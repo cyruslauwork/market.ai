@@ -22,4 +22,5 @@ class SharedPreferencesConstant {
   static String apiKeyErr = 'apiKeyErr';
   static String jumpServerUrl = 'jumpServerUrl';
   static String alwaysSkipSymbolInSearch = 'alwaysSkipSymbolInSearch';
+  static String alwayStrictMatchCriteria = 'alwayStrictMatchCriteria';
 }

@@ -97,6 +97,10 @@ class Msg extends Translations {
           'apikey_reminder': 'Enter API key to authorise analytics',
           'jump_server_input_title': 'Jump server URL',
           'always_skip_search_symbol': 'Always skip stock symbol in search',
+          'recommended_tolerance': 'Recommended ≤ 50%',
+          'strict_matching_criteria': 'Strict trend matching criteria',
+          'always_use_strict_matching':
+              'Always use strict trend matching criteria',
         },
         'zh_HK': {
           'app_name': '市場慧眼📈',
@@ -172,6 +176,9 @@ class Msg extends Translations {
           'apikey_reminder': '輸入 API 金鑰以授權分析',
           'jump_server_input_title': '堡壘機 URL',
           'always_skip_search_symbol': '總是在搜尋跳過股票代碼',
+          'recommended_tolerance': '建議 ≤ 50%',
+          'strict_matching_criteria': '嚴格趨勢匹配條件',
+          'always_use_strict_matching': '總是使用嚴格趨勢匹配條件',
         },
       };
 }

@@ -260,6 +260,25 @@ class MainView extends StatefulWidget {
               ),
             ),
             const Divider(),
+            Obx(
+              () => Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'always_use_strict_matching'.tr,
+                      style: const TextTheme().sp5.w700,
+                    ),
+                  ),
+                  Switch(
+                    value: MainPresenter.to.alwayStrictMatchCriteria.value,
+                    activeColor: Colors.red,
+                    onChanged: (bool value) =>
+                        MainPresenter.to.alwayStrictMatchCriteriaToggle(value),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(),
             SizedBox(height: 5.h),
           ],
         ),

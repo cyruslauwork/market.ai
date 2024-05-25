@@ -58,6 +58,8 @@ class TrendMatch {
     MainPresenter.to.matchActualDifferencesListList.value = [];
     MainPresenter.to.matchActualPricesListList.value = [];
 
+    int tolerance = MainPresenter.to.tolerance.value;
+
     // Loop selected data
     for (int i = range; i > 1; i--) {
       double percentage =
@@ -99,7 +101,8 @@ class TrendMatch {
         List<double>
       ) comparisonResult = areDifferencesLessThanOrEqualToCertainPercent(
           selectedPeriodPercentageDifferencesList,
-          comparePeriodPercentageDifferencesList); // Record data type in Dart is equivalent to Tuple in Java and Python
+          comparePeriodPercentageDifferencesList,
+          tolerance); // Record data type in Dart is equivalent to Tuple in Java and Python
 
       if (comparisonResult.$1) {
         trueCount += 1;
@@ -184,18 +187,49 @@ class TrendMatch {
   }
 
   (bool, List<double>) areDifferencesLessThanOrEqualToCertainPercent(
-      List<double> selList, List<double> comList) {
+      List<double> selList, List<double> comList, int tolerance) {
     if (selList.length != comList.length) {
       // logger.d('${selList.length} != ${comList.length}');
       throw ArgumentError('Both lists must have the same length.');
     }
 
-    for (int i = 0; i < selList.length; i++) {
-      double difference = comList[i] - selList[i];
-      double percentageDifference = (difference / selList[i]) * 100;
+    if (MainPresenter.to.strictMatchCriteria.value) {
+      int positiveTolerance = tolerance;
+      int negativeTolerance = -tolerance;
+      for (int i = 0; i < selList.length; i++) {
+        double difference = comList[i] - selList[i];
+        double percentageDifference = (difference / selList[i]) * 100;
 
-      if (percentageDifference.abs() >= MainPresenter.to.tolerance.value) {
-        return (false, []); // Difference is larger than or equal to certain %
+        if (percentageDifference >= 0) {
+          // Positive percentageDifference
+          if (percentageDifference > positiveTolerance) {
+            return (false, []); // Difference is larger than certain %
+          }
+          if (positiveTolerance == tolerance) {
+            positiveTolerance -= percentageDifference.toInt();
+          } else {
+            positiveTolerance = tolerance;
+          }
+        } else {
+          // Negative percentageDifference
+          if (percentageDifference < negativeTolerance) {
+            return (false, []); // Difference is less than certain -%
+          }
+          if (negativeTolerance == -tolerance) {
+            negativeTolerance -= percentageDifference.toInt();
+          } else {
+            negativeTolerance = -tolerance;
+          }
+        }
+      }
+    } else {
+      for (int i = 0; i < selList.length; i++) {
+        double difference = comList[i] - selList[i];
+        double percentageDifference = (difference / selList[i]) * 100;
+
+        if (percentageDifference.abs() > MainPresenter.to.tolerance.value) {
+          return (false, []); // Difference is larger than certain %
+        }
       }
     }
 

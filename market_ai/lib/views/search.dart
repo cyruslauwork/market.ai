@@ -50,7 +50,7 @@ class _SearchViewState extends State<SearchView> {
     bool hasText = _textEditingController.text != '' ? true : false;
     bool skipSymbolInSearch = MainPresenter.to.alwaysSkipSymbolInSearch.value;
     final String symbol;
-    if (skipSymbolInSearch) {
+    if (!hasText && skipSymbolInSearch) {
       symbol = MainPresenter.to.financialInstrumentSymbol.value;
     } else {
       symbol = _textEditingController.text.toUpperCase();
@@ -213,6 +213,10 @@ class _SearchViewState extends State<SearchView> {
                           ),
                         ],
                       ),
+                      Text(
+                        'recommended_tolerance'.tr,
+                        style: const TextTheme().sp4.greyColor,
+                      ),
                     ],
                   )),
               Padding(
@@ -256,6 +260,26 @@ class _SearchViewState extends State<SearchView> {
                             style: const TextTheme().sp4,
                           ),
                         ],
+                      ),
+                    ],
+                  )),
+              Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 4.w),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'strict_matching_criteria'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                      Obx(
+                        () => Switch(
+                          value: MainPresenter.to.strictMatchCriteria.value,
+                          activeColor: Colors.red,
+                          onChanged: (bool value) => MainPresenter
+                              .to.strictMatchCriteria.value = value,
+                        ),
                       ),
                     ],
                   )),

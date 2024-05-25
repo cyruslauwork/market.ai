@@ -61,10 +61,6 @@ class MainPresenter extends GetxController {
               .getString(SharedPreferencesConstant.jumpServerUrl) ??
           '35.212.154.124')
       .obs;
-  RxBool alwaysSkipSymbolInSearch = (PrefsService.to.prefs
-              .getBool(SharedPreferencesConstant.alwaysSkipSymbolInSearch) ??
-          false)
-      .obs;
 
   /* Candlestick-related */
   RxString financialInstrumentSymbol = (PrefsService.to.prefs
@@ -125,6 +121,18 @@ class MainPresenter extends GetxController {
   /* Search */
   ValueNotifier<int> searchCountNotifier = ValueNotifier<int>(0);
   bool isSearchCountListenerAdded = false;
+  RxBool alwaysSkipSymbolInSearch = (PrefsService.to.prefs
+              .getBool(SharedPreferencesConstant.alwaysSkipSymbolInSearch) ??
+          false)
+      .obs;
+  RxBool alwayStrictMatchCriteria = (PrefsService.to.prefs
+              .getBool(SharedPreferencesConstant.alwayStrictMatchCriteria) ??
+          false)
+      .obs;
+  RxBool strictMatchCriteria = (PrefsService.to.prefs
+              .getBool(SharedPreferencesConstant.alwayStrictMatchCriteria) ??
+          false)
+      .obs;
 
   /* Chat */
   RxList<String> messages = (PrefsService.to.prefs
@@ -143,7 +151,7 @@ class MainPresenter extends GetxController {
   RxInt range =
       (PrefsService.to.prefs.getInt(SharedPreferencesConstant.range) ?? 5).obs;
   RxInt tolerance =
-      (PrefsService.to.prefs.getInt(SharedPreferencesConstant.tolerance) ?? 100)
+      (PrefsService.to.prefs.getInt(SharedPreferencesConstant.tolerance) ?? 50)
           .obs;
   RxList<double> selectedPeriodPercentDifferencesList = [0.0].obs;
   RxList<double> selectedPeriodActualDifferencesList = [0.0].obs;
@@ -750,21 +758,28 @@ class MainPresenter extends GetxController {
   }
 
   alwaysShowAnalyticsToggle(bool value) {
-    alwaysShowAnalytics.toggle();
+    alwaysShowAnalytics.value = value;
     PrefsService.to.prefs
         .setBool(SharedPreferencesConstant.alwaysShowAnalytics, value);
   }
 
   alwaysShowSdDistPlotToggle(bool value) {
-    alwaysShowSdDistPlot.toggle();
+    alwaysShowSdDistPlot.value = value;
     PrefsService.to.prefs
         .setBool(SharedPreferencesConstant.alwaysShowSdDistPlot, value);
   }
 
   alwaysSkipSymbolInSearchToggle(bool value) {
-    alwaysSkipSymbolInSearch.toggle();
+    alwaysSkipSymbolInSearch.value = value;
     PrefsService.to.prefs
         .setBool(SharedPreferencesConstant.alwaysSkipSymbolInSearch, value);
+  }
+
+  alwayStrictMatchCriteriaToggle(bool value) {
+    alwayStrictMatchCriteria.value = value;
+    PrefsService.to.prefs
+        .setBool(SharedPreferencesConstant.alwayStrictMatchCriteria, value);
+    strictMatchCriteria.value = value;
   }
 
   showApiKeyInput() {
