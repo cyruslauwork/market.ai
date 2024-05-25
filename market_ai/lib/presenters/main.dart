@@ -1,0 +1,851 @@
+import 'dart:typed_data';
+import 'package:flutter/material.dart';
+
+import 'package:get/get.dart';
+import 'package:interactive_chart/interactive_chart.dart';
+
+import 'package:market_ai/styles/styles.dart';
+import 'package:market_ai/utils/utils.dart';
+import 'package:market_ai/models/models.dart';
+import 'package:market_ai/services/services.dart';
+import 'package:market_ai/views/views.dart';
+
+class MainPresenter extends GetxController {
+  // Singleton implementation
+  static MainPresenter? _instance;
+  factory MainPresenter() {
+    _instance ??= MainPresenter._();
+    return _instance!;
+  }
+  MainPresenter._();
+
+  static MainPresenter get to => Get.find();
+
+  /* Preference */
+  RxBool darkMode =
+      (PrefsService.to.prefs.getBool(SharedPreferencesConstant.darkMode) ??
+              false)
+          .obs;
+  bool isDarkModeInit = false;
+  RxBool devMode = false.obs;
+  ValueNotifier<bool> devModeNotifier = ValueNotifier<bool>(false);
+  bool isDevModeListenerAdded = false;
+  ValueNotifier<bool> isEnNotifier = ValueNotifier<bool>(
+      (PrefsService.to.prefs.getBool(SharedPreferencesConstant.isEn) ?? true));
+  bool isEnListenerAdded = false;
+  RxBool alwaysShowAnalytics = (PrefsService.to.prefs
+              .getBool(SharedPreferencesConstant.alwaysShowAnalytics) ??
+          false)
+      .obs;
+  RxBool alwaysShowSdDistPlot = (PrefsService.to.prefs
+              .getBool(SharedPreferencesConstant.alwaysShowSdDistPlot) ??
+          false)
+      .obs;
+  RxList<String> watchlist = (PrefsService.to.prefs
+              .getStringList(SharedPreferencesConstant.watchlist) ??
+          [])
+      .obs;
+  late Rx<IconData> bookmarked =
+      (watchlist.contains(financialInstrumentSymbol.value)
+              ? Icons.bookmark_outlined
+              : Icons.bookmark_border_outlined)
+          .obs;
+  RxString apiKey =
+      (PrefsService.to.prefs.getString(SharedPreferencesConstant.apiKey) ?? '')
+          .obs;
+  RxString apiKeyErr =
+      (PrefsService.to.prefs.getString(SharedPreferencesConstant.apiKeyErr) ??
+              '')
+          .obs;
+  RxString jumpServerUrl = (PrefsService.to.prefs
+              .getString(SharedPreferencesConstant.jumpServerUrl) ??
+          '35.212.154.124')
+      .obs;
+  RxBool alwaysSkipSymbolInSearch = (PrefsService.to.prefs
+              .getBool(SharedPreferencesConstant.alwaysSkipSymbolInSearch) ??
+          false)
+      .obs;
+
+  /* Candlestick-related */
+  RxString financialInstrumentSymbol = (PrefsService.to.prefs
+              .getString(SharedPreferencesConstant.financialInstrumentSymbol) ??
+          'SPY')
+      .obs;
+  RxString financialInstrumentName = (PrefsService.to.prefs
+              .getString(SharedPreferencesConstant.financialInstrumentName) ??
+          'SPDR S&P 500 ETF Trust')
+      .obs;
+  RxInt candledownloadTime = 0.obs;
+  RxList<List<dynamic>> candleListList = [[]].obs;
+  late Rx<Future<List<CandleData>>> futureListCandledata = init().obs;
+  RxList<CandleData> listCandledata = [
+    CandleData(
+        timestamp: 0000000000 * 1000,
+        open: 0,
+        high: 0,
+        low: 0,
+        close: 0,
+        volume: 0),
+    // CandleData(
+    //     timestamp: 1555939800 * 1000,
+    //     open: 51.80,
+    //     high: 53.94,
+    //     low: 50.50,
+    //     close: 52.55,
+    //     volume: 60735500),
+    // CandleData(
+    //     timestamp: 1556026200 * 1000,
+    //     open: 43.80,
+    //     high: 53.94,
+    //     low: 42.50,
+    //     close: 52.55,
+    //     volume: 60735500),
+    // CandleData(
+    //     timestamp: 1556112600 * 1000,
+    //     open: 73.80,
+    //     high: 83.94,
+    //     low: 52.50,
+    //     close: 72.55,
+    //     volume: 60735500),
+  ].obs;
+  ValueNotifier<bool> showAverageNotifier = ValueNotifier<bool>(true);
+  bool isShowAverageListenerAdded = false;
+  late RxString marketDataProviderMsg = Rx('mkt_data'.tr)().obs;
+  RxBool isMarketDataProviderErr = false.obs;
+
+  /* Listings */
+  RxInt listingsDownloadTime = 0.obs;
+  RxList<SymbolAndName> listSymbolAndName =
+      [const SymbolAndName(symbol: '', name: '')].obs;
+  RxString listingErr = ''.obs;
+  RxBool isListingInit = false.obs;
+  late RxString listingsProviderMsg = Rx('listings'.tr)().obs;
+  RxBool isListingsProviderErr = false.obs;
+
+  /* Search */
+  ValueNotifier<int> searchCountNotifier = ValueNotifier<int>(0);
+  bool isSearchCountListenerAdded = false;
+
+  /* Chat */
+  RxList<String> messages = (PrefsService.to.prefs
+              .getStringList(SharedPreferencesConstant.messages) ??
+          [
+            "Hi! I'm your dedicated News AI, here to assist you in analyzing news related to your preferred stocks or ETFs! ^_^"
+          ])
+      .obs;
+  RxBool isWaitingForReply = false.obs;
+  RxInt aiResponseTime = 0.obs;
+  RxBool firstQuestion = true.obs;
+  ValueNotifier<bool> isWaitingForReplyNotifier = ValueNotifier<bool>(false);
+  bool isWaitingForReplyNotifierAdded = false;
+
+  /* Trend match */
+  RxInt range =
+      (PrefsService.to.prefs.getInt(SharedPreferencesConstant.range) ?? 5).obs;
+  RxInt tolerance =
+      (PrefsService.to.prefs.getInt(SharedPreferencesConstant.tolerance) ?? 100)
+          .obs;
+  RxList<double> selectedPeriodPercentDifferencesList = [0.0].obs;
+  RxList<double> selectedPeriodActualDifferencesList = [0.0].obs;
+  RxList<double> selectedPeriodActualPricesList = [0.0].obs;
+  RxList<List<double>> comparePeriodPercentDifferencesListList = [
+    [0.0]
+  ].obs;
+  RxList<List<double>> comparePeriodActualDifferencesListList = [
+    [0.0]
+  ].obs;
+  RxList<List<double>> comparePeriodActualPricesListList = [
+    [0.0]
+  ].obs;
+  RxList<List<double>> matchPercentDifferencesListList = [
+    [0.0]
+  ].obs;
+  RxList<List<double>> matchActualDifferencesListList = [
+    [0.0]
+  ].obs;
+  RxList<List<double>> matchActualPricesListList = [
+    [0.0]
+  ].obs;
+  RxList<int> trendMatchOutput = [0, 0, 0, 0, 0].obs;
+  RxList<int> matchRows = [0].obs;
+  RxBool trendMatched = false.obs;
+  RxBool showAnalytics = false.obs;
+  ValueNotifier<bool> showAnalyticsNotifier = ValueNotifier<bool>(false);
+  bool isShowAnalyticsNotifierAdded = false;
+  late RxDouble candleChartHeight = (showAnalytics.value ? 50.h : 100.h).obs;
+  ValueNotifier<bool> chartExpandNotifier = ValueNotifier<bool>(true);
+  bool isChartExpandNotifierAdded = false;
+  Rx<IconData> expandOrShrinkIcon = Icons.vertical_align_center_rounded.obs;
+  Rx<Widget> sidePlot = (const SizedBox.shrink()).obs;
+  late RxDouble tmChartWidth = 135.w.obs;
+
+  /* Subsequent analytics */
+  RxInt lastClosePriceAndSubsequentTrendsExeTime = 0.obs;
+  RxInt cloudSubsequentAnalyticsTime = 0.obs;
+  RxBool hasSubsequentAnalytics = false.obs;
+  Rx<Uint8List> img1Bytes = Rx<Uint8List>(Uint8List.fromList([0]));
+  Rx<Uint8List> img2Bytes = Rx<Uint8List>(Uint8List.fromList([0]));
+  Rx<Uint8List> img3Bytes = Rx<Uint8List>(Uint8List.fromList([0]));
+  Rx<Uint8List> img4Bytes = Rx<Uint8List>(Uint8List.fromList([0]));
+  Rx<Uint8List> img5Bytes = Rx<Uint8List>(Uint8List.fromList([0]));
+  Rx<Uint8List> img6Bytes = Rx<Uint8List>(Uint8List.fromList([0]));
+  Rx<Uint8List> img7Bytes = Rx<Uint8List>(Uint8List.fromList([0]));
+  Rx<Uint8List> img8Bytes = Rx<Uint8List>(Uint8List.fromList([0]));
+  Rx<Uint8List> img9Bytes = Rx<Uint8List>(Uint8List.fromList([0]));
+  Rx<Uint8List> img10Bytes = Rx<Uint8List>(Uint8List.fromList([0]));
+  RxString subsequentAnalyticsErr = ''.obs;
+  RxInt numOfClusters = 0.obs;
+  RxString maxSilhouetteScore = ''.obs;
+  ValueNotifier<bool> subsequentAnalyticsNotifier = ValueNotifier<bool>(false);
+  bool isSubsequentAnalyticsNotifierAdded = false;
+  RxList<List<double>> adjustedTrendsAndSelectedTrendList = [
+    [0.0]
+  ].obs;
+  RxInt saCount = 0.obs;
+
+  List<Map<String, dynamic>> json = [];
+  RxInt lastCandledataLength = 0.obs;
+
+  // A 2nd initialization will be triggered when starting the app
+  @override
+  void onInit() {
+    // PrefsService.to.prefs
+    //     .setString(SharedPreferencesConstant.financialInstrumentSymbol, 'SPY');
+    // PrefsService.to.prefs.setString(
+    //     SharedPreferencesConstant.financialInstrumentName,
+    //     'SPDR S&P 500 ETF Trust');
+    // PrefsService.to.prefs.setInt(SharedPreferencesConstant.range, 5);
+    // PrefsService.to.prefs.setInt(SharedPreferencesConstant.tolerance, 100);
+    // PrefsService.to.prefs
+    //     .setStringList(SharedPreferencesConstant.watchlist, []);
+
+    super.onInit();
+    if (!isDarkModeInit) {
+      if (darkMode.value) {
+        AppColor.primaryTextColor = Colors.white;
+      } else {
+        AppColor.primaryTextColor = Colors.black;
+      }
+      isDarkModeInit = true;
+    }
+
+    if (!isShowAverageListenerAdded) {
+      showAverageNotifier.addListener(showAverageListener);
+      isShowAverageListenerAdded = true;
+    }
+
+    if (!isDevModeListenerAdded) {
+      devModeNotifier.addListener(devModeListener);
+      isDevModeListenerAdded = true;
+    }
+
+    if (!isEnListenerAdded) {
+      isEnNotifier.addListener(isEnListener);
+      isEnListenerAdded = true;
+    }
+
+    if (!isSearchCountListenerAdded) {
+      searchCountNotifier.addListener(isSearchCountListener);
+      isSearchCountListenerAdded = true;
+    }
+
+    if (!isListingInit.value) {
+      isListingInit.value =
+          true; // Must set the value to true before invoking the method
+      Listing().init();
+    }
+
+    if (!isShowAnalyticsNotifierAdded) {
+      showAnalyticsNotifier.addListener(showAnalyticsListener);
+      isShowAnalyticsNotifierAdded = true;
+    }
+
+    if (!isChartExpandNotifierAdded) {
+      chartExpandNotifier.addListener(chartExpandListener);
+      isChartExpandNotifierAdded = true;
+    }
+
+    if (!isSubsequentAnalyticsNotifierAdded) {
+      subsequentAnalyticsNotifier.addListener(subsequentAnalyticsListener);
+      isSubsequentAnalyticsNotifierAdded = true;
+    }
+
+    if (!isWaitingForReplyNotifierAdded) {
+      isWaitingForReplyNotifier.addListener(isWaitingForReplyListener);
+      isWaitingForReplyNotifierAdded = true;
+    }
+  }
+
+  void showAverageListener() {
+    // Perform actions based on the new value of showAverage
+    if (showAverageNotifier.value) {
+      // Show the average
+      Candle().computeTrendLines();
+    } else {
+      // Hide the average
+      Candle().removeTrendLines();
+    }
+  }
+
+  void devModeListener() {
+    devMode.toggle();
+    if (devModeNotifier.value) {
+      Get.snackbar(
+          'system_info'.tr,
+          colorText: AppColor.whiteColor,
+          backgroundColor: AppColor.greyColor,
+          icon: const Icon(Icons.settings),
+          'dev_mode'.tr);
+      showAnalyticsNotifier.value = true;
+    }
+  }
+
+  void isEnListener() {
+    if (isEnNotifier.value) {
+      LangService.to.changeLanguage(Lang.en);
+      SubsequentAnalytics().init();
+    } else {
+      LangService.to.changeLanguage(Lang.zh);
+      SubsequentAnalytics().init();
+    }
+  }
+
+  void isSearchCountListener() {
+    bookmarked.value = watchlist.contains(financialInstrumentSymbol.value)
+        ? Icons.bookmark_outlined
+        : Icons.bookmark_border_outlined;
+    futureListCandledata.value = init();
+  }
+
+  void showAnalyticsListener() {
+    if (showAnalyticsNotifier.value) {
+      showAnalytics.value = true;
+      chartExpandNotifier.value = false;
+    } else {
+      showAnalytics.value = false;
+      chartExpandNotifier.value = true;
+    }
+  }
+
+  void chartExpandListener() {
+    if (chartExpandNotifier.value) {
+      candleChartHeight.value = 100.h;
+      expandOrShrinkIcon.value = Icons.vertical_align_center_rounded;
+    } else {
+      candleChartHeight.value = 50.h;
+      expandOrShrinkIcon.value = Icons.expand;
+    }
+  }
+
+  void subsequentAnalyticsListener() {
+    if (subsequentAnalyticsNotifier.value &&
+        subsequentAnalyticsErr.value != '') {
+      hasSubsequentAnalytics.value = true;
+      sidePlot.value = const SizedBox.shrink();
+      tmChartWidth.value = 135.w;
+    } else if (subsequentAnalyticsNotifier.value) {
+      hasSubsequentAnalytics.value = true;
+      sidePlot.value = SizedBox(
+          child: Padding(
+        padding: EdgeInsets.only(top: 7.5.h),
+        child: Image.memory(
+          MainPresenter.to.img10Bytes.value,
+          width: 52.5.w,
+          height: 78.h,
+          fit: BoxFit.fill,
+        ),
+      ));
+      tmChartWidth.value = 90.w;
+    } else {
+      sidePlot.value = const SizedBox.shrink();
+      tmChartWidth.value = 135.w;
+      hasSubsequentAnalytics.value = false;
+    }
+  }
+
+  void isWaitingForReplyListener() {
+    if (isWaitingForReplyNotifier.value) {
+      isWaitingForReply.value = true;
+    } else {
+      isWaitingForReply.value = false;
+    }
+  }
+
+  void reload() {
+    Get.delete<MainPresenter>();
+    Get.put(MainPresenter());
+    logger.d('Instance "MainPresenter" has been reloaded');
+    super.onInit();
+  }
+
+  Future<List<CandleData>> init() async {
+    if (!alwaysShowAnalytics.value) {
+      showAnalyticsNotifier.value = false;
+    } else {
+      showAnalyticsNotifier.value = true;
+    }
+    await Candle().init();
+    if (showAverageNotifier.value) {
+      Candle().computeTrendLines();
+    }
+    TrendMatch().init();
+    if (apiKey.value != '') {
+      SubsequentAnalytics().init();
+    }
+    return listCandledata;
+  }
+
+  /* Route */
+  void route(String path) {
+    Get.toNamed(path);
+  }
+
+  void back() {
+    Get.back();
+  }
+
+  /* UI Logic (mainly focused on show/hide) */
+  List<Widget> buildListingRelatedIcons() {
+    if (isListingInit.value) {
+      return [
+        IconButton(
+          icon: const Icon(Icons.search),
+          onPressed: () {
+            MainPresenter.to.route(RouteName.searchView.path);
+          },
+        ),
+        IconButton(
+          icon: const Icon(Icons.contact_support),
+          onPressed: () {
+            MainPresenter.to.route(RouteName.chatView.path);
+          },
+        ),
+      ];
+    } else {
+      return [];
+    }
+  }
+
+  Widget showTm() {
+    return Obx(() {
+      if (trendMatched.value && showAnalytics.value) {
+        return TrendMatchView().showAdjustedLineChart();
+      } else if (showAnalytics.value) {
+        return TrendMatchView().showCircularProgressIndicator();
+      }
+      return const SizedBox.shrink();
+    });
+  }
+
+  Widget showStartBtn() {
+    return Obx(() {
+      if (showAnalytics.value) {
+        return const SizedBox.shrink();
+      } else {
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 2.w),
+          child: ElevatedButton.icon(
+            onPressed: () {
+              MainPresenter.to.showAnalyticsNotifier.value = true;
+            },
+            icon: Icon(
+              Icons.analytics_outlined,
+              size: 20.h,
+            ),
+            label: Text(
+              'btn_tm_sa'.tr,
+              style: const TextTheme().sp5.w700,
+            ),
+          ),
+        );
+      }
+    });
+  }
+
+  Widget showDevModeViewOne(bool devMode) {
+    if (devMode) {
+      return MainView().devModeViewOne();
+    } else {
+      return const SizedBox.shrink();
+    }
+  }
+
+  Widget showDevModeViewTwo(bool devMode) {
+    if (devMode) {
+      return MainView().devModeViewTwo();
+    } else {
+      return const SizedBox.shrink();
+    }
+  }
+
+  Widget showSa() {
+    return Obx(() {
+      if (hasSubsequentAnalytics.value &&
+          showAnalytics.value &&
+          devMode.value &&
+          apiKey.value != '') {
+        if (subsequentAnalyticsErr.value == '' && apiKeyErr.value == '') {
+          return Column(
+            children: [
+              SubsequentAnalyticsView().showSaChart(),
+              SubsequentAnalyticsView().showSaDevChart(),
+            ],
+          );
+        } else if (apiKeyErr.value == '') {
+          return SubsequentAnalyticsView().showError();
+        } else {
+          return Column(
+            children: [
+              SubsequentAnalyticsView().showError(),
+              showApiKeyReminder(),
+            ],
+          );
+        }
+      } else if (hasSubsequentAnalytics.value &&
+          showAnalytics.value &&
+          apiKey.value != '') {
+        if (subsequentAnalyticsErr.value == '' && apiKeyErr.value == '') {
+          return SubsequentAnalyticsView().showSaChart();
+        } else if (apiKeyErr.value == '') {
+          return SubsequentAnalyticsView().showError();
+        } else {
+          return Column(
+            children: [
+              SubsequentAnalyticsView().showError(),
+              showApiKeyReminder(),
+            ],
+          );
+        }
+      } else if (showAnalytics.value && apiKey.value != '') {
+        return SubsequentAnalyticsView().showCircularProgressIndicator();
+      } else if (showAnalytics.value) {
+        showApiKeyInput();
+        return showApiKeyReminder();
+      }
+      return const SizedBox.shrink();
+    });
+  }
+
+  Widget buildListingSourceRichText() {
+    final imageSpan = WidgetSpan(
+      child: Padding(
+        padding: EdgeInsets.only(left: 3.w),
+        child: Container(
+          decoration: const BoxDecoration(
+            color: AppColor.imageDefaultBgColor,
+          ),
+          child: Image.asset(
+            'images/nasdaq.png',
+            height: 6.h,
+          ),
+        ),
+      ),
+    );
+    final imageSpan2 = WidgetSpan(
+      child: Padding(
+        padding: EdgeInsets.only(left: 3.w),
+        child: Container(
+          decoration: const BoxDecoration(
+            color: AppColor.imageDefaultBgColor,
+          ),
+          child: Image.asset(
+            'images/nyse.png',
+            height: 7.h,
+          ),
+        ),
+      ),
+    );
+    final imageSpan3 = WidgetSpan(
+      child: Padding(
+        padding: EdgeInsets.only(left: 3.w),
+        child: Transform.translate(
+          offset: Offset(0.0, 3.h),
+          child: Container(
+            decoration: const BoxDecoration(
+              color: AppColor.imageDefaultBgColor,
+            ),
+            child: Image.asset(
+              'images/amex.png',
+              height: 12.h,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    return RichText(
+      text: TextSpan(
+        text: listingsProviderMsg.value,
+        children: [imageSpan, imageSpan2, imageSpan3],
+        style: const TextTheme().sp4.greyColor,
+      ),
+    );
+  }
+
+  Widget buildMktDataProviderRichText() {
+    final imageSpan = WidgetSpan(
+      child: Padding(
+        padding: EdgeInsets.only(left: 3.w),
+        child: Container(
+          decoration: const BoxDecoration(
+            color: AppColor.imageDefaultBgColor,
+          ),
+          child: Image.asset(
+            'images/yahoofinance.png',
+            height: 6.h, // Adjust the height as needed
+          ),
+        ),
+      ),
+    );
+
+    return Obx(() => RichText(
+          text: TextSpan(
+            text: marketDataProviderMsg.value,
+            children: [imageSpan],
+            style: const TextTheme().sp4.greyColor,
+          ),
+        ));
+  }
+
+  Widget buildCloudFunctionCol() {
+    final imageSpan = WidgetSpan(
+      child: Padding(
+        padding: EdgeInsets.only(left: 3.w),
+        child: Transform.translate(
+          offset: Offset(0.0, 3.h),
+          child: Image.asset(
+            'images/cloudfunction.png',
+            height: 18.h, // Adjust the height as needed
+          ),
+        ),
+      ),
+    );
+    final textSpan = WidgetSpan(
+      child: Padding(
+          padding: EdgeInsets.only(left: 3.w),
+          child: Text(
+            'x',
+            style: const TextTheme().sp10.greyColor,
+          )),
+    );
+    final imageSpan2 = WidgetSpan(
+      child: Padding(
+        padding: EdgeInsets.only(left: 3.w),
+        child: Transform.translate(
+          offset: Offset(0.0, 3.h),
+          child: Image.asset(
+            'images/hsuhk_cs_dept.png',
+            height: 18.h, // Adjust the height as needed
+          ),
+        ),
+      ),
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.w),
+          child: Text(
+            'power_from'.tr,
+            style: const TextTheme().sp4.greyColor,
+          ),
+        ),
+        Center(
+          child: RichText(
+            text: TextSpan(
+              children: [imageSpan, textSpan, imageSpan2],
+              style: const TextTheme().sp4.greyColor,
+            ),
+          ),
+        ),
+        SizedBox(height: 50.h),
+      ],
+    );
+  }
+
+  void changeAppearance() {
+    darkMode.toggle();
+    if (darkMode.value) {
+      AppColor.primaryTextColor = Colors.white;
+    } else {
+      AppColor.primaryTextColor = Colors.black;
+    }
+    PrefsService.to.prefs
+        .setBool(SharedPreferencesConstant.darkMode, darkMode.value);
+  }
+
+  clearMsg() {
+    messages.value = messages.sublist(0, 1); // newList will be ["first"]
+    PrefsService.to.prefs
+        .setStringList(SharedPreferencesConstant.messages, messages);
+    firstQuestion.value = true;
+  }
+
+  void bookmarkThis({required BuildContext context}) {
+    if (watchlist.contains(financialInstrumentSymbol.value)) {
+      bookmarked.value = Icons.bookmark_border_outlined;
+      watchlist.remove(financialInstrumentSymbol.value);
+      PrefsService.to.prefs
+          .setStringList(SharedPreferencesConstant.watchlist, watchlist);
+    } else {
+      if (watchlist.length > 4) {
+        Get.snackbar(
+            'notice'.tr,
+            colorText: AppColor.whiteColor,
+            backgroundColor: AppColor.errorColor,
+            icon: const Icon(Icons.error),
+            'watchlist_max'.tr);
+      } else {
+        bookmarked.value = Icons.bookmark_outlined;
+        watchlist.add(financialInstrumentSymbol.value);
+        PrefsService.to.prefs
+            .setStringList(SharedPreferencesConstant.watchlist, watchlist);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Center(
+            child: Text(
+              'bookmarked'.tr,
+              style: const TextTheme().sp5.greyColor,
+            ),
+          ),
+        ));
+      }
+    }
+  }
+
+  List<PopupMenuEntry<String>> popMenuItems() {
+    List<PopupMenuEntry<String>> watchlistMenuItems;
+    if (watchlist.isEmpty) {
+      watchlistMenuItems = [
+        PopupMenuItem<String>(
+          value: 'watchlistEmpty',
+          child: Text(
+            'watchlistEmpty'.tr,
+            style: const TextTheme().sp4.primaryTextColor,
+          ),
+        ),
+      ];
+    } else {
+      watchlistMenuItems = watchlist.map((String item) {
+        return PopupMenuItem<String>(
+          value: item,
+          child: ListTile(
+            leading: Icon(
+              Icons.bookmark_outlined,
+              color: ThemeColor.primary.value,
+            ),
+            title: Text(
+              item,
+              style: const TextTheme().sp4.primaryTextColor,
+            ),
+          ),
+        );
+      }).toList();
+    }
+    return watchlistMenuItems;
+  }
+
+  refreshIndicator() {
+    futureListCandledata.value = init();
+  }
+
+  alwaysShowAnalyticsToggle(bool value) {
+    alwaysShowAnalytics.toggle();
+    PrefsService.to.prefs
+        .setBool(SharedPreferencesConstant.alwaysShowAnalytics, value);
+  }
+
+  alwaysShowSdDistPlotToggle(bool value) {
+    alwaysShowSdDistPlot.toggle();
+    PrefsService.to.prefs
+        .setBool(SharedPreferencesConstant.alwaysShowSdDistPlot, value);
+  }
+
+  alwaysSkipSymbolInSearchToggle(bool value) {
+    alwaysSkipSymbolInSearch.toggle();
+    PrefsService.to.prefs
+        .setBool(SharedPreferencesConstant.alwaysSkipSymbolInSearch, value);
+  }
+
+  showApiKeyInput() {
+    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Get.snackbar(
+        'notice'.tr,
+        colorText: AppColor.whiteColor,
+        backgroundColor: AppColor.errorColor,
+        icon: const Icon(Icons.error),
+        'api_key'.tr,
+        duration: const Duration(seconds: 60),
+        userInputForm: Form(
+          key: formKey,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                child: TextFormField(
+                  initialValue: apiKey.value,
+                  decoration: InputDecoration(
+                    errorStyle: const TextTheme().sp4.whiteColor,
+                    hintText: 'api_key'.tr,
+                    hintStyle: const TextTheme().sp5.whiteColor,
+                    prefixIcon: const Icon(Icons.key),
+                    prefixIconColor: AppColor.whiteColor,
+                  ),
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return 'api_key_validation'.tr;
+                    }
+                    return null;
+                  },
+                  onSaved: (String? value) {
+                    apiKey.value = value!;
+                    PrefsService.to.prefs.setString(
+                        SharedPreferencesConstant.apiKey, apiKey.value);
+                    apiKeyErr.value = '';
+                    PrefsService.to.prefs
+                        .setString(SharedPreferencesConstant.apiKeyErr, '');
+                    TrendMatch().init();
+                    SubsequentAnalytics().init();
+                  },
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  if (formKey.currentState!.validate()) {
+                    formKey.currentState!.save();
+                    Get.closeCurrentSnackbar();
+                  }
+                },
+                child: Text(
+                  'submit'.tr,
+                  style: const TextTheme().sp5,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    });
+  }
+
+  Widget showApiKeyReminder() {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 10.h),
+      child: ElevatedButton.icon(
+        onPressed: () {
+          showApiKeyInput();
+        },
+        icon: Icon(
+          Icons.key_off,
+          size: 5.h,
+        ),
+        label: Text(
+          'apikey_reminder'.tr,
+          style: const TextTheme().sp5.w700,
+        ),
+      ),
+    );
+  }
+}

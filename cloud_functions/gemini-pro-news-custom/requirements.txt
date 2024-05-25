@@ -1,0 +1,5 @@
+functions-framework==3.*
+gnews
+requests
+google-generativeai
+# google-cloud-aiplatform

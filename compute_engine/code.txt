@@ -1,0 +1,67 @@
+To create a simple Flask server for forwarding requests to a specific URL within a VPC on a Google Cloud Compute Engine VM, you can follow these steps:
+
+1. SSH into your Compute Engine VM.
+2. Install Flask and any other dependencies required for your application. You can use `pip` to install Flask:
+
+   ```
+   sudo apt update
+   sudo apt install python3-pip
+   sudo pip3 install flask
+   sudo pip3 install schedule
+   sudo pip3 install google-cloud-storage
+   ```
+
+3. Create a new file called `app.py` and open it in a text editor:
+
+   ```
+   nano app.py
+   ```
+
+4. In the `app.py` file, import Flask and create a Flask application instance, 
+   define a route that will handle the incoming requests and forward them to the desired URL,
+   and add a main block to run the Flask application:
+
+   code_step5.py
+
+   Replace `<your-target-url>` with the actual URL you want to forward the requests to.
+
+5. Save the `app.py` file and exit the text editor.
+
+6. To run your program within a terminal multiplexer tool like tmux or screen, follow these steps:
+
+   1. **Install tmux or screen**: If you don't have tmux or screen installed on your system, you can install them using the package manager for your operating system. For example, on Ubuntu, you can install tmux using the following command:
+   ```
+   sudo apt-get install tmux
+   ```
+   Or you can install screen using:
+   ```
+   sudo apt-get install screen
+   ```
+
+   2. **Start a new session**: Open your terminal and start a new session with either tmux or screen. For tmux, run the command `tmux` and for screen, run the command `screen`.
+
+   3. **Run your program**: Once inside the tmux or screen session, you can run your program as you normally would in the terminal. For example, if you have a Python program called `my_program.py`, you can run it by executing `python my_program.py` or any other relevant command.
+
+   **Detach from the session**: To detach from the tmux or screen session while leaving your program running, use the following key combinations:
+      - For tmux: Press `Ctrl + b`, followed by `d`.
+      - For screen: Press `Ctrl + a`, followed by `d`.
+
+   **Reattach to the session**: When you want to resume working with your program, you can reattach to the tmux or screen session by running the following commands:
+      - For tmux: Run `tmux attach` or `tmux a` in a new terminal window or tab.
+      - For screen: Run `screen -r` in a new terminal window or tab.
+
+   By running your program within tmux or screen, you can detach from and reattach to the session, allowing your program to continue running persistently even after you close your SSH session.
+
+7. Start the Flask server by running the following command:
+
+   ```
+   sudo python3 app.py
+   ```
+
+   The Flask application will start running, and you should see the output indicating that the server is running.
+
+8. By default, the Flask server will be accessible through the external IP address of your Compute Engine VM on port 80. You can use the external IP address to access your Flask application in a web browser or send requests to it programmatically.
+
+Note: Make sure to replace `<your-target-url>` with the actual URL you want to forward the requests to. Additionally, you may need to configure firewall rules in your Google Cloud project to allow incoming traffic on the desired port (e.g., port 80) if it's not already allowed.
+
+That's it! You have created a simple Flask server on your Compute Engine VM to forward requests to a specific URL within your VPC.
