@@ -351,7 +351,8 @@ class MainPresenter extends GetxController {
       hasSubsequentAnalytics.value = true;
       sidePlot.value = const SizedBox.shrink();
       tmChartWidth.value = 135.w;
-    } else if (subsequentAnalyticsNotifier.value) {
+    } else if (subsequentAnalyticsNotifier.value &&
+        subsequentAnalyticsErr.value == '') {
       hasSubsequentAnalytics.value = true;
       sidePlot.value = SizedBox(
           child: Padding(

@@ -112,7 +112,7 @@ class SubsequentAnalytics {
       }).catchError((error) {
         // Handle any errors during the asynchronous operation
         MainPresenter.to.subsequentAnalyticsErr.value =
-            'An unexpected error occurred in getCsvAndPng()';
+            'An unexpected error occurred in getCsvAndPng(): $error';
       });
     } else {
       MainPresenter.to.subsequentAnalyticsErr.value =

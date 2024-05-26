@@ -51,7 +51,7 @@ def return_string(string, response_code, blob, current_month, gce_monthly_kb_cou
         blob.upload_from_string(json.dumps(gce_monthly_kb_counters), content_type='application/json', timeout=15)
     except:
         print('Handling gce_monthly_kb_counters timed out')
-        return {'error': 'Handling gce_monthly_kb_counters timed out'}, 504
+        return 'Handling gce_monthly_kb_counters timed out', 504
     return string, response_code
 
 def print_string(string, blob, current_month, gce_monthly_kb_counters, kb):
@@ -121,10 +121,11 @@ def forward_request():
     if limit_exceed:
         return return_jsonify({'error': 'Monthly request limit exceeded'}, 503, blob, current_month, gce_monthly_kb_counters, 1)
     
+    # Incorporate a delay of three seconds 'time.sleep(3)' following each parameter-related erroneous response. 
+    # This strategy is designed to deter brute-force attacks by increasing the time cost for each attempted breach.
     if request.method == 'POST':
         api_key = request.form.get('api_key')
         if api_key == API_KEY:
-
             func_name = request.form.get('func') # Get the 'func' parameter from the URL (the Cloud Function user want to call)
             if func_name == 'subtrend-to-csv-png':
                 # Get parameters from the user's GET request
@@ -178,8 +179,10 @@ def forward_request():
                     # Handle the case when the command exceeds the timeout
                     return return_jsonify({'error': 'access_token_command/id_token_command execution timed out'}, 504, blob, current_month, gce_monthly_kb_counters, 1)
             else:
+                time.sleep(3)
                 return return_jsonify({'error': 'Invalid function name'}, 400, blob, current_month, gce_monthly_kb_counters, 1)
         else:
+            time.sleep(3)
             return return_jsonify({'error': 'Invalid API key'}, 401, blob, current_month, gce_monthly_kb_counters, 1)
     elif request.method == 'GET':
         # Vertex AI
@@ -230,6 +233,7 @@ def forward_request():
                     # Handle the case when the command exceeds the timeout
                     return return_string('gemini-pro-news execution timed out', 504, blob, current_month, gce_monthly_kb_counters, 1)
             else:
+                time.sleep(3)
                 return return_string('Invalid API key', 401, blob, current_month, gce_monthly_kb_counters, 1)
         elif func_name == 'gemini-pro-news-custom':
             api_key = request.args.get('api_key')
@@ -268,6 +272,7 @@ def forward_request():
                     # Handle the case when the command exceeds the timeout
                     return return_string('gemini-pro-news-custom execution timed out', 504, blob, current_month, gce_monthly_kb_counters, 1)
             else:
+                time.sleep(3)
                 return return_string('Invalid API key', 401, blob, current_month, gce_monthly_kb_counters, 1)
         elif func_name == 'nyse-etfs-symbol-name':
             bucket_name = 'market-ai-2024'
@@ -303,6 +308,7 @@ def forward_request():
                 # Handle the case when the command exceeds the timeout
                 return return_jsonify({'error': 'nyse-etfs-symbol-name execution timed out'}, 504, blob, current_month, gce_monthly_kb_counters, 1)
         else:
+            time.sleep(3)
             return return_jsonify({'error': 'Invalid function name'}, 400, blob, current_month, gce_monthly_kb_counters, 1)
         # Vertex AI
         # except subprocess.TimeoutExpired:
@@ -310,6 +316,7 @@ def forward_request():
         #     return_jsonify({'error': 'app_access_token_command execution timed out!'}, 504, blob, current_month, gce_monthly_kb_counters, 1)
         #
     else:
+        time.sleep(3)
         return return_jsonify({'error': 'Invalid HTTP method'}, 400, blob, current_month, gce_monthly_kb_counters, 1)
 
 if __name__ == '__main__':
