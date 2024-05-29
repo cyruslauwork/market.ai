@@ -11,6 +11,7 @@ import shlex
 import urllib.parse
 import sys
 from google.cloud import storage
+import pytz
 
 app = Flask(__name__)
 
@@ -71,14 +72,14 @@ def print_string(string, blob, current_month, gce_monthly_kb_counters, kb):
 
 def monthly_usage_limit(current_month):
     bucket = storage_client.bucket(bucket_name)
-    bucket.storage_class = "STANDARD"
+    bucket.storage_class = 'STANDARD'
     if bucket.exists() is False:
         print('Creating bucket...')
-        storage_client.create_bucket(bucket, location="us-west1")
+        storage_client.create_bucket(bucket, location='us-west1')
     blob = bucket.blob(file_name)
     try:
-        json_data = blob.download_as_text()
-        gce_monthly_kb_counters = json.loads(json_data)
+        json_file = blob.download_as_text()
+        gce_monthly_kb_counters = json.loads(json_file)
         # Check if the KB limit is approached
         if current_month in gce_monthly_kb_counters:
             if gce_monthly_kb_counters[current_month] >= (GCE_OUTBOUND_KB_LIMIT * 0.99):
@@ -111,6 +112,86 @@ def fetch_and_store_etfs_listing():
     except subprocess.TimeoutExpired:
         # Handle the case when the command exceeds the timeout
         print_string('Function fetch_and_store_etfs_listing execution timed out', blob, current_month, gce_monthly_kb_counters, 1)
+
+# Check if the current time is within the US stock regular trading hours or not
+def is_within_regular_trading_hours():
+    now = datetime.datetime.utcnow()
+    us_eastern = pytz.timezone('US/Eastern')
+    now_us_eastern = now.astimezone(us_eastern)
+    # Extract the hour and minute components
+    hour = now_us_eastern.hour
+    minute = now_us_eastern.minute
+    return (hour == 9 and minute >= 29) or (9 < hour < 16) or (hour == 16 and minute == 0)
+
+def fetch_and_store_one_minute_candlestick_json():
+    if not is_within_regular_trading_hours():
+        symbols = ['spy', 'qqq', 'uso', 'gld']
+        bucket = storage_client.bucket(bucket_name)
+        bucket.storage_class = 'STANDARD'
+        result_json_list = []  # Initialize an empty list
+        if bucket.exists() is False:
+            print('Creating bucket...')
+            storage_client.create_bucket(bucket, location='us-west1')
+        for symbol in symbols:
+            blob = bucket.blob(f'{symbol}.json')
+            try:
+                json_file = blob.download_as_text()
+                json_data = json.loads(json_file)
+            except:
+                # If the file doesn't exist or there's an error loading it
+                print(f'Error occurred while downloading the {symbol} JSON file')
+                return
+            headers = {
+                'User-Agent': 'Mozilla/5.0'
+            }
+            url = f'https://query1.finance.yahoo.com/v7/finance/chart/{symbol}?dataGranularity=1m&range=1d'
+            response = requests.get(url, headers=headers) # Send a GET request to the URL and fetch the JSON response
+            print(f"Fetching JSON response for symbol '{symbol}'")
+            # Check if the request was successful (status code 200)
+            if response.status_code == 200:
+                # Extract the JSON response
+                response_data = response.json()
+                # Extract the relevant data
+                timestamps = response_data['chart']['result'][0]['timestamp']
+                opens = response_data['chart']['result'][0]['indicators']['quote'][0]['open']
+                highs = response_data['chart']['result'][0]['indicators']['quote'][0]['high']
+                lows = response_data['chart']['result'][0]['indicators']['quote'][0]['low']
+                closes = response_data['chart']['result'][0]['indicators']['quote'][0]['close']
+                volumes = response_data['chart']['result'][0]['indicators']['quote'][0]['volume']
+                for timestamp, open, high, low, close, volume in zip(timestamps, opens, highs, lows, closes, volumes):
+                    # Create a new JSON with the desired columns
+                    result_json = {
+                        'time_key': timestamp,
+                        'open': open,
+                        'high': high,
+                        'low': low,
+                        'close': close,
+                        'volume': volume
+                    }
+                    result_json_list.append(result_json) # Append the dictionary to the list
+                # To check only the last 390 rows (60 mins * 6.5 regular trading hours) of json_data for the presence of the last time_key in result_json_list
+                time_keys = {row['time_key'] for row in json_data[-390:]}
+                last_time_key = result_json_list[-1]['time_key']
+                first_time_key = result_json_list[0]['time_key']
+                if last_time_key in time_keys or first_time_key in time_keys:
+                    return
+                # Check if the trading time is entered incorrectly by using special signals in Yahoo Finance API JSON response
+                second_last_close_value = result_json_list[-2]['close']
+                if second_last_close_value is None or second_last_close_value == 'null':
+                    return
+                # Append the result_json_list to the json_data list
+                json_data.extend(result_json_list)
+                # Convert the result to JSON format
+                json_str = json.dumps(json_data)
+                if blob.exists():
+                    blob.delete()  # Delete existing blob
+                    print('Object deleted')
+                try:
+                    blob.upload_from_string(json_str, content_type='application/json')
+                except:
+                    print('Create object timeout')
+            else:
+                print(f"Error occurred while fetching the JSON response for symbol '{symbol}'. Status code:", response.status_code)
 
 @app.route('/', methods=['POST', 'GET'])
 def forward_request():
@@ -325,10 +406,12 @@ if __name__ == '__main__':
     server_thread = threading.Thread(target=app.run, kwargs={'host': '0.0.0.0', 'port': 80})
     server_thread.start()
 
-    # Execute the initial fetch_and_store_etfs_listing()
+    # Execute the initial function
     fetch_and_store_etfs_listing()
-    # Schedule the fetch_and_store_etfs_listing() to run every 30 days
+    fetch_and_store_one_minute_candlestick_json()
+    # Schedule the function to run every 30 days
     schedule.every(30).days.do(fetch_and_store_etfs_listing)
+    schedule.every(12).hours.do(fetch_and_store_one_minute_candlestick_json)
     # Run the scheduled tasks in the background
     while True:
         schedule.run_pending()

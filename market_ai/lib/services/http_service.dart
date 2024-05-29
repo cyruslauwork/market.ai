@@ -22,7 +22,7 @@ class HTTPService extends GetxService {
 
   Future<http.Response> fetchCandleCsv({required String stockSymbol}) async {
     /* 
-    US exchanges – such as the NYSE or NASDAQ – which are open Monday through Friday from 9:30 am to 4:00 pm Eastern Daylight Time (GMT-04:00) i.e. 14:30 to 21:00 (UTC).
+    US exchanges – such as the NYSE or NASDAQ – which are open Monday through Friday from 9:30 am to 4:00 pm Eastern Daylight Time (GMT-04:00) i.e. 13:30 to 20:00 (UTC).
     Eastern Standard Time (Winter Time) or EST: It is 5 hours behind the Greenwich Mean Time/Coordinated Universal Time or UTC-5. 
     Eastern Daylight Time or EDT: In summer and spring seasons, daylight saving time is observed. EDT is 4 hours behind UTC or UTC-4.
     */
@@ -31,9 +31,9 @@ class HTTPService extends GetxService {
     int endTimestamp;
     // Latest, based on the closing price on the trading day
     DateTime now = DateTime.now().toUtc();
-    // Check if current UTC time is less than or equal to 13:30:50
+    // Check if current UTC time is less than or equal to 13:29:59
     if (now.hour < 13 ||
-        (now.hour == 13 && now.minute <= 30 && now.second <= 50)) {
+        (now.hour == 13 && now.minute <= 29 && now.second <= 59)) {
       endTimestamp = 9999999999;
     } else {
       if (TimeService().isEasternDaylightTime(now)) {
@@ -67,7 +67,7 @@ class HTTPService extends GetxService {
     //         1000; // Select specific end date
 
     final url = Uri.parse(
-        'https://query1.finance.yahoo.com/v7/finance/download/$stockSymbol?period1=$startTimestamp&period2=$endTimestamp&interval=1d&events=history&includeAdjustedClose=true');
+        'https://query1.finance.yahoo.com/v7/finance/download/$stockSymbol?period1=$startTimestamp&period2=$endTimestamp&interval=1d&includeAdjustedClose=true');
     /* 
     Maximum end timestamp: 9999999999
 

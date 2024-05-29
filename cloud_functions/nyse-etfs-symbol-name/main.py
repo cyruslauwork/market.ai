@@ -85,7 +85,7 @@ def https(request):
             blob = bucket.blob(object_name)
             if blob.exists():
                 blob.delete()  # Delete existing blob
-            print('Object deleted')
+                print('Object deleted')
             try:
                 blob.upload_from_string(data, content_type='application/json')
             except:
