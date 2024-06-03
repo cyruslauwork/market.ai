@@ -61,6 +61,12 @@ class MainPresenter extends GetxController {
               .getString(SharedPreferencesConstant.jumpServerUrl) ??
           '35.212.154.124')
       .obs;
+  RxBool alwaysShowMinuteData = (PrefsService.to.prefs
+              .getBool(SharedPreferencesConstant.alwaysShowMinuteData) ??
+          false)
+      .obs;
+  late Rx<IconData> dataGranularity =
+      (alwaysShowMinuteData.value ? Icons.timer_outlined : Icons.today).obs;
 
   /* Candlestick-related */
   RxString financialInstrumentSymbol = (PrefsService.to.prefs
@@ -76,38 +82,332 @@ class MainPresenter extends GetxController {
   late Rx<Future<List<CandleData>>> futureListCandledata = init().obs;
   RxList<CandleData> listCandledata = [
     CandleData(
-        timestamp: 0000000000 * 1000,
-        open: 0,
-        high: 0,
-        low: 0,
-        close: 0,
-        volume: 0),
-    // CandleData(
-    //     timestamp: 1555939800 * 1000,
-    //     open: 51.80,
-    //     high: 53.94,
-    //     low: 50.50,
-    //     close: 52.55,
-    //     volume: 60735500),
-    // CandleData(
-    //     timestamp: 1556026200 * 1000,
-    //     open: 43.80,
-    //     high: 53.94,
-    //     low: 42.50,
-    //     close: 52.55,
-    //     volume: 60735500),
-    // CandleData(
-    //     timestamp: 1556112600 * 1000,
-    //     open: 73.80,
-    //     high: 83.94,
-    //     low: 52.50,
-    //     close: 72.55,
-    //     volume: 60735500),
+      timestamp: 1555939800 * 1000,
+      open: 51.80,
+      high: 53.94,
+      low: 50.50,
+      close: 52.55,
+      volume: 60735500,
+    ),
+    CandleData(
+      timestamp: 1556026200 * 1000,
+      open: 43.80,
+      high: 53.94,
+      low: 42.50,
+      close: 52.55,
+      volume: 60735500,
+    ),
+    CandleData(
+      timestamp: 1556112600 * 1000,
+      open: 73.80,
+      high: 83.94,
+      low: 52.50,
+      close: 72.55,
+      volume: 60735500,
+    ),
+    CandleData(
+      timestamp: 1556199000 * 1000,
+      open: 72.55,
+      high: 75.20,
+      low: 70.50,
+      close: 74.80,
+      volume: 55000000,
+    ),
+    CandleData(
+      timestamp: 1556285400 * 1000,
+      open: 74.80,
+      high: 76.50,
+      low: 73.20,
+      close: 75.50,
+      volume: 51000000,
+    ),
+    CandleData(
+      timestamp: 1556371800 * 1000,
+      open: 75.50,
+      high: 77.80,
+      low: 74.50,
+      close: 76.70,
+      volume: 48000000,
+    ),
+    CandleData(
+      timestamp: 1556458200 * 1000,
+      open: 76.70,
+      high: 77.90,
+      low: 75.50,
+      close: 77.20,
+      volume: 46000000,
+    ),
+    CandleData(
+      timestamp: 1556544600 * 1000,
+      open: 77.20,
+      high: 78.40,
+      low: 76.80,
+      close: 77.80,
+      volume: 44000000,
+    ),
+    CandleData(
+      timestamp: 1556631000 * 1000,
+      open: 77.80,
+      high: 79.20,
+      low: 77.50,
+      close: 78.90,
+      volume: 42000000,
+    ),
+    CandleData(
+      timestamp: 1556717400 * 1000,
+      open: 78.90,
+      high: 80.10,
+      low: 78.20,
+      close: 79.50,
+      volume: 40000000,
+    ),
+    CandleData(
+      timestamp: 1556803800 * 1000,
+      open: 79.50,
+      high: 81.00,
+      low: 79.30,
+      close: 80.70,
+      volume: 38000000,
+    ),
+    CandleData(
+      timestamp: 1556890200 * 1000,
+      open: 80.70,
+      high: 81.80,
+      low: 80.10,
+      close: 81.30,
+      volume: 36000000,
+    ),
+    CandleData(
+      timestamp: 1556976600 * 1000,
+      open: 81.30,
+      high: 82.50,
+      low: 80.80,
+      close: 82.20,
+      volume: 34000000,
+    ),
+    CandleData(
+      timestamp: 1557063000 * 1000,
+      open: 82.20,
+      high: 83.40,
+      low: 81.60,
+      close: 82.80,
+      volume: 32000000,
+    ),
+    CandleData(
+      timestamp: 1557149400 * 1000,
+      open: 82.80,
+      high: 84.00,
+      low: 82.20,
+      close: 83.50,
+      volume: 30000000,
+    ),
+    CandleData(
+      timestamp: 1557235800 * 1000,
+      open: 83.50,
+      high: 84.60,
+      low: 82.80,
+      close: 84.10,
+      volume: 28000000,
+    ),
+    CandleData(
+      timestamp: 1557495000 * 1000,
+      open: 85.30,
+      high: 87.10,
+      low: 85.00,
+      close: 86.50,
+      volume: 22000000,
+    ),
+    CandleData(
+      timestamp: 1557581400 * 1000,
+      open: 86.50,
+      high: 87.60,
+      low: 86.00,
+      close: 87.20,
+      volume: 20000000,
+    ),
+    CandleData(
+      timestamp: 1557667800 * 1000,
+      open: 87.20,
+      high: 88.40,
+      low: 86.70,
+      close: 87.80,
+      volume: 18000000,
+    ),
+    CandleData(
+      timestamp: 1557754200 * 1000,
+      open: 87.80,
+      high: 89.00,
+      low: 87.10,
+      close: 88.50,
+      volume: 16000000,
+    ),
+    CandleData(
+      timestamp: 1557840600 * 1000,
+      open: 88.50,
+      high: 89.80,
+      low: 88.00,
+      close: 89.10,
+      volume: 14000000,
+    ),
+    CandleData(
+      timestamp: 1557927000 * 1000,
+      open: 89.10,
+      high: 90.20,
+      low: 88.40,
+      close: 89.70,
+      volume: 12000000,
+    ),
+    CandleData(
+      timestamp: 1558013400 * 1000,
+      open: 89.70,
+      high: 90.90,
+      low: 88.90,
+      close: 90.40,
+      volume: 10000000,
+    ),
+    CandleData(
+      timestamp: 1558099800 * 1000,
+      open: 90.40,
+      high: 91.60,
+      low: 89.70,
+      close: 91.10,
+      volume: 8000000,
+    ),
+    CandleData(
+      timestamp: 1558186200 * 1000,
+      open: 91.10,
+      high: 92.30,
+      low: 90.40,
+      close: 91.80,
+      volume: 6000000,
+    ),
+    CandleData(
+      timestamp: 1558272600 * 1000,
+      open: 91.80,
+      high: 93.00,
+      low: 91.10,
+      close: 92.50,
+      volume: 4000000,
+    ),
+    CandleData(
+      timestamp: 1558359000 * 1000,
+      open: 92.50,
+      high: 93.70,
+      low: 91.80,
+      close: 93.20,
+      volume: 2000000,
+    ),
+    CandleData(
+      timestamp: 1558445400 * 1000,
+      open: 93.20,
+      high: 94.40,
+      low: 92.50,
+      close: 93.90,
+      volume: 1000000,
+    ),
+    CandleData(
+      timestamp: 1558531800 * 1000,
+      open: 93.90,
+      high: 95.00,
+      low: 93.10,
+      close: 94.50,
+      volume: 900000,
+    ),
+    CandleData(
+      timestamp: 1558618200 * 1000,
+      open: 94.50,
+      high: 95.70,
+      low: 93.80,
+      close: 95.20,
+      volume: 800000,
+    ),
+    CandleData(
+      timestamp: 1558704600 * 1000,
+      open: 95.20,
+      high: 96.40,
+      low: 94.50,
+      close: 95.90,
+      volume: 700000,
+    ),
+    CandleData(
+      timestamp: 1558791000 * 1000,
+      open: 95.90,
+      high: 97.10,
+      low: 95.20,
+      close: 96.60,
+      volume: 600000,
+    ),
+    CandleData(
+      timestamp: 1558877400 * 1000,
+      open: 96.60,
+      high: 97.80,
+      low: 95.90,
+      close: 97.30,
+      volume: 500000,
+    ),
+    CandleData(
+      timestamp: 1558963800 * 1000,
+      open: 97.30,
+      high: 98.50,
+      low: 96.60,
+      close: 98.00,
+      volume: 400000,
+    ),
+    CandleData(
+      timestamp: 1559050200 * 1000,
+      open: 98.00,
+      high: 99.20,
+      low: 97.30,
+      close: 98.70,
+      volume: 300000,
+    ),
+    CandleData(
+      timestamp: 1559136600 * 1000,
+      open: 98.70,
+      high: 99.90,
+      low: 97.90,
+      close: 99.40,
+      volume: 200000,
+    ),
+    CandleData(
+      timestamp: 1559223000 * 1000,
+      open: 99.40,
+      high: 100.60,
+      low: 98.70,
+      close: 100.10,
+      volume: 100000,
+    ),
+    CandleData(
+      timestamp: 1559309400 * 1000,
+      open: 100.10,
+      high: 101.30,
+      low: 99.40,
+      close: 100.80,
+      volume: 50000,
+    ),
+    CandleData(
+      timestamp: 1559395800 * 1000,
+      open: 100.80,
+      high: 102.00,
+      low: 100.10,
+      close: 101.50,
+      volume: 25000,
+    ),
+    CandleData(
+      timestamp: 1559482200 * 1000,
+      open: 101.50,
+      high: 102.70,
+      low: 100.80,
+      close: 102.20,
+      volume: 10000,
+    ),
   ].obs;
   ValueNotifier<bool> showAverageNotifier = ValueNotifier<bool>(true);
   bool isShowAverageListenerAdded = false;
   late RxString marketDataProviderMsg = Rx('mkt_data'.tr)().obs;
   RxBool isMarketDataProviderErr = false.obs;
+  RxList minuteDataList = ['SPY', 'QQQ', 'USO', 'GLD'].obs;
+  RxBool hasMinuteData = false.obs;
 
   /* Listings */
   RxInt listingsDownloadTime = 0.obs;
@@ -211,9 +511,6 @@ class MainPresenter extends GetxController {
   ].obs;
   RxInt saCount = 0.obs;
 
-  List<Map<String, dynamic>> json = [];
-  RxInt lastCandledataLength = 0.obs;
-
   // A 2nd initialization will be triggered when starting the app
   @override
   void onInit() {
@@ -226,6 +523,8 @@ class MainPresenter extends GetxController {
     // PrefsService.to.prefs.setInt(SharedPreferencesConstant.tolerance, 100);
     // PrefsService.to.prefs
     //     .setStringList(SharedPreferencesConstant.watchlist, []);
+    // PrefsService.to.prefs
+    //     .setBool(SharedPreferencesConstant.alwaysShowMinuteData, false);
 
     super.onInit();
     if (!isDarkModeInit) {
@@ -393,11 +692,17 @@ class MainPresenter extends GetxController {
     } else {
       showAnalyticsNotifier.value = true;
     }
-    await Candle().init();
-    if (showAverageNotifier.value) {
-      Candle().computeTrendLines();
+    if (apiKey.value == '' && hasMinuteData.value) {
+      MainPresenter.to.marketDataProviderMsg.value =
+          'No API key to access Firestore with';
+      MainPresenter.to.isMarketDataProviderErr.value = true;
+    } else {
+      await Candle().init();
+      if (showAverageNotifier.value) {
+        Candle().computeTrendLines();
+      }
+      TrendMatch().init();
     }
-    TrendMatch().init();
     if (apiKey.value != '') {
       SubsequentAnalytics().init();
     }
@@ -783,6 +1088,42 @@ class MainPresenter extends GetxController {
     strictMatchCriteria.value = value;
   }
 
+  alwaysShowMinuteDataToggle(bool value, BuildContext context) {
+    alwaysShowMinuteData.value = value;
+    PrefsService.to.prefs
+        .setBool(SharedPreferencesConstant.alwaysShowMinuteData, value);
+    dataGranularity.value = (value ? Icons.timer_outlined : Icons.today);
+    if (value) {
+      listCandledata.value = [
+        CandleData(
+            timestamp: 1555939800 * 1000,
+            open: 51.80,
+            high: 53.94,
+            low: 50.50,
+            close: 52.55,
+            volume: 60735500),
+        CandleData(
+            timestamp: 1556026200 * 1000,
+            open: 43.80,
+            high: 53.94,
+            low: 42.50,
+            close: 52.55,
+            volume: 60735500),
+        CandleData(
+            timestamp: 1556112600 * 1000,
+            open: 73.80,
+            high: 83.94,
+            low: 52.50,
+            close: 72.55,
+            volume: 60735500),
+      ];
+      showScaffoldMessenger(context: context, localizedMsg: 'show_one_minute');
+    } else {
+      showScaffoldMessenger(context: context, localizedMsg: 'show_one_day');
+    }
+    futureListCandledata.value = init();
+  }
+
   showApiKeyInput() {
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -863,5 +1204,35 @@ class MainPresenter extends GetxController {
         ),
       ),
     );
+  }
+
+  Widget showMinuteDataToggleBtn({required BuildContext context}) {
+    if (hasMinuteData.value) {
+      return IconButton(
+        onPressed: () =>
+            alwaysShowMinuteDataToggle(!alwaysShowMinuteData.value, context),
+        icon: Obx(
+          () => Icon(
+            MainPresenter.to.dataGranularity.value,
+          ),
+        ),
+        color: ThemeColor.primary.value,
+        iconSize: 10.h,
+      );
+    } else {
+      return const SizedBox.shrink();
+    }
+  }
+
+  void showScaffoldMessenger(
+      {required BuildContext context, required String localizedMsg}) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Center(
+        child: Text(
+          localizedMsg.tr,
+          style: const TextTheme().sp5.greyColor,
+        ),
+      ),
+    ));
   }
 }

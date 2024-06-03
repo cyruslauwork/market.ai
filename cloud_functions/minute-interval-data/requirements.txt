@@ -1,0 +1,5 @@
+functions-framework==3.*
+google-cloud-firestore
+flask
+google-api-core
+google-cloud-storage

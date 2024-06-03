@@ -661,16 +661,22 @@ class _MainViewState extends State<MainView> {
                               style:
                                   const TextTheme().sp10.primaryTextColor.w700,
                             ),
-                            IconButton(
-                              onPressed: () => MainPresenter.to
-                                  .bookmarkThis(context: context),
-                              icon: Obx(
-                                () => Icon(
-                                  MainPresenter.to.bookmarked.value,
+                            Row(
+                              children: [
+                                MainPresenter.to
+                                    .showMinuteDataToggleBtn(context: context),
+                                IconButton(
+                                  onPressed: () => MainPresenter.to
+                                      .bookmarkThis(context: context),
+                                  icon: Obx(
+                                    () => Icon(
+                                      MainPresenter.to.bookmarked.value,
+                                    ),
+                                  ),
+                                  color: ThemeColor.primary.value,
+                                  iconSize: 10.h,
                                 ),
-                              ),
-                              color: ThemeColor.primary.value,
-                              iconSize: 10.h,
+                              ],
                             ),
                           ],
                         ),

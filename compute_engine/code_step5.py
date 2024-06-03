@@ -20,8 +20,8 @@ API_KEY = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 # Counter and timestamp for tracking the number of requests and the start of each month
 GCE_OUTBOUND_KB_LIMIT = 1048576 # Free tier: 1 GB
 storage_client = storage.Client()
-bucket_name = 'market-ai-2024'
-file_name = 'gce_monthly_kb_counters.json'
+BUCKET_NAME = 'market-ai-2024'
+FILE_NAME = 'gce_monthly_kb_counters.json'
 
 def return_jsonify(json_data, response_code, blob, current_month, gce_monthly_kb_counters, kb):
     # Check if it's a new month and reset the counter if needed
@@ -71,12 +71,12 @@ def print_string(string, blob, current_month, gce_monthly_kb_counters, kb):
     print(string)
 
 def monthly_usage_limit(current_month):
-    bucket = storage_client.bucket(bucket_name)
+    bucket = storage_client.bucket(BUCKET_NAME)
     bucket.storage_class = 'STANDARD'
     if bucket.exists() is False:
         print('Creating bucket...')
         storage_client.create_bucket(bucket, location='us-west1')
-    blob = bucket.blob(file_name)
+    blob = bucket.blob(FILE_NAME)
     try:
         json_file = blob.download_as_text()
         gce_monthly_kb_counters = json.loads(json_file)
@@ -123,75 +123,78 @@ def is_within_regular_trading_hours():
     minute = now_us_eastern.minute
     return (hour == 9 and minute >= 29) or (9 < hour < 16) or (hour == 16 and minute == 0)
 
-def fetch_and_store_one_minute_candlestick_json():
-    if not is_within_regular_trading_hours():
-        symbols = ['spy', 'qqq', 'uso', 'gld']
-        bucket = storage_client.bucket(bucket_name)
-        bucket.storage_class = 'STANDARD'
-        result_json_list = []  # Initialize an empty list
-        if bucket.exists() is False:
-            print('Creating bucket...')
-            storage_client.create_bucket(bucket, location='us-west1')
-        for symbol in symbols:
-            blob = bucket.blob(f'{symbol}.json')
-            try:
-                json_file = blob.download_as_text()
-                json_data = json.loads(json_file)
-            except:
-                # If the file doesn't exist or there's an error loading it
-                print(f'Error occurred while downloading the {symbol} JSON file')
-                return
-            headers = {
-                'User-Agent': 'Mozilla/5.0'
-            }
-            url = f'https://query1.finance.yahoo.com/v7/finance/chart/{symbol}?dataGranularity=1m&range=1d'
-            response = requests.get(url, headers=headers) # Send a GET request to the URL and fetch the JSON response
-            print(f"Fetching JSON response for symbol '{symbol}'")
-            # Check if the request was successful (status code 200)
-            if response.status_code == 200:
-                # Extract the JSON response
-                response_data = response.json()
-                # Extract the relevant data
-                timestamps = response_data['chart']['result'][0]['timestamp']
-                opens = response_data['chart']['result'][0]['indicators']['quote'][0]['open']
-                highs = response_data['chart']['result'][0]['indicators']['quote'][0]['high']
-                lows = response_data['chart']['result'][0]['indicators']['quote'][0]['low']
-                closes = response_data['chart']['result'][0]['indicators']['quote'][0]['close']
-                volumes = response_data['chart']['result'][0]['indicators']['quote'][0]['volume']
-                for timestamp, open, high, low, close, volume in zip(timestamps, opens, highs, lows, closes, volumes):
-                    # Create a new JSON with the desired columns
-                    result_json = {
-                        'time_key': timestamp,
-                        'open': open,
-                        'high': high,
-                        'low': low,
-                        'close': close,
-                        'volume': volume
-                    }
-                    result_json_list.append(result_json) # Append the dictionary to the list
-                # To check only the last 390 rows (60 mins * 6.5 regular trading hours) of json_data for the presence of the last time_key in result_json_list
-                time_keys = {row['time_key'] for row in json_data[-390:]}
-                last_time_key = result_json_list[-1]['time_key']
-                first_time_key = result_json_list[0]['time_key']
-                if last_time_key in time_keys or first_time_key in time_keys:
-                    return
-                # Check if the trading time is entered incorrectly by using special signals in Yahoo Finance API JSON response
-                second_last_close_value = result_json_list[-2]['close']
-                if second_last_close_value is None or second_last_close_value == 'null':
-                    return
-                # Append the result_json_list to the json_data list
-                json_data.extend(result_json_list)
-                # Convert the result to JSON format
-                json_str = json.dumps(json_data)
-                if blob.exists():
-                    blob.delete()  # Delete existing blob
-                    print('Object deleted')
-                try:
-                    blob.upload_from_string(json_str, content_type='application/json')
-                except:
-                    print('Create object timeout')
-            else:
-                print(f"Error occurred while fetching the JSON response for symbol '{symbol}'. Status code:", response.status_code)
+# def fetch_and_store_one_minute_candlestick_json():
+#     if not is_within_regular_trading_hours():
+#         symbols = ['spy', 'qqq', 'uso', 'gld']
+#         bucket = storage_client.bucket(BUCKET_NAME)
+#         bucket.storage_class = 'STANDARD'
+#         result_json_list = []  # Initialize an empty list
+#         if bucket.exists() is False:
+#             print('Creating bucket...')
+#             storage_client.create_bucket(bucket, location='us-west1')
+#         for symbol in symbols:
+#             blob = bucket.blob(f'{symbol}.json')
+#             try:
+#                 json_file = blob.download_as_text()
+#                 json_data = json.loads(json_file)
+#             except:
+#                 # If the file doesn't exist or there's an error loading it
+#                 print(f'Error occurred while downloading the {symbol} JSON file')
+#                 return
+#             headers = {
+#                 'User-Agent': 'Mozilla/5.0'
+#             }
+#             url = f'https://query1.finance.yahoo.com/v7/finance/chart/{symbol}?dataGranularity=1m&range=1d'
+#             response = requests.get(url, headers=headers) # Send a GET request to the URL and fetch the JSON response
+#             print(f"Fetching JSON response for symbol '{symbol}'")
+#             # Check if the request was successful (status code 200)
+#             if response.status_code == 200:
+#                 # Extract the JSON response
+#                 response_data = response.json()
+#                 # Extract the relevant data
+#                 timestamps = response_data['chart']['result'][0]['timestamp']
+#                 opens = response_data['chart']['result'][0]['indicators']['quote'][0]['open']
+#                 highs = response_data['chart']['result'][0]['indicators']['quote'][0]['high']
+#                 lows = response_data['chart']['result'][0]['indicators']['quote'][0]['low']
+#                 closes = response_data['chart']['result'][0]['indicators']['quote'][0]['close']
+#                 volumes = response_data['chart']['result'][0]['indicators']['quote'][0]['volume']
+#                 for timestamp, open, high, low, close, volume in zip(timestamps, opens, highs, lows, closes, volumes):
+#                     if timestamp is None or open is None or high is None or low is None or close is None or volume is None:
+#                         # Handle the case where any of the variables is None
+#                         continue  # Skip the current iteration and move to the next iteration
+#                     # Create a new JSON with the desired columns
+#                     result_json = {
+#                         'time_key': timestamp,
+#                         'open': open,
+#                         'high': high,
+#                         'low': low,
+#                         'close': close,
+#                         'volume': volume
+#                     }
+#                     result_json_list.append(result_json) # Append the dictionary to the list
+#                 # To check only the last 390 rows (60 mins * 6.5 regular trading hours) of json_data for the presence of the last time_key in result_json_list
+#                 time_keys = {row['time_key'] for row in json_data[-390:]}
+#                 last_time_key = result_json_list[-1]['time_key']
+#                 first_time_key = result_json_list[0]['time_key']
+#                 if last_time_key in time_keys or first_time_key in time_keys:
+#                     return
+#                 # Check if the trading time is entered incorrectly by using special signals in Yahoo Finance API JSON response
+#                 second_last_close_value = result_json_list[-2]['close']
+#                 if second_last_close_value is None or second_last_close_value == 'null':
+#                     return
+#                 # Append the result_json_list to the json_data list
+#                 json_data.extend(result_json_list)
+#                 # Convert the result to JSON format
+#                 json_str = json.dumps(json_data)
+#                 if blob.exists():
+#                     blob.delete()  # Delete existing blob
+#                     print('Object deleted')
+#                 try:
+#                     blob.upload_from_string(json_str, content_type='application/json')
+#                 except:
+#                     print('Create object timeout')
+#             else:
+#                 print(f"Error occurred while fetching the JSON response for symbol '{symbol}'. Status code:", response.status_code)
 
 @app.route('/', methods=['POST', 'GET'])
 def forward_request():
@@ -286,15 +289,9 @@ def forward_request():
                 symbol_and_name = request.args.get('symbol_and_name')
                 # URL-encode the symbol_and_name parameter value
                 url_encoded_symbol_and_name = quote(symbol_and_name)
-                # Vertex AI
-                # url_encoded_output = quote(output)
-                #
                 # Make a request to the Cloud Functions URL
                 # Construct the cURL command with the URL and authorization header
                 curl_command = f'curl -X GET "https://us-west1-market-ai-2024.cloudfunctions.net/gemini-pro-news?symbol_and_name={url_encoded_symbol_and_name}" -H "Authorization: bearer $(gcloud auth print-identity-token)" -H "Accept: text/plain"'
-                # Vertex AI
-                # curl_command = f'curl -X GET "https://us-west1-market-ai-2024.cloudfunctions.net/gemini-pro-news?symbol_and_name={url_encoded_symbol_and_name}&app_access_token={url_encoded_output}" -H "Authorization: bearer $(gcloud auth print-identity-token)" -H "Accept: text/plain"'
-                #
                 # Execute the cURL command using subprocess
                 try:
                     response = subprocess.run(curl_command, capture_output=True, text=True, shell=True, timeout=60)
@@ -356,12 +353,12 @@ def forward_request():
                 time.sleep(3)
                 return return_string('Invalid API key', 401, blob, current_month, gce_monthly_kb_counters, 1)
         elif func_name == 'nyse-etfs-symbol-name':
-            bucket_name = 'market-ai-2024'
+            BUCKET_NAME = 'market-ai-2024'
             object_name = 'nyse-etfs-symbol-name.json'
-            url_encoded_bucket_name = quote(bucket_name)
+            url_encoded_BUCKET_NAME = quote(BUCKET_NAME)
             url_encoded_object_name = quote(object_name)
             # Construct the cURL command with the URL and authorization header
-            curl_command = f'curl -X GET "https://storage.googleapis.com/storage/v1/b/{url_encoded_bucket_name}/o/{url_encoded_object_name}?alt=media" -H "Authorization: Bearer $(gcloud auth print-access-token)" -H "Accept: application/json"'
+            curl_command = f'curl -X GET "https://storage.googleapis.com/storage/v1/b/{url_encoded_BUCKET_NAME}/o/{url_encoded_object_name}?alt=media" -H "Authorization: Bearer $(gcloud auth print-access-token)" -H "Accept: application/json"'
             # Execute the cURL command using subprocess
             try:
                 response = subprocess.run(curl_command, capture_output=True, text=True, shell=True, timeout=15)

@@ -81,21 +81,28 @@ class HTTPService extends GetxService {
     */
 
     // Modify the request headers to accept CSV data
-    final headers = {'Accept': 'text/csv'};
+    final headers = {
+      'Accept': 'text/csv',
+      'Connection': 'Keep-Alive',
+      'Keep-Alive': 'timeout=5, max=3',
+    };
 
     // Send the HTTP GET request with the updated URL and headers
     return http.get(url, headers: headers);
   }
 
-  Future<http.Response> fetchCandleJSON() async {
-    final url = Uri.parse('');
-
-    /* 
-    The intraday candles json up to 5000 results each API call (about 7 days) and there are 5 free API calls per minute.
-    */
+  Future<http.Response> fetchCandleJSON(String symbol, int timestamp) async {
+    String urlEncodedApiKey =
+        Uri.encodeComponent(MainPresenter.to.apiKey.value);
+    final url = Uri.parse(
+        'https://us-west1-market-ai-2024.cloudfunctions.net/minute-interval-data?api_key=$urlEncodedApiKey&granularity=1m&symbol=$symbol&timestamp=$timestamp');
 
     // Modify the request headers to accept JSON data
-    final headers = {'Accept': 'text/json'};
+    final headers = {
+      'Accept': 'text/json',
+      'Connection': 'Keep-Alive',
+      'Keep-Alive': 'timeout=5, max=3',
+    };
 
     // Send the HTTP GET request with the updated URL and headers
     return http.get(url, headers: headers);
@@ -106,7 +113,7 @@ class HTTPService extends GetxService {
     final headers = {
       'Accept': 'application/json',
       'Connection': 'Keep-Alive',
-      'Keep-Alive': 'timeout=5, max=1000',
+      'Keep-Alive': 'timeout=5, max=3',
     };
 
     try {
@@ -123,10 +130,14 @@ class HTTPService extends GetxService {
         // print(response.body.runtimeType);
         return parsedResponse; // Return the parsed JSON
       } else {
-        var parsedErrorResponse =
-            await jsonDecode(response.body); // Parse the JSON error response
-        // logger.d('${response.statusCode}, $parsedErrorResponse');
-        return parsedErrorResponse;
+        try {
+          var parsedErrorResponse =
+              await jsonDecode(response.body); // Parse the JSON error response
+          // logger.d('${response.statusCode}, $parsedErrorResponse');
+          return parsedErrorResponse;
+        } catch (e) {
+          return {'error': response.body};
+        }
       }
     } catch (e) {
       return {'error': 'Unable to connect to $url'};
@@ -140,7 +151,7 @@ class HTTPService extends GetxService {
       'Content-Type': 'application/x-www-form-urlencoded',
       'Accept': 'application/json',
       'Connection': 'Keep-Alive',
-      'Keep-Alive': 'timeout=5, max=1000',
+      'Keep-Alive': 'timeout=5, max=3',
     };
 
     try {
@@ -178,7 +189,7 @@ class HTTPService extends GetxService {
     final headers = {
       'Accept': 'text/plain',
       'Connection': 'Keep-Alive',
-      'Keep-Alive': 'timeout=5, max=1000',
+      'Keep-Alive': 'timeout=5, max=3',
     };
 
     try {
@@ -207,7 +218,7 @@ class HTTPService extends GetxService {
       'Content-Type': 'application/x-www-form-urlencoded',
       'Accept': 'text/plain',
       'Connection': 'Keep-Alive',
-      'Keep-Alive': 'timeout=5, max=1000',
+      'Keep-Alive': 'timeout=5, max=3',
     };
 
     try {

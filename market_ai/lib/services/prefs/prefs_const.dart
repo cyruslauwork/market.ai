@@ -23,4 +23,5 @@ class SharedPreferencesConstant {
   static String jumpServerUrl = 'jumpServerUrl';
   static String alwaysSkipSymbolInSearch = 'alwaysSkipSymbolInSearch';
   static String alwayStrictMatchCriteria = 'alwayStrictMatchCriteria';
+  static String alwaysShowMinuteData = 'alwaysShowMinuteData';
 }

@@ -33,43 +33,33 @@ class CandleAdapter {
   }
 
   Future<List<CandleData>> listListTolistCandledata(
-      Future<List<List<dynamic>>> futureListList) async {
-    List<List<dynamic>> listList = await futureListList;
+      (Future<List<List<dynamic>>>, SrcFileType) param) async {
+    List<List<dynamic>> listList = await param.$1;
     MainPresenter.to.candleListList.value = listList;
     late List<CandleData> listCandledata;
 
-    if (FlavorService.to.apiProvider == APIProvider.yahoofinance) {
+    if (param.$2 == SrcFileType.csv) {
       listCandledata = listList
           .map((row) => CandleData(
                 timestamp: TimeService().convertToUnixTimestamp(row[0]) * 1000,
-                open: (row[1] == 'null' ? 0.0 : row[1]),
-                high: (row[2] == 'null' ? 0.0 : row[2]),
-                low: (row[3] == 'null' ? 0.0 : row[3]),
-                close: (row[4] == 'null' ? 0.0 : row[4]),
-                volume: (row[6] == 'null' ? 0.0 : row[6].toDouble()),
+                open: row[1].toDouble(),
+                high: row[2].toDouble(),
+                low: row[3].toDouble(),
+                close: row[4].toDouble(),
+                volume: row[6].toDouble(),
               ))
           .toList();
       MainPresenter.to.listCandledata.value = listCandledata;
       return listCandledata;
-    } else if (FlavorService.to.apiProvider == APIProvider.polygon) {
+    } else if (param.$2 == SrcFileType.json) {
       listCandledata = listList
           .map((row) => CandleData(
-                timestamp: row[6],
-                open: (row[2].toString() == 'null'
-                    ? 0.0
-                    : double.parse(row[2].toString())),
-                high: (row[4].toString() == 'null'
-                    ? 0.0
-                    : double.parse(row[4].toString())),
-                low: (row[5].toString() == 'null'
-                    ? 0.0
-                    : double.parse(row[5].toString())),
-                close: (row[3].toString() == 'null'
-                    ? 0.0
-                    : double.parse(row[3].toString())),
-                volume: (row[0].toString() == 'null'
-                    ? 0.0
-                    : double.parse(row[0].toString())),
+                timestamp: row[0].toInt(),
+                open: row[1].toDouble(),
+                high: row[2].toDouble(),
+                low: row[3].toDouble(),
+                close: row[4].toDouble(),
+                volume: row[5].toDouble(),
               ))
           .toList();
       MainPresenter.to.listCandledata.value = listCandledata;

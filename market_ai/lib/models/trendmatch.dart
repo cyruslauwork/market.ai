@@ -149,8 +149,6 @@ class TrendMatch {
     MainPresenter.to.matchActualPricesListList.value =
         matchActualPricesListList;
 
-    MainPresenter.to.lastCandledataLength.value = listCandledata.length;
-
     DateTime endTime = DateTime.now(); // Record the end time
     // Calculate the time difference
     Duration executionDuration = endTime.difference(startTime);

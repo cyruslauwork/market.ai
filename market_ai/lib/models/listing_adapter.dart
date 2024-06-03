@@ -46,6 +46,11 @@ class ListingAdapter {
             !symbolAndName.symbol.contains('/') &&
             !symbolAndName.symbol.contains('^'))
         .toList();
+
+    // Manually add financial instrument(s)
+    listSymbolAndName.insert(
+        0, const SymbolAndName(symbol: 'GLD', name: 'GLD SPDR Gold ETF'));
+
     // print(listSymbolAndName);
     return listSymbolAndName;
   }

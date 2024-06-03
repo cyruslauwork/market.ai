@@ -28,24 +28,13 @@ class FlavorService extends GetxService {
   static FlavorService get to => Get.find();
 
   late final Flavor flavor;
-  late final APIProvider apiProvider;
-  late final SrcFileType srcFileType;
   String version = "";
   String platform = "";
   String uuid = "";
   String fcmToken = "";
 
-  Future<FlavorService> init(Flavor flavor, APIProvider apiProvider) async {
+  Future<FlavorService> init(Flavor flavor) async {
     this.flavor = flavor;
-    this.apiProvider = apiProvider;
-
-    if (apiProvider == APIProvider.yahoofinance) {
-      srcFileType = SrcFileType.csv;
-    } else if (apiProvider == APIProvider.polygon) {
-      srcFileType = SrcFileType.json;
-    } else {
-      throw ArgumentError('Failed to check API provider.');
-    }
 
     platform = Platform.isAndroid ? 'android' : 'ios';
     return this;
@@ -60,11 +49,6 @@ enum RouteName {
   const RouteName(this.path);
 
   final String path;
-}
-
-enum APIProvider {
-  yahoofinance,
-  polygon;
 }
 
 enum SrcFileType {

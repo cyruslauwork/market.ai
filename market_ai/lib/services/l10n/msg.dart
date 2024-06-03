@@ -101,6 +101,8 @@ class Msg extends Translations {
           'strict_matching_criteria': 'Strict trend matching criteria',
           'always_use_strict_matching':
               'Always use strict trend matching criteria',
+          'show_one_minute': 'Show 1 minute interval data',
+          'show_one_day': 'Show 1 day interval data',
         },
         'zh_HK': {
           'app_name': '市場慧眼📈',
@@ -179,6 +181,8 @@ class Msg extends Translations {
           'recommended_tolerance': '建議 ≤ 50%',
           'strict_matching_criteria': '嚴格趨勢匹配條件',
           'always_use_strict_matching': '總是使用嚴格趨勢匹配條件',
+          'show_one_minute': '顯示1分鐘間隔數據',
+          'show_one_day': '顯示日K數據',
         },
       };
 }

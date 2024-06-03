@@ -9,6 +9,7 @@ To create a simple Flask server for forwarding requests to a specific URL within
    sudo pip3 install flask
    sudo pip3 install schedule
    sudo pip3 install google-cloud-storage
+   sudo pip3 install google-cloud-firestore
    sudo pip3 install pytz
    ```
 
