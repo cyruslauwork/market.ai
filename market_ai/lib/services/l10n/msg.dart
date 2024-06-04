@@ -12,7 +12,7 @@ class Msg extends Translations {
   Map<String, Map<String, String>> get keys => {
         'en_UK': {
           'app_name': 'Market.AI📈',
-          'candle_chart_title': 'Recent 1000-days Candlestick Chart',
+          'candle_chart_title': 'Recent 1000 candlesticks',
           'as_of': 'As of',
           'mkt_data': 'Market data provided by',
           'trend_matching': 'Trend matching...',
@@ -106,7 +106,7 @@ class Msg extends Translations {
         },
         'zh_HK': {
           'app_name': '市場慧眼📈',
-          'candle_chart_title': '最近 1000 日陰陽燭圖',
+          'candle_chart_title': '最近 1000 枝陰陽燭',
           'as_of': '截至',
           'mkt_data': '市場數據提供者',
           'trend_matching': '走勢匹配中...',

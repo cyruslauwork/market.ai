@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:get/get.dart';
-import 'package:path_provider/path_provider.dart';
 
 import 'package:interactive_chart/interactive_chart.dart';
 import 'package:isar/isar.dart';
@@ -10,6 +9,7 @@ import 'package:market_ai/services/services.dart';
 import 'package:market_ai/presenters/presenters.dart';
 import 'candle_adapter.dart';
 import 'collections.dart';
+import 'isac.dart';
 
 // import 'package:market_ai/utils/utils.dart';
 
@@ -429,22 +429,7 @@ Date,Open,High,Low,Close,Adj Close,Volume
         "volume": 1264004
       }
     ];
-    final dir = await getApplicationDocumentsDirectory();
-    final isar = await Isar.open(
-      [SpyDataSchema, QqqDataSchema, UsoDataSchema, GldDataSchema],
-      directory: dir.path,
-    );
-    // Clear all data in all collections
-    // Future<void> clearAllData(Isar isar) async {
-    //   await isar.writeTxn(() async {
-    //     await isar.spyDatas.clear();
-    //     await isar.qqqDatas.clear();
-    //     await isar.usoDatas.clear();
-    //     await isar.gldDatas.clear();
-    //   });
-    // }
-
-    // await clearAllData(isar);
+    final isar = await IsarService().getIsarInstance();
     dynamic lastDoc;
     int timestamp;
     switch (stockSymbol) {
@@ -522,7 +507,7 @@ Date,Open,High,Low,Close,Adj Close,Volume
         bool init = jsonData['init'];
         switch (stockSymbol) {
           case 'SPY':
-            if (jsonData['content'] != null || !jsonData['content'].isEmpty) {
+            if (jsonData['content'] != null && !jsonData['content'].isEmpty) {
               stockDataList = jsonData['content']
                   .map((data) => SpyData.fromJson(data))
                   .toList();
@@ -544,7 +529,7 @@ Date,Open,High,Low,Close,Adj Close,Volume
               return docList;
             }
           case 'QQQ':
-            if (jsonData['content'] != null || !jsonData['content'].isEmpty) {
+            if (jsonData['content'] != null && !jsonData['content'].isEmpty) {
               stockDataList = jsonData['content']
                   .map((data) => QqqData.fromJson(data))
                   .toList();
@@ -566,7 +551,7 @@ Date,Open,High,Low,Close,Adj Close,Volume
               return docList;
             }
           case 'USO':
-            if (jsonData['content'] != null || !jsonData['content'].isEmpty) {
+            if (jsonData['content'] != null && !jsonData['content'].isEmpty) {
               stockDataList = jsonData['content']
                   .map((data) => UsoData.fromJson(data))
                   .toList();
@@ -588,7 +573,7 @@ Date,Open,High,Low,Close,Adj Close,Volume
               return docList;
             }
           case 'GLD':
-            if (jsonData['content'] != null || !jsonData['content'].isEmpty) {
+            if (jsonData['content'] != null && !jsonData['content'].isEmpty) {
               stockDataList = jsonData['content']
                   .map((data) => GldData.fromJson(data))
                   .toList();

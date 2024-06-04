@@ -53,6 +53,7 @@ def https(request):
             collection_ref = db.collection(symbol)
             json_data = {}
             init = True
+            # About the Firestore reading cost, ref to https://cloud.google.com/skus?hl=en&filter=C91A-FAC3-A285&currency=USD
             if timestamp == 0:
                 print(f'Retrieving all documents in {symbol} collection')
                 docs = collection_ref.order_by('time_key').stream(retry=Retry())

@@ -680,9 +680,11 @@ class _MainViewState extends State<MainView> {
                             ),
                           ],
                         ),
-                        Text(
-                          '${'as_of'.tr} ${MainPresenter.to.candleListList.last[0].toString()}.',
-                          style: const TextTheme().sp4.greyColor,
+                        Obx(
+                          () => Text(
+                            MainPresenter.to.lastDatetime.value,
+                            style: const TextTheme().sp4.greyColor,
+                          ),
                         ),
                         Center(
                           child: Text(

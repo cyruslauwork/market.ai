@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import 'package:get/get.dart';
 import 'package:interactive_chart/interactive_chart.dart';
@@ -408,6 +409,7 @@ class MainPresenter extends GetxController {
   RxBool isMarketDataProviderErr = false.obs;
   RxList minuteDataList = ['SPY', 'QQQ', 'USO', 'GLD'].obs;
   RxBool hasMinuteData = false.obs;
+  late Rx<String> lastDatetime = 'Loading last datetime...'.obs;
 
   /* Listings */
   RxInt listingsDownloadTime = 0.obs;
@@ -692,7 +694,7 @@ class MainPresenter extends GetxController {
     } else {
       showAnalyticsNotifier.value = true;
     }
-    if (apiKey.value == '' && hasMinuteData.value) {
+    if (apiKey.value == '' && alwaysShowMinuteData.value) {
       MainPresenter.to.marketDataProviderMsg.value =
           'No API key to access Firestore with';
       MainPresenter.to.isMarketDataProviderErr.value = true;
@@ -1094,29 +1096,6 @@ class MainPresenter extends GetxController {
         .setBool(SharedPreferencesConstant.alwaysShowMinuteData, value);
     dataGranularity.value = (value ? Icons.timer_outlined : Icons.today);
     if (value) {
-      listCandledata.value = [
-        CandleData(
-            timestamp: 1555939800 * 1000,
-            open: 51.80,
-            high: 53.94,
-            low: 50.50,
-            close: 52.55,
-            volume: 60735500),
-        CandleData(
-            timestamp: 1556026200 * 1000,
-            open: 43.80,
-            high: 53.94,
-            low: 42.50,
-            close: 52.55,
-            volume: 60735500),
-        CandleData(
-            timestamp: 1556112600 * 1000,
-            open: 73.80,
-            high: 83.94,
-            low: 52.50,
-            close: 72.55,
-            volume: 60735500),
-      ];
       showScaffoldMessenger(context: context, localizedMsg: 'show_one_minute');
     } else {
       showScaffoldMessenger(context: context, localizedMsg: 'show_one_day');
@@ -1234,5 +1213,23 @@ class MainPresenter extends GetxController {
         ),
       ),
     ));
+  }
+
+  String getLastDatetime() {
+    var lastDatetime = MainPresenter.to.candleListList.last[0];
+    // print(lastDatetime);
+    if (alwaysShowMinuteData.value) {
+      DateTime dateTime =
+          DateTime.fromMillisecondsSinceEpoch(lastDatetime * 1000, isUtc: true);
+      DateTime subtractedDateTime =
+          TimeService.to.subtractHoursBasedOnTimezone(dateTime);
+      lastDatetime =
+          DateFormat('yyyy-MM-dd HH:mm:ss').format(subtractedDateTime);
+      String timezone =
+          TimeService.to.isEasternDaylightTime(dateTime) ? 'EDT' : 'EST';
+      return '${'as_of'.tr} $lastDatetime $timezone.';
+    } else {
+      return '${'as_of'.tr} $lastDatetime.';
+    }
   }
 }
