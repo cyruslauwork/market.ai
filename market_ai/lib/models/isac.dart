@@ -30,7 +30,7 @@ class IsarService {
       //   });
       // }
 
-      // await clearAllData(isar);
+      // await clearAllData(_isar!);
     }
     return _isar!;
   }

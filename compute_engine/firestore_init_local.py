@@ -16,7 +16,7 @@ script_dir = os.path.dirname(os.path.abspath(__file__)) # Get the current direct
 
 # 2.
 # Function to upload JSON data using batch writes
-def upload_json_to_firestore(collection_ref, json_data):
+def upload_json_to_firestore(collection_ref, json_data, last_time_key):
     batch = db.batch()
     batch_size = 1000  # Firestore batch limit is 500
     count = 0
@@ -31,6 +31,11 @@ def upload_json_to_firestore(collection_ref, json_data):
     # Commit any remaining operations in the final batch
     if count % batch_size != 0:
         batch.commit()
+    last_time_key_collection_ref = db.collection(collection_name + '_update')
+    doc_ref = last_time_key_collection_ref.document('last_time_key')
+    data = {'last_time_key': last_time_key}
+    doc_ref.set(data)
+    print('Last time_key inserted into collection:', doc_ref.path)
 # Upload JSON files as documents
 for file_name_with_extension in FILE_NAME_WITH_EXTENSION:
     collection_name = file_name_with_extension[:-5]  # Remove the '.json' extension from the file name
@@ -43,8 +48,13 @@ for file_name_with_extension in FILE_NAME_WITH_EXTENSION:
         json_data = json.load(json_file)
         print(f'Loaded JSON file from {file_name_with_extension}')
     try:
+        last_time_key = None
+        for item in json_data:
+            time_key = item['time_key']
+            if last_time_key is None or time_key > last_time_key:
+                last_time_key = time_key
         print(f'Inserting JSON data into collection: {collection_name}')
-        upload_json_to_firestore(collection_ref, json_data)
+        upload_json_to_firestore(collection_ref, json_data, last_time_key)
         print(f'Inserted JSON data into collection: {collection_name}')
     except Exception as e:
         # Handle other exceptions

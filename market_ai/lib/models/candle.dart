@@ -491,20 +491,22 @@ Date,Open,High,Low,Close,Adj Close,Volume
         if (jsonData.containsKey('public_url')) {
           String publicUrl = jsonData['public_url'];
           final res = await HTTPService().getFetchJson(publicUrl);
-          if (!res.containsKey('init')) {
+          jsonData = res;
+        }
+        if (jsonData.containsKey('message')) {
+          if (jsonData['message'] == 'No update required') {
+            final dataList =
+                await isar.spyDatas.where().sortByTimeKey().findAll();
+            List<Map<String, dynamic>> docList =
+                dataList.map((data) => data.toJson()).toList();
+            return docList;
+          } else if (jsonData['message'] == 'User data outdated') {
             MainPresenter.to.marketDataProviderMsg.value =
-                'Error: key "init" not found';
-            MainPresenter.to.isMarketDataProviderErr.value = true;
-            return dummyData;
-          } else if (res.containsKey('error')) {
-            MainPresenter.to.marketDataProviderMsg.value =
-                'Error: ${res['error']}';
+                'User data outdated, please reinstall';
             MainPresenter.to.isMarketDataProviderErr.value = true;
             return dummyData;
           }
-          jsonData = res;
         }
-        bool init = jsonData['init'];
         switch (stockSymbol) {
           case 'SPY':
             if (jsonData['content'] != null && !jsonData['content'].isEmpty) {
@@ -515,19 +517,11 @@ Date,Open,High,Low,Close,Adj Close,Volume
                 await isar.spyDatas.putAll(stockDataList.cast<SpyData>());
               });
             }
-            if (init) {
-              // return jsonData['content'].sort((a, b) =>
-              //     (a['time_key'] as int).compareTo(b['time_key'] as int));
-              return (jsonData['content'] as List)
-                  .map((item) => item as Map<String, dynamic>)
-                  .toList();
-            } else {
-              final dataList =
-                  await isar.spyDatas.where().sortByTimeKey().findAll();
-              List<Map<String, dynamic>> docList =
-                  dataList.map((data) => data.toJson()).toList();
-              return docList;
-            }
+            final dataList =
+                await isar.spyDatas.where().sortByTimeKey().findAll();
+            List<Map<String, dynamic>> docList =
+                dataList.map((data) => data.toJson()).toList();
+            return docList;
           case 'QQQ':
             if (jsonData['content'] != null && !jsonData['content'].isEmpty) {
               stockDataList = jsonData['content']
@@ -537,19 +531,11 @@ Date,Open,High,Low,Close,Adj Close,Volume
                 await isar.qqqDatas.putAll(stockDataList.cast<QqqData>());
               });
             }
-            if (init) {
-              // return jsonData['content'].sort((a, b) =>
-              //     (a['time_key'] as int).compareTo(b['time_key'] as int));
-              return (jsonData['content'] as List)
-                  .map((item) => item as Map<String, dynamic>)
-                  .toList();
-            } else {
-              final dataList =
-                  await isar.qqqDatas.where().sortByTimeKey().findAll();
-              List<Map<String, dynamic>> docList =
-                  dataList.map((data) => data.toJson()).toList();
-              return docList;
-            }
+            final dataList =
+                await isar.qqqDatas.where().sortByTimeKey().findAll();
+            List<Map<String, dynamic>> docList =
+                dataList.map((data) => data.toJson()).toList();
+            return docList;
           case 'USO':
             if (jsonData['content'] != null && !jsonData['content'].isEmpty) {
               stockDataList = jsonData['content']
@@ -559,19 +545,11 @@ Date,Open,High,Low,Close,Adj Close,Volume
                 await isar.usoDatas.putAll(stockDataList.cast<UsoData>());
               });
             }
-            if (init) {
-              // return jsonData['content'].sort((a, b) =>
-              //     (a['time_key'] as int).compareTo(b['time_key'] as int));
-              return (jsonData['content'] as List)
-                  .map((item) => item as Map<String, dynamic>)
-                  .toList();
-            } else {
-              final dataList =
-                  await isar.usoDatas.where().sortByTimeKey().findAll();
-              List<Map<String, dynamic>> docList =
-                  dataList.map((data) => data.toJson()).toList();
-              return docList;
-            }
+            final dataList =
+                await isar.usoDatas.where().sortByTimeKey().findAll();
+            List<Map<String, dynamic>> docList =
+                dataList.map((data) => data.toJson()).toList();
+            return docList;
           case 'GLD':
             if (jsonData['content'] != null && !jsonData['content'].isEmpty) {
               stockDataList = jsonData['content']
@@ -581,19 +559,11 @@ Date,Open,High,Low,Close,Adj Close,Volume
                 await isar.gldDatas.putAll(stockDataList.cast<GldData>());
               });
             }
-            if (init) {
-              // return jsonData['content'].sort((a, b) =>
-              //     (a['time_key'] as int).compareTo(b['time_key'] as int));
-              return (jsonData['content'] as List)
-                  .map((item) => item as Map<String, dynamic>)
-                  .toList();
-            } else {
-              final dataList =
-                  await isar.gldDatas.where().sortByTimeKey().findAll();
-              List<Map<String, dynamic>> docList =
-                  dataList.map((data) => data.toJson()).toList();
-              return docList;
-            }
+            final dataList =
+                await isar.gldDatas.where().sortByTimeKey().findAll();
+            List<Map<String, dynamic>> docList =
+                dataList.map((data) => data.toJson()).toList();
+            return docList;
           default:
             throw Exception(
                 'Unknown financial instrument symbol: $stockSymbol');

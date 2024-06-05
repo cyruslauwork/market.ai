@@ -1216,6 +1216,9 @@ class MainPresenter extends GetxController {
   }
 
   String getLastDatetime() {
+    if (MainPresenter.to.candleListList.isEmpty) {
+      return 'Error';
+    }
     var lastDatetime = MainPresenter.to.candleListList.last[0];
     // print(lastDatetime);
     if (alwaysShowMinuteData.value) {

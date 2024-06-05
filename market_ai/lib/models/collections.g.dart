@@ -45,7 +45,7 @@ const SpyDataSchema = CollectionSchema(
     r'volume': PropertySchema(
       id: 5,
       name: r'volume',
-      type: IsarType.double,
+      type: IsarType.long,
     )
   },
   estimateSize: _spyDataEstimateSize,
@@ -82,7 +82,7 @@ void _spyDataSerialize(
   writer.writeDouble(offsets[2], object.low);
   writer.writeDouble(offsets[3], object.open);
   writer.writeLong(offsets[4], object.timeKey);
-  writer.writeDouble(offsets[5], object.volume);
+  writer.writeLong(offsets[5], object.volume);
 }
 
 SpyData _spyDataDeserialize(
@@ -98,7 +98,7 @@ SpyData _spyDataDeserialize(
   object.low = reader.readDouble(offsets[2]);
   object.open = reader.readDouble(offsets[3]);
   object.timeKey = reader.readLong(offsets[4]);
-  object.volume = reader.readDouble(offsets[5]);
+  object.volume = reader.readLong(offsets[5]);
   return object;
 }
 
@@ -120,7 +120,7 @@ P _spyDataDeserializeProp<P>(
     case 4:
       return (reader.readLong(offset)) as P;
     case 5:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -569,54 +569,46 @@ extension SpyDataQueryFilter
   }
 
   QueryBuilder<SpyData, SpyData, QAfterFilterCondition> volumeEqualTo(
-    double value, {
-    double epsilon = Query.epsilon,
-  }) {
+      int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'volume',
         value: value,
-        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<SpyData, SpyData, QAfterFilterCondition> volumeGreaterThan(
-    double value, {
+    int value, {
     bool include = false,
-    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'volume',
         value: value,
-        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<SpyData, SpyData, QAfterFilterCondition> volumeLessThan(
-    double value, {
+    int value, {
     bool include = false,
-    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'volume',
         value: value,
-        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<SpyData, SpyData, QAfterFilterCondition> volumeBetween(
-    double lower,
-    double upper, {
+    int lower,
+    int upper, {
     bool includeLower = true,
     bool includeUpper = true,
-    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -625,7 +617,6 @@ extension SpyDataQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
-        epsilon: epsilon,
       ));
     });
   }
@@ -875,7 +866,7 @@ extension SpyDataQueryProperty
     });
   }
 
-  QueryBuilder<SpyData, double, QQueryOperations> volumeProperty() {
+  QueryBuilder<SpyData, int, QQueryOperations> volumeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'volume');
     });
@@ -921,7 +912,7 @@ const QqqDataSchema = CollectionSchema(
     r'volume': PropertySchema(
       id: 5,
       name: r'volume',
-      type: IsarType.double,
+      type: IsarType.long,
     )
   },
   estimateSize: _qqqDataEstimateSize,
@@ -958,7 +949,7 @@ void _qqqDataSerialize(
   writer.writeDouble(offsets[2], object.low);
   writer.writeDouble(offsets[3], object.open);
   writer.writeLong(offsets[4], object.timeKey);
-  writer.writeDouble(offsets[5], object.volume);
+  writer.writeLong(offsets[5], object.volume);
 }
 
 QqqData _qqqDataDeserialize(
@@ -974,7 +965,7 @@ QqqData _qqqDataDeserialize(
   object.low = reader.readDouble(offsets[2]);
   object.open = reader.readDouble(offsets[3]);
   object.timeKey = reader.readLong(offsets[4]);
-  object.volume = reader.readDouble(offsets[5]);
+  object.volume = reader.readLong(offsets[5]);
   return object;
 }
 
@@ -996,7 +987,7 @@ P _qqqDataDeserializeProp<P>(
     case 4:
       return (reader.readLong(offset)) as P;
     case 5:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -1445,54 +1436,46 @@ extension QqqDataQueryFilter
   }
 
   QueryBuilder<QqqData, QqqData, QAfterFilterCondition> volumeEqualTo(
-    double value, {
-    double epsilon = Query.epsilon,
-  }) {
+      int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'volume',
         value: value,
-        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<QqqData, QqqData, QAfterFilterCondition> volumeGreaterThan(
-    double value, {
+    int value, {
     bool include = false,
-    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'volume',
         value: value,
-        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<QqqData, QqqData, QAfterFilterCondition> volumeLessThan(
-    double value, {
+    int value, {
     bool include = false,
-    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'volume',
         value: value,
-        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<QqqData, QqqData, QAfterFilterCondition> volumeBetween(
-    double lower,
-    double upper, {
+    int lower,
+    int upper, {
     bool includeLower = true,
     bool includeUpper = true,
-    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -1501,7 +1484,6 @@ extension QqqDataQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
-        epsilon: epsilon,
       ));
     });
   }
@@ -1751,7 +1733,7 @@ extension QqqDataQueryProperty
     });
   }
 
-  QueryBuilder<QqqData, double, QQueryOperations> volumeProperty() {
+  QueryBuilder<QqqData, int, QQueryOperations> volumeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'volume');
     });
@@ -1797,7 +1779,7 @@ const UsoDataSchema = CollectionSchema(
     r'volume': PropertySchema(
       id: 5,
       name: r'volume',
-      type: IsarType.double,
+      type: IsarType.long,
     )
   },
   estimateSize: _usoDataEstimateSize,
@@ -1834,7 +1816,7 @@ void _usoDataSerialize(
   writer.writeDouble(offsets[2], object.low);
   writer.writeDouble(offsets[3], object.open);
   writer.writeLong(offsets[4], object.timeKey);
-  writer.writeDouble(offsets[5], object.volume);
+  writer.writeLong(offsets[5], object.volume);
 }
 
 UsoData _usoDataDeserialize(
@@ -1850,7 +1832,7 @@ UsoData _usoDataDeserialize(
   object.low = reader.readDouble(offsets[2]);
   object.open = reader.readDouble(offsets[3]);
   object.timeKey = reader.readLong(offsets[4]);
-  object.volume = reader.readDouble(offsets[5]);
+  object.volume = reader.readLong(offsets[5]);
   return object;
 }
 
@@ -1872,7 +1854,7 @@ P _usoDataDeserializeProp<P>(
     case 4:
       return (reader.readLong(offset)) as P;
     case 5:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -2321,54 +2303,46 @@ extension UsoDataQueryFilter
   }
 
   QueryBuilder<UsoData, UsoData, QAfterFilterCondition> volumeEqualTo(
-    double value, {
-    double epsilon = Query.epsilon,
-  }) {
+      int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'volume',
         value: value,
-        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<UsoData, UsoData, QAfterFilterCondition> volumeGreaterThan(
-    double value, {
+    int value, {
     bool include = false,
-    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'volume',
         value: value,
-        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<UsoData, UsoData, QAfterFilterCondition> volumeLessThan(
-    double value, {
+    int value, {
     bool include = false,
-    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'volume',
         value: value,
-        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<UsoData, UsoData, QAfterFilterCondition> volumeBetween(
-    double lower,
-    double upper, {
+    int lower,
+    int upper, {
     bool includeLower = true,
     bool includeUpper = true,
-    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -2377,7 +2351,6 @@ extension UsoDataQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
-        epsilon: epsilon,
       ));
     });
   }
@@ -2627,7 +2600,7 @@ extension UsoDataQueryProperty
     });
   }
 
-  QueryBuilder<UsoData, double, QQueryOperations> volumeProperty() {
+  QueryBuilder<UsoData, int, QQueryOperations> volumeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'volume');
     });
@@ -2673,7 +2646,7 @@ const GldDataSchema = CollectionSchema(
     r'volume': PropertySchema(
       id: 5,
       name: r'volume',
-      type: IsarType.double,
+      type: IsarType.long,
     )
   },
   estimateSize: _gldDataEstimateSize,
@@ -2710,7 +2683,7 @@ void _gldDataSerialize(
   writer.writeDouble(offsets[2], object.low);
   writer.writeDouble(offsets[3], object.open);
   writer.writeLong(offsets[4], object.timeKey);
-  writer.writeDouble(offsets[5], object.volume);
+  writer.writeLong(offsets[5], object.volume);
 }
 
 GldData _gldDataDeserialize(
@@ -2726,7 +2699,7 @@ GldData _gldDataDeserialize(
   object.low = reader.readDouble(offsets[2]);
   object.open = reader.readDouble(offsets[3]);
   object.timeKey = reader.readLong(offsets[4]);
-  object.volume = reader.readDouble(offsets[5]);
+  object.volume = reader.readLong(offsets[5]);
   return object;
 }
 
@@ -2748,7 +2721,7 @@ P _gldDataDeserializeProp<P>(
     case 4:
       return (reader.readLong(offset)) as P;
     case 5:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -3197,54 +3170,46 @@ extension GldDataQueryFilter
   }
 
   QueryBuilder<GldData, GldData, QAfterFilterCondition> volumeEqualTo(
-    double value, {
-    double epsilon = Query.epsilon,
-  }) {
+      int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'volume',
         value: value,
-        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<GldData, GldData, QAfterFilterCondition> volumeGreaterThan(
-    double value, {
+    int value, {
     bool include = false,
-    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'volume',
         value: value,
-        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<GldData, GldData, QAfterFilterCondition> volumeLessThan(
-    double value, {
+    int value, {
     bool include = false,
-    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'volume',
         value: value,
-        epsilon: epsilon,
       ));
     });
   }
 
   QueryBuilder<GldData, GldData, QAfterFilterCondition> volumeBetween(
-    double lower,
-    double upper, {
+    int lower,
+    int upper, {
     bool includeLower = true,
     bool includeUpper = true,
-    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -3253,7 +3218,6 @@ extension GldDataQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
-        epsilon: epsilon,
       ));
     });
   }
@@ -3503,7 +3467,7 @@ extension GldDataQueryProperty
     });
   }
 
-  QueryBuilder<GldData, double, QQueryOperations> volumeProperty() {
+  QueryBuilder<GldData, int, QQueryOperations> volumeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'volume');
     });

@@ -13,7 +13,7 @@ class SpyData {
   late double high;
   late double low;
   late double close;
-  late double volume;
+  late int volume;
 
   SpyData();
 
@@ -23,7 +23,8 @@ class SpyData {
         high = json['high'],
         low = json['low'],
         close = json['close'],
-        volume = json['volume'];
+        volume =
+            (json['volume'] is int) ? json['volume'] : json['volume'].toInt();
 
   Map<String, dynamic> toJson() => {
         'time_key': timeKey,
@@ -44,7 +45,7 @@ class QqqData {
   late double high;
   late double low;
   late double close;
-  late double volume;
+  late int volume;
 
   QqqData();
 
@@ -54,7 +55,8 @@ class QqqData {
         high = json['high'],
         low = json['low'],
         close = json['close'],
-        volume = json['volume'];
+        volume =
+            (json['volume'] is int) ? json['volume'] : json['volume'].toInt();
 
   Map<String, dynamic> toJson() => {
         'time_key': timeKey,
@@ -75,7 +77,7 @@ class UsoData {
   late double high;
   late double low;
   late double close;
-  late double volume;
+  late int volume;
 
   UsoData();
 
@@ -85,7 +87,8 @@ class UsoData {
         high = json['high'],
         low = json['low'],
         close = json['close'],
-        volume = json['volume'];
+        volume =
+            (json['volume'] is int) ? json['volume'] : json['volume'].toInt();
 
   Map<String, dynamic> toJson() => {
         'time_key': timeKey,
@@ -106,7 +109,7 @@ class GldData {
   late double high;
   late double low;
   late double close;
-  late double volume;
+  late int volume;
 
   GldData();
 
@@ -116,7 +119,8 @@ class GldData {
         high = json['high'],
         low = json['low'],
         close = json['close'],
-        volume = json['volume'];
+        volume =
+            (json['volume'] is int) ? json['volume'] : json['volume'].toInt();
 
   Map<String, dynamic> toJson() => {
         'time_key': timeKey,
