@@ -196,7 +196,21 @@ class TrendMatch {
       int negativeTolerance = -tolerance;
       for (int i = 0; i < selList.length; i++) {
         double difference = comList[i] - selList[i];
-        double percentageDifference = (difference / selList[i]) * 100;
+        double percentageDifference;
+
+        // Handle zero in selList to avoid division by zero
+        if (selList[i] == 0.0) {
+          if (comList[i] != 0.0) {
+            return (
+              false,
+              []
+            ); // Any non-zero value compared to zero is a large difference
+          } else {
+            percentageDifference = 0.0; // Both are zero, no difference
+          }
+        } else {
+          percentageDifference = (difference / selList[i]) * 100;
+        }
 
         if (percentageDifference >= 0) {
           // Positive percentageDifference
@@ -223,7 +237,21 @@ class TrendMatch {
     } else {
       for (int i = 0; i < selList.length; i++) {
         double difference = comList[i] - selList[i];
-        double percentageDifference = (difference / selList[i]) * 100;
+        double percentageDifference;
+
+        // Handle zero in selList to avoid division by zero
+        if (selList[i] == 0.0) {
+          if (comList[i] != 0.0) {
+            return (
+              false,
+              []
+            ); // Any non-zero value compared to zero is a large difference
+          } else {
+            percentageDifference = 0.0; // Both are zero, no difference
+          }
+        } else {
+          percentageDifference = (difference / selList[i]) * 100;
+        }
 
         if (percentageDifference.abs() > MainPresenter.to.tolerance.value) {
           return (false, []); // Difference is larger than certain %

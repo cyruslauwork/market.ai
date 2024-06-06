@@ -149,7 +149,29 @@ def https(request):
                         # Create/update Cloud Storage
                         if timestamp == -1:
                             server_end_json_data = {'content': new_documents}
-                            if not bucket.exists():
+                            if bucket.exists():
+                                if blob.exists():
+                                    json_file = blob.download_as_string().decode('utf-8')
+                                    collection = json.loads(json_file)
+                                    docs = collection.get('content', [])
+                                    if docs is None:
+                                        docs = []
+                                    blob.delete()  # Delete existing blob
+                                    print('Object deleted')
+                                else:
+                                    print(f'Retrieving all documents in {symbol} collection')
+                                    docs = collection_ref.order_by('time_key').stream(retry=Retry())
+                                    docs = [doc.to_dict() for doc in docs]
+                                server_end_json_data['content'].extend(docs)
+                                # Convert the result to JSON format
+                                json_str = json.dumps(server_end_json_data)
+                                try:
+                                    blob.upload_from_string(json_str, content_type='application/json')
+                                    print('Object uploaded successfully')
+                                except Exception as e:
+                                    print(f'Create object timeout {e}')
+                                    return
+                            else:
                                 print('Creating bucket...')
                                 bucket.create(location='us-west1')
                                 bucket.make_public()
@@ -171,41 +193,44 @@ def https(request):
                                     print('Blob uploaded successfully')
                                 except:
                                     print('Handling blob timed out')
-                                    return jsonify({'error': 'Handling blob timed out'})
-                            else:
-                                if blob.exists():
-                                    json_file = blob.download_as_string().decode('utf-8')
-                                    collection = json.loads(json_file)
-                                    docs = collection.get('content', [])
-                                    if docs is None:
-                                        docs = []
-                                    blob.delete()  # Delete existing blob
-                                    print('Object deleted')
-                                else:
-                                    print(f'Retrieving all documents in {symbol} collection')
-                                    docs = collection_ref.order_by('time_key').stream(retry=Retry())
-                                    docs = [doc.to_dict() for doc in docs]
-                                server_end_json_data['content'].extend(docs)
-                                # Convert the result to JSON format
-                                json_str = json.dumps(server_end_json_data)
-                                try:
-                                    blob.upload_from_string(json_str, content_type='application/json')
-                                    print('Object uploaded successfully')
-                                except Exception as e:
-                                    print(f'Create object timeout {e}')
-                                    return jsonify({'error': 'Create object timeout'})
+                                    return
                         else:
                             return
                     else:
                         return
                 else:
                     print({'error': f'Error fetching data from Yahoo Finance: {response.status_code} {response.reason}'})
-                    return jsonify({'error': f'Error fetching data from Yahoo Finance: {response.status_code} {response.reason}'})
+                    return
             fetch_update_insert_delete_data(timestamp)
 
             # About the Firestore reading cost, ref to https://cloud.google.com/skus?hl=en&filter=C91A-FAC3-A285&currency=USD
             if timestamp == 0:
-                if not bucket.exists():
+                if bucket.exists():
+                    if blob.exists():
+                        print('Bucket already exists')
+                        # Get public URL of the blob
+                        public_url = blob.public_url
+                        print('Returning public URL')
+                        return jsonify({'public_url': public_url})
+                    else:
+                        print(f'Retrieving all documents in {symbol} collection')
+                        docs = collection_ref.order_by('time_key').stream(retry=Retry())
+                        docs_list = [doc.to_dict() for doc in docs]
+                        print(f'Retrieved required document(s) in {symbol} collection')
+                        print(f'Preparing to return JSON')
+                        json_data['content'] = docs_list
+                        print('Uploading JSON to GCS')
+                        try:
+                            blob.upload_from_string(json.dumps(json_data), content_type='application/json', timeout=60)
+                            print('Blob uploaded successfully')
+                        except:
+                            print({'error': 'Handling blob timed out'})
+                            return jsonify({'error': 'Handling blob timed out'})
+                        # Get public URL of the uploaded blob
+                        public_url = blob.public_url
+                        print('Returning public URL')
+                        return jsonify({'public_url': public_url})
+                else:
                     print('Creating bucket...')
                     bucket.create(location='us-west1')
                     bucket.make_public()
@@ -230,12 +255,7 @@ def https(request):
                     public_url = blob.public_url
                     print('Returning public URL')
                     return jsonify({'public_url': public_url})
-                else:
-                    print('Bucket already exists')
-                    # Get public URL of the blob
-                    public_url = blob.public_url
-                    print('Returning public URL')
-                    return jsonify({'public_url': public_url})
+
             elif timestamp > 0:
                 # print(f'Retrieving all documents in {symbol} collection that have values greater than {timestamp}')
                 # docs = collection_ref.where('time_key', '>', timestamp).order_by('time_key').stream(retry=Retry())

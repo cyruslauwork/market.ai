@@ -657,7 +657,7 @@ class _MainViewState extends State<MainView> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              '\$${MainPresenter.to.candleListList.last[4].toString()}',
+                              '\$${MainPresenter.to.showCandleListListLastItem(i: 4)}',
                               style:
                                   const TextTheme().sp10.primaryTextColor.w700,
                             ),

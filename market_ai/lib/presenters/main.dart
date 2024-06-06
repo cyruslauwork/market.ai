@@ -703,10 +703,12 @@ class MainPresenter extends GetxController {
       if (showAverageNotifier.value) {
         Candle().computeTrendLines();
       }
-      TrendMatch().init();
-    }
-    if (apiKey.value != '') {
-      SubsequentAnalytics().init();
+      if (listCandledata.isNotEmpty) {
+        TrendMatch().init();
+        if (apiKey.value != '') {
+          SubsequentAnalytics().init();
+        }
+      }
     }
     return listCandledata;
   }
@@ -1216,23 +1218,33 @@ class MainPresenter extends GetxController {
   }
 
   String getLastDatetime() {
-    if (MainPresenter.to.candleListList.isEmpty) {
-      return 'Error';
-    }
-    var lastDatetime = MainPresenter.to.candleListList.last[0];
-    // print(lastDatetime);
-    if (alwaysShowMinuteData.value) {
-      DateTime dateTime =
-          DateTime.fromMillisecondsSinceEpoch(lastDatetime * 1000, isUtc: true);
-      DateTime subtractedDateTime =
-          TimeService.to.subtractHoursBasedOnTimezone(dateTime);
-      lastDatetime =
-          DateFormat('yyyy-MM-dd HH:mm:ss').format(subtractedDateTime);
-      String timezone =
-          TimeService.to.isEasternDaylightTime(dateTime) ? 'EDT' : 'EST';
-      return '${'as_of'.tr} $lastDatetime $timezone.';
+    if (MainPresenter.to.candleListList.isNotEmpty) {
+      var lastDatetime = MainPresenter.to.candleListList.last[0];
+      // print(lastDatetime);
+      if (alwaysShowMinuteData.value) {
+        DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
+            lastDatetime * 1000,
+            isUtc: true);
+        DateTime subtractedDateTime =
+            TimeService.to.subtractHoursBasedOnTimezone(dateTime);
+        lastDatetime =
+            DateFormat('yyyy-MM-dd HH:mm:ss').format(subtractedDateTime);
+        String timezone =
+            TimeService.to.isEasternDaylightTime(dateTime) ? 'EDT' : 'EST';
+        return '${'as_of'.tr} $lastDatetime $timezone.';
+      } else {
+        return '${'as_of'.tr} $lastDatetime.';
+      }
     } else {
-      return '${'as_of'.tr} $lastDatetime.';
+      return 'Loading';
+    }
+  }
+
+  String showCandleListListLastItem({required int i}) {
+    if (MainPresenter.to.candleListList.isNotEmpty) {
+      return MainPresenter.to.candleListList.last[i].toString();
+    } else {
+      return 'Loading';
     }
   }
 }
