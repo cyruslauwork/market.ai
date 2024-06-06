@@ -51,6 +51,7 @@ class CandleAdapter {
               ))
           .toList();
       MainPresenter.to.listCandledata.value = listCandledata;
+      MainPresenter.to.hasCandleData.value = true;
       return listCandledata;
     } else if (param.$2 == SrcFileType.json) {
       listCandledata = listList
@@ -64,6 +65,7 @@ class CandleAdapter {
               ))
           .toList();
       MainPresenter.to.listCandledata.value = listCandledata;
+      MainPresenter.to.hasCandleData.value = true;
       return listCandledata;
     } else {
       throw ArgumentError('Failed to convert list to candles.');

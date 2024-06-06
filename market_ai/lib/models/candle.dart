@@ -21,6 +21,9 @@ class Candle {
 
   Future<List<CandleData>> init({String? stockSymbol}) {
     stockSymbol ??= MainPresenter.to.financialInstrumentSymbol.value;
+    MainPresenter.to.hasCandleData.value = false;
+    MainPresenter.to.trendMatched.value = false;
+    MainPresenter.to.hasSubsequentAnalytics.value = false;
     // print(stockSymbol);
     return CandleAdapter().listListTolistCandledata(
         Candle().checkAPIProvider(stockSymbol: stockSymbol));

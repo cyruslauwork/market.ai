@@ -79,8 +79,8 @@ class TrendMatchView extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
-          width: 40.w,
-          height: 40.h,
+          width: 20.w,
+          height: 20.h,
           child: const CircularProgressIndicator(),
         ),
         Padding(

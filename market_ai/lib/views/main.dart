@@ -692,55 +692,8 @@ class _MainViewState extends State<MainView> {
                             style: const TextTheme().sp5,
                           ),
                         ),
-                        Obx(
-                          () => SizedBox(
-                            width: 393.w,
-                            height: MainPresenter.to.candleChartHeight.value,
-                            child: InteractiveChart(
-                              candles: (snapshot.data!.length > 1000
-                                  ? snapshot.data!.sublist(
-                                      snapshot.data!.length - 999,
-                                      snapshot.data!.length)
-                                  : snapshot.data!),
-                              style: ChartStyle(
-                                trendLineStyles: [
-                                  Paint()
-                                    ..strokeWidth = 1.0
-                                    ..strokeCap = StrokeCap.round
-                                    ..color = Colors.orange,
-                                  Paint()
-                                    ..strokeWidth = 1.0
-                                    ..strokeCap = StrokeCap.round
-                                    ..color = Colors.red,
-                                  Paint()
-                                    ..strokeWidth = 1.0
-                                    ..strokeCap = StrokeCap.round
-                                    ..color = Colors.purple[300]!,
-                                  Paint()
-                                    ..strokeWidth = 1.0
-                                    ..strokeCap = StrokeCap.round
-                                    ..color = Colors.blue[700]!,
-                                  Paint()
-                                    ..strokeWidth = 1.0
-                                    ..strokeCap = StrokeCap.round
-                                    ..color = Colors.green,
-                                  // Paint()
-                                  //   ..strokeWidth = 1.0
-                                  //   ..strokeCap = StrokeCap.round
-                                  //   ..color = Colors.yellow,
-                                ],
-                                selectionHighlightColor:
-                                    Colors.red.withOpacity(0.75),
-                                overlayBackgroundColor:
-                                    Colors.red.withOpacity(0.75),
-                                overlayTextStyle:
-                                    const TextStyle(color: AppColor.whiteColor),
-                              ),
-                              /** Callbacks */
-                              // onTap: (candle) => print("user tapped on $candle"),
-                            ),
-                          ),
-                        ),
+                        MainPresenter.to
+                            .showCandlestickChart(snapshot: snapshot),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [

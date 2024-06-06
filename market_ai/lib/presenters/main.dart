@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import 'package:get/get.dart';
 import 'package:interactive_chart/interactive_chart.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import 'package:market_ai/styles/styles.dart';
 import 'package:market_ai/utils/utils.dart';
@@ -410,6 +411,7 @@ class MainPresenter extends GetxController {
   RxList minuteDataList = ['SPY', 'QQQ', 'USO', 'GLD'].obs;
   RxBool hasMinuteData = false.obs;
   late Rx<String> lastDatetime = 'Loading last datetime...'.obs;
+  RxBool hasCandleData = false.obs;
 
   /* Listings */
   RxInt listingsDownloadTime = 0.obs;
@@ -655,8 +657,8 @@ class MainPresenter extends GetxController {
     } else if (subsequentAnalyticsNotifier.value &&
         subsequentAnalyticsErr.value == '') {
       hasSubsequentAnalytics.value = true;
-      var img10Bytes = MainPresenter.to.img10Bytes.value;
-      if (img10Bytes.isEmpty) {
+      var img10 = img10Bytes.value;
+      if (img10.isEmpty) {
         sidePlot.value = const SizedBox.shrink();
         tmChartWidth.value = 135.w;
       } else {
@@ -664,7 +666,7 @@ class MainPresenter extends GetxController {
             child: Padding(
           padding: EdgeInsets.only(top: 7.5.h),
           child: Image.memory(
-            img10Bytes,
+            img10,
             width: 52.5.w,
             height: 78.h,
             fit: BoxFit.fill,
@@ -1251,6 +1253,73 @@ class MainPresenter extends GetxController {
       return MainPresenter.to.candleListList.last[i].toString();
     } else {
       return 'Loading';
+    }
+  }
+
+  Widget showCandlestickChart(
+      {required AsyncSnapshot<List<CandleData>> snapshot}) {
+    if (hasCandleData.value) {
+      return Obx(
+        () => SizedBox(
+          width: 393.w,
+          height: MainPresenter.to.candleChartHeight.value,
+          child: InteractiveChart(
+            candles: (snapshot.data!.length > 1000
+                ? snapshot.data!
+                    .sublist(snapshot.data!.length - 999, snapshot.data!.length)
+                : snapshot.data!),
+            style: ChartStyle(
+              trendLineStyles: [
+                Paint()
+                  ..strokeWidth = 1.0
+                  ..strokeCap = StrokeCap.round
+                  ..color = Colors.orange,
+                Paint()
+                  ..strokeWidth = 1.0
+                  ..strokeCap = StrokeCap.round
+                  ..color = Colors.red,
+                Paint()
+                  ..strokeWidth = 1.0
+                  ..strokeCap = StrokeCap.round
+                  ..color = Colors.purple[300]!,
+                Paint()
+                  ..strokeWidth = 1.0
+                  ..strokeCap = StrokeCap.round
+                  ..color = Colors.blue[700]!,
+                Paint()
+                  ..strokeWidth = 1.0
+                  ..strokeCap = StrokeCap.round
+                  ..color = Colors.green,
+                // Paint()
+                //   ..strokeWidth = 1.0
+                //   ..strokeCap = StrokeCap.round
+                //   ..color = Colors.yellow,
+              ],
+              selectionHighlightColor: Colors.red.withOpacity(0.75),
+              overlayBackgroundColor: Colors.red.withOpacity(0.75),
+              overlayTextStyle: const TextStyle(color: AppColor.whiteColor),
+            ),
+            /** Callbacks */
+            // onTap: (candle) => print("user tapped on $candle"),
+          ),
+        ),
+      );
+    } else {
+      return Center(
+        child: Column(
+          children: [
+            LoadingAnimationWidget.staggeredDotsWave(
+              color: ThemeColor.primary.value,
+              size: 25.w,
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 10.h),
+              child:
+                  Text('downloading_candle'.tr, style: const TextTheme().sp5),
+            ),
+          ],
+        ),
+      );
     }
   }
 }

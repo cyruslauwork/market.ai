@@ -361,10 +361,10 @@ def https(request):
     axis_y_second.tick_params(right=False)
     ### Set current price to the 3rd y-axis
     if lang == 'zh':
-        axis.plot([current_price] * len(cluster_ori_list[0][0]),
+        axis.plot([current_price] * len(round(cluster_ori_list[0][0], 2)),
                     color='black', linestyle='-', alpha=1, label='現價線', linewidth=5)
     else:
-        axis.plot([current_price] * len(cluster_ori_list[0][0]),
+        axis.plot([current_price] * len(round(cluster_ori_list[0][0], 2)),
                     color='black', linestyle='-', alpha=1, label='Current price', linewidth=5)
     axis_y_third = axis.twinx()
     axis_y_third.set_ylim(left_y_min, left_y_max)
@@ -467,10 +467,10 @@ def https(request):
     axis_y_second.tick_params(right=False)
     ### Set current price to the 3rd y-axis
     if lang == 'zh':
-        axis.plot([current_price] * len(cluster_ori_list[0][0]),
+        axis.plot([current_price] * len(round(cluster_ori_list[0][0], 2)),
                     color='black', linestyle='-', alpha=1, label='現價線', linewidth=5)
     else:
-        axis.plot([current_price] * len(cluster_ori_list[0][0]),
+        axis.plot([current_price] * len(round(cluster_ori_list[0][0], 2)),
                     color='black', linestyle='-', alpha=1, label='Current price', linewidth=5)
     axis_y_third = axis.twinx()
     axis_y_third.set_ylim(left_y_min, left_y_max)

@@ -160,129 +160,177 @@ class _SearchViewState extends State<SearchView> {
           child: Column(
             children: <Widget>[
               Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 6.w),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'tolerance'.tr,
-                        style: const TextTheme().sp5.primaryTextColor,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 6.w),
-                        child: SliderTheme(
-                          data: SliderTheme.of(context).copyWith(
-                            overlayShape: SliderComponentShape.noOverlay,
-                          ),
-                          child: Slider(
-                            value: _currentTolerance,
-                            max: 200,
-                            min: 5,
-                            divisions: 39,
-                            label: '${_currentTolerance.round().toString()}%',
-                            onChanged: (double value) {
-                              setState(() {
-                                _currentTolerance = value;
-                              });
-                            },
-                          ),
+                padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 6.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'tolerance'.tr,
+                      style: const TextTheme().sp5.primaryTextColor,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 6.w),
+                      child: SliderTheme(
+                        data: SliderTheme.of(context).copyWith(
+                          overlayShape: SliderComponentShape.noOverlay,
+                        ),
+                        child: Slider(
+                          value: _currentTolerance,
+                          max: 200,
+                          min: 5,
+                          divisions: 39,
+                          label: '${_currentTolerance.round().toString()}%',
+                          onChanged: (double value) {
+                            setState(() {
+                              _currentTolerance = value;
+                            });
+                          },
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            '5%',
-                            style: const TextTheme().sp4,
-                          ),
-                          Text(
-                            '50%',
-                            style: const TextTheme().sp4,
-                          ),
-                          Text(
-                            '100%',
-                            style: const TextTheme().sp4,
-                          ),
-                          Text(
-                            '150%',
-                            style: const TextTheme().sp4,
-                          ),
-                          Text(
-                            '200%',
-                            style: const TextTheme().sp4,
-                          ),
-                        ],
-                      ),
-                      Text(
-                        'recommended_tolerance'.tr,
-                        style: const TextTheme().sp4.greyColor,
-                      ),
-                    ],
-                  )),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '5%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '50%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '100%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '150%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '200%',
+                          style: const TextTheme().sp4,
+                        ),
+                      ],
+                    ),
+                    Text(
+                      'recommended_tolerance'.tr,
+                      style: const TextTheme().sp4.greyColor,
+                    ),
+                  ],
+                ),
+              ),
               Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 4.w),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'date_range'.tr,
-                        style: const TextTheme().sp5.primaryTextColor,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 6.w),
-                        child: SliderTheme(
-                          data: SliderTheme.of(context).copyWith(
-                            overlayShape: SliderComponentShape.noOverlay,
-                          ),
-                          child: Slider(
-                            value: _currentRange.toDouble(),
-                            max: 20,
-                            min: 2,
-                            divisions: 18,
-                            label: _currentRange.round().toString(),
-                            onChanged: (double value) {
-                              setState(() {
-                                _currentRange = value.toInt();
-                              });
-                            },
-                          ),
+                padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 4.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'time_range'.tr,
+                      style: const TextTheme().sp5.primaryTextColor,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 6.w),
+                      child: SliderTheme(
+                        data: SliderTheme.of(context).copyWith(
+                          overlayShape: SliderComponentShape.noOverlay,
+                        ),
+                        child: Slider(
+                          value: _currentRange.toDouble(),
+                          max: 20,
+                          min: 2,
+                          divisions: 18,
+                          label: _currentRange.round().toString(),
+                          onChanged: (double value) {
+                            setState(() {
+                              _currentRange = value.toInt();
+                            });
+                          },
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            '2days'.tr,
-                            style: const TextTheme().sp4,
-                          ),
-                          Text(
-                            '20days'.tr,
-                            style: const TextTheme().sp4,
-                          ),
-                        ],
-                      ),
-                    ],
-                  )),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '2_timeunits'.tr,
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '20_timeunits'.tr,
+                          style: const TextTheme().sp4,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              // Padding(
+              //   padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 4.w),
+              //   child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       Text(
+              //         'time_range'.tr,
+              //         style: const TextTheme().sp5.primaryTextColor,
+              //       ),
+              //       Padding(
+              //         padding: EdgeInsets.symmetric(vertical: 6.w),
+              //         child: SliderTheme(
+              //           data: SliderTheme.of(context).copyWith(
+              //             overlayShape: SliderComponentShape.noOverlay,
+              //           ),
+              //           child: Slider(
+              //             value: _currentRange.toDouble(),
+              //             max: 20,
+              //             min: 0,
+              //             divisions: 20,
+              //             label: _currentRange.round().toString(),
+              //             onChanged: (double value) {
+              //               setState(() {
+              //                 _currentRange = value.toInt();
+              //               });
+              //             },
+              //           ),
+              //         ),
+              //       ),
+              //       Row(
+              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //         children: [
+              //           Text(
+              //             '0_timeunits'.tr,
+              //             style: const TextTheme().sp4,
+              //           ),
+              //           Text(
+              //             '20_timeunits'.tr,
+              //             style: const TextTheme().sp4,
+              //           ),
+              //         ],
+              //       ),
+              //     ],
+              //   ),
+              // ),
               Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 4.w),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          'strict_matching_criteria'.tr,
-                          style: const TextTheme().sp5.w700,
-                        ),
+                padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 4.w),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'strict_matching_criteria'.tr,
+                        style: const TextTheme().sp5.w700,
                       ),
-                      Obx(
-                        () => Switch(
-                          value: MainPresenter.to.strictMatchCriteria.value,
-                          activeColor: Colors.red,
-                          onChanged: (bool value) => MainPresenter
-                              .to.strictMatchCriteria.value = value,
-                        ),
+                    ),
+                    Obx(
+                      () => Switch(
+                        value: MainPresenter.to.strictMatchCriteria.value,
+                        activeColor: Colors.red,
+                        onChanged: (bool value) =>
+                            MainPresenter.to.strictMatchCriteria.value = value,
                       ),
-                    ],
-                  )),
+                    ),
+                  ],
+                ),
+              ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 4.w),
                 child: Column(

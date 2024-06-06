@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
 import 'dart:math';
 
 import 'package:interactive_chart/interactive_chart.dart';
@@ -17,8 +18,6 @@ class TrendMatch {
   TrendMatch._();
 
   init() {
-    MainPresenter.to.trendMatched.value = false;
-
     List<CandleData> listCandledata = MainPresenter.to.listCandledata;
 
     List<double> selectedPeriodPercentageDifferencesList = [];
@@ -162,6 +161,7 @@ class TrendMatch {
       range,
     ];
 
+    MainPresenter.to.sidePlot.value = const SizedBox.shrink();
     MainPresenter.to.trendMatched.value = true;
 
     // logger.d('True${MainPresenter.to.trendMatchOutput[0]}');
