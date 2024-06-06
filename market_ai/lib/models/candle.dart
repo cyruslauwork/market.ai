@@ -471,7 +471,9 @@ Date,Open,High,Low,Close,Adj Close,Volume
       // print(response.statusCode);
       if (response.statusCode == 200 || response.statusCode == 201) {
         var jsonData = jsonDecode(response.body) as Map<String, dynamic>;
+        // print(jsonData);
         List<dynamic> stockDataList;
+        List<Map<String, dynamic>> docList;
         if (jsonData.containsKey('error')) {
           String err = jsonData['error'];
           if (err == Err.apiKey.name) {
@@ -495,10 +497,31 @@ Date,Open,High,Low,Close,Adj Close,Volume
         }
         if (jsonData.containsKey('message')) {
           if (jsonData['message'] == 'No update required') {
-            final dataList =
-                await isar.spyDatas.where().sortByTimeKey().findAll();
-            List<Map<String, dynamic>> docList =
-                dataList.map((data) => data.toJson()).toList();
+            switch (stockSymbol) {
+              case 'SPY':
+                final dataList =
+                    await isar.spyDatas.where().sortByTimeKey().findAll();
+                docList = dataList.map((data) => data.toJson()).toList();
+                break;
+              case 'QQQ':
+                final dataList =
+                    await isar.qqqDatas.where().sortByTimeKey().findAll();
+                docList = dataList.map((data) => data.toJson()).toList();
+                break;
+              case 'USO':
+                final dataList =
+                    await isar.usoDatas.where().sortByTimeKey().findAll();
+                docList = dataList.map((data) => data.toJson()).toList();
+                break;
+              case 'GLD':
+                final dataList =
+                    await isar.gldDatas.where().sortByTimeKey().findAll();
+                docList = dataList.map((data) => data.toJson()).toList();
+                break;
+              default:
+                throw Exception(
+                    'Unknown financial instrument symbol: $stockSymbol');
+            }
             return docList;
           } else if (jsonData['message'] == 'User data outdated') {
             MainPresenter.to.marketDataProviderMsg.value =
@@ -519,9 +542,8 @@ Date,Open,High,Low,Close,Adj Close,Volume
             }
             final dataList =
                 await isar.spyDatas.where().sortByTimeKey().findAll();
-            List<Map<String, dynamic>> docList =
-                dataList.map((data) => data.toJson()).toList();
-            return docList;
+            docList = dataList.map((data) => data.toJson()).toList();
+            break;
           case 'QQQ':
             if (jsonData['content'] != null && !jsonData['content'].isEmpty) {
               stockDataList = jsonData['content']
@@ -533,9 +555,8 @@ Date,Open,High,Low,Close,Adj Close,Volume
             }
             final dataList =
                 await isar.qqqDatas.where().sortByTimeKey().findAll();
-            List<Map<String, dynamic>> docList =
-                dataList.map((data) => data.toJson()).toList();
-            return docList;
+            docList = dataList.map((data) => data.toJson()).toList();
+            break;
           case 'USO':
             if (jsonData['content'] != null && !jsonData['content'].isEmpty) {
               stockDataList = jsonData['content']
@@ -547,9 +568,8 @@ Date,Open,High,Low,Close,Adj Close,Volume
             }
             final dataList =
                 await isar.usoDatas.where().sortByTimeKey().findAll();
-            List<Map<String, dynamic>> docList =
-                dataList.map((data) => data.toJson()).toList();
-            return docList;
+            docList = dataList.map((data) => data.toJson()).toList();
+            break;
           case 'GLD':
             if (jsonData['content'] != null && !jsonData['content'].isEmpty) {
               stockDataList = jsonData['content']
@@ -561,13 +581,13 @@ Date,Open,High,Low,Close,Adj Close,Volume
             }
             final dataList =
                 await isar.gldDatas.where().sortByTimeKey().findAll();
-            List<Map<String, dynamic>> docList =
-                dataList.map((data) => data.toJson()).toList();
-            return docList;
+            docList = dataList.map((data) => data.toJson()).toList();
+            break;
           default:
             throw Exception(
                 'Unknown financial instrument symbol: $stockSymbol');
         }
+        return docList;
       } else {
         MainPresenter.to.marketDataProviderMsg.value =
             '${response.statusCode} error from';

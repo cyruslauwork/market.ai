@@ -118,7 +118,12 @@ class SubsequentAnalytics {
       MainPresenter.to.subsequentAnalyticsErr.value =
           'The number of subsequent trends must be equal to or greater than 4.';
     }
-    MainPresenter.to.subsequentAnalyticsNotifier.value = true;
+    if (MainPresenter.to.subsequentAnalyticsNotifier.value) {
+      MainPresenter.to.subsequentAnalyticsNotifier.value = false;
+      MainPresenter.to.subsequentAnalyticsNotifier.value = true;
+    } else {
+      MainPresenter.to.subsequentAnalyticsNotifier.value = true;
+    }
   }
 
   List<double> getMatchedTrendLastClosePriceAndSubsequentTrend(int index) {

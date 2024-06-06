@@ -655,17 +655,23 @@ class MainPresenter extends GetxController {
     } else if (subsequentAnalyticsNotifier.value &&
         subsequentAnalyticsErr.value == '') {
       hasSubsequentAnalytics.value = true;
-      sidePlot.value = SizedBox(
-          child: Padding(
-        padding: EdgeInsets.only(top: 7.5.h),
-        child: Image.memory(
-          MainPresenter.to.img10Bytes.value,
-          width: 52.5.w,
-          height: 78.h,
-          fit: BoxFit.fill,
-        ),
-      ));
-      tmChartWidth.value = 90.w;
+      var img10Bytes = MainPresenter.to.img10Bytes.value;
+      if (img10Bytes.isEmpty) {
+        sidePlot.value = const SizedBox.shrink();
+        tmChartWidth.value = 135.w;
+      } else {
+        sidePlot.value = SizedBox(
+            child: Padding(
+          padding: EdgeInsets.only(top: 7.5.h),
+          child: Image.memory(
+            img10Bytes,
+            width: 52.5.w,
+            height: 78.h,
+            fit: BoxFit.fill,
+          ),
+        ));
+        tmChartWidth.value = 90.w;
+      }
     } else {
       sidePlot.value = const SizedBox.shrink();
       tmChartWidth.value = 135.w;

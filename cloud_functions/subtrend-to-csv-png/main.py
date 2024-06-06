@@ -117,6 +117,7 @@ def https(request):
     )
     plt.savefig(buffer, format='png') # Save the plot to the buffer as PNG
     plt.clf() # Clear the current figure
+    plt.close() # Close the figure
     image_data1 = base64.b64encode(buffer.getvalue()).decode('utf-8') # Convert the buffer content to base64
     buffer.seek(0) # Reset the buffer position
     
@@ -153,6 +154,7 @@ def https(request):
         plt.ylabel('Silhouette Score')
     plt.savefig(buffer, format='png') # Save the plot to the buffer as PNG
     plt.clf() # Clear the current figure
+    plt.close() # Close the figure
     image_data2 = base64.b64encode(buffer.getvalue()).decode('utf-8') # Convert the buffer content to base64
     buffer.seek(0) # Reset the buffer position
 
@@ -215,6 +217,7 @@ def https(request):
         )
         plt.savefig(buffer, format='png') # Save the plot to the buffer as PNG
         plt.clf() # Clear the current figure
+        plt.close() # Close the figure
         image_data1 = base64.b64encode(buffer.getvalue()).decode('utf-8') # Convert the buffer content to base64
         buffer.seek(0) # Reset the buffer position
 
@@ -253,6 +256,7 @@ def https(request):
         plt.ylabel('Value')
     plt.savefig(buffer, format='png') # Save the plot to the buffer as PNG
     plt.clf() # Clear the current figure
+    plt.close() # Close the figure
     image_data3 = base64.b64encode(buffer.getvalue()).decode('utf-8') # Convert the buffer content to base64
     buffer.seek(0) # Reset the buffer position
 
@@ -277,6 +281,7 @@ def https(request):
         plt.ylabel('Value')
     plt.savefig(buffer, format='png') # Save the plot to the buffer as PNG
     plt.clf() # Clear the current figure
+    plt.close() # Close the figure
     image_data4 = base64.b64encode(buffer.getvalue()).decode('utf-8') # Convert the buffer content to base64
     buffer.seek(0) # Reset the buffer position
 
@@ -297,6 +302,7 @@ def https(request):
         plt.ylabel('Value')
     plt.savefig(buffer, format='png') # Save the plot to the buffer as PNG
     plt.clf() # Clear the current figure
+    plt.close() # Close the figure
     image_data5 = base64.b64encode(buffer.getvalue()).decode('utf-8') # Convert the buffer content to base64
     buffer.seek(0) # Reset the buffer position
 
@@ -431,6 +437,7 @@ def https(request):
     plt.tight_layout()
     plt.savefig(buffer, format='png', bbox_inches='tight') # Save the plot to the buffer as PNG
     plt.clf() # Clear the current figure
+    plt.close() # Close the figure
     image_data6 = base64.b64encode(buffer.getvalue()).decode('utf-8') # Convert the buffer content to base64
     buffer.seek(0) # Reset the buffer position
     #################################################################################################################################################################
@@ -503,6 +510,7 @@ def https(request):
     plt.tight_layout()
     plt.savefig(buffer, format='png', bbox_inches='tight') # Save the plot to the buffer as PNG
     plt.clf() # Clear the current figure
+    plt.close() # Close the figure
     image_data8 = base64.b64encode(buffer.getvalue()).decode('utf-8') # Convert the buffer content to base64
     buffer.seek(0) # Reset the buffer position
     #################################################################################################################################################################
@@ -530,6 +538,7 @@ def https(request):
     plt.legend()
     plt.savefig(buffer, format='png') # Save the plot to the buffer as PNG
     plt.clf() # Clear the current figure
+    plt.close() # Close the figure
     image_data7 = base64.b64encode(buffer.getvalue()).decode('utf-8') # Convert the buffer content to base64
     buffer.seek(0) # Reset the buffer position
     #################################################################################################################################################################
@@ -545,6 +554,7 @@ def https(request):
         plt.ylabel('Count')
     plt.savefig(buffer, format='png') # Save the plot to the buffer as PNG
     plt.clf() # Clear the current figure
+    plt.close() # Close the figure
     image_data9 = base64.b64encode(buffer.getvalue()).decode('utf-8') # Convert the buffer content to base64
     buffer.seek(0) # Reset the buffer position
     #################################################################################################################################################################
@@ -558,6 +568,7 @@ def https(request):
     plt.ylim(round(min_value, 2), round(max_value, 2))  # Replace with your desired min and max values
     plt.savefig(buffer, format='png', transparent=True) # Save the plot to the buffer as PNG
     plt.clf() # Clear the current figure
+    plt.close() # Close the figure
     image_data10 = base64.b64encode(buffer.getvalue()).decode('utf-8') # Convert the buffer content to base64
     buffer.seek(0) # Reset the buffer position
     #################################################################################################################################################################

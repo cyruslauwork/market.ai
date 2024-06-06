@@ -140,7 +140,7 @@ def https(request):
                         doc_ref = update_collection_ref.document(field_name)
                         doc_ref.set({field_name: new_last_time_key})
                         # Delete documents older than 30 days
-                        thirty_days_ago = datetime.fromtimestamp(timestamp) - timedelta(days=30)
+                        thirty_days_ago = datetime.fromtimestamp(last_time_key) - timedelta(days=30)
                         thirty_days_ago_timestamp = thirty_days_ago.timestamp()
                         query = new_month_collection_ref.where('time_key', '<', thirty_days_ago_timestamp)
                         docs_to_delete = query.stream(retry=Retry())
