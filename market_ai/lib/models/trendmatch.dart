@@ -44,9 +44,10 @@ class TrendMatch {
 
     int trueCount = 0;
     int falseCount = 0;
-    int range = MainPresenter.to.range.value;
+    int len = MainPresenter.to.length.value;
+    int subLen = MainPresenter.to.subLength.value;
 
-    if (range <= 1) {
+    if (len <= 1) {
       throw ArgumentError('Selected period must greater than 1 time unit.');
     }
 
@@ -60,7 +61,7 @@ class TrendMatch {
     int tolerance = MainPresenter.to.tolerance.value;
 
     // Loop selected data
-    for (int i = range; i > 1; i--) {
+    for (int i = len; i > 1; i--) {
       double percentage =
           (listCandledata[listCandledata.length - (i - 1)].close! -
                   listCandledata[listCandledata.length - i].close!) /
@@ -72,7 +73,7 @@ class TrendMatch {
               listCandledata[listCandledata.length - i].close!);
     }
 
-    for (int i = range; i > 0; i--) {
+    for (int i = len; i > 0; i--) {
       selectedPeriodActualPricesList
           .add(listCandledata[listCandledata.length - i].close!);
     }
@@ -83,8 +84,8 @@ class TrendMatch {
     MainPresenter.to.selectedPeriodActualPricesList.value =
         selectedPeriodActualPricesList;
 
-    for (int l = 0; l < listCandledata.length - range * 2; l++) {
-      for (int i = 0; i < range - 1; i++) {
+    for (int l = 0; l < listCandledata.length - (len + subLen); l++) {
+      for (int i = 0; i < len - 1; i++) {
         double percentage = (listCandledata[l + (i + 1)].close! -
                 listCandledata[l + i].close!) /
             (listCandledata[l + i].close!);
@@ -92,7 +93,7 @@ class TrendMatch {
         comparePeriodActualDifferencesList.add(
             listCandledata[l + (i + 1)].close! - listCandledata[l + i].close!);
       }
-      for (int i = 0; i < range; i++) {
+      for (int i = 0; i < len; i++) {
         comparePeriodActualPricesList.add(listCandledata[l + i].close!);
       }
       (
@@ -158,7 +159,7 @@ class TrendMatch {
       falseCount,
       executionTime,
       listCandledata.length,
-      range,
+      len,
     ];
 
     MainPresenter.to.sidePlot.value = const SizedBox.shrink();
@@ -398,7 +399,9 @@ class TrendMatch {
         MainPresenter.to.candleListList[
             MainPresenter.to.matchRows[index] + selectedLength.toInt()][4];
 
-    for (double i = 0; i < selectedLength * 2 + 2; i++) {
+    double subLen = MainPresenter.to.subLength.value.toDouble();
+
+    for (double i = 0; i < (selectedLength + subLen) + 1; i++) {
       if (i == selectedLength) {
         flspotList.add(FlSpot(i, lastSelectedClosePrice));
       } else {

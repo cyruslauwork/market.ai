@@ -454,8 +454,8 @@ class MainPresenter extends GetxController {
   bool isWaitingForReplyNotifierAdded = false;
 
   /* Trend match */
-  RxInt range =
-      (PrefsService.to.prefs.getInt(SharedPreferencesConstant.range) ?? 5).obs;
+  RxInt length =
+      (PrefsService.to.prefs.getInt(SharedPreferencesConstant.length) ?? 5).obs;
   RxInt tolerance =
       (PrefsService.to.prefs.getInt(SharedPreferencesConstant.tolerance) ?? 50)
           .obs;
@@ -492,6 +492,9 @@ class MainPresenter extends GetxController {
   Rx<IconData> expandOrShrinkIcon = Icons.vertical_align_center_rounded.obs;
   Rx<Widget> sidePlot = (const SizedBox.shrink()).obs;
   late RxDouble tmChartWidth = 135.w.obs;
+  RxInt subLength =
+      (PrefsService.to.prefs.getInt(SharedPreferencesConstant.subLength) ?? 5)
+          .obs;
 
   /* Subsequent analytics */
   RxInt lastClosePriceAndSubsequentTrendsExeTime = 0.obs;

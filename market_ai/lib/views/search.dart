@@ -26,11 +26,13 @@ class _SearchViewState extends State<SearchView> {
   double _currentTolerance =
       (PrefsService.to.prefs.getInt(SharedPreferencesConstant.tolerance) ?? 100)
           .toDouble();
-  int _currentRange =
-      PrefsService.to.prefs.getInt(SharedPreferencesConstant.range) ?? 5;
+  int _currentLength =
+      PrefsService.to.prefs.getInt(SharedPreferencesConstant.length) ?? 5;
   TextEditingController _textEditingController = TextEditingController();
   bool _autocomplete = true;
   List<SymbolAndName> listSymbolAndName = MainPresenter.to.listSymbolAndName;
+  int _currentSubLength =
+      PrefsService.to.prefs.getInt(SharedPreferencesConstant.subLength) ?? 5;
 
   Widget sizedBox = const SizedBox.shrink();
   final ScrollController _scrollController = ScrollController();
@@ -41,8 +43,9 @@ class _SearchViewState extends State<SearchView> {
   void _resetForm() {
     setState(() {
       _currentTolerance = 100;
-      _currentRange = 5;
+      _currentLength = 5;
       _textEditingController.clear();
+      _currentSubLength = 5;
     });
   }
 
@@ -70,13 +73,18 @@ class _SearchViewState extends State<SearchView> {
         PrefsService.to.prefs.setString(
             SharedPreferencesConstant.financialInstrumentSymbol, newSymbol);
         MainPresenter.to.financialInstrumentSymbol.value = newSymbol;
-        int newRange = _currentRange;
-        PrefsService.to.prefs.setInt(SharedPreferencesConstant.range, newRange);
-        MainPresenter.to.range.value = newRange;
+        int newLength = _currentLength;
+        PrefsService.to.prefs
+            .setInt(SharedPreferencesConstant.length, newLength);
+        MainPresenter.to.length.value = newLength;
         int newTolerance = _currentTolerance.toInt();
         PrefsService.to.prefs
             .setInt(SharedPreferencesConstant.tolerance, newTolerance);
         MainPresenter.to.tolerance.value = newTolerance;
+        int newSubLength = _currentSubLength;
+        PrefsService.to.prefs
+            .setInt(SharedPreferencesConstant.subLength, newSubLength);
+        MainPresenter.to.subLength.value = newSubLength;
         MainPresenter.to.searchCountNotifier.value++;
         MainPresenter.to.back();
       } else {
@@ -93,14 +101,18 @@ class _SearchViewState extends State<SearchView> {
           PrefsService.to.prefs.setString(
               SharedPreferencesConstant.financialInstrumentName, newName);
           MainPresenter.to.financialInstrumentName.value = newName;
-          int newRange = _currentRange;
+          int newLength = _currentLength;
           PrefsService.to.prefs
-              .setInt(SharedPreferencesConstant.range, newRange);
-          MainPresenter.to.range.value = newRange;
+              .setInt(SharedPreferencesConstant.length, newLength);
+          MainPresenter.to.length.value = newLength;
           int newTolerance = _currentTolerance.toInt();
           PrefsService.to.prefs
               .setInt(SharedPreferencesConstant.tolerance, newTolerance);
           MainPresenter.to.tolerance.value = newTolerance;
+          int newSubLength = _currentSubLength;
+          PrefsService.to.prefs
+              .setInt(SharedPreferencesConstant.subLength, newSubLength);
+          MainPresenter.to.subLength.value = newSubLength;
           MainPresenter.to.searchCountNotifier.value++;
           MainPresenter.to.back();
         } else if (textMatchesName.length > 1) {
@@ -236,14 +248,14 @@ class _SearchViewState extends State<SearchView> {
                           overlayShape: SliderComponentShape.noOverlay,
                         ),
                         child: Slider(
-                          value: _currentRange.toDouble(),
+                          value: _currentLength.toDouble(),
                           max: 20,
                           min: 2,
                           divisions: 18,
-                          label: _currentRange.round().toString(),
+                          label: _currentLength.round().toString(),
                           onChanged: (double value) {
                             setState(() {
-                              _currentRange = value.toInt();
+                              _currentLength = value.toInt();
                             });
                           },
                         ),
@@ -265,51 +277,51 @@ class _SearchViewState extends State<SearchView> {
                   ],
                 ),
               ),
-              // Padding(
-              //   padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 4.w),
-              //   child: Column(
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //     children: [
-              //       Text(
-              //         'time_range'.tr,
-              //         style: const TextTheme().sp5.primaryTextColor,
-              //       ),
-              //       Padding(
-              //         padding: EdgeInsets.symmetric(vertical: 6.w),
-              //         child: SliderTheme(
-              //           data: SliderTheme.of(context).copyWith(
-              //             overlayShape: SliderComponentShape.noOverlay,
-              //           ),
-              //           child: Slider(
-              //             value: _currentRange.toDouble(),
-              //             max: 20,
-              //             min: 0,
-              //             divisions: 20,
-              //             label: _currentRange.round().toString(),
-              //             onChanged: (double value) {
-              //               setState(() {
-              //                 _currentRange = value.toInt();
-              //               });
-              //             },
-              //           ),
-              //         ),
-              //       ),
-              //       Row(
-              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //         children: [
-              //           Text(
-              //             '0_timeunits'.tr,
-              //             style: const TextTheme().sp4,
-              //           ),
-              //           Text(
-              //             '20_timeunits'.tr,
-              //             style: const TextTheme().sp4,
-              //           ),
-              //         ],
-              //       ),
-              //     ],
-              //   ),
-              // ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 4.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'subsequent_timeunit'.tr,
+                      style: const TextTheme().sp5.primaryTextColor,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 6.w),
+                      child: SliderTheme(
+                        data: SliderTheme.of(context).copyWith(
+                          overlayShape: SliderComponentShape.noOverlay,
+                        ),
+                        child: Slider(
+                          value: _currentSubLength.toDouble(),
+                          max: 20,
+                          min: 2,
+                          divisions: 18,
+                          label: _currentSubLength.round().toString(),
+                          onChanged: (double value) {
+                            setState(() {
+                              _currentSubLength = value.toInt();
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '2_timeunits'.tr,
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '20_timeunits'.tr,
+                          style: const TextTheme().sp4,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 4.w),
                 child: Row(

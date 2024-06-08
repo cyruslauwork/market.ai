@@ -43,7 +43,7 @@ class TrendMatchView extends StatelessWidget {
                 message:
                     '1) We adjusted last prices to be the same as the last selected price and apply to previous prices. \n2) adjusted first prices to be the same as the last selected price and apply to subsequent prices.',
                 child: Text(
-                  '${'recent'.tr}${MainPresenter.to.range.toString()}${'tm_title1'.tr}${MainPresenter.to.tolerance.toString()}${'tm_title2'.tr}',
+                  '${'recent'.tr}${MainPresenter.to.length.toString()}${'tm_title1'.tr}${MainPresenter.to.tolerance.toString()}${'tm_title2'.tr}',
                   style: const TextTheme().sp5.w700,
                 ),
               ),

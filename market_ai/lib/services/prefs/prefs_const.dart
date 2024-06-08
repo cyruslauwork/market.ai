@@ -10,7 +10,7 @@ class SharedPreferencesConstant {
   static String saveLanguageKey = 'lang';
   static String financialInstrumentSymbol = 'financialInstrumentSymbol';
   static String financialInstrumentName = 'financialInstrumentName';
-  static String range = 'range';
+  static String length = 'length';
   static String tolerance = 'tolerance';
   static String darkMode = 'darkMode';
   static String isEn = 'isEn';
@@ -24,4 +24,5 @@ class SharedPreferencesConstant {
   static String alwaysSkipSymbolInSearch = 'alwaysSkipSymbolInSearch';
   static String alwayStrictMatchCriteria = 'alwayStrictMatchCriteria';
   static String alwaysShowMinuteData = 'alwaysShowMinuteData';
+  static String subLength = 'subLength';
 }
