@@ -6,6 +6,7 @@ from google.api_core.retry import Retry
 from google.cloud import storage
 from datetime import datetime, timedelta
 import requests
+from retry import retry
 
 api_key = 'A parameter cannot be empty.'
 granularity = 'A parameter cannot be empty.'
@@ -17,7 +18,7 @@ db = firestore.Client(project='market-ai-2024')
 storage_client = storage.Client()
 BUCKET_NAME = 'market-ai-2024-minute-data-public_v74-x4b37-v_47'
 AVAILABLE_SYMBOL = ['spy', 'qqq', 'uso', 'gld']
-last_time_key = 0
+last_time_key = 9999999999
 new_documents = [] # Initialize an empty list
 
 @functions_framework.http
@@ -67,6 +68,14 @@ def https(request):
             bucket = storage_client.bucket(BUCKET_NAME)
             bucket.storage_class = 'STANDARD'
             blob = bucket.blob(symbol + '.json')
+
+            @retry(tries=5, delay=2, backoff=2, exceptions=(Exception,))
+            def download_blob_with_retry(blob):
+                return blob.download_as_string(timeout=60).decode('utf-8')
+
+            @retry(tries=5, delay=2, backoff=2, exceptions=(Exception,))
+            def upload_blob_with_retry(blob, json_str):
+                return blob.upload_from_string(json_str, content_type='application/json', timeout=60)
             
             def fetch_update_insert_delete_data(timestamp):
                 global last_time_key, new_documents # Declare that we are using the global last_time_key, new_documents
@@ -76,18 +85,23 @@ def https(request):
                 doc = doc_ref.get()
                 if doc.exists:
                     last_time_key = doc.get(field_name)
+                    print(f'value {last_time_key} in last_time_key document in {symbol}_update collection retrieved')
                     if last_time_key is None:
                         print(f'{field_name} is not set in the document')
-                        return jsonify({'error': f'{field_name} is not set in the document'})
+                        doc = collection_ref.order_by('time_key', direction=firestore.Query.DESCENDING).limit(1).stream(retry=Retry())
+                        doc_ref = update_collection_ref.document(field_name)
+                        last_time_key = doc.get('time_key')
+                        doc_ref.set({field_name: last_time_key})
                 else:
                     print(f'Document does not exist')
-                    docs = collection_ref.order_by('time_key', direction=firestore.Query.DESCENDING).limit(1).stream(retry=Retry())
+                    doc = collection_ref.order_by('time_key', direction=firestore.Query.DESCENDING).limit(1).stream(retry=Retry())
                     doc_ref = update_collection_ref.document(field_name)
-                    doc_ref.set({field_name: docs.get('time_key')})
+                    last_time_key = doc.get('time_key')
+                    doc_ref.set({field_name: last_time_key})
                 headers = {
                     'User-Agent': 'Mozilla/5.0'
                 }
-                url = f'https://query1.finance.yahoo.com/v7/finance/chart/{symbol}?dataGranularity=1m&range=1d'
+                url = f'https://query1.finance.yahoo.com/v7/finance/chart/{symbol}?dataGranularity=1m&range=7d'
                 response = requests.get(url, headers=headers) # Send a GET request to the URL and fetch the JSON response
                 print(f"Fetching JSON response for symbol '{symbol}' from Yahoo Finance")
                 # Check if the request was successful (status code 200)
@@ -123,10 +137,10 @@ def https(request):
                         # Create a new JSON with the desired columns
                         result_json = {
                             'time_key': time,
-                            'open': open,
-                            'high': high,
-                            'low': low,
-                            'close': close,
+                            'open': round(open, 4),
+                            'high': round(high, 4),
+                            'low': round(low, 4),
+                            'close': round(close, 4),
                             'volume': volume
                         }
                         new_documents.append(result_json) # Append the dictionary to the list
@@ -151,7 +165,7 @@ def https(request):
                             server_end_json_data = {'content': new_documents}
                             if bucket.exists():
                                 if blob.exists():
-                                    json_file = blob.download_as_string().decode('utf-8')
+                                    json_file = download_blob_with_retry(blob)
                                     collection = json.loads(json_file)
                                     docs = collection.get('content', [])
                                     if docs is None:
@@ -166,7 +180,7 @@ def https(request):
                                 # Convert the result to JSON format
                                 json_str = json.dumps(server_end_json_data)
                                 try:
-                                    blob.upload_from_string(json_str, content_type='application/json')
+                                    upload_blob_with_retry(blob, json_str)
                                     print('Object uploaded successfully')
                                 except Exception as e:
                                     print(f'Create object timeout {e}')
@@ -189,7 +203,7 @@ def https(request):
                                 # Convert the result to JSON format
                                 json_str = json.dumps(server_end_json_data)
                                 try:
-                                    blob.upload_from_string(json_str, content_type='application/json', timeout=60)
+                                    upload_blob_with_retry(blob, json_str)
                                     print('Blob uploaded successfully')
                                 except:
                                     print('Handling blob timed out')
@@ -220,8 +234,9 @@ def https(request):
                         print(f'Preparing to return JSON')
                         json_data['content'] = docs_list
                         print('Uploading JSON to GCS')
+                        json_str = json.dumps(json_data)
                         try:
-                            blob.upload_from_string(json.dumps(json_data), content_type='application/json', timeout=60)
+                            upload_blob_with_retry(blob, json_str)
                             print('Blob uploaded successfully')
                         except:
                             print({'error': 'Handling blob timed out'})
@@ -245,8 +260,9 @@ def https(request):
                     print(f'Preparing to return JSON')
                     json_data['content'] = docs_list
                     print('Uploading JSON to GCS')
+                    json_str = json.dumps(json_data)
                     try:
-                        blob.upload_from_string(json.dumps(json_data), content_type='application/json', timeout=60)
+                        upload_blob_with_retry(blob, json_str)
                         print('Blob uploaded successfully')
                     except:
                         print({'error': 'Handling blob timed out'})
@@ -255,7 +271,6 @@ def https(request):
                     public_url = blob.public_url
                     print('Returning public URL')
                     return jsonify({'public_url': public_url})
-
             elif timestamp > 0:
                 # print(f'Retrieving all documents in {symbol} collection that have values greater than {timestamp}')
                 # docs = collection_ref.where('time_key', '>', timestamp).order_by('time_key').stream(retry=Retry())

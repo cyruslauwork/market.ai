@@ -143,14 +143,12 @@ def fetch_and_store_one_minute_candlestick_json():
                 error = response.stderr
                 if response.returncode != 0:
                     print_string(error, blob, current_month, gce_monthly_kb_counters, 1)
-                    return
                 else:
                     print_string(f'fetch_and_store_one_minute_candlestick_json executed: {output}', blob, current_month, gce_monthly_kb_counters, 1)
-                    return
             except subprocess.TimeoutExpired:
                 # Handle the case when the command exceeds the timeout
                 print_string('fetch_and_store_one_minute_candlestick_json execution timed out', blob, current_month, gce_monthly_kb_counters, 1)
-                return
+        return
 
 @app.route('/', methods=['POST', 'GET'])
 def forward_request():

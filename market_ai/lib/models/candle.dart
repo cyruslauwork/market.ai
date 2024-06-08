@@ -437,6 +437,12 @@ Date,Open,High,Low,Close,Adj Close,Volume
     int timestamp;
     switch (stockSymbol) {
       case 'SPY':
+        // final docs =
+        //     await isar.spyDatas.where().filter().openEqualTo(463.39).findAll();
+        // for (final doc in docs) {
+        //   print(doc.timeKey);
+        //   print('---');
+        // }
         lastDoc = await isar.spyDatas.where().sortByTimeKeyDesc().findFirst();
         break;
       case 'QQQ':
@@ -505,6 +511,16 @@ Date,Open,High,Low,Close,Adj Close,Volume
                 final dataList =
                     await isar.spyDatas.where().sortByTimeKey().findAll();
                 docList = dataList.map((data) => data.toJson()).toList();
+                // print(docList.first.values);
+                // print(docList.last.values);
+                // for (final doc in docList) {
+                //   if (doc['open'] == 463.39) {
+                //     print('time_key: ${doc['time_key']}');
+                //     print('open: ${doc['open']}');
+                //     print('===');
+                //   }
+                // }
+                // print(docList.length);
                 break;
               case 'QQQ':
                 final dataList =
@@ -593,7 +609,7 @@ Date,Open,High,Low,Close,Adj Close,Volume
         return docList;
       } else {
         MainPresenter.to.marketDataProviderMsg.value =
-            '${response.statusCode} error from';
+            '${response.statusCode} error from server';
         MainPresenter.to.isMarketDataProviderErr.value = true;
         return dummyData;
       }

@@ -23,66 +23,7 @@ class MainPresenter extends GetxController {
 
   static MainPresenter get to => Get.find();
 
-  /* Preference */
-  RxBool darkMode =
-      (PrefsService.to.prefs.getBool(SharedPreferencesConstant.darkMode) ??
-              false)
-          .obs;
-  bool isDarkModeInit = false;
-  RxBool devMode = false.obs;
-  ValueNotifier<bool> devModeNotifier = ValueNotifier<bool>(false);
-  bool isDevModeListenerAdded = false;
-  ValueNotifier<bool> isEnNotifier = ValueNotifier<bool>(
-      (PrefsService.to.prefs.getBool(SharedPreferencesConstant.isEn) ?? true));
-  bool isEnListenerAdded = false;
-  RxBool alwaysShowAnalytics = (PrefsService.to.prefs
-              .getBool(SharedPreferencesConstant.alwaysShowAnalytics) ??
-          false)
-      .obs;
-  RxBool alwaysShowSdDistPlot = (PrefsService.to.prefs
-              .getBool(SharedPreferencesConstant.alwaysShowSdDistPlot) ??
-          false)
-      .obs;
-  RxList<String> watchlist = (PrefsService.to.prefs
-              .getStringList(SharedPreferencesConstant.watchlist) ??
-          [])
-      .obs;
-  late Rx<IconData> bookmarked =
-      (watchlist.contains(financialInstrumentSymbol.value)
-              ? Icons.bookmark_outlined
-              : Icons.bookmark_border_outlined)
-          .obs;
-  RxString apiKey =
-      (PrefsService.to.prefs.getString(SharedPreferencesConstant.apiKey) ?? '')
-          .obs;
-  RxString apiKeyErr =
-      (PrefsService.to.prefs.getString(SharedPreferencesConstant.apiKeyErr) ??
-              '')
-          .obs;
-  RxString jumpServerUrl = (PrefsService.to.prefs
-              .getString(SharedPreferencesConstant.jumpServerUrl) ??
-          '35.212.154.124')
-      .obs;
-  RxBool alwaysShowMinuteData = (PrefsService.to.prefs
-              .getBool(SharedPreferencesConstant.alwaysShowMinuteData) ??
-          false)
-      .obs;
-  late Rx<IconData> dataGranularity =
-      (alwaysShowMinuteData.value ? Icons.timer_outlined : Icons.today).obs;
-
-  /* Candlestick-related */
-  RxString financialInstrumentSymbol = (PrefsService.to.prefs
-              .getString(SharedPreferencesConstant.financialInstrumentSymbol) ??
-          'SPY')
-      .obs;
-  RxString financialInstrumentName = (PrefsService.to.prefs
-              .getString(SharedPreferencesConstant.financialInstrumentName) ??
-          'SPDR S&P 500 ETF Trust')
-      .obs;
-  RxInt candledownloadTime = 0.obs;
-  RxList<List<dynamic>> candleListList = [[]].obs;
-  late Rx<Future<List<CandleData>>> futureListCandledata = init().obs;
-  RxList<CandleData> listCandledata = [
+  List<CandleData> dummyCandle = [
     CandleData(
       timestamp: 1555939800 * 1000,
       open: 51.80,
@@ -403,7 +344,68 @@ class MainPresenter extends GetxController {
       close: 102.20,
       volume: 10000,
     ),
-  ].obs;
+  ];
+
+  /* Preference */
+  RxBool darkMode =
+      (PrefsService.to.prefs.getBool(SharedPreferencesConstant.darkMode) ??
+              false)
+          .obs;
+  bool isDarkModeInit = false;
+  RxBool devMode = false.obs;
+  ValueNotifier<bool> devModeNotifier = ValueNotifier<bool>(false);
+  bool isDevModeListenerAdded = false;
+  ValueNotifier<bool> isEnNotifier = ValueNotifier<bool>(
+      (PrefsService.to.prefs.getBool(SharedPreferencesConstant.isEn) ?? true));
+  bool isEnListenerAdded = false;
+  RxBool alwaysShowAnalytics = (PrefsService.to.prefs
+              .getBool(SharedPreferencesConstant.alwaysShowAnalytics) ??
+          false)
+      .obs;
+  RxBool alwaysShowSdDistPlot = (PrefsService.to.prefs
+              .getBool(SharedPreferencesConstant.alwaysShowSdDistPlot) ??
+          false)
+      .obs;
+  RxList<String> watchlist = (PrefsService.to.prefs
+              .getStringList(SharedPreferencesConstant.watchlist) ??
+          [])
+      .obs;
+  late Rx<IconData> bookmarked =
+      (watchlist.contains(financialInstrumentSymbol.value)
+              ? Icons.bookmark_outlined
+              : Icons.bookmark_border_outlined)
+          .obs;
+  RxString apiKey =
+      (PrefsService.to.prefs.getString(SharedPreferencesConstant.apiKey) ?? '')
+          .obs;
+  RxString apiKeyErr =
+      (PrefsService.to.prefs.getString(SharedPreferencesConstant.apiKeyErr) ??
+              '')
+          .obs;
+  RxString jumpServerUrl = (PrefsService.to.prefs
+              .getString(SharedPreferencesConstant.jumpServerUrl) ??
+          '35.212.154.124')
+      .obs;
+  RxBool alwaysShowMinuteData = (PrefsService.to.prefs
+              .getBool(SharedPreferencesConstant.alwaysShowMinuteData) ??
+          false)
+      .obs;
+  late Rx<IconData> dataGranularity =
+      (alwaysShowMinuteData.value ? Icons.timer_outlined : Icons.today).obs;
+
+  /* Candlestick-related */
+  RxString financialInstrumentSymbol = (PrefsService.to.prefs
+              .getString(SharedPreferencesConstant.financialInstrumentSymbol) ??
+          'SPY')
+      .obs;
+  RxString financialInstrumentName = (PrefsService.to.prefs
+              .getString(SharedPreferencesConstant.financialInstrumentName) ??
+          'SPDR S&P 500 ETF Trust')
+      .obs;
+  RxInt candledownloadTime = 0.obs;
+  RxList<List<dynamic>> candleListList = [[]].obs;
+  late Rx<Future<List<CandleData>>> futureListCandledata = init().obs;
+  late RxList<CandleData> listCandledata = dummyCandle.obs;
   ValueNotifier<bool> showAverageNotifier = ValueNotifier<bool>(true);
   bool isShowAverageListenerAdded = false;
   late RxString marketDataProviderMsg = Rx('mkt_data'.tr)().obs;
@@ -707,7 +709,14 @@ class MainPresenter extends GetxController {
           'No API key to access Firestore with';
       MainPresenter.to.isMarketDataProviderErr.value = true;
     } else {
+      // listCandledata.value = dummyCandle;
       await Candle().init();
+      // for (final data in listCandledata) {
+      //   if (data.open == 463.39) {
+      //     print(data.toString());
+      //     print(data.timestamp.toString());
+      //   }
+      // }
       if (showAverageNotifier.value) {
         Candle().computeTrendLines();
       }

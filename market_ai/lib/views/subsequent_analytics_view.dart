@@ -32,32 +32,48 @@ class SubsequentAnalyticsView extends StatelessWidget {
     return Column(
       children: [
         Obx(
-          () => GestureDetector(
-            onTap: () {
-              showDialog(
-                context: context!,
-                builder: (BuildContext context) {
-                  return Dialog(
-                    child: HeroPhotoViewRouteWrapper(
-                      imageProvider: MemoryImage(
-                        (MainPresenter.to.alwaysShowSdDistPlot.value
-                            ? MainPresenter.to.img8Bytes.value
-                            : MainPresenter.to.img1Bytes.value),
-                      ),
-                      minScale: 0.48,
+          () => (MainPresenter.to.alwaysShowSdDistPlot.value
+              ? GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context!,
+                      builder: (BuildContext context) {
+                        return Dialog(
+                          child: HeroPhotoViewRouteWrapper(
+                            imageProvider: MemoryImage(
+                              MainPresenter.to.img8Bytes.value,
+                            ),
+                            minScale: 0.48,
+                          ),
+                        );
+                      },
+                    );
+                  },
+                  child: Hero(
+                      tag: 'img8',
+                      child: Image.memory(MainPresenter.to.img8Bytes.value)),
+                )
+              : const SizedBox.shrink()),
+        ),
+        GestureDetector(
+          onTap: () {
+            showDialog(
+              context: context!,
+              builder: (BuildContext context) {
+                return Dialog(
+                  child: HeroPhotoViewRouteWrapper(
+                    imageProvider: MemoryImage(
+                      MainPresenter.to.img1Bytes.value,
                     ),
-                  );
-                },
-              );
-            },
-            child: Hero(
-                tag: (MainPresenter.to.alwaysShowSdDistPlot.value
-                    ? 'img8'
-                    : 'img1'),
-                child: Image.memory((MainPresenter.to.alwaysShowSdDistPlot.value
-                    ? MainPresenter.to.img8Bytes.value
-                    : MainPresenter.to.img1Bytes.value))),
-          ),
+                    minScale: 0.48,
+                  ),
+                );
+              },
+            );
+          },
+          child: Hero(
+              tag: 'img1',
+              child: Image.memory(MainPresenter.to.img1Bytes.value)),
         ),
         GestureDetector(
           onTap: () {
@@ -200,34 +216,6 @@ class SubsequentAnalyticsView extends StatelessWidget {
           child: Hero(
               tag: 'img7',
               child: Image.memory(MainPresenter.to.img7Bytes.value)),
-        ),
-        Obx(
-          () => GestureDetector(
-            onTap: () {
-              showDialog(
-                context: context!,
-                builder: (BuildContext context) {
-                  return Dialog(
-                    child: HeroPhotoViewRouteWrapper(
-                      imageProvider: MemoryImage(
-                        (MainPresenter.to.alwaysShowSdDistPlot.value
-                            ? MainPresenter.to.img1Bytes.value
-                            : MainPresenter.to.img8Bytes.value),
-                      ),
-                      minScale: 0.48,
-                    ),
-                  );
-                },
-              );
-            },
-            child: Hero(
-                tag: (MainPresenter.to.alwaysShowSdDistPlot.value
-                    ? 'img1'
-                    : 'img8'),
-                child: Image.memory((MainPresenter.to.alwaysShowSdDistPlot.value
-                    ? MainPresenter.to.img1Bytes.value
-                    : MainPresenter.to.img8Bytes.value))),
-          ),
         ),
         SizedBox(height: 5.h),
       ],

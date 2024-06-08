@@ -1,3 +1,7 @@
+// import 'dart:convert';
+// import 'dart:io';
+// import 'package:path_provider/path_provider.dart';
+
 import 'package:csv/csv.dart';
 import 'package:interactive_chart/interactive_chart.dart';
 
@@ -65,10 +69,32 @@ class CandleAdapter {
               ))
           .toList();
       MainPresenter.to.listCandledata.value = listCandledata;
+      // final jsonList =
+      //     listCandledata.map((candleData) => candleData.toMap()).toList();
+      // final jsonString = json.encode(jsonList);
+
+      // final documentsDirectory = await getApplicationDocumentsDirectory();
+      // final filePath = '${documentsDirectory.path}/marketai_json/spy_ios.json';
+      // final file = File(filePath);
+      // await file.create(recursive: true);
+      // await file.writeAsString(jsonString);
       MainPresenter.to.hasCandleData.value = true;
       return listCandledata;
     } else {
       throw ArgumentError('Failed to convert list to candles.');
     }
+  }
+}
+
+extension MyCandleData on CandleData {
+  Map<String, dynamic> toMap() {
+    return {
+      'timestamp': timestamp,
+      'open': open,
+      'high': high,
+      'low': low,
+      'close': close,
+      'volume': volume,
+    };
   }
 }

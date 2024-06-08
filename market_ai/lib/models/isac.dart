@@ -28,6 +28,7 @@ class IsarService {
       //     await isar.usoDatas.clear();
       //     await isar.gldDatas.clear();
       //   });
+      //   print('clear all Isac data');
       // }
 
       // await clearAllData(_isar!);
