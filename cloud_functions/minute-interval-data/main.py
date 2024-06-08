@@ -18,7 +18,7 @@ db = firestore.Client(project='market-ai-2024')
 storage_client = storage.Client()
 BUCKET_NAME = 'market-ai-2024-minute-data-public_v74-x4b37-v_47'
 AVAILABLE_SYMBOL = ['spy', 'qqq', 'uso', 'gld']
-last_time_key = 9999999999
+last_time_key = None
 new_documents = [] # Initialize an empty list
 BATCH_SIZE = 390  # Firestore batch limit is 390 operations per batch
 
@@ -81,9 +81,9 @@ def https(request):
             def add_documents_in_batches(collection_ref, new_documents):
                 batch = db.batch()
                 count = 0
-                for document in new_documents:
+                for doc in new_documents:
                     doc_ref = collection_ref.document()
-                    batch.set(doc_ref, document)
+                    batch.set(doc_ref, doc)
                     count += 1
                     if count % BATCH_SIZE == 0:
                         batch.commit()
@@ -116,20 +116,24 @@ def https(request):
                     print(f'value {last_time_key} in last_time_key document in {symbol}_update collection retrieved')
                     if last_time_key is None:
                         print(f'{field_name} is not set in the document')
-                        doc = collection_ref.order_by('time_key', direction=firestore.Query.DESCENDING).limit(1).stream(retry=Retry())
+                        docs = collection_ref.order_by('time_key', direction=firestore.Query.DESCENDING).limit(1).stream(retry=Retry())
+                        for doc in docs:
+                            last_time_key = doc.get('time_key')
                         doc_ref = update_collection_ref.document(field_name)
-                        last_time_key = doc.get('time_key')
                         doc_ref.set({field_name: last_time_key})
                 else:
                     print(f'Document does not exist')
-                    doc = collection_ref.order_by('time_key', direction=firestore.Query.DESCENDING).limit(1).stream(retry=Retry())
-                    doc_ref = update_collection_ref.document(field_name)
-                    last_time_key = doc.get('time_key')
+                    docs = collection_ref.order_by('time_key', direction=firestore.Query.DESCENDING).limit(1).stream(retry=Retry())
+                    for doc in docs:
+                        last_time_key = doc.get('time_key')
+                        doc_ref = update_collection_ref.document(field_name)
                     doc_ref.set({field_name: last_time_key})
+                if last_time_key is None:
+                    return
                 headers = {
                     'User-Agent': 'Mozilla/5.0'
                 }
-                url = f'https://query1.finance.yahoo.com/v7/finance/chart/{symbol}?dataGranularity=1m&range=1d'
+                url = f'https://query1.finance.yahoo.com/v7/finance/chart/{symbol}?dataGranularity=1m&range=7d'
                 response = requests.get(url, headers=headers) # Send a GET request to the URL and fetch the JSON response
                 print(f"Fetching JSON response for symbol '{symbol}' from Yahoo Finance")
                 # Check if the request was successful (status code 200)
@@ -174,18 +178,18 @@ def https(request):
                         closes = closes[:-2]
                         volumes = volumes[:-2]
                     print(f'Filtering time_key from new document(s) that have not value greater than last_time_key {last_time_key}')
-                    for time, open, high, low, close, volume in zip(times, opens, highs, lows, closes, volumes):
-                        if time is None or open is None or high is None or low is None or close is None or volume is None:
+                    for time, o, high, low, close, volume in zip(times, opens, highs, lows, closes, volumes):
+                        if time is None or o is None or high is None or low is None or close is None or volume is None:
                             # Handle the case where any of the variables is None
                             continue  # Skip the current iteration and move to the next iteration
-                        if time == 'null' or open == 'null' or high == 'null' or low == 'null' or close == 'null' or volume == 'null':
+                        if time == 'null' or o == 'null' or high == 'null' or low == 'null' or close == 'null' or volume == 'null':
                             continue # Skip the current iteration and move to the next iteration
                         if time <= last_time_key:
                             continue # Skip the current iteration and move to the next iteration
                         # Create a new JSON with the desired columns
                         result_json = {
                             'time_key': time,
-                            'open': round(open, 4),
+                            'open': round(o, 4),
                             'high': round(high, 4),
                             'low': round(low, 4),
                             'close': round(close, 4),
@@ -198,6 +202,7 @@ def https(request):
                         add_documents_in_batches(new_month_collection_ref, new_documents)
                         # Update last_time_key document
                         new_last_time_key = max(doc['time_key'] for doc in new_documents)
+                        print(f'Updating last_time_key document in {symbol}_update collection with value {new_last_time_key}')
                         doc_ref = update_collection_ref.document(field_name)
                         doc_ref.set({field_name: new_last_time_key})
                         # Delete documents older than 30 days
@@ -325,6 +330,9 @@ def https(request):
                 #     json_data['content'] = []
                 #     print(json_data)
                 #     return jsonify(json_data)
+                if last_time_key is None:
+                    print({'error': 'last_time_key cannot be None'})
+                    return jsonify({'error': 'last_time_key cannot be None'})
                 if last_time_key > timestamp:
                     print(f'Retrieving all documents in {symbol}_new_month collection under {symbol}_update collection that have values greater than {timestamp}')
                     docs = new_month_collection_ref.where('time_key', '>', timestamp).order_by('time_key').stream(retry=Retry())
