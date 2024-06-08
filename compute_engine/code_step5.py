@@ -361,7 +361,7 @@ if __name__ == '__main__':
     fetch_and_store_one_minute_candlestick_json()
     fetch_and_store_etfs_listing()
     # Schedule the function to run every specific period
-    schedule.every(12).hours.do(fetch_and_store_one_minute_candlestick_json)
+    schedule.every(8).hours.do(fetch_and_store_one_minute_candlestick_json)
     schedule.every(30).days.do(fetch_and_store_etfs_listing)
     # Run the scheduled tasks in the background
     while True:

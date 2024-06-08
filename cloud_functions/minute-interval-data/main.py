@@ -20,6 +20,7 @@ BUCKET_NAME = 'market-ai-2024-minute-data-public_v74-x4b37-v_47'
 AVAILABLE_SYMBOL = ['spy', 'qqq', 'uso', 'gld']
 last_time_key = 9999999999
 new_documents = [] # Initialize an empty list
+BATCH_SIZE = 390  # Firestore batch limit is 390 operations per batch
 
 @functions_framework.http
 def https(request):
@@ -76,6 +77,33 @@ def https(request):
             @retry(tries=5, delay=2, backoff=2, exceptions=(Exception,))
             def upload_blob_with_retry(blob, json_str):
                 return blob.upload_from_string(json_str, content_type='application/json', timeout=60)
+
+            def add_documents_in_batches(collection_ref, new_documents):
+                batch = db.batch()
+                count = 0
+                for document in new_documents:
+                    doc_ref = collection_ref.document()
+                    batch.set(doc_ref, document)
+                    count += 1
+                    if count % BATCH_SIZE == 0:
+                        batch.commit()
+                        batch = db.batch()
+                if count % BATCH_SIZE != 0:
+                    batch.commit()
+
+            def delete_thirty_days_ago_documents_in_batches(collection_ref, thirty_days_ago_timestamp):
+                query = collection_ref.where('time_key', '<', thirty_days_ago_timestamp)
+                docs_to_delete = query.stream(retry=Retry())
+                batch = db.batch()
+                count = 0
+                for doc in docs_to_delete:
+                    batch.delete(doc.reference)
+                    count += 1
+                    if count % BATCH_SIZE == 0:
+                        batch.commit()
+                        batch = db.batch()
+                if count % BATCH_SIZE != 0:
+                    batch.commit()
             
             def fetch_update_insert_delete_data(timestamp):
                 global last_time_key, new_documents # Declare that we are using the global last_time_key, new_documents
@@ -101,7 +129,7 @@ def https(request):
                 headers = {
                     'User-Agent': 'Mozilla/5.0'
                 }
-                url = f'https://query1.finance.yahoo.com/v7/finance/chart/{symbol}?dataGranularity=1m&range=7d'
+                url = f'https://query1.finance.yahoo.com/v7/finance/chart/{symbol}?dataGranularity=1m&range=1d'
                 response = requests.get(url, headers=headers) # Send a GET request to the URL and fetch the JSON response
                 print(f"Fetching JSON response for symbol '{symbol}' from Yahoo Finance")
                 # Check if the request was successful (status code 200)
@@ -109,12 +137,32 @@ def https(request):
                     # Extract the JSON response
                     response_data = response.json()
                     # Extract the relevant data
-                    times = response_data['chart']['result'][0]['timestamp']
-                    opens = response_data['chart']['result'][0]['indicators']['quote'][0]['open']
-                    highs = response_data['chart']['result'][0]['indicators']['quote'][0]['high']
-                    lows = response_data['chart']['result'][0]['indicators']['quote'][0]['low']
-                    closes = response_data['chart']['result'][0]['indicators']['quote'][0]['close']
-                    volumes = response_data['chart']['result'][0]['indicators']['quote'][0]['volume']
+                    times = response_data['chart']['result'][0].get('timestamp', [])
+                    opens = response_data['chart']['result'][0]['indicators']['quote'][0].get('open', [])
+                    highs = response_data['chart']['result'][0]['indicators']['quote'][0].get('high', [])
+                    lows = response_data['chart']['result'][0]['indicators']['quote'][0].get('low', [])
+                    closes = response_data['chart']['result'][0]['indicators']['quote'][0].get('close', [])
+                    volumes = response_data['chart']['result'][0]['indicators']['quote'][0].get('volume', [])
+                    # Verify that the data
+                    if not times or not opens or not highs or not lows or not closes or not volumes:
+                        print('Error: No data found')
+                        return
+                    elif times == 'null' or opens == 'null' or highs == 'null' or lows == 'null' or closes == 'null' or volumes == 'null':
+                        print('Error: Data cannot be null')
+                        return
+                    elif times is None or opens is None or highs is None or lows is None or closes is None or volumes is None:
+                        print('Error: Data cannot be None')
+                        return
+                    else:
+                        # Additional check if times is a list and its length is at least 3
+                        if not isinstance(times, list):
+                            print("Error: 'times' is not a list")
+                            return
+                        elif len(times) < 3:
+                            print("Error: 'times' list has less than 3 elements")
+                            return
+                        else:
+                            print('All data appears to be valid')
                     # Check if the trading time is entered incorrectly by using special signals in Yahoo Finance API JSON response
                     second_last_close_value = closes[-2]
                     if second_last_close_value is None or second_last_close_value == 'null':
@@ -146,9 +194,8 @@ def https(request):
                         new_documents.append(result_json) # Append the dictionary to the list
                     if len(new_documents) > 0:
                         # Insert new documents into 'collection_ref' and 'new_month_collection_ref' Firestore collections
-                        for document in new_documents:
-                            collection_ref.add(document)
-                            new_month_collection_ref.add(document)
+                        add_documents_in_batches(collection_ref, new_documents)
+                        add_documents_in_batches(new_month_collection_ref, new_documents)
                         # Update last_time_key document
                         new_last_time_key = max(doc['time_key'] for doc in new_documents)
                         doc_ref = update_collection_ref.document(field_name)
@@ -156,10 +203,7 @@ def https(request):
                         # Delete documents older than 30 days
                         thirty_days_ago = datetime.fromtimestamp(last_time_key) - timedelta(days=30)
                         thirty_days_ago_timestamp = thirty_days_ago.timestamp()
-                        query = new_month_collection_ref.where('time_key', '<', thirty_days_ago_timestamp)
-                        docs_to_delete = query.stream(retry=Retry())
-                        for doc in docs_to_delete:
-                            doc.reference.delete()
+                        delete_thirty_days_ago_documents_in_batches(new_month_collection_ref, thirty_days_ago_timestamp)
                         # Create/update Cloud Storage
                         if timestamp == -1:
                             server_end_json_data = {'content': new_documents}
@@ -168,7 +212,7 @@ def https(request):
                                     json_file = download_blob_with_retry(blob)
                                     collection = json.loads(json_file)
                                     docs = collection.get('content', [])
-                                    if docs is None:
+                                    if docs is None or docs == 'null':
                                         docs = []
                                     blob.delete()  # Delete existing blob
                                     print('Object deleted')
