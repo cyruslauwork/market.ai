@@ -697,9 +697,11 @@ class _MainViewState extends State<MainView> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Text(
-                              '🟠MA5 🔴MA20 🟣MA60 🔵MA120 🟢MA240',
-                              style: const TextTheme().sp4.greyColor,
+                            Obx(
+                              () => Text(
+                                MainPresenter.to.legends.value,
+                                style: const TextTheme().sp4.greyColor,
+                              ),
                             ),
                           ],
                         ),

@@ -414,6 +414,10 @@ class MainPresenter extends GetxController {
   RxBool hasMinuteData = false.obs;
   late Rx<String> lastDatetime = 'Loading last datetime...'.obs;
   RxBool hasCandleData = false.obs;
+  late RxString legends = (MainPresenter.to.alwaysShowMinuteData.value
+          ? '🟠EMA5 🔴EMA10 🟢EMA15 🔵EMA20'
+          : '🟠MA5 🔴MA20 🟢MA60 🔵MA120 🟣MA240')
+      .obs;
 
   /* Listings */
   RxInt listingsDownloadTime = 0.obs;
@@ -1118,8 +1122,10 @@ class MainPresenter extends GetxController {
         .setBool(SharedPreferencesConstant.alwaysShowMinuteData, value);
     dataGranularity.value = (value ? Icons.timer_outlined : Icons.today);
     if (value) {
+      legends.value = '🟠EMA5 🔴EMA10 🟢EMA15 🔵EMA20';
       showScaffoldMessenger(context: context, localizedMsg: 'show_one_minute');
     } else {
+      legends.value = '🟠MA5 🔴MA20 🟢MA60 🔵MA120 🟣MA240';
       showScaffoldMessenger(context: context, localizedMsg: 'show_one_day');
     }
     futureListCandledata.value = init();
@@ -1293,7 +1299,7 @@ class MainPresenter extends GetxController {
                 Paint()
                   ..strokeWidth = 1.0
                   ..strokeCap = StrokeCap.round
-                  ..color = Colors.purple[300]!,
+                  ..color = Colors.green,
                 Paint()
                   ..strokeWidth = 1.0
                   ..strokeCap = StrokeCap.round
@@ -1301,7 +1307,7 @@ class MainPresenter extends GetxController {
                 Paint()
                   ..strokeWidth = 1.0
                   ..strokeCap = StrokeCap.round
-                  ..color = Colors.green,
+                  ..color = Colors.purple[300]!,
                 // Paint()
                 //   ..strokeWidth = 1.0
                 //   ..strokeCap = StrokeCap.round

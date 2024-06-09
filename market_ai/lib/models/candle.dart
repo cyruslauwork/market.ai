@@ -644,28 +644,111 @@ Date,Open,High,Low,Close,Adj Close,Volume
   }
 
   computeTrendLines() {
-    final ma5 = CandleData.computeMA(MainPresenter.to.listCandledata, 5);
-    // final ma10 = CandleData.computeMA(MainPresenter.to.listCandledata, 10);
-    final ma20 = CandleData.computeMA(MainPresenter.to.listCandledata, 20);
-    final ma60 = CandleData.computeMA(MainPresenter.to.listCandledata, 60);
-    final ma120 = CandleData.computeMA(MainPresenter.to.listCandledata, 120);
-    final ma240 = CandleData.computeMA(MainPresenter.to.listCandledata, 240);
+    List<CandleData> listCandledata = MainPresenter.to.listCandledata;
 
-    for (int i = 0; i < MainPresenter.to.listCandledata.length; i++) {
-      MainPresenter.to.listCandledata[i].trends = [
-        ma5[i],
-        // ma10[i],
-        ma20[i],
-        ma60[i],
-        ma120[i],
-        ma240[i],
-      ];
+    if (MainPresenter.to.hasMinuteData.value) {
+      final ma5 = computeEMA(listCandledata, 5);
+      final ma10 = computeEMA(listCandledata, 10);
+      final ma15 = computeEMA(listCandledata, 15);
+      final ma20 = computeEMA(listCandledata, 20);
+
+      for (int i = 0; i < listCandledata.length; i++) {
+        listCandledata[i].trends = [
+          ma5[i],
+          ma10[i],
+          ma15[i],
+          ma20[i],
+        ];
+      }
+    } else {
+      final ma5 = computeSMA(listCandledata, 5);
+      final ma20 = computeSMA(listCandledata, 20);
+      final ma60 = computeSMA(listCandledata, 60);
+      final ma120 = computeSMA(listCandledata, 120);
+      final ma240 = computeSMA(listCandledata, 240);
+
+      for (int i = 0; i < listCandledata.length; i++) {
+        listCandledata[i].trends = [
+          ma5[i],
+          ma20[i],
+          ma60[i],
+          ma120[i],
+          ma240[i],
+        ];
+      }
     }
   }
 
   removeTrendLines() {
-    for (final data in MainPresenter.to.listCandledata) {
+    List<CandleData> listCandledata = MainPresenter.to.listCandledata;
+    for (final data in listCandledata) {
       data.trends = [];
     }
+  }
+
+  /// Computes the Exponential Moving Average (EMA) for the given data.
+  static List<double?> computeEMA(List<CandleData> data, [int period = 7]) {
+    // If data is not at least twice as long as the period, return nulls.
+    if (data.length < period * 2) return List.filled(data.length, null);
+
+    final List<double?> result = [];
+    final List<double?> emaValues = [];
+
+    // Calculate the initial SMA for the first [period] data points.
+    final firstPeriod =
+        data.take(period).map((d) => d.close).whereType<double>();
+    double sma = firstPeriod.reduce((a, b) => a + b) / firstPeriod.length;
+
+    // Initialize EMA with the initial SMA value.
+    emaValues.add(sma);
+    result.addAll(List.filled(period - 1, null));
+    result.add(sma);
+
+    // Calculate the multiplier for weighting the EMA.
+    final double multiplier = 2 / (period + 1);
+
+    // Compute the EMA for the rest of the data points.
+    for (int i = period; i < data.length; i++) {
+      final curr = data[i].close;
+      if (curr != null) {
+        sma = (curr - sma) * multiplier + sma;
+        emaValues.add(sma);
+        result.add(sma);
+      } else {
+        emaValues.add(null);
+        result.add(null);
+      }
+    }
+
+    return result;
+  }
+
+  /// Efficient Updating Method not Sliding Window Method
+  /// Computes the Simple Moving Average (SMA) for the given data.
+  static List<double?> computeSMA(List<CandleData> data, [int period = 7]) {
+    // If data length is less than the period, return nulls.
+    if (data.length < period) return List.filled(data.length, null);
+
+    final List<double?> result = [];
+
+    // Calculate the initial SMA for the first [period] data points.
+    final initialPeriod =
+        data.take(period).map((d) => d.close).whereType<double>();
+    double ma = initialPeriod.reduce((a, b) => a + b) / initialPeriod.length;
+    result.addAll(List.filled(period - 1, null));
+    result.add(ma);
+
+    // Compute the moving average for the rest of the data points.
+    for (int i = period; i < data.length; i++) {
+      final curr = data[i].close;
+      final prev = data[i - period].close;
+      if (curr != null && prev != null) {
+        ma = (ma * period + curr - prev) / period;
+        result.add(ma);
+      } else {
+        result.add(null);
+      }
+    }
+    return result;
   }
 }
