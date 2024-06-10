@@ -40,30 +40,12 @@ class SubsequentAnalytics {
     // Selected trend
     for (int i = 0; i < selectedLength; i++) {
       double value =
-          candleListList[candleListListLength - selectedLength.toInt() + i - 1]
-              [4];
+          candleListList[candleListListLength - selectedLength + i][4];
       minValueOfAllTrends = min(minValueOfAllTrends, value);
       maxValueOfAllTrends = max(maxValueOfAllTrends, value);
     }
-    double lastSelectedClosePrice = candleListList[candleListListLength - 1][4];
-    List<int> matchRows = MainPresenter.to.matchRows;
-    // Adjusted trends
-    for (int index in matchRows) {
-      double lastActualDifference =
-          lastSelectedClosePrice / candleListList[index + selectedLength][4];
-      for (int i = 0; i < selectedLength + 1; i++) {
-        double adjustedMatchedTrendClosePrice =
-            candleListList[index + i.toInt()][4] // Close price of matched trend
-                *
-                lastActualDifference;
-        minValueOfAllTrends =
-            min(minValueOfAllTrends, adjustedMatchedTrendClosePrice);
-        maxValueOfAllTrends =
-            max(maxValueOfAllTrends, adjustedMatchedTrendClosePrice);
-      }
-    }
-    // print(minValueOfAllTrends);
-    // print(maxValueOfAllTrends);
+    print(minValueOfAllTrends);
+    print(maxValueOfAllTrends);
 
     DateTime exeEndTime = DateTime.now(); // Record the download end time
     // Calculate the time difference
@@ -131,20 +113,23 @@ class SubsequentAnalytics {
     double selectedLength =
         MainPresenter.to.selectedPeriodPercentDifferencesList.length.toDouble();
 
-    double lastActualDifference = MainPresenter
-            .to.candleListList[MainPresenter.to.candleListList.length - 1][4] /
-        MainPresenter.to.candleListList[
-            MainPresenter.to.matchRows[index] + selectedLength.toInt()][4];
+    List<List<dynamic>> candleListList = MainPresenter.to.candleListList;
+    List<int> matchRows = MainPresenter.to.matchRows;
+
+    double lastActualDifference = candleListList[candleListList.length - 1][4] /
+        candleListList[matchRows[index] + selectedLength.toInt()][4];
 
     lastClosePriceAndSubsequentTrend.add(MainPresenter
         .to.selectedPeriodActualPricesList[selectedLength.toInt()]);
 
-    for (double i = selectedLength + 1; i < selectedLength * 2 + 2; i++) {
-      double adjustedMatchedTrendClosePrice = MainPresenter.to
-                  .candleListList[MainPresenter.to.matchRows[index] + i.toInt()]
-              [4] // Close price of matched trend
-          *
-          lastActualDifference;
+    int length = MainPresenter.to.length.value;
+
+    for (int i = length; i < length * 2; i++) {
+      double adjustedMatchedTrendClosePrice =
+          candleListList[matchRows[index] + i]
+                  [4] // Close price of matched trend
+              *
+              lastActualDifference;
 
       lastClosePriceAndSubsequentTrend.add(adjustedMatchedTrendClosePrice);
     }
