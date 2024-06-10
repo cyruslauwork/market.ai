@@ -104,6 +104,9 @@ class Msg extends Translations {
           'show_one_minute': 'Show 1 minute interval data',
           'show_one_day': 'Show 1 day interval data',
           'subsequent_timeunit': 'Subsequent Trend Timeunit(s)',
+          'always_use_ma_matching':
+              'Always use SMA/EMA trend matching criteria',
+          'ma_mathcing_criteria': 'SMA/EMA trend matching criteria',
         },
         'zh_HK': {
           'app_name': '市場慧眼📈',
@@ -185,6 +188,8 @@ class Msg extends Translations {
           'show_one_minute': '顯示 1 分鐘間隔數據',
           'show_one_day': '顯示日 K 數據',
           'subsequent_timeunit': '後續走勢時間單位',
+          'always_use_ma_matching': '總是使用 SMA/EMA 趨勢匹配條件',
+          'ma_mathcing_criteria': 'SMA/EMA 趨勢匹配條件',
         },
       };
 }

@@ -345,6 +345,27 @@ class _SearchViewState extends State<SearchView> {
               ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 4.w),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'ma_mathcing_criteria'.tr,
+                        style: const TextTheme().sp5.w700,
+                      ),
+                    ),
+                    Obx(
+                      () => Switch(
+                        value: MainPresenter.to.maMatchCriteria.value,
+                        activeColor: Colors.red,
+                        onChanged: (bool value) =>
+                            MainPresenter.to.maMatchCriteria.value = value,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 4.w),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:interactive_chart/interactive_chart.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:market_ai/models/candle.dart';
 
 import 'package:market_ai/presenters/presenters.dart';
 import 'package:market_ai/styles/styles.dart';
@@ -19,6 +20,7 @@ class TrendMatch {
 
   init() {
     List<CandleData> listCandledata = MainPresenter.to.listCandledata;
+    int dataLength = listCandledata.length;
 
     List<double> selectedPeriodPercentageDifferencesList = [];
     List<double> selectedPeriodActualDifferencesList = [];
@@ -60,22 +62,56 @@ class TrendMatch {
 
     int tolerance = MainPresenter.to.tolerance.value;
 
-    // Loop selected data
-    for (int i = len; i > 1; i--) {
-      double percentage =
-          (listCandledata[listCandledata.length - (i - 1)].close! -
-                  listCandledata[listCandledata.length - i].close!) /
-              (listCandledata[listCandledata.length - i].close!);
+    bool hasMa = listCandledata.last.trends.isNotEmpty;
+    bool isMaMatch = MainPresenter.to.maMatchCriteria.value;
+    List<double> selectedPeriodFirstMaAndPricePercentageDifferencesList = [];
+    List<List<double>> selectedPeriodMaPercentageDifferencesListList = [];
+    int maLength = listCandledata.last.trends.length;
 
-      selectedPeriodPercentageDifferencesList.add(percentage);
-      selectedPeriodActualDifferencesList.add(
-          listCandledata[listCandledata.length - (i - 1)].close! -
-              listCandledata[listCandledata.length - i].close!);
+    if (isMaMatch) {
+      if (!hasMa) {
+        Candle().computeTrendLines();
+      }
+      double selectedFirstPrice = listCandledata[dataLength - len].close!;
+      // Loop selected data
+      for (int i = len; i > 1; i--) {
+        double newVal = listCandledata[dataLength - (i - 1)].close!;
+        double oriVal = listCandledata[dataLength - i].close!;
+        double percentage = (newVal - oriVal) / oriVal;
+
+        selectedPeriodPercentageDifferencesList.add(percentage);
+        selectedPeriodActualDifferencesList.add(newVal - oriVal);
+
+        List<double> selectedPeriodMaPercentageDifferencesList = [];
+        for (int l = 0; l < maLength; l++) {
+          double oriVal = listCandledata[dataLength - i].trends[l]!;
+          double maPercentage =
+              (listCandledata[dataLength - (i - 1)].trends[l]! - oriVal) /
+                  oriVal;
+          selectedPeriodMaPercentageDifferencesList.add(maPercentage);
+
+          selectedPeriodFirstMaAndPricePercentageDifferencesList.add(
+              (listCandledata[dataLength - len - 1].trends[l]! -
+                      selectedFirstPrice) /
+                  selectedFirstPrice);
+        }
+        selectedPeriodMaPercentageDifferencesListList
+            .add(selectedPeriodMaPercentageDifferencesList);
+      }
+    } else {
+      // Loop selected data
+      for (int i = len; i > 1; i--) {
+        double newVal = listCandledata[dataLength - (i - 1)].close!;
+        double oriVal = listCandledata[dataLength - i].close!;
+        double percentage = (newVal - oriVal) / oriVal;
+
+        selectedPeriodPercentageDifferencesList.add(percentage);
+        selectedPeriodActualDifferencesList.add(newVal - oriVal);
+      }
     }
 
     for (int i = len; i > 0; i--) {
-      selectedPeriodActualPricesList
-          .add(listCandledata[listCandledata.length - i].close!);
+      selectedPeriodActualPricesList.add(listCandledata[dataLength - i].close!);
     }
     MainPresenter.to.selectedPeriodPercentDifferencesList.value =
         selectedPeriodPercentageDifferencesList;
@@ -84,14 +120,25 @@ class TrendMatch {
     MainPresenter.to.selectedPeriodActualPricesList.value =
         selectedPeriodActualPricesList;
 
-    for (int l = 0; l < listCandledata.length - (len + subLen); l++) {
+    int maxMa() {
+      if (MainPresenter.to.hasMinuteData.value &&
+          MainPresenter.to.alwaysShowMinuteData.value) {
+        return 20;
+      } else {
+        return 240;
+      }
+    }
+
+    for (int l = (isMaMatch ? maxMa() : 0);
+        l < dataLength - (len + subLen);
+        l++) {
       for (int i = 0; i < len - 1; i++) {
-        double percentage = (listCandledata[l + (i + 1)].close! -
-                listCandledata[l + i].close!) /
-            (listCandledata[l + i].close!);
+        double percentage =
+            (listCandledata[l + i + 1].close! - listCandledata[l + i].close!) /
+                (listCandledata[l + i].close!);
         comparePeriodPercentageDifferencesList.add(percentage);
         comparePeriodActualDifferencesList.add(
-            listCandledata[l + (i + 1)].close! - listCandledata[l + i].close!);
+            listCandledata[l + i + 1].close! - listCandledata[l + i].close!);
       }
       for (int i = 0; i < len; i++) {
         comparePeriodActualPricesList.add(listCandledata[l + i].close!);
@@ -105,23 +152,70 @@ class TrendMatch {
           tolerance); // Record data type in Dart is equivalent to Tuple in Java and Python
 
       if (comparisonResult.$1) {
-        trueCount += 1;
+        if (isMaMatch) {
+          List<double> comparePeriodFirstMaAndPricePercentageDifferencesList =
+              [];
+          List<List<double>> comparePeriodMaPercentageDifferencesListList = [];
+          double compareFirstPrice = listCandledata[l].close!;
+          for (int m = 0; m < maLength; m++) {
+            List<double> comparePeriodMaPercentageDifferencesList = [];
+            for (int i = 0; i < maLength; i++) {
+              double oriVal = listCandledata[l + m].trends[i]!;
+              double maPercentage =
+                  (listCandledata[l + m + 1].trends[i]! - oriVal) / oriVal;
+              comparePeriodMaPercentageDifferencesList.add(maPercentage);
 
-        MainPresenter.to.matchRows.add(l);
-        matchPercentDifferencesListList.add(comparisonResult.$2);
-        for (int i = 0; i < comparisonResult.$2.length; i++) {
-          double actual =
-              listCandledata[l + (i + 1)].close! - listCandledata[l + i].close!;
-          matchActualDifferencesList.add(actual);
+              comparePeriodFirstMaAndPricePercentageDifferencesList.add(
+                  (listCandledata[l].trends[i]! - compareFirstPrice) /
+                      compareFirstPrice);
+            }
+            comparePeriodMaPercentageDifferencesListList
+                .add(comparePeriodMaPercentageDifferencesList);
+          }
+
+          bool isMaMatched = maDifferencesLessThanOrEqualToCertainPercent(
+              selectedPeriodFirstMaAndPricePercentageDifferencesList,
+              selectedPeriodMaPercentageDifferencesListList,
+              comparePeriodFirstMaAndPricePercentageDifferencesList,
+              comparePeriodMaPercentageDifferencesListList,
+              tolerance);
+
+          if (isMaMatched) {
+            trueCount += 1;
+            MainPresenter.to.matchRows.add(l);
+            matchPercentDifferencesListList.add(comparisonResult.$2);
+            for (int i = 0; i < comparisonResult.$2.length; i++) {
+              double actual = listCandledata[l + i + 1].close! -
+                  listCandledata[l + i].close!;
+              matchActualDifferencesList.add(actual);
+            }
+            for (int i = 0; i < comparisonResult.$2.length + 1; i++) {
+              matchActualPricesList.add(listCandledata[l + i].close!);
+            }
+            matchActualDifferencesListList.add(matchActualDifferencesList);
+            matchActualPricesListList.add(matchActualPricesList);
+          } else {
+            falseCount += 1;
+          }
+        } else {
+          trueCount += 1;
+          MainPresenter.to.matchRows.add(l);
+          matchPercentDifferencesListList.add(comparisonResult.$2);
+          for (int i = 0; i < comparisonResult.$2.length; i++) {
+            double actual =
+                listCandledata[l + i + 1].close! - listCandledata[l + i].close!;
+            matchActualDifferencesList.add(actual);
+          }
+          for (int i = 0; i < comparisonResult.$2.length + 1; i++) {
+            matchActualPricesList.add(listCandledata[l + i].close!);
+          }
+          matchActualDifferencesListList.add(matchActualDifferencesList);
+          matchActualPricesListList.add(matchActualPricesList);
         }
-        for (int i = 0; i < comparisonResult.$2.length + 1; i++) {
-          matchActualPricesList.add(listCandledata[l + i].close!);
-        }
-        matchActualDifferencesListList.add(matchActualDifferencesList);
-        matchActualPricesListList.add(matchActualPricesList);
       } else {
         falseCount += 1;
       }
+
       comparePeriodPercentageDifferencesListList
           .add(comparePeriodPercentageDifferencesList);
       comparePeriodActualDifferencesListList
@@ -158,7 +252,7 @@ class TrendMatch {
       trueCount,
       falseCount,
       executionTime,
-      listCandledata.length,
+      dataLength,
       len,
     ];
 
@@ -168,10 +262,10 @@ class TrendMatch {
     // logger.d('True${MainPresenter.to.trendMatchOutput[0]}');
     // logger.d('False${MainPresenter.to.trendMatchOutput[1]}');
     // logger.d('executionTime${MainPresenter.to.trendMatchOutput[2]}');
-    // logger.d('listCandledata.length${MainPresenter.to.trendMatchOutput[3]}');
+    // logger.d('dataLength${MainPresenter.to.trendMatchOutput[3]}');
     // logger.d('selectedCount${MainPresenter.to.trendMatchOutput[4]}');
     // logger.d('candleListList${MainPresenter.to.candleListList.length}');
-    // logger.d('listCandledata${MainPresenter.to.listCandledata.length}');
+    // logger.d('listCandledata${MainPresenter.to.dataLength}');
     // logger.d('selectedPeriodPercentDifferencesList${MainPresenter.to.selectedPeriodPercentDifferencesList.length}');
     // logger.d('selectedPeriodActualDifferencesList${MainPresenter.to.selectedPeriodActualDifferencesList.length}');
     // logger.d('selectedPeriodActualPricesList${MainPresenter.to.selectedPeriodActualPricesList.length}');
@@ -254,13 +348,158 @@ class TrendMatch {
           percentageDifference = (difference / selList[i]) * 100;
         }
 
-        if (percentageDifference.abs() > MainPresenter.to.tolerance.value) {
+        if (percentageDifference.abs() > tolerance) {
           return (false, []); // Difference is larger than certain %
         }
       }
     }
 
     return (true, comList); // All differences are less than certain %
+  }
+
+  bool maDifferencesLessThanOrEqualToCertainPercent(
+      List<double> selFirstList,
+      List<List<double>> selList,
+      List<double> comFirstList,
+      List<List<double>> comList,
+      int tolerance) {
+    if (selList[0].length != comList[0].length) {
+      // logger.d('${selList.length} != ${comList.length}');
+      throw ArgumentError('Both lists must have the same length.');
+    }
+
+    int length = selFirstList.length;
+    int maLength = MainPresenter.to.listCandledata.last.trends.length;
+
+    if (MainPresenter.to.strictMatchCriteria.value) {
+      int positiveTolerance = tolerance;
+      int negativeTolerance = -tolerance;
+
+      for (int i = 0; i < length; i++) {
+        double difference = comFirstList[i] - selFirstList[i];
+        double percentageDifference;
+
+        // Handle zero in selList to avoid division by zero
+        if (selFirstList[i] == 0.0) {
+          if (comFirstList[i] != 0.0) {
+            return false; // Any non-zero value compared to zero is a large difference
+          } else {
+            percentageDifference = 0.0; // Both are zero, no difference
+          }
+        } else {
+          percentageDifference = (difference / selFirstList[i]) * 100;
+        }
+
+        if (percentageDifference >= 0) {
+          // Positive percentageDifference
+          if (percentageDifference > positiveTolerance) {
+            return false; // Difference is larger than certain %
+          }
+          if (positiveTolerance == tolerance) {
+            positiveTolerance -= percentageDifference.toInt();
+          } else {
+            positiveTolerance = tolerance;
+          }
+        } else {
+          // Negative percentageDifference
+          if (percentageDifference < negativeTolerance) {
+            return false; // Difference is less than certain -%
+          }
+          if (negativeTolerance == -tolerance) {
+            negativeTolerance -= percentageDifference.toInt();
+          } else {
+            negativeTolerance = -tolerance;
+          }
+        }
+      }
+
+      positiveTolerance = tolerance;
+      negativeTolerance = -tolerance;
+
+      for (int i = 0; i < comList.length; i++) {
+        for (int l = 0; l < maLength; l++) {
+          double difference = comList[i][l] - selList[0][l];
+          double percentageDifference;
+
+          // Handle zero in selList to avoid division by zero
+          if (selList[0][l] == 0.0) {
+            if (comList[i][l] != 0.0) {
+              return false; // Any non-zero value compared to zero is a large difference
+            } else {
+              percentageDifference = 0.0; // Both are zero, no difference
+            }
+          } else {
+            percentageDifference = (difference / selList[0][l]) * 100;
+          }
+
+          if (percentageDifference >= 0) {
+            // Positive percentageDifference
+            if (percentageDifference > positiveTolerance) {
+              return false; // Difference is larger than certain %
+            }
+            if (positiveTolerance == tolerance) {
+              positiveTolerance -= percentageDifference.toInt();
+            } else {
+              positiveTolerance = tolerance;
+            }
+          } else {
+            // Negative percentageDifference
+            if (percentageDifference < negativeTolerance) {
+              return false; // Difference is less than certain -%
+            }
+            if (negativeTolerance == -tolerance) {
+              negativeTolerance -= percentageDifference.toInt();
+            } else {
+              negativeTolerance = -tolerance;
+            }
+          }
+        }
+      }
+    } else {
+      for (int i = 0; i < length; i++) {
+        double difference = comFirstList[i] - selFirstList[i];
+        double percentageDifference;
+
+        // Handle zero in selList to avoid division by zero
+        if (selFirstList[i] == 0.0) {
+          if (comFirstList[i] != 0.0) {
+            return false; // Any non-zero value compared to zero is a large difference
+          } else {
+            percentageDifference = 0.0; // Both are zero, no difference
+          }
+        } else {
+          percentageDifference = (difference / selFirstList[i]) * 100;
+        }
+
+        if (percentageDifference.abs() > tolerance) {
+          return false; // Difference is larger than certain %
+        }
+      }
+
+      for (int i = 0; i < comList.length; i++) {
+        for (int l = 0; l < maLength; l++) {
+          double difference = comList[i][l] - selList[0][l];
+          double percentageDifference;
+
+          // Handle zero in selList to avoid division by zero
+          if (selList[0][l] == 0.0) {
+            if (comList[i][l] != 0.0) {
+              return false; // Any non-zero value compared to zero is a large difference
+            } else {
+              percentageDifference = 0.0; // Both are zero, no difference
+            }
+          } else {
+            percentageDifference = (difference / selList[0][l]) * 100;
+          }
+
+          if (percentageDifference.abs() > tolerance) {
+            return false; // Difference is larger than certain %
+          }
+        }
+      }
+    }
+
+    return true; // All differences are less than certain %
   }
 
   List<FlSpot> getSimplelineBarsData(int index, bool normalized) {

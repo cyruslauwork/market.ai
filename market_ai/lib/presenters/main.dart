@@ -443,6 +443,14 @@ class MainPresenter extends GetxController {
               .getBool(SharedPreferencesConstant.alwayStrictMatchCriteria) ??
           false)
       .obs;
+  RxBool alwaysMaMatchCriteria = (PrefsService.to.prefs
+              .getBool(SharedPreferencesConstant.alwaysMaMatchCriteria) ??
+          false)
+      .obs;
+  RxBool maMatchCriteria = (PrefsService.to.prefs
+              .getBool(SharedPreferencesConstant.alwaysMaMatchCriteria) ??
+          false)
+      .obs;
 
   /* Chat */
   RxList<String> messages = (PrefsService.to.prefs
@@ -1114,6 +1122,13 @@ class MainPresenter extends GetxController {
     PrefsService.to.prefs
         .setBool(SharedPreferencesConstant.alwayStrictMatchCriteria, value);
     strictMatchCriteria.value = value;
+  }
+
+  alwayMaMatchCriteriaToggle(bool value) {
+    alwaysMaMatchCriteria.value = value;
+    PrefsService.to.prefs
+        .setBool(SharedPreferencesConstant.alwaysMaMatchCriteria, value);
+    maMatchCriteria.value = value;
   }
 
   alwaysShowMinuteDataToggle(bool value, BuildContext context) {

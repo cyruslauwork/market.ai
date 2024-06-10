@@ -646,18 +646,19 @@ Date,Open,High,Low,Close,Adj Close,Volume
   computeTrendLines() {
     List<CandleData> listCandledata = MainPresenter.to.listCandledata;
 
-    if (MainPresenter.to.hasMinuteData.value) {
-      final ma5 = computeEMA(listCandledata, 5);
-      final ma10 = computeEMA(listCandledata, 10);
-      final ma15 = computeEMA(listCandledata, 15);
-      final ma20 = computeEMA(listCandledata, 20);
+    if (MainPresenter.to.hasMinuteData.value &&
+        MainPresenter.to.alwaysShowMinuteData.value) {
+      final wma5 = computeEMA(listCandledata, 5);
+      final wma10 = computeEMA(listCandledata, 10);
+      final wma15 = computeEMA(listCandledata, 15);
+      final wma20 = computeEMA(listCandledata, 20);
 
       for (int i = 0; i < listCandledata.length; i++) {
         listCandledata[i].trends = [
-          ma5[i],
-          ma10[i],
-          ma15[i],
-          ma20[i],
+          wma5[i],
+          wma10[i],
+          wma15[i],
+          wma20[i],
         ];
       }
     } else {
@@ -688,8 +689,8 @@ Date,Open,High,Low,Close,Adj Close,Volume
 
   /// Computes the Exponential Moving Average (EMA) for the given data.
   static List<double?> computeEMA(List<CandleData> data, [int period = 7]) {
-    // If data is not at least twice as long as the period, return nulls.
-    if (data.length < period * 2) return List.filled(data.length, null);
+    // If data length is less than the period, return nulls.
+    if (data.length < period) return List.filled(data.length, null);
 
     final List<double?> result = [];
     final List<double?> emaValues = [];
