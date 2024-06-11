@@ -71,7 +71,8 @@ enum Question {
 }
 
 enum Err {
-  apiKey('Invalid API key');
+  apiKey('Invalid API key'),
+  invalidJson('Invalid JSON response');
 
   const Err(this.name);
 

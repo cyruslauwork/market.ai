@@ -107,6 +107,8 @@ class Msg extends Translations {
           'always_use_ma_matching':
               'Always use SMA/EMA trend matching criteria',
           'ma_mathcing_criteria': 'SMA/EMA trend matching criteria',
+          'more_than_500_matches':
+              'There are more than 500 trend matches, only 500 results will be returned',
         },
         'zh_HK': {
           'app_name': '市場慧眼📈',
@@ -190,6 +192,7 @@ class Msg extends Translations {
           'subsequent_timeunit': '後續走勢時間單位',
           'always_use_ma_matching': '總是使用 SMA/EMA 趨勢匹配條件',
           'ma_mathcing_criteria': 'SMA/EMA 趨勢匹配條件',
+          'more_than_500_matches': '匹配趨勢超過 500 條，僅返回 500 條結果',
         },
       };
 }

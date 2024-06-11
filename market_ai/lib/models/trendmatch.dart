@@ -65,7 +65,7 @@ class TrendMatch {
     bool hasMa = listCandledata.last.trends.isNotEmpty;
     bool isMaMatch = MainPresenter.to.maMatchCriteria.value;
     List<double> selectedPeriodFirstMaAndPricePercentDifferencesList = [];
-    List<double> selectedPeriodMaPercentDifferencesList = [];
+    List<List<double>> selectedPeriodMaPercentDifferencesListList = [];
     int maLength = listCandledata.last.trends.length;
 
     if (isMaMatch) {
@@ -83,12 +83,15 @@ class TrendMatch {
         selectedPeriodPercentDifferencesList.add(percentDiff);
         selectedPeriodActualDifferencesList.add(newVal - oriVal);
 
+        List<double> selectedPeriodMaPercentDifferencesList = [];
         for (int l = 0; l < maLength; l++) {
           double newVal = listCandledata[dataLength - (i - 1)].trends[l]!;
           double oriVal = listCandledata[dataLength - i].trends[l]!;
           double maPercentDiff = (newVal - oriVal) / oriVal;
           selectedPeriodMaPercentDifferencesList.add(maPercentDiff);
         }
+        selectedPeriodMaPercentDifferencesListList
+            .add(selectedPeriodMaPercentDifferencesList);
       }
       for (int l = 0; l < maLength; l++) {
         selectedPeriodFirstMaAndPricePercentDifferencesList.add(
@@ -179,9 +182,9 @@ class TrendMatch {
               i++) {
             isMaMatched = maDifferencesLessThanOrEqualToCertainPercent(
                 selectedPeriodFirstMaAndPricePercentDifferencesList,
-                selectedPeriodMaPercentDifferencesList,
+                selectedPeriodMaPercentDifferencesListList,
                 comparePeriodFirstMaAndPricePercentDifferencesList,
-                comparePeriodMaPercentDifferencesListList[i],
+                comparePeriodMaPercentDifferencesListList,
                 tolerance);
             if (!isMaMatched) {
               break; // Exit the loop
@@ -366,9 +369,9 @@ class TrendMatch {
 
   bool maDifferencesLessThanOrEqualToCertainPercent(
       List<double> selFirstList,
-      List<double> selList,
+      List<List<double>> selList,
       List<double> comFirstList,
-      List<double> comList,
+      List<List<double>> comList,
       int tolerance) {
     if (selList.length != comList.length) {
       // logger.d('${selList.length} != ${comList.length}');
@@ -422,41 +425,42 @@ class TrendMatch {
 
       positiveTolerance = tolerance;
       negativeTolerance = -tolerance;
+      for (int i = 0; i < comList.length; i++) {
+        for (int l = 0; l < maLength; l++) {
+          double difference = comList[i][l] - selList[i][l];
+          double percentDiff;
 
-      for (int l = 0; l < maLength; l++) {
-        double difference = comList[l] - selList[l];
-        double percentDiff;
+          // Handle zero in selList to avoid division by zero
+          if (selList[i][l] == 0.0) {
+            if (comList[i][l] != 0.0) {
+              return false; // Any non-zero value compared to zero is a large difference
+            } else {
+              percentDiff = 0.0; // Both are zero, no difference
+            }
+          } else {
+            percentDiff = (difference / selList[i][l]) * 100;
+          }
 
-        // Handle zero in selList to avoid division by zero
-        if (selList[l] == 0.0) {
-          if (comList[l] != 0.0) {
-            return false; // Any non-zero value compared to zero is a large difference
+          if (percentDiff >= 0) {
+            // Positive percentDiff
+            if (percentDiff > positiveTolerance) {
+              return false; // Difference is larger than certain %
+            }
+            if (positiveTolerance == tolerance) {
+              positiveTolerance -= percentDiff.toInt();
+            } else {
+              positiveTolerance = tolerance;
+            }
           } else {
-            percentDiff = 0.0; // Both are zero, no difference
-          }
-        } else {
-          percentDiff = (difference / selList[l]) * 100;
-        }
-
-        if (percentDiff >= 0) {
-          // Positive percentDiff
-          if (percentDiff > positiveTolerance) {
-            return false; // Difference is larger than certain %
-          }
-          if (positiveTolerance == tolerance) {
-            positiveTolerance -= percentDiff.toInt();
-          } else {
-            positiveTolerance = tolerance;
-          }
-        } else {
-          // Negative percentDiff
-          if (percentDiff < negativeTolerance) {
-            return false; // Difference is less than certain -%
-          }
-          if (negativeTolerance == -tolerance) {
-            negativeTolerance -= percentDiff.toInt();
-          } else {
-            negativeTolerance = -tolerance;
+            // Negative percentDiff
+            if (percentDiff < negativeTolerance) {
+              return false; // Difference is less than certain -%
+            }
+            if (negativeTolerance == -tolerance) {
+              negativeTolerance -= percentDiff.toInt();
+            } else {
+              negativeTolerance = -tolerance;
+            }
           }
         }
       }
@@ -481,23 +485,25 @@ class TrendMatch {
         }
       }
 
-      for (int l = 0; l < maLength; l++) {
-        double difference = comList[l] - selList[l];
-        double percentDiff;
+      for (int i = 0; i < comList.length; i++) {
+        for (int l = 0; l < maLength; l++) {
+          double difference = comList[i][l] - selList[i][l];
+          double percentDiff;
 
-        // Handle zero in selList to avoid division by zero
-        if (selList[l] == 0.0) {
-          if (comList[l] != 0.0) {
-            return false; // Any non-zero value compared to zero is a large difference
+          // Handle zero in selList to avoid division by zero
+          if (selList[i][l] == 0.0) {
+            if (comList[i][l] != 0.0) {
+              return false; // Any non-zero value compared to zero is a large difference
+            } else {
+              percentDiff = 0.0; // Both are zero, no difference
+            }
           } else {
-            percentDiff = 0.0; // Both are zero, no difference
+            percentDiff = (difference / selList[i][l]) * 100;
           }
-        } else {
-          percentDiff = (difference / selList[l]) * 100;
-        }
 
-        if (percentDiff.abs() > tolerance) {
-          return false; // Difference is larger than certain %
+          if (percentDiff.abs() > tolerance) {
+            return false; // Difference is larger than certain %
+          }
         }
       }
     }
@@ -633,25 +639,25 @@ class TrendMatch {
     double selectedLength =
         MainPresenter.to.selectedPeriodPercentDifferencesList.length.toDouble();
 
-    double lastSelectedClosePrice = MainPresenter
-        .to.candleListList[MainPresenter.to.candleListList.length - 1][4];
+    List<List<dynamic>> candleListList = MainPresenter.to.candleListList;
+    List<int> matchRows = MainPresenter.to.matchRows;
 
-    double lastActualDifference = MainPresenter
-            .to.candleListList[MainPresenter.to.candleListList.length - 1][4] /
-        MainPresenter.to.candleListList[
-            MainPresenter.to.matchRows[index] + selectedLength.toInt()][4];
+    double lastSelectedClosePrice = candleListList.last[4];
+
+    double lastActualDifference = lastSelectedClosePrice /
+        candleListList[matchRows[index] + selectedLength.toInt()][4];
 
     double subLen = MainPresenter.to.subLength.value.toDouble();
 
-    for (double i = 0; i < (selectedLength + subLen) + 1; i++) {
+    for (double i = 0; i < selectedLength + subLen + 1; i++) {
       if (i == selectedLength) {
         flspotList.add(FlSpot(i, lastSelectedClosePrice));
       } else {
-        double adjustedMatchedTrendClosePrice = MainPresenter.to.candleListList[
-                    MainPresenter.to.matchRows[index] + i.toInt()]
-                [4] // Close price of matched trend
-            *
-            lastActualDifference;
+        double adjustedMatchedTrendClosePrice =
+            candleListList[matchRows[index] + i.toInt()]
+                    [4] // Close price of matched trend
+                *
+                lastActualDifference;
 
         flspotList.add(FlSpot(i, adjustedMatchedTrendClosePrice));
       }
@@ -689,7 +695,7 @@ class TrendMatch {
               isCurved: true,
               barWidth: 1,
               color: ThemeColor.secondary.value))
-          // .take(5) // Add this line to limit the items to the first 5
+          .take(500) // Add this line to limit the items to the first 500
           .toList()
         ..add(
           LineChartBarData(

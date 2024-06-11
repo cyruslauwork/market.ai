@@ -69,7 +69,8 @@ class TrendMatchView extends StatelessWidget {
             )
           ],
         ),
-        AdjustedLineChart()
+        AdjustedLineChart(),
+        MainPresenter.to.showMatchesExceededMsg(),
       ],
     );
   }

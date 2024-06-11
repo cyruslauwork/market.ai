@@ -1355,4 +1355,12 @@ class MainPresenter extends GetxController {
       );
     }
   }
+
+  Widget showMatchesExceededMsg() {
+    if (MainPresenter.to.matchRows.length > 500) {
+      return Text('more_than_500_matches'.tr, style: const TextTheme().sp5);
+    } else {
+      return const SizedBox.shrink();
+    }
+  }
 }

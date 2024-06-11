@@ -32,11 +32,6 @@ buffer = io.BytesIO() # Create the buffer
 
 @functions_framework.http
 def https(request):
-    # request_args = request.args
-    # if request_args and 'sub_trend' in request_args:
-    #     sub_trend = str(request_args['sub_trend'])
-    # else:
-    #     return 'Error: Parameter "sub_trend" cannot be empty.'
     if request.method == 'POST':
         if 'sub_trend' in request.form:
             sub_trend = str(request.form['sub_trend'])
@@ -97,6 +92,22 @@ def https(request):
     sub_trend = sub_trend.strip("'")  # Remove single quotes around the string
     subsequent_trends = ast.literal_eval(sub_trend)
     timeSeries = pd.DataFrame(subsequent_trends)
+
+    # Check for non-finite values
+    if not np.all(np.isfinite(timeSeries)):
+        # Identify non-finite values
+        non_finite_mask = ~np.isfinite(timeSeries)
+        non_finite_values = timeSeries[non_finite_mask]
+        # Print non-finite values
+        print("Non-finite values found in the data:")
+        print(non_finite_values)
+        # Handle non-finite values
+        timeSeries = timeSeries.replace([np.inf, -np.inf], np.nan).dropna()
+
+    # Verify data after handling non-finite values
+    if timeSeries.empty or not np.all(np.isfinite(timeSeries)):
+        print('Data contains non-finite values even after cleanup.')
+        return 'Data contains non-finite values even after cleanup.', 400
     #################################################################################################################################################################
     Z = hac.linkage(timeSeries, method='complete', metric='correlation') # Perform 1st clustering
 

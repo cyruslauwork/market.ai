@@ -19,7 +19,9 @@ class SubsequentAnalytics {
     List<List<double>> lastClosePriceAndSubsequentTrends = [];
 
     DateTime exeStartTime = DateTime.now(); // Record the download start time
-    for (int i = 0; i < MainPresenter.to.matchRows.length; i++) {
+    int matchLen = MainPresenter.to.matchRows.length;
+    for (int i = 0; i < (matchLen > 500 ? 500 : matchLen); i++) {
+      // Takes 500 only to avoid a Cloud Functions crash
       lastClosePriceAndSubsequentTrends
           .add(getMatchedTrendLastClosePriceAndSubsequentTrend(i));
     }
@@ -44,8 +46,31 @@ class SubsequentAnalytics {
       minValueOfAllTrends = min(minValueOfAllTrends, value);
       maxValueOfAllTrends = max(maxValueOfAllTrends, value);
     }
-    print(minValueOfAllTrends);
-    print(maxValueOfAllTrends);
+    double lastSelectedClosePrice = candleListList.last[4];
+    List<int> matchRows = MainPresenter.to.matchRows;
+    double subLen = MainPresenter.to.subLength.value.toDouble();
+    // Adjusted trends
+    for (int index in matchRows) {
+      double lastActualDifference =
+          lastSelectedClosePrice / candleListList[index + selectedLength][4];
+      for (int i = 0; i < selectedLength + subLen + 1; i++) {
+        double adjustedMatchedTrendClosePrice;
+        if (i == selectedLength) {
+          adjustedMatchedTrendClosePrice = lastSelectedClosePrice;
+        } else {
+          adjustedMatchedTrendClosePrice =
+              candleListList[index + i][4] // Close price of matched trend
+                  *
+                  lastActualDifference;
+        }
+        minValueOfAllTrends =
+            min(minValueOfAllTrends, adjustedMatchedTrendClosePrice);
+        maxValueOfAllTrends =
+            max(maxValueOfAllTrends, adjustedMatchedTrendClosePrice);
+      }
+    }
+    // print(minValueOfAllTrends);
+    // print(maxValueOfAllTrends);
 
     DateTime exeEndTime = DateTime.now(); // Record the download end time
     // Calculate the time difference
@@ -81,11 +106,16 @@ class SubsequentAnalytics {
                 .setString(SharedPreferencesConstant.apiKeyErr, '');
           } catch (e) {
             String err = parsedResponse['error'];
-            MainPresenter.to.subsequentAnalyticsErr.value = err;
             if (err == Err.apiKey.name) {
+              MainPresenter.to.subsequentAnalyticsErr.value = err;
               MainPresenter.to.apiKeyErr.value = err;
               PrefsService.to.prefs
                   .setString(SharedPreferencesConstant.apiKeyErr, err);
+            } else if (err == Err.invalidJson.name) {
+              MainPresenter.to.subsequentAnalyticsErr.value =
+                  '$err: The error may be caused by the time range being less than 3.';
+            } else {
+              MainPresenter.to.apiKeyErr.value = err;
             }
           }
         } else {
