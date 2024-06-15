@@ -26,4 +26,5 @@ class SharedPreferencesConstant {
   static String alwaysShowMinuteData = 'alwaysShowMinuteData';
   static String subLength = 'subLength';
   static String alwaysMaMatchCriteria = 'alwaysMaMatchCriteria';
+  static String alwaysUseCrossData = 'alwaysUseCrossData';
 }

@@ -392,6 +392,13 @@ class MainPresenter extends GetxController {
       .obs;
   late Rx<IconData> dataGranularity =
       (alwaysShowMinuteData.value ? Icons.timer_outlined : Icons.today).obs;
+  RxBool alwaysUseCrossData = (PrefsService.to.prefs
+              .getBool(SharedPreferencesConstant.alwaysUseCrossData) ??
+          false)
+      .obs;
+  late Rx<IconData> crossData =
+      (alwaysUseCrossData.value ? Icons.dataset_linked_rounded : Icons.dataset)
+          .obs;
 
   /* Candlestick-related */
   RxString financialInstrumentSymbol = (PrefsService.to.prefs
@@ -404,8 +411,16 @@ class MainPresenter extends GetxController {
       .obs;
   RxInt candledownloadTime = 0.obs;
   RxList<List<dynamic>> candleListList = [[]].obs;
+  RxList<List<dynamic>> spyCandleListList = [[]].obs; // Cross-data
+  RxList<List<dynamic>> qqqCandleListList = [[]].obs; // Cross-data
+  RxList<List<dynamic>> usoCandleListList = [[]].obs; // Cross-data
+  RxList<List<dynamic>> gldCandleListList = [[]].obs; // Cross-data
   late Rx<Future<List<CandleData>>> futureListCandledata = init().obs;
   late RxList<CandleData> listCandledata = dummyCandle.obs;
+  late RxList<CandleData> spyListCandledata = dummyCandle.obs; // Cross-data
+  late RxList<CandleData> qqqListCandledata = dummyCandle.obs; // Cross-data
+  late RxList<CandleData> usoListCandledata = dummyCandle.obs; // Cross-data
+  late RxList<CandleData> gldListCandledata = dummyCandle.obs; // Cross-data
   ValueNotifier<bool> showAverageNotifier = ValueNotifier<bool>(true);
   bool isShowAverageListenerAdded = false;
   late RxString marketDataProviderMsg = Rx('mkt_data'.tr)().obs;
@@ -418,6 +433,7 @@ class MainPresenter extends GetxController {
           ? '🟠EMA5 🔴EMA10 🟢EMA15 🔵EMA20'
           : '🟠MA5 🔴MA20 🟢MA60 🔵MA120 🟣MA240')
       .obs;
+  RxInt schemasLen = 0.obs;
 
   /* Listings */
   RxInt listingsDownloadTime = 0.obs;
@@ -494,6 +510,10 @@ class MainPresenter extends GetxController {
   ].obs;
   RxList<int> trendMatchOutput = [0, 0, 0, 0, 0].obs;
   RxList<int> matchRows = [0].obs;
+  RxList<int> spyMatchRows = [0].obs; // Cross-data
+  RxList<int> qqqMatchRows = [0].obs; // Cross-data
+  RxList<int> usoMatchRows = [0].obs; // Cross-data
+  RxList<int> gldMatchRows = [0].obs; // Cross-data
   RxBool trendMatched = false.obs;
   RxBool showAnalytics = false.obs;
   ValueNotifier<bool> showAnalyticsNotifier = ValueNotifier<bool>(false);
@@ -536,10 +556,10 @@ class MainPresenter extends GetxController {
   @override
   void onInit() {
     // PrefsService.to.prefs
-    //     .setString(SharedPreferencesConstant.financialInstrumentSymbol, 'SPY');
+    //     .setString(SharedPreferencesConstant.financialInstrumentSymbol, 'QQQ');
     // PrefsService.to.prefs.setString(
     //     SharedPreferencesConstant.financialInstrumentName,
-    //     'SPDR S&P 500 ETF Trust');
+    //     'Invesco QQQ Trust, Series 1');
     // PrefsService.to.prefs.setInt(SharedPreferencesConstant.range, 5);
     // PrefsService.to.prefs.setInt(SharedPreferencesConstant.tolerance, 100);
     // PrefsService.to.prefs
@@ -736,7 +756,7 @@ class MainPresenter extends GetxController {
         Candle().computeTrendLines();
       }
       if (listCandledata.isNotEmpty) {
-        TrendMatch().init();
+        await TrendMatch().init();
         if (apiKey.value != '') {
           SubsequentAnalytics().init();
         }
@@ -1146,6 +1166,19 @@ class MainPresenter extends GetxController {
     futureListCandledata.value = init();
   }
 
+  alwaysUseCrossDataToggle(bool value, BuildContext context) {
+    alwaysUseCrossData.value = value;
+    PrefsService.to.prefs
+        .setBool(SharedPreferencesConstant.alwaysUseCrossData, value);
+    crossData.value = (value ? Icons.dataset_linked : Icons.dataset);
+    if (value) {
+      showScaffoldMessenger(context: context, localizedMsg: 'cross_data');
+    } else {
+      showScaffoldMessenger(context: context, localizedMsg: 'cross_data_off');
+    }
+    futureListCandledata.value = init();
+  }
+
   showApiKeyInput() {
     final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -1236,6 +1269,24 @@ class MainPresenter extends GetxController {
         icon: Obx(
           () => Icon(
             MainPresenter.to.dataGranularity.value,
+          ),
+        ),
+        color: ThemeColor.primary.value,
+        iconSize: 10.h,
+      );
+    } else {
+      return const SizedBox.shrink();
+    }
+  }
+
+  Widget showCrossDataToggleBtn({required BuildContext context}) {
+    if (hasMinuteData.value) {
+      return IconButton(
+        onPressed: () =>
+            alwaysUseCrossDataToggle(!alwaysUseCrossData.value, context),
+        icon: Obx(
+          () => Icon(
+            MainPresenter.to.crossData.value,
           ),
         ),
         color: ThemeColor.primary.value,

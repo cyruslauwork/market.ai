@@ -4,7 +4,7 @@ from flask import jsonify
 import json
 from google.api_core.retry import Retry
 from google.cloud import storage
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import requests
 from retry import retry
 
@@ -19,7 +19,6 @@ storage_client = storage.Client()
 BUCKET_NAME = 'market-ai-2024-minute-data-public_v74-x4b37-v_47'
 AVAILABLE_SYMBOL = ['spy', 'qqq', 'uso', 'gld']
 last_time_key = None
-new_documents = [] # Initialize an empty list
 BATCH_SIZE = 390  # Firestore batch limit is 390 operations per batch
 
 @functions_framework.http
@@ -106,30 +105,38 @@ def https(request):
                     batch.commit()
             
             def fetch_update_insert_delete_data(timestamp):
-                global last_time_key, new_documents # Declare that we are using the global last_time_key, new_documents
-                field_name = 'last_time_key'
-                print(f'Retrieving last_time_key document in {symbol}_update collection')
-                doc_ref = update_collection_ref.document(field_name)
-                doc = doc_ref.get()
+                # Get update status to avoid duplication
+                is_updating = 'is_updating'
+                update_queue = 'update_queue'
+                update_status = 0
+                print(f'Retrieving is_updating document in {symbol}_update collection')
+                is_updating_doc_ref = update_collection_ref.document(is_updating)
+                doc = is_updating_doc_ref.get()
                 if doc.exists:
-                    last_time_key = doc.get(field_name)
-                    print(f'value {last_time_key} in last_time_key document in {symbol}_update collection retrieved')
-                    if last_time_key is None:
-                        print(f'{field_name} is not set in the document')
-                        docs = collection_ref.order_by('time_key', direction=firestore.Query.DESCENDING).limit(1).stream(retry=Retry())
-                        for doc in docs:
-                            last_time_key = doc.get('time_key')
-                        doc_ref = update_collection_ref.document(field_name)
-                        doc_ref.set({field_name: last_time_key})
+                    update_status = doc.get(is_updating)
+                    if update_status == 1:
+                        print(f'Another update is already in progress. Please try again later.')
+                        return
+                    is_updating_doc_ref = update_collection_ref.document(is_updating)
+                    is_updating_doc_ref.update({is_updating: 1})
+                    print(f'value {update_status} in is_updating document in {symbol}_update collection retrieved')
+                    if update_status is None:
+                        print(f'{is_updating} is not set in the document')
+                        update_status = 1
                 else:
                     print(f'Document does not exist')
-                    docs = collection_ref.order_by('time_key', direction=firestore.Query.DESCENDING).limit(1).stream(retry=Retry())
-                    for doc in docs:
-                        last_time_key = doc.get('time_key')
-                        doc_ref = update_collection_ref.document(field_name)
-                    doc_ref.set({field_name: last_time_key})
-                if last_time_key is None:
-                    return
+                    update_status = 1
+                    is_updating_doc_ref = update_collection_ref.document(is_updating)
+                    is_updating_doc_ref.set({is_updating: 1})
+                # Add to queue to check for duplicates later
+                update_queue = {}
+                timestamp_now = datetime.now(timezone.utc)
+                update_queue['created_at'] = timestamp_now
+                update_queue_collection_ref = update_collection_ref.document('temp').collection(symbol + '_update_queue')
+                update_queue_collection_ref.add(update_queue)
+                print(f'Added document to {symbol}_update_queue collection with attribute timestamp created_at: {timestamp_now}')
+                # Fetch data from Yahoo Finance API
+                global last_time_key # Declare that we are using the global last_time_key
                 headers = {
                     'User-Agent': 'Mozilla/5.0'
                 }
@@ -138,6 +145,7 @@ def https(request):
                 print(f"Fetching JSON response for symbol '{symbol}' from Yahoo Finance")
                 # Check if the request was successful (status code 200)
                 if response.status_code == 200:
+                    print('Parsing JSON response')
                     # Extract the JSON response
                     response_data = response.json()
                     # Extract the relevant data
@@ -150,20 +158,30 @@ def https(request):
                     # Verify that the data
                     if not times or not opens or not highs or not lows or not closes or not volumes:
                         print('Error: No data found')
+                        doc_ref = update_collection_ref.document(is_updating)
+                        doc_ref.update({is_updating: 0})
                         return
                     elif times == 'null' or opens == 'null' or highs == 'null' or lows == 'null' or closes == 'null' or volumes == 'null':
                         print('Error: Data cannot be null')
+                        doc_ref = update_collection_ref.document(is_updating)
+                        doc_ref.update({is_updating: 0})
                         return
                     elif times is None or opens is None or highs is None or lows is None or closes is None or volumes is None:
                         print('Error: Data cannot be None')
+                        doc_ref = update_collection_ref.document(is_updating)
+                        doc_ref.update({is_updating: 0})
                         return
                     else:
                         # Additional check if times is a list and its length is at least 3
                         if not isinstance(times, list):
                             print("Error: 'times' is not a list")
+                            doc_ref = update_collection_ref.document(is_updating)
+                            doc_ref.update({is_updating: 0})
                             return
                         elif len(times) < 3:
                             print("Error: 'times' list has less than 3 elements")
+                            doc_ref = update_collection_ref.document(is_updating)
+                            doc_ref.update({is_updating: 0})
                             return
                         else:
                             print('All data appears to be valid')
@@ -177,14 +195,43 @@ def https(request):
                         lows = lows[:-2]
                         closes = closes[:-2]
                         volumes = volumes[:-2]
+                        print('Due to trading hours, the last 2 items from each list have been removed')
+                    # Get last_time_key
+                    field_name = 'last_time_key'
+                    print(f'Retrieving last_time_key document in {symbol}_update collection')
+                    last_time_key_doc_ref = update_collection_ref.document(field_name)
+                    doc = last_time_key_doc_ref.get()
+                    if doc.exists:
+                        last_time_key = doc.get(field_name)
+                        print(f'value {last_time_key} in last_time_key document in {symbol}_update collection retrieved')
+                        if last_time_key is None:
+                            print(f'{field_name} is not set in the document')
+                            docs = collection_ref.order_by('time_key', direction=firestore.Query.DESCENDING).limit(1).stream(retry=Retry())
+                            for doc in docs:
+                                last_time_key = doc.get('time_key')
+                            last_time_key_doc_ref = update_collection_ref.document(field_name)
+                            last_time_key_doc_ref.update({field_name: last_time_key})
+                    else:
+                        print(f'Document does not exist')
+                        docs = collection_ref.order_by('time_key', direction=firestore.Query.DESCENDING).limit(1).stream(retry=Retry())
+                        for doc in docs:
+                            last_time_key = doc.get('time_key')
+                            last_time_key_doc_ref = update_collection_ref.document(field_name)
+                        last_time_key_doc_ref.set({field_name: last_time_key})
+                    if last_time_key is None:
+                        last_time_key_doc_ref = update_collection_ref.document(is_updating)
+                        last_time_key_doc_ref.update({is_updating: 0})
+                        return
                     print(f'Filtering time_key from new document(s) that have not value greater than last_time_key {last_time_key}')
+                    last_time_key = int(last_time_key)
+                    new_documents = [] # Initialize an empty list
                     for time, o, high, low, close, volume in zip(times, opens, highs, lows, closes, volumes):
                         if time is None or o is None or high is None or low is None or close is None or volume is None:
                             # Handle the case where any of the variables is None
                             continue  # Skip the current iteration and move to the next iteration
                         if time == 'null' or o == 'null' or high == 'null' or low == 'null' or close == 'null' or volume == 'null':
                             continue # Skip the current iteration and move to the next iteration
-                        if time <= last_time_key:
+                        if int(time) <= last_time_key:
                             continue # Skip the current iteration and move to the next iteration
                         # Create a new JSON with the desired columns
                         result_json = {
@@ -197,18 +244,43 @@ def https(request):
                         }
                         new_documents.append(result_json) # Append the dictionary to the list
                     if len(new_documents) > 0:
-                        # Insert new documents into 'collection_ref' and 'new_month_collection_ref' Firestore collections
-                        add_documents_in_batches(collection_ref, new_documents)
-                        add_documents_in_batches(new_month_collection_ref, new_documents)
+                        # Check if the document is the first in the queue
+                        docs = update_queue_collection_ref.order_by('created_at', direction=firestore.Query.ASCENDING).limit(1).stream(retry=Retry()) # Order by timestamp e.g. Jun 15, 2024, 4:21:53.689 PM
+                        first_doc = next(docs, None)
+                        for doc in docs:
+                            first_doc = doc
+                            break
+                        if first_doc is None:
+                            doc_ref = update_collection_ref.document(is_updating)
+                            doc_ref.update({is_updating: 0})
+                            print('Error: No document in the queue.')
+                            return
+                        first_doc_created_at = first_doc.get('created_at')
+                        if timestamp_now == first_doc_created_at:
+                            print('This is the first document in the queue. Continuing the process...')
+                        else:
+                            print('This is not the first document in the queue. Exiting...')
+                            return
                         # Update last_time_key document
                         new_last_time_key = max(doc['time_key'] for doc in new_documents)
                         print(f'Updating last_time_key document in {symbol}_update collection with value {new_last_time_key}')
                         doc_ref = update_collection_ref.document(field_name)
-                        doc_ref.set({field_name: new_last_time_key})
+                        doc_ref.update({field_name: new_last_time_key})
+                        # Insert new documents into 'collection_ref' and 'new_month_collection_ref' Firestore collections
+                        print(f'Inserting new document(s)')
+                        add_documents_in_batches(collection_ref, new_documents)
+                        add_documents_in_batches(new_month_collection_ref, new_documents)
                         # Delete documents older than 30 days
+                        print(f'Deleting documents older than 30 days from {symbol} collection')
                         thirty_days_ago = datetime.fromtimestamp(last_time_key) - timedelta(days=30)
                         thirty_days_ago_timestamp = thirty_days_ago.timestamp()
                         delete_thirty_days_ago_documents_in_batches(new_month_collection_ref, thirty_days_ago_timestamp)
+                        # Reset queue and update status
+                        docs = update_queue_collection_ref.stream(retry=Retry())
+                        for doc in docs:
+                            doc.reference.delete()
+                        doc_ref = update_collection_ref.document(is_updating)
+                        doc_ref.set({is_updating: 0})
                         # Create/update Cloud Storage
                         if timestamp == -1:
                             server_end_json_data = {'content': new_documents}
@@ -260,8 +332,19 @@ def https(request):
                         else:
                             return
                     else:
+                        docs = update_queue_collection_ref.stream(retry=Retry())
+                        for doc in docs:
+                            doc.reference.delete()
+                        doc_ref = update_collection_ref.document(is_updating)
+                        doc_ref.update({is_updating: 0})
+                        print('No new data to update')
                         return
                 else:
+                    docs = update_queue_collection_ref.stream(retry=Retry())
+                    for doc in docs:
+                        doc.reference.delete()
+                    doc_ref = update_collection_ref.document(is_updating)
+                    doc_ref.update({is_updating: 0})
                     print({'error': f'Error fetching data from Yahoo Finance: {response.status_code} {response.reason}'})
                     return
             fetch_update_insert_delete_data(timestamp)

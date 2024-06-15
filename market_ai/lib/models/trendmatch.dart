@@ -4,11 +4,16 @@ import 'dart:math';
 
 import 'package:interactive_chart/interactive_chart.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:market_ai/models/candle.dart';
+import 'package:isar/isar.dart';
+import 'collections.dart';
 
 import 'package:market_ai/presenters/presenters.dart';
 import 'package:market_ai/styles/styles.dart';
 import 'package:market_ai/utils/screen_utils.dart';
+import 'isac.dart';
+import 'candle_adapter.dart';
+import 'candle.dart';
+import 'package:market_ai/services/flavor_service.dart';
 
 // import 'package:market_ai/utils/utils.dart';
 
@@ -18,9 +23,10 @@ class TrendMatch {
   factory TrendMatch() => _instance;
   TrendMatch._();
 
-  init() {
+  init() async {
     List<CandleData> listCandledata = MainPresenter.to.listCandledata;
     int dataLength = listCandledata.length;
+    int totalDataLength = dataLength;
 
     List<double> selectedPeriodPercentDifferencesList = [];
     List<double> selectedPeriodActualDifferencesList = [];
@@ -56,6 +62,10 @@ class TrendMatch {
     DateTime startTime = DateTime.now(); // Record the start time
 
     MainPresenter.to.matchRows.value = [];
+    MainPresenter.to.spyMatchRows.value = [];
+    MainPresenter.to.qqqMatchRows.value = [];
+    MainPresenter.to.usoMatchRows.value = [];
+    MainPresenter.to.gldMatchRows.value = [];
     MainPresenter.to.matchPercentDifferencesListList.value = [];
     MainPresenter.to.matchActualDifferencesListList.value = [];
     MainPresenter.to.matchActualPricesListList.value = [];
@@ -129,70 +139,175 @@ class TrendMatch {
       }
     }
 
-    for (int l = (isMaMatch ? maxMa() : 0);
-        l < dataLength - (len + subLen);
-        l++) {
-      for (int i = 0; i < len - 1; i++) {
-        double percentDiff =
-            (listCandledata[l + i + 1].close! - listCandledata[l + i].close!) /
-                (listCandledata[l + i].close!);
-        comparePeriodPercentDifferencesList.add(percentDiff);
-        comparePeriodActualDifferencesList.add(
-            listCandledata[l + i + 1].close! - listCandledata[l + i].close!);
+    final isar = await IsarService().getIsarInstance();
+    int thisLen;
+    bool alwaysUseCrossData = MainPresenter.to.alwaysUseCrossData.value;
+    String symbol = MainPresenter.to.financialInstrumentSymbol.value;
+    if (alwaysUseCrossData) {
+      thisLen = MainPresenter.to.schemasLen.value + 1;
+    } else {
+      thisLen = 1;
+    }
+    for (int i = 0; i < thisLen; i++) {
+      String thisTurnSymbol = '';
+      final dynamic dataList;
+      if (i != 0) {
+        if (i == 1 && symbol != 'SPY') {
+          dataList = await isar.spyDatas.where().sortByTimeKey().findAll();
+          thisTurnSymbol = 'SPY';
+        } else if (i == 2 && symbol != 'QQQ') {
+          dataList = await isar.qqqDatas.where().sortByTimeKey().findAll();
+          thisTurnSymbol = 'QQQ';
+        } else if (i == 3 && symbol != 'USO') {
+          dataList = await isar.usoDatas.where().sortByTimeKey().findAll();
+          thisTurnSymbol = 'USO';
+        } else if (i == 4 && symbol != 'GLD') {
+          dataList = await isar.gldDatas.where().sortByTimeKey().findAll();
+          thisTurnSymbol = 'GLD';
+        } else {
+          if (i == 4) {
+            break;
+          }
+          int l = i + 1;
+          if (l == 1 && symbol != 'SPY') {
+            dataList = await isar.spyDatas.where().sortByTimeKey().findAll();
+            thisTurnSymbol = 'SPY';
+          } else if (l == 2 && symbol != 'QQQ') {
+            dataList = await isar.qqqDatas.where().sortByTimeKey().findAll();
+            thisTurnSymbol = 'QQQ';
+          } else if (l == 3 && symbol != 'USO') {
+            dataList = await isar.usoDatas.where().sortByTimeKey().findAll();
+            thisTurnSymbol = 'USO';
+          } else if (l == 4 && symbol != 'GLD') {
+            dataList = await isar.gldDatas.where().sortByTimeKey().findAll();
+            thisTurnSymbol = 'GLD';
+          } else {
+            throw Exception('There is no minute interval data for $i');
+          }
+          i++;
+        }
+        if (dataList.length < 40) {
+          continue;
+        }
+        List<Map<String, dynamic>> docList = List<SpyData>.from(dataList)
+            .map<Map<String, dynamic>>((data) => data.toJson())
+            .toList();
+        listCandledata =
+            await CandleAdapter().crossDataListListTolistCandledata((
+          CandleAdapter().jsonToListList(Future.value(docList)),
+          SrcFileType.json,
+          thisTurnSymbol
+        ));
+        dataLength = listCandledata.length;
+        totalDataLength += dataLength;
       }
-      for (int i = 0; i < len; i++) {
-        comparePeriodActualPricesList.add(listCandledata[l + i].close!);
+
+      void addMatchRow(int rowId) {
+        if (thisTurnSymbol == 'SPY') {
+          MainPresenter.to.spyMatchRows.add(rowId);
+        } else if (thisTurnSymbol == 'QQQ') {
+          MainPresenter.to.spyMatchRows.add(rowId);
+        } else if (thisTurnSymbol == 'USO') {
+          MainPresenter.to.spyMatchRows.add(rowId);
+        } else if (thisTurnSymbol == 'GLD') {
+          MainPresenter.to.spyMatchRows.add(rowId);
+        } else if (thisTurnSymbol == '') {
+          MainPresenter.to.matchRows.add(rowId);
+        } else {
+          throw Exception('There is no matchRows for $thisTurnSymbol');
+        }
       }
-      // print(selectedPeriodPercentDifferencesList.length);
-      // print(comparePeriodPercentDifferencesList.length);
-      (
-        bool,
-        List<double>
-      ) comparisonResult = areDifferencesLessThanOrEqualToCertainPercent(
-          selectedPeriodPercentDifferencesList,
-          comparePeriodPercentDifferencesList,
-          tolerance); // Record data type in Dart is equivalent to Tuple in Java and Python
 
-      if (comparisonResult.$1) {
-        if (isMaMatch) {
-          List<double> comparePeriodFirstMaAndPricePercentDifferencesList = [];
-          List<List<double>> comparePeriodMaPercentDifferencesListList = [];
-          double compareFirstPrice = listCandledata[l].close!;
+      for (int l = (isMaMatch ? maxMa() : 0);
+          l < dataLength - (len + subLen);
+          l++) {
+        for (int i = 0; i < len - 1; i++) {
+          double percentDiff = (listCandledata[l + i + 1].close! -
+                  listCandledata[l + i].close!) /
+              (listCandledata[l + i].close!);
+          comparePeriodPercentDifferencesList.add(percentDiff);
+          comparePeriodActualDifferencesList.add(
+              listCandledata[l + i + 1].close! - listCandledata[l + i].close!);
+        }
+        for (int i = 0; i < len; i++) {
+          comparePeriodActualPricesList.add(listCandledata[l + i].close!);
+        }
+        // print(selectedPeriodPercentDifferencesList.length);
+        // print(comparePeriodPercentDifferencesList.length);
+        (
+          bool,
+          List<double>
+        ) comparisonResult = areDifferencesLessThanOrEqualToCertainPercent(
+            selectedPeriodPercentDifferencesList,
+            comparePeriodPercentDifferencesList,
+            tolerance); // Record data type in Dart is equivalent to Tuple in Java and Python
 
-          for (int m = 0; m < len - 1; m++) {
-            List<double> comparePeriodMaPercentDifferencesList = [];
+        if (comparisonResult.$1) {
+          if (isMaMatch) {
+            List<double> comparePeriodFirstMaAndPricePercentDifferencesList =
+                [];
+            List<List<double>> comparePeriodMaPercentDifferencesListList = [];
+            double compareFirstPrice = listCandledata[l].close!;
+
+            for (int m = 0; m < len - 1; m++) {
+              List<double> comparePeriodMaPercentDifferencesList = [];
+              for (int i = 0; i < maLength; i++) {
+                double newVal = listCandledata[l + m + 1].trends[i]!;
+                double oriVal = listCandledata[l + m].trends[i]!;
+                double maPercentDiff = (newVal - oriVal) / oriVal;
+                comparePeriodMaPercentDifferencesList.add(maPercentDiff);
+              }
+              comparePeriodMaPercentDifferencesListList
+                  .add(comparePeriodMaPercentDifferencesList);
+            }
             for (int i = 0; i < maLength; i++) {
-              double newVal = listCandledata[l + m + 1].trends[i]!;
-              double oriVal = listCandledata[l + m].trends[i]!;
-              double maPercentDiff = (newVal - oriVal) / oriVal;
-              comparePeriodMaPercentDifferencesList.add(maPercentDiff);
+              comparePeriodFirstMaAndPricePercentDifferencesList.add(
+                  (listCandledata[l].trends[i]! - compareFirstPrice) /
+                      compareFirstPrice);
             }
-            comparePeriodMaPercentDifferencesListList
-                .add(comparePeriodMaPercentDifferencesList);
-          }
-          for (int i = 0; i < maLength; i++) {
-            comparePeriodFirstMaAndPricePercentDifferencesList.add(
-                (listCandledata[l].trends[i]! - compareFirstPrice) /
-                    compareFirstPrice);
-          }
 
-          bool isMaMatched = false;
-          for (int i = 0;
-              i < comparePeriodMaPercentDifferencesListList.length;
-              i++) {
-            isMaMatched = maDifferencesLessThanOrEqualToCertainPercent(
-                selectedPeriodFirstMaAndPricePercentDifferencesList,
-                selectedPeriodMaPercentDifferencesListList,
-                comparePeriodFirstMaAndPricePercentDifferencesList,
-                comparePeriodMaPercentDifferencesListList,
-                tolerance);
-            if (!isMaMatched) {
-              break; // Exit the loop
+            bool isMaMatched = false;
+            for (int i = 0;
+                i < comparePeriodMaPercentDifferencesListList.length;
+                i++) {
+              isMaMatched = maDifferencesLessThanOrEqualToCertainPercent(
+                  selectedPeriodFirstMaAndPricePercentDifferencesList,
+                  selectedPeriodMaPercentDifferencesListList,
+                  comparePeriodFirstMaAndPricePercentDifferencesList,
+                  comparePeriodMaPercentDifferencesListList,
+                  tolerance);
+              if (!isMaMatched) {
+                break; // Exit the loop
+              }
             }
-          }
-          if (isMaMatched) {
+            if (isMaMatched) {
+              trueCount += 1;
+              if (alwaysUseCrossData) {
+                addMatchRow(l);
+              } else {
+                MainPresenter.to.matchRows.add(l);
+              }
+              matchPercentDifferencesListList.add(comparisonResult.$2);
+              for (int i = 0; i < comparisonResult.$2.length; i++) {
+                double actual = listCandledata[l + i + 1].close! -
+                    listCandledata[l + i].close!;
+                matchActualDifferencesList.add(actual);
+              }
+              for (int i = 0; i < comparisonResult.$2.length + 1; i++) {
+                matchActualPricesList.add(listCandledata[l + i].close!);
+              }
+              matchActualDifferencesListList.add(matchActualDifferencesList);
+              matchActualPricesListList.add(matchActualPricesList);
+            } else {
+              falseCount += 1;
+            }
+          } else {
             trueCount += 1;
-            MainPresenter.to.matchRows.add(l);
+            if (alwaysUseCrossData) {
+              addMatchRow(l);
+            } else {
+              MainPresenter.to.matchRows.add(l);
+            }
             matchPercentDifferencesListList.add(comparisonResult.$2);
             for (int i = 0; i < comparisonResult.$2.length; i++) {
               double actual = listCandledata[l + i + 1].close! -
@@ -204,39 +319,23 @@ class TrendMatch {
             }
             matchActualDifferencesListList.add(matchActualDifferencesList);
             matchActualPricesListList.add(matchActualPricesList);
-          } else {
-            falseCount += 1;
           }
         } else {
-          trueCount += 1;
-          MainPresenter.to.matchRows.add(l);
-          matchPercentDifferencesListList.add(comparisonResult.$2);
-          for (int i = 0; i < comparisonResult.$2.length; i++) {
-            double actual =
-                listCandledata[l + i + 1].close! - listCandledata[l + i].close!;
-            matchActualDifferencesList.add(actual);
-          }
-          for (int i = 0; i < comparisonResult.$2.length + 1; i++) {
-            matchActualPricesList.add(listCandledata[l + i].close!);
-          }
-          matchActualDifferencesListList.add(matchActualDifferencesList);
-          matchActualPricesListList.add(matchActualPricesList);
+          falseCount += 1;
         }
-      } else {
-        falseCount += 1;
+
+        comparePeriodPercentDifferencesListList
+            .add(comparePeriodPercentDifferencesList);
+        comparePeriodActualDifferencesListList
+            .add(comparePeriodActualDifferencesList);
+        comparePeriodActualPricesListList.add(comparePeriodActualPricesList);
+        comparePeriodPercentDifferencesList = [];
+        comparePeriodActualDifferencesList = [];
+        comparePeriodActualPricesList = [];
+
+        matchActualDifferencesList = [];
+        matchActualPricesList = [];
       }
-
-      comparePeriodPercentDifferencesListList
-          .add(comparePeriodPercentDifferencesList);
-      comparePeriodActualDifferencesListList
-          .add(comparePeriodActualDifferencesList);
-      comparePeriodActualPricesListList.add(comparePeriodActualPricesList);
-      comparePeriodPercentDifferencesList = [];
-      comparePeriodActualDifferencesList = [];
-      comparePeriodActualPricesList = [];
-
-      matchActualDifferencesList = [];
-      matchActualPricesList = [];
     }
 
     MainPresenter.to.comparePeriodPercentDifferencesListList.value =
@@ -262,31 +361,12 @@ class TrendMatch {
       trueCount,
       falseCount,
       executionTime,
-      dataLength,
+      totalDataLength,
       len,
     ];
 
     MainPresenter.to.sidePlot.value = const SizedBox.shrink();
     MainPresenter.to.trendMatched.value = true;
-
-    // logger.d('True${MainPresenter.to.trendMatchOutput[0]}');
-    // logger.d('False${MainPresenter.to.trendMatchOutput[1]}');
-    // logger.d('executionTime${MainPresenter.to.trendMatchOutput[2]}');
-    // logger.d('dataLength${MainPresenter.to.trendMatchOutput[3]}');
-    // logger.d('selectedCount${MainPresenter.to.trendMatchOutput[4]}');
-    // logger.d('candleListList${MainPresenter.to.candleListList.length}');
-    // logger.d('listCandledata${MainPresenter.to.dataLength}');
-    // logger.d('selectedPeriodPercentDifferencesList${MainPresenter.to.selectedPeriodPercentDifferencesList.length}');
-    // logger.d('selectedPeriodActualDifferencesList${MainPresenter.to.selectedPeriodActualDifferencesList.length}');
-    // logger.d('selectedPeriodActualPricesList${MainPresenter.to.selectedPeriodActualPricesList.length}');
-    // logger.d('comparePeriodPercentDifferencesListList${MainPresenter.to.comparePeriodPercentDifferencesListList.length}');
-    // logger.d('comparePeriodActualDifferencesListList${MainPresenter.to.comparePeriodActualDifferencesListList.length}');
-    // logger.d('comparePeriodActualPricesListList${MainPresenter.to.comparePeriodActualPricesListList.length}');
-    // logger.d('matchPercentDifferencesListList${MainPresenter.to.matchPercentDifferencesListList.length}');
-    // logger.d('matchActualDifferencesListList${MainPresenter.to.matchActualDifferencesListList.length}');
-    // logger.d('matchActualPricesListList${MainPresenter.to.matchActualPricesListList.length}');
-    // logger.d('matchRows${MainPresenter.to.matchRows.length}');
-    // logger.d('lastCandleDataLength${MainPresenter.to.lastCandleDataLength}');
   }
 
   (bool, List<double>) areDifferencesLessThanOrEqualToCertainPercent(
@@ -516,54 +596,173 @@ class TrendMatch {
 
     // Whether to normalize
     if (normalized) {
-      List<double> closePrices = [];
+      if (MainPresenter.to.alwaysUseCrossData.value) {
+        List<String> minuteDataList =
+            List<String>.from(MainPresenter.to.minuteDataList) + ['NULL'];
+        for (String symbol in minuteDataList) {
+          List<int> matchRows;
+          List<List<dynamic>> candleListList;
+          if (symbol == 'SPY') {
+            matchRows = MainPresenter.to.spyMatchRows;
+            candleListList = MainPresenter.to.spyCandleListList;
+          } else if (symbol == 'QQQ') {
+            matchRows = MainPresenter.to.qqqMatchRows;
+            candleListList = MainPresenter.to.qqqCandleListList;
+          } else if (symbol == 'USO') {
+            matchRows = MainPresenter.to.usoMatchRows;
+            candleListList = MainPresenter.to.usoCandleListList;
+          } else if (symbol == 'GLD') {
+            matchRows = MainPresenter.to.gldMatchRows;
+            candleListList = MainPresenter.to.gldCandleListList;
+          } else {
+            matchRows = MainPresenter.to.matchRows;
+            candleListList = MainPresenter.to.candleListList;
+          }
+          if (matchRows.isEmpty) {
+            continue;
+          }
 
-      for (int l = 0; l < MainPresenter.to.matchRows.length; l++) {
-        for (int i = 0;
-            i < MainPresenter.to.selectedPeriodPercentDifferencesList.length;
-            i++) {
-          closePrices.add(MainPresenter.to.candleListList[// The CSV/JSON data
-              MainPresenter.to.matchRows[l] +
-                  i // Loop all closing prices in the matched trend
-              ][4]); // The 4th row of the list is the closing price
-        }
-      }
+          List<double> closePrices = [];
 
-      final lower = closePrices.reduce(min);
-      final upper = closePrices.reduce(max);
+          for (int l = 0; l < matchRows.length; l++) {
+            for (int i = 0;
+                i <
+                    MainPresenter
+                        .to.selectedPeriodPercentDifferencesList.length;
+                i++) {
+              closePrices.add(candleListList[
+                  // The CSV/JSON data
+                  matchRows[l] +
+                      i // Loop all closing prices in the matched trend
+                  ][4]); // The 4th row of the list is the closing price
+            }
+          }
 
-      for (double i = 0;
-          i < MainPresenter.to.selectedPeriodPercentDifferencesList.length + 1;
-          i++) {
-        double closePrice = MainPresenter.to.candleListList[// The CSV/JSON data
-                MainPresenter.to.matchRows[
-                        index] // Get the matched trend row from this index
-                    +
-                    i.toInt()] // Loop all closing prices in the matched trend
-            [4]; // The 4th row of the list is the closing price
-        if (closePrice < 0) {
-          closePrice = -(closePrice / lower);
-        } else {
-          closePrice = closePrice / upper;
-        }
+          final lower = closePrices.reduce(min);
+          final upper = closePrices.reduce(max);
 
-        flsportList.add(FlSpot(
-            i, // Equal to selectedPeriodCount, starting from 0
-            closePrice));
-      }
-    } else {
-      for (double i = 0;
-          i < MainPresenter.to.selectedPeriodPercentDifferencesList.length + 1;
-          i++) {
-        flsportList.add(FlSpot(
-            i, // Equal to selectedPeriodCount, starting from 0
-            MainPresenter.to.candleListList[// The CSV/JSON data
-                    MainPresenter.to.matchRows[
+          for (double i = 0;
+              i <
+                  MainPresenter.to.selectedPeriodPercentDifferencesList.length +
+                      1;
+              i++) {
+            double closePrice = candleListList[
+                    // The CSV/JSON data
+                    matchRows[
                             index] // Get the matched trend row from this index
                         +
                         i.toInt()] // Loop all closing prices in the matched trend
-                [4] // The 4th row of the list is the closing price
-            ));
+                [4]; // The 4th row of the list is the closing price
+            if (closePrice < 0) {
+              closePrice = -(closePrice / lower);
+            } else {
+              closePrice = closePrice / upper;
+            }
+
+            flsportList.add(FlSpot(
+                i, // Equal to selectedPeriodCount, starting from 0
+                closePrice));
+          }
+        }
+      } else {
+        List<double> closePrices = [];
+
+        for (int l = 0; l < MainPresenter.to.matchRows.length; l++) {
+          for (int i = 0;
+              i < MainPresenter.to.selectedPeriodPercentDifferencesList.length;
+              i++) {
+            closePrices.add(MainPresenter.to.candleListList[// The CSV/JSON data
+                MainPresenter.to.matchRows[l] +
+                    i // Loop all closing prices in the matched trend
+                ][4]); // The 4th row of the list is the closing price
+          }
+        }
+
+        final lower = closePrices.reduce(min);
+        final upper = closePrices.reduce(max);
+
+        for (double i = 0;
+            i <
+                MainPresenter.to.selectedPeriodPercentDifferencesList.length +
+                    1;
+            i++) {
+          double closePrice = MainPresenter.to.candleListList[
+                  // The CSV/JSON data
+                  MainPresenter.to.matchRows[
+                          index] // Get the matched trend row from this index
+                      +
+                      i.toInt()] // Loop all closing prices in the matched trend
+              [4]; // The 4th row of the list is the closing price
+          if (closePrice < 0) {
+            closePrice = -(closePrice / lower);
+          } else {
+            closePrice = closePrice / upper;
+          }
+
+          flsportList.add(FlSpot(
+              i, // Equal to selectedPeriodCount, starting from 0
+              closePrice));
+        }
+      }
+    } else {
+      if (MainPresenter.to.alwaysUseCrossData.value) {
+        List<String> minuteDataList =
+            List<String>.from(MainPresenter.to.minuteDataList) + ['NULL'];
+        for (String symbol in minuteDataList) {
+          List<int> matchRows;
+          List<List<dynamic>> candleListList;
+          if (symbol == 'SPY') {
+            matchRows = MainPresenter.to.spyMatchRows;
+            candleListList = MainPresenter.to.spyCandleListList;
+          } else if (symbol == 'QQQ') {
+            matchRows = MainPresenter.to.qqqMatchRows;
+            candleListList = MainPresenter.to.qqqCandleListList;
+          } else if (symbol == 'USO') {
+            matchRows = MainPresenter.to.usoMatchRows;
+            candleListList = MainPresenter.to.usoCandleListList;
+          } else if (symbol == 'GLD') {
+            matchRows = MainPresenter.to.gldMatchRows;
+            candleListList = MainPresenter.to.gldCandleListList;
+          } else {
+            matchRows = MainPresenter.to.matchRows;
+            candleListList = MainPresenter.to.candleListList;
+          }
+          if (matchRows.isEmpty) {
+            continue;
+          }
+
+          for (double i = 0;
+              i <
+                  MainPresenter.to.selectedPeriodPercentDifferencesList.length +
+                      1;
+              i++) {
+            flsportList.add(FlSpot(
+                i, // Equal to selectedPeriodCount, starting from 0
+                candleListList[// The CSV/JSON data
+                        matchRows[
+                                index] // Get the matched trend row from this index
+                            +
+                            i.toInt()] // Loop all closing prices in the matched trend
+                    [4] // The 4th row of the list is the closing price
+                ));
+          }
+        }
+      } else {
+        for (double i = 0;
+            i <
+                MainPresenter.to.selectedPeriodPercentDifferencesList.length +
+                    1;
+            i++) {
+          flsportList.add(FlSpot(
+              i, // Equal to selectedPeriodCount, starting from 0
+              MainPresenter.to.candleListList[// The CSV/JSON data
+                      MainPresenter.to.matchRows[
+                              index] // Get the matched trend row from this index
+                          +
+                          i.toInt()] // Loop all closing prices in the matched trend
+                  [4] // The 4th row of the list is the closing price
+              ));
+        }
       }
     }
 
@@ -571,16 +770,54 @@ class TrendMatch {
   }
 
   LineChartData getDefaultSimpleLineChartData(bool normalized) {
-    return LineChartData(
-      borderData: FlBorderData(show: false),
-      lineBarsData: MainPresenter.to.matchRows
+    List<LineChartBarData> lineBarsData = [];
+    if (MainPresenter.to.alwaysUseCrossData.value) {
+      List<String> minuteDataList =
+          List<String>.from(MainPresenter.to.minuteDataList) + ['NULL'];
+      for (String symbol in minuteDataList) {
+        List<int> matchRows;
+        if (symbol == 'SPY') {
+          matchRows = MainPresenter.to.spyMatchRows;
+        } else if (symbol == 'QQQ') {
+          matchRows = MainPresenter.to.qqqMatchRows;
+        } else if (symbol == 'USO') {
+          matchRows = MainPresenter.to.usoMatchRows;
+        } else if (symbol == 'GLD') {
+          matchRows = MainPresenter.to.gldMatchRows;
+        } else {
+          matchRows = MainPresenter.to.matchRows;
+        }
+        if (matchRows.isEmpty) {
+          continue;
+        }
+        if (lineBarsData.length >= 500) {
+          break;
+        }
+        List<LineChartBarData> newLineBarsData = matchRows
+            .mapIndexed((index, row) => LineChartBarData(
+                spots: getSimplelineBarsData(index, normalized),
+                isCurved: true,
+                barWidth: 1,
+                color: AppColor.greyColor))
+            .take(500 -
+                lineBarsData
+                    .length) // Add this line to limit the items to the first 500
+            .toList();
+        lineBarsData.addAll(newLineBarsData);
+      }
+    } else {
+      lineBarsData = MainPresenter.to.matchRows
           .mapIndexed((index, row) => LineChartBarData(
               spots: getSimplelineBarsData(index, normalized),
               isCurved: true,
               barWidth: 1,
               color: AppColor.greyColor))
-          // .take(5) // Add this line to limit the items to the first 5
-          .toList(),
+          .take(500) // Add this line to limit the items to the first 500
+          .toList();
+    }
+    return LineChartData(
+      borderData: FlBorderData(show: false),
+      lineBarsData: lineBarsData,
       // [
       //   // The red line
       //   LineChartBarData(
@@ -636,30 +873,57 @@ class TrendMatch {
 
   List<FlSpot> getAdjustedlineBarsData(int index) {
     List<FlSpot> flspotList = [];
-    double selectedLength =
-        MainPresenter.to.selectedPeriodPercentDifferencesList.length.toDouble();
 
-    List<List<dynamic>> candleListList = MainPresenter.to.candleListList;
-    List<int> matchRows = MainPresenter.to.matchRows;
+    if (MainPresenter.to.alwaysUseCrossData.value) {
+      List<String> minuteDataList =
+          List<String>.from(MainPresenter.to.minuteDataList) + ['NULL'];
+      for (String symbol in minuteDataList) {
+        List<int> matchRows;
+        List<List<dynamic>> candleListList;
+        if (symbol == 'SPY') {
+          matchRows = MainPresenter.to.spyMatchRows;
+          candleListList = MainPresenter.to.spyCandleListList;
+        } else if (symbol == 'QQQ') {
+          matchRows = MainPresenter.to.qqqMatchRows;
+          candleListList = MainPresenter.to.qqqCandleListList;
+        } else if (symbol == 'USO') {
+          matchRows = MainPresenter.to.usoMatchRows;
+          candleListList = MainPresenter.to.usoCandleListList;
+        } else if (symbol == 'GLD') {
+          matchRows = MainPresenter.to.gldMatchRows;
+          candleListList = MainPresenter.to.gldCandleListList;
+        } else {
+          matchRows = MainPresenter.to.matchRows;
+          candleListList = MainPresenter.to.candleListList;
+        }
+        if (matchRows.isEmpty) {
+          continue;
+        }
 
-    double lastSelectedClosePrice = candleListList.last[4];
+        double selectedLength = MainPresenter
+            .to.selectedPeriodPercentDifferencesList.length
+            .toDouble();
 
-    double lastActualDifference = lastSelectedClosePrice /
-        candleListList[matchRows[index] + selectedLength.toInt()][4];
+        double lastSelectedClosePrice = candleListList.last[4];
 
-    double subLen = MainPresenter.to.subLength.value.toDouble();
+        double lastActualDifference = lastSelectedClosePrice /
+            candleListList[matchRows[index] + selectedLength.toInt()][4];
 
-    for (double i = 0; i < selectedLength + subLen + 1; i++) {
-      if (i == selectedLength) {
-        flspotList.add(FlSpot(i, lastSelectedClosePrice));
-      } else {
-        double adjustedMatchedTrendClosePrice =
-            candleListList[matchRows[index] + i.toInt()]
-                    [4] // Close price of matched trend
-                *
-                lastActualDifference;
+        double subLen = MainPresenter.to.subLength.value.toDouble();
 
-        flspotList.add(FlSpot(i, adjustedMatchedTrendClosePrice));
+        for (double i = 0; i < selectedLength + subLen + 1; i++) {
+          if (i == selectedLength) {
+            flspotList.add(FlSpot(i, lastSelectedClosePrice));
+          } else {
+            double adjustedMatchedTrendClosePrice =
+                candleListList[matchRows[index] + i.toInt()]
+                        [4] // Close price of matched trend
+                    *
+                    lastActualDifference;
+
+            flspotList.add(FlSpot(i, adjustedMatchedTrendClosePrice));
+          }
+        }
       }
     }
 
@@ -686,10 +950,51 @@ class TrendMatch {
   }
 
   LineChartData getDefaultAdjustedLineChartData() {
-    return LineChartData(
-      lineTouchData: const LineTouchData(enabled: false),
-      borderData: FlBorderData(show: false),
-      lineBarsData: MainPresenter.to.matchRows
+    List<LineChartBarData> lineBarsData = [];
+    if (MainPresenter.to.alwaysUseCrossData.value) {
+      List<String> minuteDataList =
+          List<String>.from(MainPresenter.to.minuteDataList) + ['NULL'];
+      for (String symbol in minuteDataList) {
+        List<int> matchRows;
+        if (symbol == 'SPY') {
+          matchRows = MainPresenter.to.spyMatchRows;
+        } else if (symbol == 'QQQ') {
+          matchRows = MainPresenter.to.qqqMatchRows;
+        } else if (symbol == 'USO') {
+          matchRows = MainPresenter.to.usoMatchRows;
+        } else if (symbol == 'GLD') {
+          matchRows = MainPresenter.to.gldMatchRows;
+        } else {
+          matchRows = MainPresenter.to.matchRows;
+        }
+        if (matchRows.isEmpty) {
+          continue;
+        }
+        if (lineBarsData.length >= 500) {
+          break;
+        }
+        List<LineChartBarData> newLineBarsData = matchRows
+            .mapIndexed((index, row) => LineChartBarData(
+                spots: getAdjustedlineBarsData(index),
+                isCurved: true,
+                barWidth: 1,
+                color: ThemeColor.secondary.value))
+            .take(500 -
+                lineBarsData
+                    .length) // Add this line to limit the items to the first 500
+            .toList()
+          ..add(
+            LineChartBarData(
+              spots: getSelectedPeriodClosePrices(),
+              isCurved: true,
+              barWidth: 3,
+              color: ThemeColor.primary.value,
+            ),
+          );
+        lineBarsData.addAll(newLineBarsData);
+      }
+    } else {
+      lineBarsData = MainPresenter.to.matchRows
           .mapIndexed((index, row) => LineChartBarData(
               spots: getAdjustedlineBarsData(index),
               isCurved: true,
@@ -704,7 +1009,12 @@ class TrendMatch {
             barWidth: 3,
             color: ThemeColor.primary.value,
           ),
-        ),
+        );
+    }
+    return LineChartData(
+      lineTouchData: const LineTouchData(enabled: false),
+      borderData: FlBorderData(show: false),
+      lineBarsData: lineBarsData,
       titlesData: FlTitlesData(
         rightTitles:
             const AxisTitles(sideTitles: SideTitles(showTitles: false)),

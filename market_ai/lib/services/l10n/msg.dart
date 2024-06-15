@@ -109,6 +109,9 @@ class Msg extends Translations {
           'ma_mathcing_criteria': 'SMA/EMA trend matching criteria',
           'more_than_500_matches':
               'There are more than 500 trend matches, only 500 results will be returned',
+          'cross_data':
+              'To maximize the likelihood of achieving favourable results, other financial instrument datasets were used',
+          'cross_data_off': 'Cross-data sharing is off',
         },
         'zh_HK': {
           'app_name': '市場慧眼📈',
@@ -193,6 +196,8 @@ class Msg extends Translations {
           'always_use_ma_matching': '總是使用 SMA/EMA 趨勢匹配條件',
           'ma_mathcing_criteria': 'SMA/EMA 趨勢匹配條件',
           'more_than_500_matches': '匹配趨勢超過 500 條，僅返回 500 條結果',
+          'cross_data': '為了最大限度地提高獲得正面結果的機率，已使用其他金融工具的資料集',
+          'cross_data_off': '跨資料共享已關閉',
         },
       };
 }

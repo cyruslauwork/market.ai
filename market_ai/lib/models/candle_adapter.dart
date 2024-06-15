@@ -84,6 +84,73 @@ class CandleAdapter {
       throw ArgumentError('Failed to convert list to candles.');
     }
   }
+
+  Future<List<CandleData>> crossDataListListTolistCandledata(
+      (Future<List<List<dynamic>>>, SrcFileType, String) param) async {
+    List<List<dynamic>> listList = await param.$1;
+    if (param.$3 == 'SPY') {
+      MainPresenter.to.spyCandleListList.value = listList;
+    } else if (param.$3 == 'QQQ') {
+      MainPresenter.to.qqqCandleListList.value = listList;
+    } else if (param.$3 == 'USO') {
+      MainPresenter.to.usoCandleListList.value = listList;
+    } else if (param.$3 == 'GLD') {
+      MainPresenter.to.gldCandleListList.value = listList;
+    } else {
+      throw Exception('There is no candleListList for ${param.$3}');
+    }
+    late List<CandleData> listCandledata;
+
+    if (param.$2 == SrcFileType.csv) {
+      listCandledata = listList
+          .map((row) => CandleData(
+                timestamp: TimeService().convertToUnixTimestamp(row[0]) * 1000,
+                open: row[1].toDouble(),
+                high: row[2].toDouble(),
+                low: row[3].toDouble(),
+                close: row[4].toDouble(),
+                volume: row[6].toDouble(),
+              ))
+          .toList();
+      if (param.$3 == 'SPY') {
+        MainPresenter.to.spyListCandledata.value = listCandledata;
+      } else if (param.$3 == 'QQQ') {
+        MainPresenter.to.qqqListCandledata.value = listCandledata;
+      } else if (param.$3 == 'USO') {
+        MainPresenter.to.usoListCandledata.value = listCandledata;
+      } else if (param.$3 == 'GLD') {
+        MainPresenter.to.gldListCandledata.value = listCandledata;
+      } else {
+        throw Exception('There is no listCandledata for ${param.$3}');
+      }
+      return listCandledata;
+    } else if (param.$2 == SrcFileType.json) {
+      listCandledata = listList
+          .map((row) => CandleData(
+                timestamp: row[0].toInt() * 1000,
+                open: row[1].toDouble(),
+                high: row[2].toDouble(),
+                low: row[3].toDouble(),
+                close: row[4].toDouble(),
+                volume: row[5].toDouble(),
+              ))
+          .toList();
+      if (param.$3 == 'SPY') {
+        MainPresenter.to.spyListCandledata.value = listCandledata;
+      } else if (param.$3 == 'QQQ') {
+        MainPresenter.to.qqqListCandledata.value = listCandledata;
+      } else if (param.$3 == 'USO') {
+        MainPresenter.to.usoListCandledata.value = listCandledata;
+      } else if (param.$3 == 'GLD') {
+        MainPresenter.to.gldListCandledata.value = listCandledata;
+      } else {
+        throw Exception('There is no listCandledata for ${param.$3}');
+      }
+      return listCandledata;
+    } else {
+      throw ArgumentError('Failed to convert list to candles.');
+    }
+  }
 }
 
 extension MyCandleData on CandleData {

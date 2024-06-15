@@ -84,9 +84,9 @@ def main():
         update_collection_ref = db.collection(symbol + '_update')
         new_month_collection_ref = update_collection_ref.document('temp').collection(symbol + '_new_month')
         try:
-            delete_documents_based_on_time_key(collection_ref, 1716998400)
-            # delete_all_documents(new_month_collection_ref)
-            update_collection_ref.document('last_time_key').set({'last_time_key': 1716998400})
+            delete_documents_based_on_time_key(collection_ref, 1718121600)
+            delete_all_documents(new_month_collection_ref)
+            update_collection_ref.document('last_time_key').set({'last_time_key': 1718121600})
             print(f'All {symbol} collections have been updated')
         except DeadlineExceeded as e:
             print(f'DeadlineExceeded error occurred: {e}')

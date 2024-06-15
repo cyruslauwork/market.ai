@@ -684,6 +684,8 @@ class _MainViewState extends State<MainView> {
                               children: [
                                 MainPresenter.to
                                     .showMinuteDataToggleBtn(context: context),
+                                MainPresenter.to
+                                    .showCrossDataToggleBtn(context: context),
                                 IconButton(
                                   onPressed: () => MainPresenter.to
                                       .bookmarkThis(context: context),
