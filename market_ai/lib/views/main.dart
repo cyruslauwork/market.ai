@@ -432,9 +432,8 @@ class MainView extends StatefulWidget {
   }
 
   Widget devModeViewTwo() {
-    if (MainPresenter.to.alwaysUseCrossData.value) {
-      return const SizedBox.shrink();
-    } else {
+    if (!MainPresenter.to.alwaysUseCrossData.value &&
+        MainPresenter.to.trendMatched.value) {
       return Column(children: [
         const Divider(),
         Text(
@@ -531,6 +530,8 @@ class MainView extends StatefulWidget {
         SizedBox(height: 5.h),
         const Divider(),
       ]);
+    } else {
+      return const SizedBox.shrink();
     }
   }
 
