@@ -53,7 +53,6 @@ class TrendMatch {
     int trueCount = 0;
     int falseCount = 0;
     int len = MainPresenter.to.length.value;
-    int subLen = MainPresenter.to.subLength.value;
 
     if (len <= 1) {
       throw ArgumentError('Selected period must greater than 1 time unit.');
@@ -133,8 +132,10 @@ class TrendMatch {
     int maxMa() {
       if (MainPresenter.to.hasMinuteData.value &&
           MainPresenter.to.alwaysShowMinuteData.value) {
+        MainPresenter.to.maxMa.value = 20;
         return 20;
       } else {
+        MainPresenter.to.maxMa.value = 240;
         return 240;
       }
     }
@@ -218,9 +219,7 @@ class TrendMatch {
         }
       }
 
-      for (int l = (isMaMatch ? maxMa() : 0);
-          l < dataLength - (len + subLen);
-          l++) {
+      for (int l = (isMaMatch ? maxMa() : 0); l < dataLength - len; l++) {
         for (int i = 0; i < len - 1; i++) {
           double percentDiff = (listCandledata[l + i + 1].close! -
                   listCandledata[l + i].close!) /
@@ -923,6 +922,34 @@ class TrendMatch {
 
             flspotList.add(FlSpot(i, adjustedMatchedTrendClosePrice));
           }
+        }
+      }
+    } else {
+      List<int> matchRows = MainPresenter.to.matchRows;
+      List<List<dynamic>> candleListList = MainPresenter.to.candleListList;
+
+      double selectedLength = MainPresenter
+          .to.selectedPeriodPercentDifferencesList.length
+          .toDouble();
+
+      double lastSelectedClosePrice = candleListList.last[4];
+
+      double lastActualDifference = lastSelectedClosePrice /
+          candleListList[matchRows[index] + selectedLength.toInt()][4];
+
+      double subLen = MainPresenter.to.subLength.value.toDouble();
+
+      for (double i = 0; i < selectedLength + subLen + 1; i++) {
+        if (i == selectedLength) {
+          flspotList.add(FlSpot(i, lastSelectedClosePrice));
+        } else {
+          double adjustedMatchedTrendClosePrice =
+              candleListList[matchRows[index] + i.toInt()]
+                      [4] // Close price of matched trend
+                  *
+                  lastActualDifference;
+
+          flspotList.add(FlSpot(i, adjustedMatchedTrendClosePrice));
         }
       }
     }

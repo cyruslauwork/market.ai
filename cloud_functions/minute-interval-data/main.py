@@ -71,11 +71,11 @@ def https(request):
 
             @retry(tries=5, delay=2, backoff=2, exceptions=(Exception,))
             def download_blob_with_retry(blob):
-                return blob.download_as_string(timeout=60).decode('utf-8')
+                return blob.download_as_string(timeout=120).decode('utf-8')
 
             @retry(tries=5, delay=2, backoff=2, exceptions=(Exception,))
             def upload_blob_with_retry(blob, json_str):
-                return blob.upload_from_string(json_str, content_type='application/json', timeout=60)
+                return blob.upload_from_string(json_str, content_type='application/json', timeout=120)
 
             def add_documents_in_batches(collection_ref, new_documents):
                 batch = db.batch()

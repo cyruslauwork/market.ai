@@ -51,14 +51,11 @@ class MainView extends StatefulWidget {
                 Column(
                     children: [Text('range'.tr, style: const TextTheme().sp4)]),
                 Column(children: [
+                  Text('max_ma'.tr, style: const TextTheme().sp4)
+                ]),
+                Column(children: [
                   Text('tm_rows'.tr, style: const TextTheme().sp4)
                 ]),
-                Column(
-                    children: [Text('exe'.tr, style: const TextTheme().sp4)]),
-                Column(
-                    children: [Text('true'.tr, style: const TextTheme().sp4)]),
-                Column(
-                    children: [Text('false'.tr, style: const TextTheme().sp4)])
               ]),
               TableRow(children: [
                 Column(children: [
@@ -74,12 +71,36 @@ class MainView extends StatefulWidget {
                       style: const TextTheme().sp4)
                 ]),
                 Column(children: [
+                  Text(MainPresenter.to.maxMa.toString(),
+                      style: const TextTheme().sp4)
+                ]),
+                Column(children: [
                   Text(
                       (MainPresenter.to.trendMatchOutput[3] -
-                              MainPresenter.to.trendMatchOutput[4])
+                              MainPresenter.to.trendMatchOutput[4] -
+                              MainPresenter.to.maxMa.value)
                           .toString(),
                       style: const TextTheme().sp4)
                 ]),
+              ]),
+            ],
+          ),
+        ),
+        SizedBox(height: 2.h),
+        Obx(
+          () => Table(
+            border: TableBorder.all(
+                color: AppColor.blackColor, style: BorderStyle.solid, width: 2),
+            children: [
+              TableRow(children: [
+                Column(
+                    children: [Text('exe'.tr, style: const TextTheme().sp4)]),
+                Column(
+                    children: [Text('true'.tr, style: const TextTheme().sp4)]),
+                Column(
+                    children: [Text('false'.tr, style: const TextTheme().sp4)])
+              ]),
+              TableRow(children: [
                 Column(children: [
                   Text(MainPresenter.to.trendMatchOutput[2].toString(),
                       style: const TextTheme().sp4)

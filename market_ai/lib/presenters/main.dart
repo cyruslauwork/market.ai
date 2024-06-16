@@ -527,6 +527,7 @@ class MainPresenter extends GetxController {
   RxInt subLength =
       (PrefsService.to.prefs.getInt(SharedPreferencesConstant.subLength) ?? 5)
           .obs;
+  RxInt maxMa = 240.obs;
 
   /* Subsequent analytics */
   RxInt lastClosePriceAndSubsequentTrendsExeTime = 0.obs;
@@ -953,28 +954,42 @@ class MainPresenter extends GetxController {
   }
 
   Widget buildMktDataProviderRichText() {
-    final imageSpan = WidgetSpan(
-      child: Padding(
-        padding: EdgeInsets.only(left: 3.w),
-        child: Container(
-          decoration: const BoxDecoration(
-            color: AppColor.imageDefaultBgColor,
+    return Obx(
+      () => Row(
+        children: [
+          (alwaysShowMinuteData.value
+              ? Padding(
+                  padding: EdgeInsets.only(right: 3.w),
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: AppColor.imageDefaultBgColor,
+                    ),
+                    child: Image.asset(
+                      'images/futubull.png',
+                      height: 6.h, // Adjust the height as needed
+                    ),
+                  ),
+                )
+              : const SizedBox.shrink()),
+          Padding(
+            padding: EdgeInsets.only(right: 3.w),
+            child: Container(
+              decoration: const BoxDecoration(
+                color: AppColor.imageDefaultBgColor,
+              ),
+              child: Image.asset(
+                'images/yahoofinance.png',
+                height: 6.h, // Adjust the height as needed
+              ),
+            ),
           ),
-          child: Image.asset(
-            'images/yahoofinance.png',
-            height: 6.h, // Adjust the height as needed
-          ),
-        ),
-      ),
-    );
-
-    return Obx(() => RichText(
-          text: TextSpan(
-            text: marketDataProviderMsg.value,
-            children: [imageSpan],
+          Text(
+            marketDataProviderMsg.value,
             style: const TextTheme().sp4.greyColor,
           ),
-        ));
+        ],
+      ),
+    );
   }
 
   Widget buildCloudFunctionCol() {

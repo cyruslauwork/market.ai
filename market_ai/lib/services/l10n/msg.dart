@@ -14,7 +14,7 @@ class Msg extends Translations {
           'app_name': 'Market.AI📈',
           'candle_chart_title': 'Recent 1000 candlesticks',
           'as_of': 'As of',
-          'mkt_data': 'Market data provided by',
+          'mkt_data': 'Market data provider(s)',
           'trend_matching': 'Trend matching...',
           'btn_tm_sa': 'Historical trend matching and analytics',
           'downloading_candle': 'Downloading candlestick data...',
@@ -112,6 +112,7 @@ class Msg extends Translations {
           'cross_data':
               'To maximize the likelihood of achieving favourable results, other financial instrument datasets were used',
           'cross_data_off': 'Cross-data sharing is off',
+          'max_ma': 'Max MA',
         },
         'zh_HK': {
           'app_name': '市場慧眼📈',
@@ -198,6 +199,7 @@ class Msg extends Translations {
           'more_than_500_matches': '匹配趨勢超過 500 條，僅返回 500 條結果',
           'cross_data': '為了最大限度地提高獲得正面結果的機率，已使用其他金融工具的資料集',
           'cross_data_off': '跨資料共享已關閉',
+          'max_ma': '最大 MA',
         },
       };
 }
