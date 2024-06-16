@@ -204,6 +204,7 @@ class TrendMatch {
         ));
         dataLength = listCandledata.length;
         totalDataLength += dataLength;
+        await Candle().computeTrendLines(listCandledata: listCandledata);
       }
 
       void addMatchRow(int rowId) {
@@ -251,7 +252,6 @@ class TrendMatch {
             List<List<double>> comparePeriodMaPercentDifferencesListList = [];
             double compareFirstPrice = listCandledata[l].close!;
 
-            await Candle().computeTrendLines(listCandledata: listCandledata);
             for (int m = 0; m < len - 1; m++) {
               List<double> comparePeriodMaPercentDifferencesList = [];
               for (int i = 0; i < maLength; i++) {
