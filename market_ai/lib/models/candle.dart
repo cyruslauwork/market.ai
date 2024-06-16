@@ -643,8 +643,8 @@ Date,Open,High,Low,Close,Adj Close,Volume
     }
   }
 
-  computeTrendLines() {
-    List<CandleData> listCandledata = MainPresenter.to.listCandledata;
+  computeTrendLines({List<CandleData>? listCandledata}) {
+    listCandledata ??= MainPresenter.to.listCandledata;
 
     if (MainPresenter.to.hasMinuteData.value &&
         MainPresenter.to.alwaysShowMinuteData.value) {
@@ -680,8 +680,8 @@ Date,Open,High,Low,Close,Adj Close,Volume
     }
   }
 
-  removeTrendLines() {
-    List<CandleData> listCandledata = MainPresenter.to.listCandledata;
+  removeTrendLines({List<CandleData>? listCandledata}) {
+    listCandledata ??= MainPresenter.to.listCandledata;
     for (final data in listCandledata) {
       data.trends = [];
     }

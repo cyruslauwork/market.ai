@@ -432,102 +432,106 @@ class MainView extends StatefulWidget {
   }
 
   Widget devModeViewTwo() {
-    return Column(children: [
-      const Divider(),
-      Text(
-        'matched_rows_title'.tr,
-        style: const TextTheme().sp5.w700,
-      ),
-      (MainPresenter.to.matchRows.isNotEmpty
-          ? SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Text(
-                MainPresenter.to.matchRows.toString(),
-                style: const TextTheme().sp4,
-              ),
-            )
-          : Text('0', style: const TextTheme().sp4)),
-      SizedBox(height: 5.h),
-      Text(
-        'matched_percent_diff_title'.tr,
-        style: const TextTheme().sp5.w700,
-      ),
-      (MainPresenter.to.matchPercentDifferencesListList.isNotEmpty
-          ? SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Text(
-                '${MainPresenter.to.matchPercentDifferencesListList.mapIndexed((i, e) => '${MainPresenter.to.matchRows[i]}:$e\n').take(10).toList().toString()}...${(MainPresenter.to.matchPercentDifferencesListList.length > 10 ? MainPresenter.to.matchPercentDifferencesListList.length - 10 : 0)} rows left',
-                style: const TextTheme().sp4,
-              ),
-            )
-          : Text('0', style: const TextTheme().sp4)),
-      SizedBox(height: 5.h),
-      Text(
-        'matched_actual_diff_title'.tr,
-        style: const TextTheme().sp5.w700,
-      ),
-      (MainPresenter.to.matchActualDifferencesListList.isNotEmpty
-          ? SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Text(
-                '${MainPresenter.to.matchActualDifferencesListList.mapIndexed((i, e) => '${MainPresenter.to.matchRows[i]}:$e\n').take(10).toList().toString()}...${(MainPresenter.to.matchActualDifferencesListList.length > 10 ? MainPresenter.to.matchActualDifferencesListList.length - 10 : 0)} rows left',
-                style: const TextTheme().sp4,
-              ),
-            )
-          : Text('0', style: const TextTheme().sp4)),
-      SizedBox(height: 5.h),
-      Text(
-        'matched_actual_title'.tr,
-        style: const TextTheme().sp5.w700,
-      ),
-      (MainPresenter.to.matchActualPricesListList.isNotEmpty
-          ? SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Text(
-                '${MainPresenter.to.matchActualPricesListList.mapIndexed((i, e) => '${MainPresenter.to.matchRows[i]}:$e\n').take(10).toList().toString()}...${(MainPresenter.to.matchActualPricesListList.length > 10 ? MainPresenter.to.matchActualPricesListList.length - 10 : 0)} rows left',
-                style: const TextTheme().sp4,
-              ),
-            )
-          : Text('0', style: const TextTheme().sp4)),
-      SizedBox(height: 5.h),
-      Text(
-        'Comparison_percent_diff_title'.tr,
-        style: const TextTheme().sp5.w700,
-      ),
-      SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Text(
-          '${MainPresenter.to.comparePeriodPercentDifferencesListList.mapIndexed((i, e) => '$i:$e\n').take(10).toList()}...${MainPresenter.to.comparePeriodPercentDifferencesListList.length - 10} rows left',
-          style: const TextTheme().sp4,
+    if (MainPresenter.to.alwaysUseCrossData.value) {
+      return const SizedBox.shrink();
+    } else {
+      return Column(children: [
+        const Divider(),
+        Text(
+          'matched_rows_title'.tr,
+          style: const TextTheme().sp5.w700,
         ),
-      ),
-      SizedBox(height: 5.h),
-      Text(
-        'Comparison_actual_diff_title'.tr,
-        style: const TextTheme().sp5.w700,
-      ),
-      SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Text(
-          '${MainPresenter.to.comparePeriodActualDifferencesListList.mapIndexed((i, e) => '$i:$e\n').take(10).toList()}...${MainPresenter.to.comparePeriodActualDifferencesListList.length - 10} rows left',
-          style: const TextTheme().sp4,
+        (MainPresenter.to.matchRows.isNotEmpty
+            ? SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Text(
+                  MainPresenter.to.matchRows.toString(),
+                  style: const TextTheme().sp4,
+                ),
+              )
+            : Text('0', style: const TextTheme().sp4)),
+        SizedBox(height: 5.h),
+        Text(
+          'matched_percent_diff_title'.tr,
+          style: const TextTheme().sp5.w700,
         ),
-      ),
-      SizedBox(height: 5.h),
-      Text(
-        'comparison_actual_title'.tr,
-        style: const TextTheme().sp5.w700,
-      ),
-      SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Text(
-          '${MainPresenter.to.comparePeriodActualPricesListList.mapIndexed((i, e) => '$i:$e\n').take(10).toList()}...${MainPresenter.to.comparePeriodActualPricesListList.length - 10} rows left',
-          style: const TextTheme().sp4,
+        (MainPresenter.to.matchPercentDifferencesListList.isNotEmpty
+            ? SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Text(
+                  '${MainPresenter.to.matchPercentDifferencesListList.mapIndexed((i, e) => '${MainPresenter.to.matchRows[i]}:$e\n').take(10).toList().toString()}...${(MainPresenter.to.matchPercentDifferencesListList.length > 10 ? MainPresenter.to.matchPercentDifferencesListList.length - 10 : 0)} rows left',
+                  style: const TextTheme().sp4,
+                ),
+              )
+            : Text('0', style: const TextTheme().sp4)),
+        SizedBox(height: 5.h),
+        Text(
+          'matched_actual_diff_title'.tr,
+          style: const TextTheme().sp5.w700,
         ),
-      ),
-      SizedBox(height: 5.h),
-      const Divider(),
-    ]);
+        (MainPresenter.to.matchActualDifferencesListList.isNotEmpty
+            ? SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Text(
+                  '${MainPresenter.to.matchActualDifferencesListList.mapIndexed((i, e) => '${MainPresenter.to.matchRows[i]}:$e\n').take(10).toList().toString()}...${(MainPresenter.to.matchActualDifferencesListList.length > 10 ? MainPresenter.to.matchActualDifferencesListList.length - 10 : 0)} rows left',
+                  style: const TextTheme().sp4,
+                ),
+              )
+            : Text('0', style: const TextTheme().sp4)),
+        SizedBox(height: 5.h),
+        Text(
+          'matched_actual_title'.tr,
+          style: const TextTheme().sp5.w700,
+        ),
+        (MainPresenter.to.matchActualPricesListList.isNotEmpty
+            ? SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Text(
+                  '${MainPresenter.to.matchActualPricesListList.mapIndexed((i, e) => '${MainPresenter.to.matchRows[i]}:$e\n').take(10).toList().toString()}...${(MainPresenter.to.matchActualPricesListList.length > 10 ? MainPresenter.to.matchActualPricesListList.length - 10 : 0)} rows left',
+                  style: const TextTheme().sp4,
+                ),
+              )
+            : Text('0', style: const TextTheme().sp4)),
+        SizedBox(height: 5.h),
+        Text(
+          'Comparison_percent_diff_title'.tr,
+          style: const TextTheme().sp5.w700,
+        ),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Text(
+            '${MainPresenter.to.comparePeriodPercentDifferencesListList.mapIndexed((i, e) => '$i:$e\n').take(10).toList()}...${MainPresenter.to.comparePeriodPercentDifferencesListList.length - 10} rows left',
+            style: const TextTheme().sp4,
+          ),
+        ),
+        SizedBox(height: 5.h),
+        Text(
+          'Comparison_actual_diff_title'.tr,
+          style: const TextTheme().sp5.w700,
+        ),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Text(
+            '${MainPresenter.to.comparePeriodActualDifferencesListList.mapIndexed((i, e) => '$i:$e\n').take(10).toList()}...${MainPresenter.to.comparePeriodActualDifferencesListList.length - 10} rows left',
+            style: const TextTheme().sp4,
+          ),
+        ),
+        SizedBox(height: 5.h),
+        Text(
+          'comparison_actual_title'.tr,
+          style: const TextTheme().sp5.w700,
+        ),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Text(
+            '${MainPresenter.to.comparePeriodActualPricesListList.mapIndexed((i, e) => '$i:$e\n').take(10).toList()}...${MainPresenter.to.comparePeriodActualPricesListList.length - 10} rows left',
+            style: const TextTheme().sp4,
+          ),
+        ),
+        SizedBox(height: 5.h),
+        const Divider(),
+      ]);
+    }
   }
 
   @override

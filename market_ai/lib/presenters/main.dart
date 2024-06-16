@@ -567,6 +567,8 @@ class MainPresenter extends GetxController {
     //     .setStringList(SharedPreferencesConstant.watchlist, []);
     // PrefsService.to.prefs
     //     .setBool(SharedPreferencesConstant.alwaysShowMinuteData, false);
+    // PrefsService.to.prefs
+    //     .setBool(SharedPreferencesConstant.alwaysUseCrossData, false);
 
     super.onInit();
     if (!isDarkModeInit) {
@@ -754,7 +756,7 @@ class MainPresenter extends GetxController {
       //   }
       // }
       if (showAverageNotifier.value) {
-        Candle().computeTrendLines();
+        await Candle().computeTrendLines();
       }
       if (listCandledata.isNotEmpty) {
         await TrendMatch().init();

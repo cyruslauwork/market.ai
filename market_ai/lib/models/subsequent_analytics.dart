@@ -61,14 +61,17 @@ class SubsequentAnalytics {
           continue;
         }
         bool outerBreak = false;
-        for (int i = 0; i < (matchLen > 500 ? 500 : matchLen); i++) {
+        int count = 0;
+        for (int i = 0; i < (matchLen > 499 ? 499 : matchLen); i++) {
           // Takes 500 only to avoid a Cloud Functions crash
-          if (lastClosePriceAndSubsequentTrends.length >= 500) {
+          if (count >= 500) {
             outerBreak = true;
             break;
           }
-          lastClosePriceAndSubsequentTrends
-              .add(getMatchedTrendLastClosePriceAndSubsequentTrend(i));
+          lastClosePriceAndSubsequentTrends.add(
+              getMatchedTrendLastClosePriceAndSubsequentTrend(i,
+                  candleListList: candleListList, matchRows: matchRows));
+          count++;
         }
         if (outerBreak) {
           break;
@@ -111,7 +114,7 @@ class SubsequentAnalytics {
       candleListListLength = MainPresenter.to.candleListList.length;
       matchRows = MainPresenter.to.matchRows;
 
-      for (int i = 0; i < (matchLen > 500 ? 500 : matchLen); i++) {
+      for (int i = 0; i < (matchLen > 499 ? 499 : matchLen); i++) {
         // Takes 500 only to avoid a Cloud Functions crash
         lastClosePriceAndSubsequentTrends
             .add(getMatchedTrendLastClosePriceAndSubsequentTrend(i));
@@ -217,78 +220,32 @@ class SubsequentAnalytics {
     }
   }
 
-  List<double> getMatchedTrendLastClosePriceAndSubsequentTrend(int index) {
+  List<double> getMatchedTrendLastClosePriceAndSubsequentTrend(int index,
+      {List<List<dynamic>>? candleListList, List<int>? matchRows}) {
     List<double> lastClosePriceAndSubsequentTrend = [];
     double selectedLength =
         MainPresenter.to.selectedPeriodPercentDifferencesList.length.toDouble();
 
-    if (MainPresenter.to.alwaysUseCrossData.value) {
-      List minuteDataList = MainPresenter.to.minuteDataList;
-      minuteDataList.add('NULL');
-      for (String symbol in minuteDataList) {
-        List<List<dynamic>> candleListList;
-        List<int> matchRows;
-        if (symbol == 'SPY') {
-          candleListList = MainPresenter.to.spyCandleListList;
-          matchRows = MainPresenter.to.spyMatchRows;
-        } else if (symbol == 'QQQ') {
-          candleListList = MainPresenter.to.qqqCandleListList;
-          matchRows = MainPresenter.to.qqqMatchRows;
-        } else if (symbol == 'USO') {
-          candleListList = MainPresenter.to.usoCandleListList;
-          matchRows = MainPresenter.to.usoMatchRows;
-        } else if (symbol == 'GLD') {
-          candleListList = MainPresenter.to.gldCandleListList;
-          matchRows = MainPresenter.to.gldMatchRows;
-        } else {
-          candleListList = MainPresenter.to.candleListList;
-          matchRows = MainPresenter.to.matchRows;
-        }
-        if (matchRows.isEmpty) {
-          continue;
-        }
+    candleListList ??= MainPresenter.to.candleListList;
+    matchRows ??= MainPresenter.to.matchRows;
 
-        double lastActualDifference = candleListList.last[4] /
-            candleListList[matchRows[index] + selectedLength.toInt()][4];
+    double lastActualDifference = candleListList.last[4] /
+        candleListList[matchRows[index] + selectedLength.toInt()][4];
 
-        lastClosePriceAndSubsequentTrend.add(MainPresenter
-            .to.selectedPeriodActualPricesList[selectedLength.toInt()]);
+    lastClosePriceAndSubsequentTrend.add(MainPresenter
+        .to.selectedPeriodActualPricesList[selectedLength.toInt()]);
 
-        int length = MainPresenter.to.length.value;
-        int subLen = MainPresenter.to.subLength.value;
+    int length = MainPresenter.to.length.value;
+    int subLen = MainPresenter.to.subLength.value;
 
-        for (int i = length; i < length + subLen; i++) {
-          double adjustedMatchedTrendClosePrice =
-              candleListList[matchRows[index] + i]
-                      [4] // Close price of matched trend
-                  *
-                  lastActualDifference;
+    for (int i = length; i < length + subLen; i++) {
+      double adjustedMatchedTrendClosePrice =
+          candleListList[matchRows[index] + i]
+                  [4] // Close price of matched trend
+              *
+              lastActualDifference;
 
-          lastClosePriceAndSubsequentTrend.add(adjustedMatchedTrendClosePrice);
-        }
-      }
-    } else {
-      List<List<dynamic>> candleListList = MainPresenter.to.candleListList;
-      List<int> matchRows = MainPresenter.to.matchRows;
-
-      double lastActualDifference = candleListList.last[4] /
-          candleListList[matchRows[index] + selectedLength.toInt()][4];
-
-      lastClosePriceAndSubsequentTrend.add(MainPresenter
-          .to.selectedPeriodActualPricesList[selectedLength.toInt()]);
-
-      int length = MainPresenter.to.length.value;
-      int subLen = MainPresenter.to.subLength.value;
-
-      for (int i = length; i < length + subLen; i++) {
-        double adjustedMatchedTrendClosePrice =
-            candleListList[matchRows[index] + i]
-                    [4] // Close price of matched trend
-                *
-                lastActualDifference;
-
-        lastClosePriceAndSubsequentTrend.add(adjustedMatchedTrendClosePrice);
-      }
+      lastClosePriceAndSubsequentTrend.add(adjustedMatchedTrendClosePrice);
     }
 
     // print(lastClosePriceAndSubsequentTrend);
