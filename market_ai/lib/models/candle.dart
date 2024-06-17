@@ -459,7 +459,7 @@ Date,Open,High,Low,Close,Adj Close,Volume
             'There is no minute interval data for financial instrument: $stockSymbol');
     }
     if (lastDoc != null) {
-      timestamp = lastDoc.timeKey;
+      timestamp = await lastDoc.timeKey;
     } else {
       timestamp = 0;
     }

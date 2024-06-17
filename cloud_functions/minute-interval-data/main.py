@@ -231,6 +231,9 @@ def https(request):
                             continue  # Skip the current iteration and move to the next iteration
                         if time == 'null' or o == 'null' or high == 'null' or low == 'null' or close == 'null' or volume == 'null':
                             continue # Skip the current iteration and move to the next iteration
+                        # Convert 'time' to string and check if the last character is not '0'
+                        if str(time)[-1] != '0':
+                            continue # Skip the current iteration and move to the next iteration
                         if int(time) <= last_time_key:
                             continue # Skip the current iteration and move to the next iteration
                         # Create a new JSON with the desired columns
