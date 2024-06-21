@@ -729,11 +729,10 @@ class MainPresenter extends GetxController {
     }
   }
 
-  void reload() {
+  @override
+  void dispose() {
     Get.delete<MainPresenter>();
-    Get.put(MainPresenter());
-    logger.d('Instance "MainPresenter" has been reloaded');
-    super.onInit();
+    super.dispose();
   }
 
   Future<List<CandleData>> init() async {

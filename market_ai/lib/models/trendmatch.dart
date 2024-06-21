@@ -6,16 +6,15 @@ import 'package:interactive_chart/interactive_chart.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:isar/isar.dart';
 import 'collections.dart';
+// import 'package:get/get.dart';
 
 import 'package:market_ai/presenters/presenters.dart';
 import 'package:market_ai/styles/styles.dart';
-import 'package:market_ai/utils/screen_utils.dart';
 import 'isac.dart';
 import 'candle_adapter.dart';
 import 'candle.dart';
 import 'package:market_ai/services/flavor_service.dart';
-
-// import 'package:market_ai/utils/utils.dart';
+import 'package:market_ai/utils/utils.dart';
 
 class TrendMatch {
   // Singleton implementation
@@ -147,61 +146,167 @@ class TrendMatch {
     int thisLen;
     bool alwaysUseCrossData = MainPresenter.to.alwaysUseCrossData.value;
     String symbol = MainPresenter.to.financialInstrumentSymbol.value;
+    int dummyCandleLen = MainPresenter.to.dummyCandle.length;
     if (alwaysUseCrossData) {
       thisLen = MainPresenter.to.schemasLen.value + 1;
+      // if (MainPresenter.to.spyListCandledata.length != dummyCandleLen ||
+      //     MainPresenter.to.qqqListCandledata.length != dummyCandleLen ||
+      //     MainPresenter.to.usoListCandledata.length != dummyCandleLen ||
+      //     MainPresenter.to.gldListCandledata.length != dummyCandleLen) {
+      //   MainPresenter.to.dispose();
+      //   Get.put(MainPresenter());
+      //   logger.d('Instance "MainPresenter" has been reloaded');
+      // }
     } else {
       thisLen = 1;
     }
     for (int i = 0; i < thisLen; i++) {
       String thisTurnSymbol = '';
-      final dynamic dataList;
+      dynamic dataList;
+      bool hasData = false;
+      List<CandleData> spyListCandledata = MainPresenter.to.spyListCandledata;
+      List<CandleData> qqqListCandledata = MainPresenter.to.qqqListCandledata;
+      List<CandleData> usoListCandledata = MainPresenter.to.usoListCandledata;
+      List<CandleData> gldListCandledata = MainPresenter.to.gldListCandledata;
       if (i != 0) {
         if (i == 1 && symbol != 'SPY') {
-          dataList = await isar.spyDatas.where().sortByTimeKey().findAll();
-          thisTurnSymbol = 'SPY';
+          if (spyListCandledata.isEmpty ||
+              spyListCandledata.length == dummyCandleLen) {
+            dataList = await isar.spyDatas.where().sortByTimeKey().findAll();
+            thisTurnSymbol = 'SPY';
+            if (dataList.length < 40) {
+              continue;
+            }
+          } else {
+            hasData = true;
+            listCandledata = spyListCandledata;
+          }
         } else if (i == 2 && symbol != 'QQQ') {
-          dataList = await isar.qqqDatas.where().sortByTimeKey().findAll();
-          thisTurnSymbol = 'QQQ';
+          if (qqqListCandledata.isEmpty ||
+              qqqListCandledata.length == dummyCandleLen) {
+            dataList = await isar.qqqDatas.where().sortByTimeKey().findAll();
+            thisTurnSymbol = 'QQQ';
+            if (dataList.length < 40) {
+              continue;
+            }
+          } else {
+            hasData = true;
+            listCandledata = qqqListCandledata;
+          }
         } else if (i == 3 && symbol != 'USO') {
-          dataList = await isar.usoDatas.where().sortByTimeKey().findAll();
-          thisTurnSymbol = 'USO';
+          if (usoListCandledata.isEmpty ||
+              usoListCandledata.length == dummyCandleLen) {
+            dataList = await isar.usoDatas.where().sortByTimeKey().findAll();
+            thisTurnSymbol = 'USO';
+            if (dataList.length < 40) {
+              continue;
+            }
+          } else {
+            hasData = true;
+            listCandledata = usoListCandledata;
+          }
         } else if (i == 4 && symbol != 'GLD') {
-          dataList = await isar.gldDatas.where().sortByTimeKey().findAll();
-          thisTurnSymbol = 'GLD';
+          if (gldListCandledata.isEmpty ||
+              gldListCandledata.length == dummyCandleLen) {
+            dataList = await isar.gldDatas.where().sortByTimeKey().findAll();
+            thisTurnSymbol = 'GLD';
+            if (dataList.length < 40) {
+              continue;
+            }
+          } else {
+            hasData = true;
+            listCandledata = gldListCandledata;
+          }
         } else {
           if (i == 4) {
             break;
           }
           int l = i + 1;
           if (l == 1 && symbol != 'SPY') {
-            dataList = await isar.spyDatas.where().sortByTimeKey().findAll();
-            thisTurnSymbol = 'SPY';
+            if (spyListCandledata.isEmpty ||
+                spyListCandledata.length == dummyCandleLen) {
+              dataList = await isar.spyDatas.where().sortByTimeKey().findAll();
+              thisTurnSymbol = 'SPY';
+              if (dataList.length < 40) {
+                continue;
+              }
+            } else {
+              hasData = true;
+              listCandledata = spyListCandledata;
+            }
           } else if (l == 2 && symbol != 'QQQ') {
-            dataList = await isar.qqqDatas.where().sortByTimeKey().findAll();
-            thisTurnSymbol = 'QQQ';
+            if (qqqListCandledata.isEmpty ||
+                qqqListCandledata.length == dummyCandleLen) {
+              dataList = await isar.qqqDatas.where().sortByTimeKey().findAll();
+              thisTurnSymbol = 'QQQ';
+              if (dataList.length < 40) {
+                continue;
+              }
+            } else {
+              hasData = true;
+              listCandledata = qqqListCandledata;
+            }
           } else if (l == 3 && symbol != 'USO') {
-            dataList = await isar.usoDatas.where().sortByTimeKey().findAll();
-            thisTurnSymbol = 'USO';
+            if (usoListCandledata.isEmpty ||
+                usoListCandledata.length == dummyCandleLen) {
+              dataList = await isar.usoDatas.where().sortByTimeKey().findAll();
+              thisTurnSymbol = 'USO';
+              if (dataList.length < 40) {
+                continue;
+              }
+            } else {
+              hasData = true;
+              listCandledata = usoListCandledata;
+            }
           } else if (l == 4 && symbol != 'GLD') {
-            dataList = await isar.gldDatas.where().sortByTimeKey().findAll();
-            thisTurnSymbol = 'GLD';
+            if (gldListCandledata.isEmpty ||
+                gldListCandledata.length == dummyCandleLen) {
+              dataList = await isar.gldDatas.where().sortByTimeKey().findAll();
+              thisTurnSymbol = 'GLD';
+              if (dataList.length < 40) {
+                continue;
+              }
+            } else {
+              hasData = true;
+              listCandledata = gldListCandledata;
+            }
           } else {
             throw Exception('There is no minute interval data for $i');
           }
           i++;
         }
-        if (dataList.length < 40) {
+        if (hasData && listCandledata.length < 40) {
           continue;
         }
-        List<Map<String, dynamic>> docList = List<SpyData>.from(dataList)
-            .map<Map<String, dynamic>>((data) => data.toJson())
-            .toList();
-        listCandledata =
-            await CandleAdapter().crossDataListListTolistCandledata((
-          CandleAdapter().jsonToListList(Future.value(docList)),
-          SrcFileType.json,
-          thisTurnSymbol
-        ));
+        List<Map<String, dynamic>> docList = [];
+        if (!hasData) {
+          if (thisTurnSymbol == 'SPY') {
+            docList = List<SpyData>.from(dataList)
+                .map<Map<String, dynamic>>((data) => data.toJson())
+                .toList();
+          } else if (thisTurnSymbol == 'QQQ') {
+            docList = List<QqqData>.from(dataList)
+                .map<Map<String, dynamic>>((data) => data.toJson())
+                .toList();
+          } else if (thisTurnSymbol == 'USO') {
+            docList = List<UsoData>.from(dataList)
+                .map<Map<String, dynamic>>((data) => data.toJson())
+                .toList();
+          } else if (thisTurnSymbol == 'GLD') {
+            docList = List<GldData>.from(dataList)
+                .map<Map<String, dynamic>>((data) => data.toJson())
+                .toList();
+          } else {
+            throw Exception(
+                'There is no Isac data structure for $thisTurnSymbol');
+          }
+          listCandledata =
+              await CandleAdapter().crossDataListListTolistCandledata((
+            CandleAdapter().jsonToListList(Future.value(docList)),
+            SrcFileType.json,
+            thisTurnSymbol
+          ));
+        }
         dataLength = listCandledata.length;
         totalDataLength += dataLength;
         await Candle().computeTrendLines(listCandledata: listCandledata);
@@ -211,11 +316,11 @@ class TrendMatch {
         if (thisTurnSymbol == 'SPY') {
           MainPresenter.to.spyMatchRows.add(rowId);
         } else if (thisTurnSymbol == 'QQQ') {
-          MainPresenter.to.spyMatchRows.add(rowId);
+          MainPresenter.to.qqqMatchRows.add(rowId);
         } else if (thisTurnSymbol == 'USO') {
-          MainPresenter.to.spyMatchRows.add(rowId);
+          MainPresenter.to.usoMatchRows.add(rowId);
         } else if (thisTurnSymbol == 'GLD') {
-          MainPresenter.to.spyMatchRows.add(rowId);
+          MainPresenter.to.gldMatchRows.add(rowId);
         } else if (thisTurnSymbol == '') {
           MainPresenter.to.matchRows.add(rowId);
         } else {
@@ -721,27 +826,28 @@ class TrendMatch {
     List<LineChartBarData> lineBarsData = [];
     if (MainPresenter.to.alwaysUseCrossData.value) {
       List<String> minuteDataList =
-          List<String>.from(MainPresenter.to.minuteDataList) + ['NULL'];
+          List<String>.from(MainPresenter.to.minuteDataList);
+      String fiSymbol = MainPresenter.to.financialInstrumentSymbol.value;
       for (String symbol in minuteDataList) {
         List<int> matchRows;
         List<List<dynamic>> candleListList;
-        if (symbol == 'SPY') {
+        if (symbol == 'SPY' && symbol != fiSymbol) {
           matchRows = MainPresenter.to.spyMatchRows;
           candleListList = MainPresenter.to.spyCandleListList;
-        } else if (symbol == 'QQQ') {
+        } else if (symbol == 'QQQ' && symbol != fiSymbol) {
           matchRows = MainPresenter.to.qqqMatchRows;
           candleListList = MainPresenter.to.qqqCandleListList;
-        } else if (symbol == 'USO') {
+        } else if (symbol == 'USO' && symbol != fiSymbol) {
           matchRows = MainPresenter.to.usoMatchRows;
           candleListList = MainPresenter.to.usoCandleListList;
-        } else if (symbol == 'GLD') {
+        } else if (symbol == 'GLD' && symbol != fiSymbol) {
           matchRows = MainPresenter.to.gldMatchRows;
           candleListList = MainPresenter.to.gldCandleListList;
         } else {
           matchRows = MainPresenter.to.matchRows;
           candleListList = MainPresenter.to.candleListList;
         }
-        if (matchRows.isEmpty) {
+        if (matchRows.isEmpty || candleListList.isEmpty) {
           continue;
         }
         if (lineBarsData.length >= 500) {
@@ -840,7 +946,7 @@ class TrendMatch {
     double selectedLength =
         MainPresenter.to.selectedPeriodPercentDifferencesList.length.toDouble();
 
-    double lastSelectedClosePrice = candleListList.last[4];
+    double lastSelectedClosePrice = MainPresenter.to.candleListList.last[4];
 
     double lastActualDifference = lastSelectedClosePrice /
         candleListList[matchRows[index] + selectedLength.toInt()][4];
@@ -887,27 +993,28 @@ class TrendMatch {
     List<LineChartBarData> lineBarsData = [];
     if (MainPresenter.to.alwaysUseCrossData.value) {
       List<String> minuteDataList =
-          List<String>.from(MainPresenter.to.minuteDataList) + ['NULL'];
+          List<String>.from(MainPresenter.to.minuteDataList);
+      String fiSymbol = MainPresenter.to.financialInstrumentSymbol.value;
       for (String symbol in minuteDataList) {
         List<int> matchRows;
         List<List<dynamic>> candleListList;
-        if (symbol == 'SPY') {
+        if (symbol == 'SPY' && symbol != fiSymbol) {
           matchRows = MainPresenter.to.spyMatchRows;
           candleListList = MainPresenter.to.spyCandleListList;
-        } else if (symbol == 'QQQ') {
+        } else if (symbol == 'QQQ' && symbol != fiSymbol) {
           matchRows = MainPresenter.to.qqqMatchRows;
           candleListList = MainPresenter.to.qqqCandleListList;
-        } else if (symbol == 'USO') {
+        } else if (symbol == 'USO' && symbol != fiSymbol) {
           matchRows = MainPresenter.to.usoMatchRows;
           candleListList = MainPresenter.to.usoCandleListList;
-        } else if (symbol == 'GLD') {
+        } else if (symbol == 'GLD' && symbol != fiSymbol) {
           matchRows = MainPresenter.to.gldMatchRows;
           candleListList = MainPresenter.to.gldCandleListList;
         } else {
           matchRows = MainPresenter.to.matchRows;
           candleListList = MainPresenter.to.candleListList;
         }
-        if (matchRows.isEmpty) {
+        if (matchRows.isEmpty || candleListList.isEmpty) {
           continue;
         }
         if (lineBarsData.length >= 500) {

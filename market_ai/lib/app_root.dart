@@ -49,7 +49,9 @@ class _AppRootWidgetState extends State<AppRoot> with WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
       logger.d('resumed: $state');
-      MainPresenter.to.reload;
+      MainPresenter.to.dispose();
+      Get.put(MainPresenter());
+      logger.d('Instance "MainPresenter" has been reloaded');
     }
   }
 

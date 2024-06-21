@@ -29,24 +29,25 @@ class SubsequentAnalytics {
 
     if (MainPresenter.to.alwaysUseCrossData.value) {
       List<String> minuteDataList =
-          List<String>.from(MainPresenter.to.minuteDataList) + ['NULL'];
+          List<String>.from(MainPresenter.to.minuteDataList);
+      String fiSymbol = MainPresenter.to.financialInstrumentSymbol.value;
       for (String symbol in minuteDataList) {
-        if (symbol == 'SPY') {
+        if (symbol == 'SPY' && symbol != fiSymbol) {
           candleListList = MainPresenter.to.spyCandleListList;
           candleListListLength = candleListList.length;
           matchRows = MainPresenter.to.spyMatchRows;
           matchLen = matchRows.length;
-        } else if (symbol == 'QQQ') {
+        } else if (symbol == 'QQQ' && symbol != fiSymbol) {
           candleListList = MainPresenter.to.qqqCandleListList;
           candleListListLength = candleListList.length;
           matchRows = MainPresenter.to.qqqMatchRows;
           matchLen = matchRows.length;
-        } else if (symbol == 'USO') {
+        } else if (symbol == 'USO' && symbol != fiSymbol) {
           candleListList = MainPresenter.to.usoCandleListList;
           candleListListLength = candleListList.length;
           matchRows = MainPresenter.to.usoMatchRows;
           matchLen = matchRows.length;
-        } else if (symbol == 'GLD') {
+        } else if (symbol == 'GLD' && symbol != fiSymbol) {
           candleListList = MainPresenter.to.gldCandleListList;
           candleListListLength = candleListList.length;
           matchRows = MainPresenter.to.gldMatchRows;
@@ -57,7 +58,7 @@ class SubsequentAnalytics {
           matchRows = MainPresenter.to.matchRows;
           matchLen = matchRows.length;
         }
-        if (matchRows.isEmpty) {
+        if (matchRows.isEmpty || candleListList.isEmpty) {
           continue;
         }
         bool outerBreak = false;
@@ -70,7 +71,7 @@ class SubsequentAnalytics {
           }
           lastClosePriceAndSubsequentTrends.add(
               getMatchedTrendLastClosePriceAndSubsequentTrend(i,
-                  candleListList: candleListList, matchRows: matchRows));
+                  otherCandleListList: candleListList, matchRows: matchRows));
           count++;
         }
         if (outerBreak) {
@@ -85,7 +86,7 @@ class SubsequentAnalytics {
           minValueOfAllTrends = min(minValueOfAllTrends, value);
           maxValueOfAllTrends = max(maxValueOfAllTrends, value);
         }
-        double lastSelectedClosePrice = candleListList.last[4];
+        double lastSelectedClosePrice = MainPresenter.to.candleListList.last[4];
         int subLen = MainPresenter.to.subLength.value;
         // Adjusted trends
         for (int index in matchRows) {
@@ -221,16 +222,16 @@ class SubsequentAnalytics {
   }
 
   List<double> getMatchedTrendLastClosePriceAndSubsequentTrend(int index,
-      {List<List<dynamic>>? candleListList, List<int>? matchRows}) {
+      {List<List<dynamic>>? otherCandleListList, List<int>? matchRows}) {
     List<double> lastClosePriceAndSubsequentTrend = [];
     double selectedLength =
         MainPresenter.to.selectedPeriodPercentDifferencesList.length.toDouble();
 
-    candleListList ??= MainPresenter.to.candleListList;
+    otherCandleListList ??= MainPresenter.to.candleListList;
     matchRows ??= MainPresenter.to.matchRows;
 
-    double lastActualDifference = candleListList.last[4] /
-        candleListList[matchRows[index] + selectedLength.toInt()][4];
+    double lastActualDifference = MainPresenter.to.candleListList.last[4] /
+        otherCandleListList[matchRows[index] + selectedLength.toInt()][4];
 
     lastClosePriceAndSubsequentTrend.add(MainPresenter
         .to.selectedPeriodActualPricesList[selectedLength.toInt()]);
@@ -240,7 +241,7 @@ class SubsequentAnalytics {
 
     for (int i = length; i < length + subLen; i++) {
       double adjustedMatchedTrendClosePrice =
-          candleListList[matchRows[index] + i]
+          otherCandleListList[matchRows[index] + i]
                   [4] // Close price of matched trend
               *
               lastActualDifference;
