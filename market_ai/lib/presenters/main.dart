@@ -5,12 +5,14 @@ import 'package:intl/intl.dart';
 import 'package:get/get.dart';
 import 'package:interactive_chart/interactive_chart.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:isar/isar.dart';
 
 import 'package:market_ai/styles/styles.dart';
 import 'package:market_ai/utils/utils.dart';
 import 'package:market_ai/models/models.dart';
 import 'package:market_ai/services/services.dart';
 import 'package:market_ai/views/views.dart';
+import 'package:market_ai/models/collections.dart';
 
 class MainPresenter extends GetxController {
   // Singleton implementation
@@ -443,6 +445,14 @@ class MainPresenter extends GetxController {
           : '🟠MA5 🔴MA20 🟢MA60 🔵MA120 🟣MA240')
       .obs;
   RxInt schemasLen = 0.obs;
+  RxBool hasSpyMinuteData = false.obs;
+  RxBool hasQqqMinuteData = false.obs;
+  RxBool hasUsoMinuteData = false.obs;
+  RxBool hasGldMinuteData = false.obs;
+  RxBool hasSlvMinuteData = false.obs;
+  RxBool hasIwmMinuteData = false.obs;
+  RxBool hasXlkMinuteData = false.obs;
+  RxBool hasAaplMinuteData = false.obs;
 
   /* Listings */
   RxInt listingsDownloadTime = 0.obs;
@@ -777,7 +787,60 @@ class MainPresenter extends GetxController {
         }
       }
     }
+    checkMinuteData();
     return listCandledata;
+  }
+
+  void checkMinuteData() async {
+    final isar = await IsarService().getIsarInstance();
+    var spyData = await isar.spyDatas.where().findFirst();
+    var qqqData = await isar.qqqDatas.where().findFirst();
+    var usoData = await isar.usoDatas.where().findFirst();
+    var gldData = await isar.gldDatas.where().findFirst();
+    var slvData = await isar.slvDatas.where().findFirst();
+    var iwmData = await isar.iwmDatas.where().findFirst();
+    var xlkData = await isar.xlkDatas.where().findFirst();
+    var aaplData = await isar.aaplDatas.where().findFirst();
+    if (spyData == null) {
+      hasSpyMinuteData.value = false;
+    } else {
+      hasSpyMinuteData.value = true;
+    }
+    if (qqqData == null) {
+      hasQqqMinuteData.value = false;
+    } else {
+      hasQqqMinuteData.value = true;
+    }
+    if (usoData == null) {
+      hasUsoMinuteData.value = false;
+    } else {
+      hasUsoMinuteData.value = true;
+    }
+    if (gldData == null) {
+      hasGldMinuteData.value = false;
+    } else {
+      hasGldMinuteData.value = true;
+    }
+    if (slvData == null) {
+      hasSlvMinuteData.value = false;
+    } else {
+      hasSlvMinuteData.value = true;
+    }
+    if (iwmData == null) {
+      hasIwmMinuteData.value = false;
+    } else {
+      hasIwmMinuteData.value = true;
+    }
+    if (xlkData == null) {
+      hasXlkMinuteData.value = false;
+    } else {
+      hasXlkMinuteData.value = true;
+    }
+    if (aaplData == null) {
+      hasAaplMinuteData.value = false;
+    } else {
+      hasAaplMinuteData.value = true;
+    }
   }
 
   /* Route */

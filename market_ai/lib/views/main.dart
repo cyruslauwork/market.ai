@@ -5,6 +5,7 @@ import 'package:market_ai/models/listing_adapter.dart';
 import 'package:get/get.dart';
 import 'package:interactive_chart/interactive_chart.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:market_ai/models/models.dart';
 
 import 'package:market_ai/presenters/presenters.dart';
 import 'package:market_ai/utils/utils.dart';
@@ -319,6 +320,190 @@ class MainView extends StatefulWidget {
               ),
             ),
             const Divider(),
+            Obx(() {
+              if (MainPresenter.to.hasSpyMinuteData.value) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 2.w),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      IsarService().clearSpyData();
+                      MainPresenter.to.hasSpyMinuteData.value = false;
+                    },
+                    icon: Icon(
+                      Icons.clean_hands_rounded,
+                      size: 10.h,
+                    ),
+                    label: Text(
+                      'btn_clear_spy_minute'.tr,
+                      style: const TextTheme().sp5.w700,
+                    ),
+                  ),
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            }),
+            Obx(() {
+              if (MainPresenter.to.hasQqqMinuteData.value) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 2.w),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      IsarService().clearQqqData();
+                      MainPresenter.to.hasQqqMinuteData.value = false;
+                    },
+                    icon: Icon(
+                      Icons.clean_hands_rounded,
+                      size: 10.h,
+                    ),
+                    label: Text(
+                      'btn_clear_qqq_minute'.tr,
+                      style: const TextTheme().sp5.w700,
+                    ),
+                  ),
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            }),
+            Obx(() {
+              if (MainPresenter.to.hasUsoMinuteData.value) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 2.w),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      IsarService().clearUsoData();
+                      MainPresenter.to.hasUsoMinuteData.value = false;
+                    },
+                    icon: Icon(
+                      Icons.clean_hands_rounded,
+                      size: 10.h,
+                    ),
+                    label: Text(
+                      'btn_clear_uso_minute'.tr,
+                      style: const TextTheme().sp5.w700,
+                    ),
+                  ),
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            }),
+            Obx(() {
+              if (MainPresenter.to.hasGldMinuteData.value) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 2.w),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      IsarService().clearGldData();
+                      MainPresenter.to.hasGldMinuteData.value = false;
+                    },
+                    icon: Icon(
+                      Icons.clean_hands_rounded,
+                      size: 10.h,
+                    ),
+                    label: Text(
+                      'btn_clear_gld_minute'.tr,
+                      style: const TextTheme().sp5.w700,
+                    ),
+                  ),
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            }),
+            Obx(() {
+              if (MainPresenter.to.hasSlvMinuteData.value) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 2.w),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      IsarService().clearSlvData();
+                      MainPresenter.to.hasSlvMinuteData.value = false;
+                    },
+                    icon: Icon(
+                      Icons.clean_hands_rounded,
+                      size: 10.h,
+                    ),
+                    label: Text(
+                      'btn_clear_slv_minute'.tr,
+                      style: const TextTheme().sp5.w700,
+                    ),
+                  ),
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            }),
+            Obx(() {
+              if (MainPresenter.to.hasIwmMinuteData.value) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 2.w),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      IsarService().clearIwmData();
+                      MainPresenter.to.hasIwmMinuteData.value = false;
+                    },
+                    icon: Icon(
+                      Icons.clean_hands_rounded,
+                      size: 10.h,
+                    ),
+                    label: Text(
+                      'btn_clear_iwm_minute'.tr,
+                      style: const TextTheme().sp5.w700,
+                    ),
+                  ),
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            }),
+            Obx(() {
+              if (MainPresenter.to.hasXlkMinuteData.value) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 2.w),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      IsarService().clearXlkData();
+                      MainPresenter.to.hasXlkMinuteData.value = false;
+                    },
+                    icon: Icon(
+                      Icons.clean_hands_rounded,
+                      size: 10.h,
+                    ),
+                    label: Text(
+                      'btn_clear_xlk_minute'.tr,
+                      style: const TextTheme().sp5.w700,
+                    ),
+                  ),
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            }),
+            Obx(() {
+              if (MainPresenter.to.hasAaplMinuteData.value) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 2.w),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      IsarService().clearAaplData();
+                      MainPresenter.to.hasAaplMinuteData.value = false;
+                    },
+                    icon: Icon(
+                      Icons.clean_hands_rounded,
+                      size: 10.h,
+                    ),
+                    label: Text(
+                      'btn_clear_aapl_minute'.tr,
+                      style: const TextTheme().sp5.w700,
+                    ),
+                  ),
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            }),
             SizedBox(height: 5.h),
           ],
         ),
