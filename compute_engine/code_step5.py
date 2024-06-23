@@ -22,7 +22,7 @@ GCE_OUTBOUND_KB_LIMIT = 1048576 # Free tier: 1 GB
 storage_client = storage.Client()
 BUCKET_NAME = 'market-ai-2024'
 FILE_NAME = 'gce_monthly_kb_counters.json'
-AVAILABLE_SYMBOL = ['SPY', 'QQQ', 'USO', 'GLD']
+AVAILABLE_SYMBOL = ['SPY', 'QQQ', 'USO', 'GLD', 'SLV', 'IWM', 'XLK', 'AAPL']
 
 def return_jsonify(json_data, response_code, blob, current_month, gce_monthly_kb_counters, kb):
     # Check if it's a new month and reset the counter if needed
@@ -78,25 +78,37 @@ def monthly_usage_limit(current_month):
         print('Creating bucket...')
         storage_client.create_bucket(bucket, location='us-west1')
     blob = bucket.blob(FILE_NAME)
-    try:
-        json_file = blob.download_as_text()
-        gce_monthly_kb_counters = json.loads(json_file)
-        # Check if the KB limit is approached
-        if current_month in gce_monthly_kb_counters:
-            if gce_monthly_kb_counters[current_month] >= (GCE_OUTBOUND_KB_LIMIT * 0.99):
-                return True, blob, gce_monthly_kb_counters
-    except:
+    if blob.exists() is False:
         # If the file doesn't exist or there's an error loading it, initialize with an empty dictionary
         gce_monthly_kb_counters = {}
-    return False, blob, gce_monthly_kb_counters
+        return False, blob, gce_monthly_kb_counters, False
+    max_retries = 3
+    for retry in range(max_retries):
+        try:
+            json_file = blob.download_as_text()
+            break
+        except Exception as e:
+            if retry < max_retries - 1:
+                print(f"Retrying 'json_file = blob.download_as_text()' (attempt {retry + 1})...")
+            else:
+                return False, blob, gce_monthly_kb_counters, True
+    gce_monthly_kb_counters = json.loads(json_file)
+    # Check if the KB limit is approached
+    if current_month in gce_monthly_kb_counters:
+        if gce_monthly_kb_counters[current_month] >= (GCE_OUTBOUND_KB_LIMIT * 0.99):
+            return True, blob, gce_monthly_kb_counters, False
+    return False, blob, gce_monthly_kb_counters, False
 
 def fetch_and_store_etfs_listing():
     # Monthly usage tracking
     now = datetime.now()
     current_month = now.strftime("%Y-%m")
-    limit_exceed, blob, gce_monthly_kb_counters = monthly_usage_limit(current_month)
+    limit_exceed, blob, gce_monthly_kb_counters, server_error = monthly_usage_limit(current_month)
     if limit_exceed:
         print_string('Monthly request limit exceeded', blob, current_month, gce_monthly_kb_counters, 1)
+        return
+    if server_error:
+        print_string('Failed to fetch monthly request limit', blob, current_month, gce_monthly_kb_counters, 1)
         return
     # Construct the cURL command with the URL and authorization header
     curl_command = 'curl -X GET "https://us-west1-market-ai-2024.cloudfunctions.net/nyse-etfs-symbol-name" -H "Authorization: bearer $(gcloud auth print-identity-token)"'
@@ -129,7 +141,10 @@ def fetch_and_store_one_minute_candlestick_json():
         # Monthly usage tracking
         now = datetime.now()
         current_month = now.strftime("%Y-%m")
-        limit_exceed, blob, gce_monthly_kb_counters = monthly_usage_limit(current_month)
+        limit_exceed, blob, gce_monthly_kb_counters, server_error = monthly_usage_limit(current_month)
+        if server_error:
+            print_string('Failed to fetch monthly request limit', blob, current_month, gce_monthly_kb_counters, 1)
+            return
         url_encoded_apikey = quote(API_KEY)
         url_encoded_granularity = quote('1m')
         url_encoded_timestamp = quote('-1')
@@ -155,7 +170,9 @@ def forward_request():
     # Monthly usage tracking
     now = datetime.now()
     current_month = now.strftime("%Y-%m")
-    limit_exceed, blob, gce_monthly_kb_counters = monthly_usage_limit(current_month)
+    limit_exceed, blob, gce_monthly_kb_counters, server_error = monthly_usage_limit(current_month)
+    if server_error:
+        return return_jsonify({'error': 'Failed to fetch monthly request limit'}, 503, blob, current_month, gce_monthly_kb_counters, 1)
     if limit_exceed:
         return return_jsonify({'error': 'Monthly request limit exceeded'}, 503, blob, current_month, gce_monthly_kb_counters, 1)
     

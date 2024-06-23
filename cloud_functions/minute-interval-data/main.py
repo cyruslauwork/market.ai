@@ -17,7 +17,7 @@ API_KEY = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 db = firestore.Client(project='market-ai-2024')
 storage_client = storage.Client()
 BUCKET_NAME = 'market-ai-2024-minute-data-public_v74-x4b37-v_47'
-AVAILABLE_SYMBOL = ['spy', 'qqq', 'uso', 'gld']
+AVAILABLE_SYMBOL = ['spy', 'qqq', 'uso', 'gld', 'slv', 'iwm', 'xlk', 'aapl']
 last_time_key = None
 BATCH_SIZE = 390  # Firestore batch limit is 390 operations per batch
 
@@ -300,6 +300,7 @@ def https(request):
                                     print(f'Retrieving all documents in {symbol} collection')
                                     docs = collection_ref.order_by('time_key').stream(retry=Retry())
                                     docs = [doc.to_dict() for doc in docs]
+                                    server_end_json_data['content'] = []
                                 server_end_json_data['content'].extend(docs)
                                 # Convert the result to JSON format
                                 json_str = json.dumps(server_end_json_data)
@@ -322,6 +323,7 @@ def https(request):
                                 docs_list = [doc.to_dict() for doc in docs]
                                 print(f'Retrieved required document(s) in {symbol} collection')
                                 print(f'Preparing to return JSON')
+                                server_end_json_data['content'] = []
                                 server_end_json_data['content'].extend(docs_list)
                                 print('Uploading JSON to GCS')
                                 # Convert the result to JSON format

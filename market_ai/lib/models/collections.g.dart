@@ -3473,3 +3473,3471 @@ extension GldDataQueryProperty
     });
   }
 }
+
+// coverage:ignore-file
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+
+extension GetSlvDataCollection on Isar {
+  IsarCollection<SlvData> get slvDatas => this.collection();
+}
+
+const SlvDataSchema = CollectionSchema(
+  name: r'SlvData',
+  id: 8339843684382101206,
+  properties: {
+    r'close': PropertySchema(
+      id: 0,
+      name: r'close',
+      type: IsarType.double,
+    ),
+    r'high': PropertySchema(
+      id: 1,
+      name: r'high',
+      type: IsarType.double,
+    ),
+    r'low': PropertySchema(
+      id: 2,
+      name: r'low',
+      type: IsarType.double,
+    ),
+    r'open': PropertySchema(
+      id: 3,
+      name: r'open',
+      type: IsarType.double,
+    ),
+    r'timeKey': PropertySchema(
+      id: 4,
+      name: r'timeKey',
+      type: IsarType.long,
+    ),
+    r'volume': PropertySchema(
+      id: 5,
+      name: r'volume',
+      type: IsarType.long,
+    )
+  },
+  estimateSize: _slvDataEstimateSize,
+  serialize: _slvDataSerialize,
+  deserialize: _slvDataDeserialize,
+  deserializeProp: _slvDataDeserializeProp,
+  idName: r'id',
+  indexes: {},
+  links: {},
+  embeddedSchemas: {},
+  getId: _slvDataGetId,
+  getLinks: _slvDataGetLinks,
+  attach: _slvDataAttach,
+  version: '3.1.0+1',
+);
+
+int _slvDataEstimateSize(
+  SlvData object,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  var bytesCount = offsets.last;
+  return bytesCount;
+}
+
+void _slvDataSerialize(
+  SlvData object,
+  IsarWriter writer,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  writer.writeDouble(offsets[0], object.close);
+  writer.writeDouble(offsets[1], object.high);
+  writer.writeDouble(offsets[2], object.low);
+  writer.writeDouble(offsets[3], object.open);
+  writer.writeLong(offsets[4], object.timeKey);
+  writer.writeLong(offsets[5], object.volume);
+}
+
+SlvData _slvDataDeserialize(
+  Id id,
+  IsarReader reader,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  final object = SlvData();
+  object.close = reader.readDouble(offsets[0]);
+  object.high = reader.readDouble(offsets[1]);
+  object.id = id;
+  object.low = reader.readDouble(offsets[2]);
+  object.open = reader.readDouble(offsets[3]);
+  object.timeKey = reader.readLong(offsets[4]);
+  object.volume = reader.readLong(offsets[5]);
+  return object;
+}
+
+P _slvDataDeserializeProp<P>(
+  IsarReader reader,
+  int propertyId,
+  int offset,
+  Map<Type, List<int>> allOffsets,
+) {
+  switch (propertyId) {
+    case 0:
+      return (reader.readDouble(offset)) as P;
+    case 1:
+      return (reader.readDouble(offset)) as P;
+    case 2:
+      return (reader.readDouble(offset)) as P;
+    case 3:
+      return (reader.readDouble(offset)) as P;
+    case 4:
+      return (reader.readLong(offset)) as P;
+    case 5:
+      return (reader.readLong(offset)) as P;
+    default:
+      throw IsarError('Unknown property with id $propertyId');
+  }
+}
+
+Id _slvDataGetId(SlvData object) {
+  return object.id;
+}
+
+List<IsarLinkBase<dynamic>> _slvDataGetLinks(SlvData object) {
+  return [];
+}
+
+void _slvDataAttach(IsarCollection<dynamic> col, Id id, SlvData object) {
+  object.id = id;
+}
+
+extension SlvDataQueryWhereSort on QueryBuilder<SlvData, SlvData, QWhere> {
+  QueryBuilder<SlvData, SlvData, QAfterWhere> anyId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+}
+
+extension SlvDataQueryWhere on QueryBuilder<SlvData, SlvData, QWhereClause> {
+  QueryBuilder<SlvData, SlvData, QAfterWhereClause> idEqualTo(Id id) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IdWhereClause.between(
+        lower: id,
+        upper: id,
+      ));
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterWhereClause> idNotEqualTo(Id id) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IdWhereClause.lessThan(upper: id, includeUpper: false),
+            )
+            .addWhereClause(
+              IdWhereClause.greaterThan(lower: id, includeLower: false),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IdWhereClause.greaterThan(lower: id, includeLower: false),
+            )
+            .addWhereClause(
+              IdWhereClause.lessThan(upper: id, includeUpper: false),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterWhereClause> idGreaterThan(Id id,
+      {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IdWhereClause.greaterThan(lower: id, includeLower: include),
+      );
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterWhereClause> idLessThan(Id id,
+      {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IdWhereClause.lessThan(upper: id, includeUpper: include),
+      );
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterWhereClause> idBetween(
+    Id lowerId,
+    Id upperId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IdWhereClause.between(
+        lower: lowerId,
+        includeLower: includeLower,
+        upper: upperId,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+}
+
+extension SlvDataQueryFilter
+    on QueryBuilder<SlvData, SlvData, QFilterCondition> {
+  QueryBuilder<SlvData, SlvData, QAfterFilterCondition> closeEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'close',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterFilterCondition> closeGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'close',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterFilterCondition> closeLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'close',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterFilterCondition> closeBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'close',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterFilterCondition> highEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'high',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterFilterCondition> highGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'high',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterFilterCondition> highLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'high',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterFilterCondition> highBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'high',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterFilterCondition> idEqualTo(Id value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'id',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterFilterCondition> idGreaterThan(
+    Id value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'id',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterFilterCondition> idLessThan(
+    Id value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'id',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterFilterCondition> idBetween(
+    Id lower,
+    Id upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'id',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterFilterCondition> lowEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'low',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterFilterCondition> lowGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'low',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterFilterCondition> lowLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'low',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterFilterCondition> lowBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'low',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterFilterCondition> openEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'open',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterFilterCondition> openGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'open',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterFilterCondition> openLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'open',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterFilterCondition> openBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'open',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterFilterCondition> timeKeyEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'timeKey',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterFilterCondition> timeKeyGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'timeKey',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterFilterCondition> timeKeyLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'timeKey',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterFilterCondition> timeKeyBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'timeKey',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterFilterCondition> volumeEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'volume',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterFilterCondition> volumeGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'volume',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterFilterCondition> volumeLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'volume',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterFilterCondition> volumeBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'volume',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+}
+
+extension SlvDataQueryObject
+    on QueryBuilder<SlvData, SlvData, QFilterCondition> {}
+
+extension SlvDataQueryLinks
+    on QueryBuilder<SlvData, SlvData, QFilterCondition> {}
+
+extension SlvDataQuerySortBy on QueryBuilder<SlvData, SlvData, QSortBy> {
+  QueryBuilder<SlvData, SlvData, QAfterSortBy> sortByClose() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'close', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterSortBy> sortByCloseDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'close', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterSortBy> sortByHigh() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'high', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterSortBy> sortByHighDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'high', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterSortBy> sortByLow() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'low', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterSortBy> sortByLowDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'low', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterSortBy> sortByOpen() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'open', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterSortBy> sortByOpenDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'open', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterSortBy> sortByTimeKey() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'timeKey', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterSortBy> sortByTimeKeyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'timeKey', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterSortBy> sortByVolume() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'volume', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterSortBy> sortByVolumeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'volume', Sort.desc);
+    });
+  }
+}
+
+extension SlvDataQuerySortThenBy
+    on QueryBuilder<SlvData, SlvData, QSortThenBy> {
+  QueryBuilder<SlvData, SlvData, QAfterSortBy> thenByClose() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'close', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterSortBy> thenByCloseDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'close', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterSortBy> thenByHigh() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'high', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterSortBy> thenByHighDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'high', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterSortBy> thenById() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'id', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterSortBy> thenByIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'id', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterSortBy> thenByLow() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'low', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterSortBy> thenByLowDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'low', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterSortBy> thenByOpen() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'open', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterSortBy> thenByOpenDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'open', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterSortBy> thenByTimeKey() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'timeKey', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterSortBy> thenByTimeKeyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'timeKey', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterSortBy> thenByVolume() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'volume', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QAfterSortBy> thenByVolumeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'volume', Sort.desc);
+    });
+  }
+}
+
+extension SlvDataQueryWhereDistinct
+    on QueryBuilder<SlvData, SlvData, QDistinct> {
+  QueryBuilder<SlvData, SlvData, QDistinct> distinctByClose() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'close');
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QDistinct> distinctByHigh() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'high');
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QDistinct> distinctByLow() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'low');
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QDistinct> distinctByOpen() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'open');
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QDistinct> distinctByTimeKey() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'timeKey');
+    });
+  }
+
+  QueryBuilder<SlvData, SlvData, QDistinct> distinctByVolume() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'volume');
+    });
+  }
+}
+
+extension SlvDataQueryProperty
+    on QueryBuilder<SlvData, SlvData, QQueryProperty> {
+  QueryBuilder<SlvData, int, QQueryOperations> idProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<SlvData, double, QQueryOperations> closeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'close');
+    });
+  }
+
+  QueryBuilder<SlvData, double, QQueryOperations> highProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'high');
+    });
+  }
+
+  QueryBuilder<SlvData, double, QQueryOperations> lowProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'low');
+    });
+  }
+
+  QueryBuilder<SlvData, double, QQueryOperations> openProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'open');
+    });
+  }
+
+  QueryBuilder<SlvData, int, QQueryOperations> timeKeyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'timeKey');
+    });
+  }
+
+  QueryBuilder<SlvData, int, QQueryOperations> volumeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'volume');
+    });
+  }
+}
+
+// coverage:ignore-file
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+
+extension GetIwmDataCollection on Isar {
+  IsarCollection<IwmData> get iwmDatas => this.collection();
+}
+
+const IwmDataSchema = CollectionSchema(
+  name: r'IwmData',
+  id: -7583070623998380696,
+  properties: {
+    r'close': PropertySchema(
+      id: 0,
+      name: r'close',
+      type: IsarType.double,
+    ),
+    r'high': PropertySchema(
+      id: 1,
+      name: r'high',
+      type: IsarType.double,
+    ),
+    r'low': PropertySchema(
+      id: 2,
+      name: r'low',
+      type: IsarType.double,
+    ),
+    r'open': PropertySchema(
+      id: 3,
+      name: r'open',
+      type: IsarType.double,
+    ),
+    r'timeKey': PropertySchema(
+      id: 4,
+      name: r'timeKey',
+      type: IsarType.long,
+    ),
+    r'volume': PropertySchema(
+      id: 5,
+      name: r'volume',
+      type: IsarType.long,
+    )
+  },
+  estimateSize: _iwmDataEstimateSize,
+  serialize: _iwmDataSerialize,
+  deserialize: _iwmDataDeserialize,
+  deserializeProp: _iwmDataDeserializeProp,
+  idName: r'id',
+  indexes: {},
+  links: {},
+  embeddedSchemas: {},
+  getId: _iwmDataGetId,
+  getLinks: _iwmDataGetLinks,
+  attach: _iwmDataAttach,
+  version: '3.1.0+1',
+);
+
+int _iwmDataEstimateSize(
+  IwmData object,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  var bytesCount = offsets.last;
+  return bytesCount;
+}
+
+void _iwmDataSerialize(
+  IwmData object,
+  IsarWriter writer,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  writer.writeDouble(offsets[0], object.close);
+  writer.writeDouble(offsets[1], object.high);
+  writer.writeDouble(offsets[2], object.low);
+  writer.writeDouble(offsets[3], object.open);
+  writer.writeLong(offsets[4], object.timeKey);
+  writer.writeLong(offsets[5], object.volume);
+}
+
+IwmData _iwmDataDeserialize(
+  Id id,
+  IsarReader reader,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  final object = IwmData();
+  object.close = reader.readDouble(offsets[0]);
+  object.high = reader.readDouble(offsets[1]);
+  object.id = id;
+  object.low = reader.readDouble(offsets[2]);
+  object.open = reader.readDouble(offsets[3]);
+  object.timeKey = reader.readLong(offsets[4]);
+  object.volume = reader.readLong(offsets[5]);
+  return object;
+}
+
+P _iwmDataDeserializeProp<P>(
+  IsarReader reader,
+  int propertyId,
+  int offset,
+  Map<Type, List<int>> allOffsets,
+) {
+  switch (propertyId) {
+    case 0:
+      return (reader.readDouble(offset)) as P;
+    case 1:
+      return (reader.readDouble(offset)) as P;
+    case 2:
+      return (reader.readDouble(offset)) as P;
+    case 3:
+      return (reader.readDouble(offset)) as P;
+    case 4:
+      return (reader.readLong(offset)) as P;
+    case 5:
+      return (reader.readLong(offset)) as P;
+    default:
+      throw IsarError('Unknown property with id $propertyId');
+  }
+}
+
+Id _iwmDataGetId(IwmData object) {
+  return object.id;
+}
+
+List<IsarLinkBase<dynamic>> _iwmDataGetLinks(IwmData object) {
+  return [];
+}
+
+void _iwmDataAttach(IsarCollection<dynamic> col, Id id, IwmData object) {
+  object.id = id;
+}
+
+extension IwmDataQueryWhereSort on QueryBuilder<IwmData, IwmData, QWhere> {
+  QueryBuilder<IwmData, IwmData, QAfterWhere> anyId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+}
+
+extension IwmDataQueryWhere on QueryBuilder<IwmData, IwmData, QWhereClause> {
+  QueryBuilder<IwmData, IwmData, QAfterWhereClause> idEqualTo(Id id) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IdWhereClause.between(
+        lower: id,
+        upper: id,
+      ));
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterWhereClause> idNotEqualTo(Id id) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IdWhereClause.lessThan(upper: id, includeUpper: false),
+            )
+            .addWhereClause(
+              IdWhereClause.greaterThan(lower: id, includeLower: false),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IdWhereClause.greaterThan(lower: id, includeLower: false),
+            )
+            .addWhereClause(
+              IdWhereClause.lessThan(upper: id, includeUpper: false),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterWhereClause> idGreaterThan(Id id,
+      {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IdWhereClause.greaterThan(lower: id, includeLower: include),
+      );
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterWhereClause> idLessThan(Id id,
+      {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IdWhereClause.lessThan(upper: id, includeUpper: include),
+      );
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterWhereClause> idBetween(
+    Id lowerId,
+    Id upperId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IdWhereClause.between(
+        lower: lowerId,
+        includeLower: includeLower,
+        upper: upperId,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+}
+
+extension IwmDataQueryFilter
+    on QueryBuilder<IwmData, IwmData, QFilterCondition> {
+  QueryBuilder<IwmData, IwmData, QAfterFilterCondition> closeEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'close',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterFilterCondition> closeGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'close',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterFilterCondition> closeLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'close',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterFilterCondition> closeBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'close',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterFilterCondition> highEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'high',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterFilterCondition> highGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'high',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterFilterCondition> highLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'high',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterFilterCondition> highBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'high',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterFilterCondition> idEqualTo(Id value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'id',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterFilterCondition> idGreaterThan(
+    Id value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'id',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterFilterCondition> idLessThan(
+    Id value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'id',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterFilterCondition> idBetween(
+    Id lower,
+    Id upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'id',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterFilterCondition> lowEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'low',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterFilterCondition> lowGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'low',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterFilterCondition> lowLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'low',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterFilterCondition> lowBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'low',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterFilterCondition> openEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'open',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterFilterCondition> openGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'open',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterFilterCondition> openLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'open',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterFilterCondition> openBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'open',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterFilterCondition> timeKeyEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'timeKey',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterFilterCondition> timeKeyGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'timeKey',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterFilterCondition> timeKeyLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'timeKey',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterFilterCondition> timeKeyBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'timeKey',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterFilterCondition> volumeEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'volume',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterFilterCondition> volumeGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'volume',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterFilterCondition> volumeLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'volume',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterFilterCondition> volumeBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'volume',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+}
+
+extension IwmDataQueryObject
+    on QueryBuilder<IwmData, IwmData, QFilterCondition> {}
+
+extension IwmDataQueryLinks
+    on QueryBuilder<IwmData, IwmData, QFilterCondition> {}
+
+extension IwmDataQuerySortBy on QueryBuilder<IwmData, IwmData, QSortBy> {
+  QueryBuilder<IwmData, IwmData, QAfterSortBy> sortByClose() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'close', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterSortBy> sortByCloseDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'close', Sort.desc);
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterSortBy> sortByHigh() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'high', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterSortBy> sortByHighDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'high', Sort.desc);
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterSortBy> sortByLow() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'low', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterSortBy> sortByLowDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'low', Sort.desc);
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterSortBy> sortByOpen() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'open', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterSortBy> sortByOpenDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'open', Sort.desc);
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterSortBy> sortByTimeKey() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'timeKey', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterSortBy> sortByTimeKeyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'timeKey', Sort.desc);
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterSortBy> sortByVolume() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'volume', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterSortBy> sortByVolumeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'volume', Sort.desc);
+    });
+  }
+}
+
+extension IwmDataQuerySortThenBy
+    on QueryBuilder<IwmData, IwmData, QSortThenBy> {
+  QueryBuilder<IwmData, IwmData, QAfterSortBy> thenByClose() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'close', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterSortBy> thenByCloseDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'close', Sort.desc);
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterSortBy> thenByHigh() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'high', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterSortBy> thenByHighDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'high', Sort.desc);
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterSortBy> thenById() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'id', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterSortBy> thenByIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'id', Sort.desc);
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterSortBy> thenByLow() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'low', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterSortBy> thenByLowDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'low', Sort.desc);
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterSortBy> thenByOpen() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'open', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterSortBy> thenByOpenDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'open', Sort.desc);
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterSortBy> thenByTimeKey() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'timeKey', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterSortBy> thenByTimeKeyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'timeKey', Sort.desc);
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterSortBy> thenByVolume() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'volume', Sort.asc);
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QAfterSortBy> thenByVolumeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'volume', Sort.desc);
+    });
+  }
+}
+
+extension IwmDataQueryWhereDistinct
+    on QueryBuilder<IwmData, IwmData, QDistinct> {
+  QueryBuilder<IwmData, IwmData, QDistinct> distinctByClose() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'close');
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QDistinct> distinctByHigh() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'high');
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QDistinct> distinctByLow() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'low');
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QDistinct> distinctByOpen() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'open');
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QDistinct> distinctByTimeKey() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'timeKey');
+    });
+  }
+
+  QueryBuilder<IwmData, IwmData, QDistinct> distinctByVolume() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'volume');
+    });
+  }
+}
+
+extension IwmDataQueryProperty
+    on QueryBuilder<IwmData, IwmData, QQueryProperty> {
+  QueryBuilder<IwmData, int, QQueryOperations> idProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<IwmData, double, QQueryOperations> closeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'close');
+    });
+  }
+
+  QueryBuilder<IwmData, double, QQueryOperations> highProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'high');
+    });
+  }
+
+  QueryBuilder<IwmData, double, QQueryOperations> lowProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'low');
+    });
+  }
+
+  QueryBuilder<IwmData, double, QQueryOperations> openProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'open');
+    });
+  }
+
+  QueryBuilder<IwmData, int, QQueryOperations> timeKeyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'timeKey');
+    });
+  }
+
+  QueryBuilder<IwmData, int, QQueryOperations> volumeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'volume');
+    });
+  }
+}
+
+// coverage:ignore-file
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+
+extension GetXlkDataCollection on Isar {
+  IsarCollection<XlkData> get xlkDatas => this.collection();
+}
+
+const XlkDataSchema = CollectionSchema(
+  name: r'XlkData',
+  id: -7597049807838897365,
+  properties: {
+    r'close': PropertySchema(
+      id: 0,
+      name: r'close',
+      type: IsarType.double,
+    ),
+    r'high': PropertySchema(
+      id: 1,
+      name: r'high',
+      type: IsarType.double,
+    ),
+    r'low': PropertySchema(
+      id: 2,
+      name: r'low',
+      type: IsarType.double,
+    ),
+    r'open': PropertySchema(
+      id: 3,
+      name: r'open',
+      type: IsarType.double,
+    ),
+    r'timeKey': PropertySchema(
+      id: 4,
+      name: r'timeKey',
+      type: IsarType.long,
+    ),
+    r'volume': PropertySchema(
+      id: 5,
+      name: r'volume',
+      type: IsarType.long,
+    )
+  },
+  estimateSize: _xlkDataEstimateSize,
+  serialize: _xlkDataSerialize,
+  deserialize: _xlkDataDeserialize,
+  deserializeProp: _xlkDataDeserializeProp,
+  idName: r'id',
+  indexes: {},
+  links: {},
+  embeddedSchemas: {},
+  getId: _xlkDataGetId,
+  getLinks: _xlkDataGetLinks,
+  attach: _xlkDataAttach,
+  version: '3.1.0+1',
+);
+
+int _xlkDataEstimateSize(
+  XlkData object,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  var bytesCount = offsets.last;
+  return bytesCount;
+}
+
+void _xlkDataSerialize(
+  XlkData object,
+  IsarWriter writer,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  writer.writeDouble(offsets[0], object.close);
+  writer.writeDouble(offsets[1], object.high);
+  writer.writeDouble(offsets[2], object.low);
+  writer.writeDouble(offsets[3], object.open);
+  writer.writeLong(offsets[4], object.timeKey);
+  writer.writeLong(offsets[5], object.volume);
+}
+
+XlkData _xlkDataDeserialize(
+  Id id,
+  IsarReader reader,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  final object = XlkData();
+  object.close = reader.readDouble(offsets[0]);
+  object.high = reader.readDouble(offsets[1]);
+  object.id = id;
+  object.low = reader.readDouble(offsets[2]);
+  object.open = reader.readDouble(offsets[3]);
+  object.timeKey = reader.readLong(offsets[4]);
+  object.volume = reader.readLong(offsets[5]);
+  return object;
+}
+
+P _xlkDataDeserializeProp<P>(
+  IsarReader reader,
+  int propertyId,
+  int offset,
+  Map<Type, List<int>> allOffsets,
+) {
+  switch (propertyId) {
+    case 0:
+      return (reader.readDouble(offset)) as P;
+    case 1:
+      return (reader.readDouble(offset)) as P;
+    case 2:
+      return (reader.readDouble(offset)) as P;
+    case 3:
+      return (reader.readDouble(offset)) as P;
+    case 4:
+      return (reader.readLong(offset)) as P;
+    case 5:
+      return (reader.readLong(offset)) as P;
+    default:
+      throw IsarError('Unknown property with id $propertyId');
+  }
+}
+
+Id _xlkDataGetId(XlkData object) {
+  return object.id;
+}
+
+List<IsarLinkBase<dynamic>> _xlkDataGetLinks(XlkData object) {
+  return [];
+}
+
+void _xlkDataAttach(IsarCollection<dynamic> col, Id id, XlkData object) {
+  object.id = id;
+}
+
+extension XlkDataQueryWhereSort on QueryBuilder<XlkData, XlkData, QWhere> {
+  QueryBuilder<XlkData, XlkData, QAfterWhere> anyId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+}
+
+extension XlkDataQueryWhere on QueryBuilder<XlkData, XlkData, QWhereClause> {
+  QueryBuilder<XlkData, XlkData, QAfterWhereClause> idEqualTo(Id id) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IdWhereClause.between(
+        lower: id,
+        upper: id,
+      ));
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterWhereClause> idNotEqualTo(Id id) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IdWhereClause.lessThan(upper: id, includeUpper: false),
+            )
+            .addWhereClause(
+              IdWhereClause.greaterThan(lower: id, includeLower: false),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IdWhereClause.greaterThan(lower: id, includeLower: false),
+            )
+            .addWhereClause(
+              IdWhereClause.lessThan(upper: id, includeUpper: false),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterWhereClause> idGreaterThan(Id id,
+      {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IdWhereClause.greaterThan(lower: id, includeLower: include),
+      );
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterWhereClause> idLessThan(Id id,
+      {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IdWhereClause.lessThan(upper: id, includeUpper: include),
+      );
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterWhereClause> idBetween(
+    Id lowerId,
+    Id upperId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IdWhereClause.between(
+        lower: lowerId,
+        includeLower: includeLower,
+        upper: upperId,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+}
+
+extension XlkDataQueryFilter
+    on QueryBuilder<XlkData, XlkData, QFilterCondition> {
+  QueryBuilder<XlkData, XlkData, QAfterFilterCondition> closeEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'close',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterFilterCondition> closeGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'close',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterFilterCondition> closeLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'close',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterFilterCondition> closeBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'close',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterFilterCondition> highEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'high',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterFilterCondition> highGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'high',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterFilterCondition> highLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'high',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterFilterCondition> highBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'high',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterFilterCondition> idEqualTo(Id value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'id',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterFilterCondition> idGreaterThan(
+    Id value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'id',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterFilterCondition> idLessThan(
+    Id value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'id',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterFilterCondition> idBetween(
+    Id lower,
+    Id upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'id',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterFilterCondition> lowEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'low',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterFilterCondition> lowGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'low',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterFilterCondition> lowLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'low',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterFilterCondition> lowBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'low',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterFilterCondition> openEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'open',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterFilterCondition> openGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'open',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterFilterCondition> openLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'open',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterFilterCondition> openBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'open',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterFilterCondition> timeKeyEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'timeKey',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterFilterCondition> timeKeyGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'timeKey',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterFilterCondition> timeKeyLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'timeKey',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterFilterCondition> timeKeyBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'timeKey',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterFilterCondition> volumeEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'volume',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterFilterCondition> volumeGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'volume',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterFilterCondition> volumeLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'volume',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterFilterCondition> volumeBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'volume',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+}
+
+extension XlkDataQueryObject
+    on QueryBuilder<XlkData, XlkData, QFilterCondition> {}
+
+extension XlkDataQueryLinks
+    on QueryBuilder<XlkData, XlkData, QFilterCondition> {}
+
+extension XlkDataQuerySortBy on QueryBuilder<XlkData, XlkData, QSortBy> {
+  QueryBuilder<XlkData, XlkData, QAfterSortBy> sortByClose() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'close', Sort.asc);
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterSortBy> sortByCloseDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'close', Sort.desc);
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterSortBy> sortByHigh() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'high', Sort.asc);
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterSortBy> sortByHighDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'high', Sort.desc);
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterSortBy> sortByLow() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'low', Sort.asc);
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterSortBy> sortByLowDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'low', Sort.desc);
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterSortBy> sortByOpen() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'open', Sort.asc);
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterSortBy> sortByOpenDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'open', Sort.desc);
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterSortBy> sortByTimeKey() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'timeKey', Sort.asc);
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterSortBy> sortByTimeKeyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'timeKey', Sort.desc);
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterSortBy> sortByVolume() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'volume', Sort.asc);
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterSortBy> sortByVolumeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'volume', Sort.desc);
+    });
+  }
+}
+
+extension XlkDataQuerySortThenBy
+    on QueryBuilder<XlkData, XlkData, QSortThenBy> {
+  QueryBuilder<XlkData, XlkData, QAfterSortBy> thenByClose() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'close', Sort.asc);
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterSortBy> thenByCloseDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'close', Sort.desc);
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterSortBy> thenByHigh() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'high', Sort.asc);
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterSortBy> thenByHighDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'high', Sort.desc);
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterSortBy> thenById() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'id', Sort.asc);
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterSortBy> thenByIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'id', Sort.desc);
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterSortBy> thenByLow() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'low', Sort.asc);
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterSortBy> thenByLowDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'low', Sort.desc);
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterSortBy> thenByOpen() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'open', Sort.asc);
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterSortBy> thenByOpenDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'open', Sort.desc);
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterSortBy> thenByTimeKey() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'timeKey', Sort.asc);
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterSortBy> thenByTimeKeyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'timeKey', Sort.desc);
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterSortBy> thenByVolume() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'volume', Sort.asc);
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QAfterSortBy> thenByVolumeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'volume', Sort.desc);
+    });
+  }
+}
+
+extension XlkDataQueryWhereDistinct
+    on QueryBuilder<XlkData, XlkData, QDistinct> {
+  QueryBuilder<XlkData, XlkData, QDistinct> distinctByClose() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'close');
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QDistinct> distinctByHigh() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'high');
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QDistinct> distinctByLow() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'low');
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QDistinct> distinctByOpen() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'open');
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QDistinct> distinctByTimeKey() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'timeKey');
+    });
+  }
+
+  QueryBuilder<XlkData, XlkData, QDistinct> distinctByVolume() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'volume');
+    });
+  }
+}
+
+extension XlkDataQueryProperty
+    on QueryBuilder<XlkData, XlkData, QQueryProperty> {
+  QueryBuilder<XlkData, int, QQueryOperations> idProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<XlkData, double, QQueryOperations> closeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'close');
+    });
+  }
+
+  QueryBuilder<XlkData, double, QQueryOperations> highProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'high');
+    });
+  }
+
+  QueryBuilder<XlkData, double, QQueryOperations> lowProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'low');
+    });
+  }
+
+  QueryBuilder<XlkData, double, QQueryOperations> openProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'open');
+    });
+  }
+
+  QueryBuilder<XlkData, int, QQueryOperations> timeKeyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'timeKey');
+    });
+  }
+
+  QueryBuilder<XlkData, int, QQueryOperations> volumeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'volume');
+    });
+  }
+}
+
+// coverage:ignore-file
+// ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
+
+extension GetAaplDataCollection on Isar {
+  IsarCollection<AaplData> get aaplDatas => this.collection();
+}
+
+const AaplDataSchema = CollectionSchema(
+  name: r'AaplData',
+  id: 1300279952317412284,
+  properties: {
+    r'close': PropertySchema(
+      id: 0,
+      name: r'close',
+      type: IsarType.double,
+    ),
+    r'high': PropertySchema(
+      id: 1,
+      name: r'high',
+      type: IsarType.double,
+    ),
+    r'low': PropertySchema(
+      id: 2,
+      name: r'low',
+      type: IsarType.double,
+    ),
+    r'open': PropertySchema(
+      id: 3,
+      name: r'open',
+      type: IsarType.double,
+    ),
+    r'timeKey': PropertySchema(
+      id: 4,
+      name: r'timeKey',
+      type: IsarType.long,
+    ),
+    r'volume': PropertySchema(
+      id: 5,
+      name: r'volume',
+      type: IsarType.long,
+    )
+  },
+  estimateSize: _aaplDataEstimateSize,
+  serialize: _aaplDataSerialize,
+  deserialize: _aaplDataDeserialize,
+  deserializeProp: _aaplDataDeserializeProp,
+  idName: r'id',
+  indexes: {},
+  links: {},
+  embeddedSchemas: {},
+  getId: _aaplDataGetId,
+  getLinks: _aaplDataGetLinks,
+  attach: _aaplDataAttach,
+  version: '3.1.0+1',
+);
+
+int _aaplDataEstimateSize(
+  AaplData object,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  var bytesCount = offsets.last;
+  return bytesCount;
+}
+
+void _aaplDataSerialize(
+  AaplData object,
+  IsarWriter writer,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  writer.writeDouble(offsets[0], object.close);
+  writer.writeDouble(offsets[1], object.high);
+  writer.writeDouble(offsets[2], object.low);
+  writer.writeDouble(offsets[3], object.open);
+  writer.writeLong(offsets[4], object.timeKey);
+  writer.writeLong(offsets[5], object.volume);
+}
+
+AaplData _aaplDataDeserialize(
+  Id id,
+  IsarReader reader,
+  List<int> offsets,
+  Map<Type, List<int>> allOffsets,
+) {
+  final object = AaplData();
+  object.close = reader.readDouble(offsets[0]);
+  object.high = reader.readDouble(offsets[1]);
+  object.id = id;
+  object.low = reader.readDouble(offsets[2]);
+  object.open = reader.readDouble(offsets[3]);
+  object.timeKey = reader.readLong(offsets[4]);
+  object.volume = reader.readLong(offsets[5]);
+  return object;
+}
+
+P _aaplDataDeserializeProp<P>(
+  IsarReader reader,
+  int propertyId,
+  int offset,
+  Map<Type, List<int>> allOffsets,
+) {
+  switch (propertyId) {
+    case 0:
+      return (reader.readDouble(offset)) as P;
+    case 1:
+      return (reader.readDouble(offset)) as P;
+    case 2:
+      return (reader.readDouble(offset)) as P;
+    case 3:
+      return (reader.readDouble(offset)) as P;
+    case 4:
+      return (reader.readLong(offset)) as P;
+    case 5:
+      return (reader.readLong(offset)) as P;
+    default:
+      throw IsarError('Unknown property with id $propertyId');
+  }
+}
+
+Id _aaplDataGetId(AaplData object) {
+  return object.id;
+}
+
+List<IsarLinkBase<dynamic>> _aaplDataGetLinks(AaplData object) {
+  return [];
+}
+
+void _aaplDataAttach(IsarCollection<dynamic> col, Id id, AaplData object) {
+  object.id = id;
+}
+
+extension AaplDataQueryWhereSort on QueryBuilder<AaplData, AaplData, QWhere> {
+  QueryBuilder<AaplData, AaplData, QAfterWhere> anyId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+}
+
+extension AaplDataQueryWhere on QueryBuilder<AaplData, AaplData, QWhereClause> {
+  QueryBuilder<AaplData, AaplData, QAfterWhereClause> idEqualTo(Id id) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IdWhereClause.between(
+        lower: id,
+        upper: id,
+      ));
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterWhereClause> idNotEqualTo(Id id) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IdWhereClause.lessThan(upper: id, includeUpper: false),
+            )
+            .addWhereClause(
+              IdWhereClause.greaterThan(lower: id, includeLower: false),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IdWhereClause.greaterThan(lower: id, includeLower: false),
+            )
+            .addWhereClause(
+              IdWhereClause.lessThan(upper: id, includeUpper: false),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterWhereClause> idGreaterThan(Id id,
+      {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IdWhereClause.greaterThan(lower: id, includeLower: include),
+      );
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterWhereClause> idLessThan(Id id,
+      {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IdWhereClause.lessThan(upper: id, includeUpper: include),
+      );
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterWhereClause> idBetween(
+    Id lowerId,
+    Id upperId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IdWhereClause.between(
+        lower: lowerId,
+        includeLower: includeLower,
+        upper: upperId,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+}
+
+extension AaplDataQueryFilter
+    on QueryBuilder<AaplData, AaplData, QFilterCondition> {
+  QueryBuilder<AaplData, AaplData, QAfterFilterCondition> closeEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'close',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterFilterCondition> closeGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'close',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterFilterCondition> closeLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'close',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterFilterCondition> closeBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'close',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterFilterCondition> highEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'high',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterFilterCondition> highGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'high',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterFilterCondition> highLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'high',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterFilterCondition> highBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'high',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterFilterCondition> idEqualTo(Id value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'id',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterFilterCondition> idGreaterThan(
+    Id value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'id',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterFilterCondition> idLessThan(
+    Id value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'id',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterFilterCondition> idBetween(
+    Id lower,
+    Id upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'id',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterFilterCondition> lowEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'low',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterFilterCondition> lowGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'low',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterFilterCondition> lowLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'low',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterFilterCondition> lowBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'low',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterFilterCondition> openEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'open',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterFilterCondition> openGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'open',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterFilterCondition> openLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'open',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterFilterCondition> openBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'open',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterFilterCondition> timeKeyEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'timeKey',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterFilterCondition> timeKeyGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'timeKey',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterFilterCondition> timeKeyLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'timeKey',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterFilterCondition> timeKeyBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'timeKey',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterFilterCondition> volumeEqualTo(
+      int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'volume',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterFilterCondition> volumeGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'volume',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterFilterCondition> volumeLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'volume',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterFilterCondition> volumeBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'volume',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+}
+
+extension AaplDataQueryObject
+    on QueryBuilder<AaplData, AaplData, QFilterCondition> {}
+
+extension AaplDataQueryLinks
+    on QueryBuilder<AaplData, AaplData, QFilterCondition> {}
+
+extension AaplDataQuerySortBy on QueryBuilder<AaplData, AaplData, QSortBy> {
+  QueryBuilder<AaplData, AaplData, QAfterSortBy> sortByClose() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'close', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterSortBy> sortByCloseDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'close', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterSortBy> sortByHigh() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'high', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterSortBy> sortByHighDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'high', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterSortBy> sortByLow() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'low', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterSortBy> sortByLowDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'low', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterSortBy> sortByOpen() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'open', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterSortBy> sortByOpenDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'open', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterSortBy> sortByTimeKey() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'timeKey', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterSortBy> sortByTimeKeyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'timeKey', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterSortBy> sortByVolume() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'volume', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterSortBy> sortByVolumeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'volume', Sort.desc);
+    });
+  }
+}
+
+extension AaplDataQuerySortThenBy
+    on QueryBuilder<AaplData, AaplData, QSortThenBy> {
+  QueryBuilder<AaplData, AaplData, QAfterSortBy> thenByClose() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'close', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterSortBy> thenByCloseDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'close', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterSortBy> thenByHigh() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'high', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterSortBy> thenByHighDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'high', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterSortBy> thenById() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'id', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterSortBy> thenByIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'id', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterSortBy> thenByLow() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'low', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterSortBy> thenByLowDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'low', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterSortBy> thenByOpen() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'open', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterSortBy> thenByOpenDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'open', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterSortBy> thenByTimeKey() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'timeKey', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterSortBy> thenByTimeKeyDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'timeKey', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterSortBy> thenByVolume() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'volume', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QAfterSortBy> thenByVolumeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'volume', Sort.desc);
+    });
+  }
+}
+
+extension AaplDataQueryWhereDistinct
+    on QueryBuilder<AaplData, AaplData, QDistinct> {
+  QueryBuilder<AaplData, AaplData, QDistinct> distinctByClose() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'close');
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QDistinct> distinctByHigh() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'high');
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QDistinct> distinctByLow() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'low');
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QDistinct> distinctByOpen() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'open');
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QDistinct> distinctByTimeKey() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'timeKey');
+    });
+  }
+
+  QueryBuilder<AaplData, AaplData, QDistinct> distinctByVolume() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'volume');
+    });
+  }
+}
+
+extension AaplDataQueryProperty
+    on QueryBuilder<AaplData, AaplData, QQueryProperty> {
+  QueryBuilder<AaplData, int, QQueryOperations> idProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<AaplData, double, QQueryOperations> closeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'close');
+    });
+  }
+
+  QueryBuilder<AaplData, double, QQueryOperations> highProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'high');
+    });
+  }
+
+  QueryBuilder<AaplData, double, QQueryOperations> lowProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'low');
+    });
+  }
+
+  QueryBuilder<AaplData, double, QQueryOperations> openProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'open');
+    });
+  }
+
+  QueryBuilder<AaplData, int, QQueryOperations> timeKeyProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'timeKey');
+    });
+  }
+
+  QueryBuilder<AaplData, int, QQueryOperations> volumeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'volume');
+    });
+  }
+}

@@ -454,6 +454,18 @@ Date,Open,High,Low,Close,Adj Close,Volume
       case 'GLD':
         lastDoc = await isar.gldDatas.where().sortByTimeKeyDesc().findFirst();
         break;
+      case 'SLV':
+        lastDoc = await isar.slvDatas.where().sortByTimeKeyDesc().findFirst();
+        break;
+      case 'IWM':
+        lastDoc = await isar.iwmDatas.where().sortByTimeKeyDesc().findFirst();
+        break;
+      case 'XLK':
+        lastDoc = await isar.xlkDatas.where().sortByTimeKeyDesc().findFirst();
+        break;
+      case 'AAPL':
+        lastDoc = await isar.aaplDatas.where().sortByTimeKeyDesc().findFirst();
+        break;
       default:
         throw Exception(
             'There is no minute interval data for financial instrument: $stockSymbol');
@@ -537,6 +549,26 @@ Date,Open,High,Low,Close,Adj Close,Volume
                     await isar.gldDatas.where().sortByTimeKey().findAll();
                 docList = dataList.map((data) => data.toJson()).toList();
                 break;
+              case 'SLV':
+                final dataList =
+                    await isar.slvDatas.where().sortByTimeKey().findAll();
+                docList = dataList.map((data) => data.toJson()).toList();
+                break;
+              case 'IWM':
+                final dataList =
+                    await isar.iwmDatas.where().sortByTimeKey().findAll();
+                docList = dataList.map((data) => data.toJson()).toList();
+                break;
+              case 'XLK':
+                final dataList =
+                    await isar.xlkDatas.where().sortByTimeKey().findAll();
+                docList = dataList.map((data) => data.toJson()).toList();
+                break;
+              case 'AAPL':
+                final dataList =
+                    await isar.aaplDatas.where().sortByTimeKey().findAll();
+                docList = dataList.map((data) => data.toJson()).toList();
+                break;
               default:
                 throw Exception(
                     'Unknown financial instrument symbol: $stockSymbol');
@@ -600,6 +632,58 @@ Date,Open,High,Low,Close,Adj Close,Volume
             }
             final dataList =
                 await isar.gldDatas.where().sortByTimeKey().findAll();
+            docList = dataList.map((data) => data.toJson()).toList();
+            break;
+          case 'SLV':
+            if (jsonData['content'] != null && !jsonData['content'].isEmpty) {
+              stockDataList = jsonData['content']
+                  .map((data) => SlvData.fromJson(data))
+                  .toList();
+              await isar.writeTxn(() async {
+                await isar.slvDatas.putAll(stockDataList.cast<SlvData>());
+              });
+            }
+            final dataList =
+                await isar.slvDatas.where().sortByTimeKey().findAll();
+            docList = dataList.map((data) => data.toJson()).toList();
+            break;
+          case 'IWM':
+            if (jsonData['content'] != null && !jsonData['content'].isEmpty) {
+              stockDataList = jsonData['content']
+                  .map((data) => IwmData.fromJson(data))
+                  .toList();
+              await isar.writeTxn(() async {
+                await isar.iwmDatas.putAll(stockDataList.cast<IwmData>());
+              });
+            }
+            final dataList =
+                await isar.iwmDatas.where().sortByTimeKey().findAll();
+            docList = dataList.map((data) => data.toJson()).toList();
+            break;
+          case 'XLK':
+            if (jsonData['content'] != null && !jsonData['content'].isEmpty) {
+              stockDataList = jsonData['content']
+                  .map((data) => XlkData.fromJson(data))
+                  .toList();
+              await isar.writeTxn(() async {
+                await isar.xlkDatas.putAll(stockDataList.cast<XlkData>());
+              });
+            }
+            final dataList =
+                await isar.xlkDatas.where().sortByTimeKey().findAll();
+            docList = dataList.map((data) => data.toJson()).toList();
+            break;
+          case 'AAPL':
+            if (jsonData['content'] != null && !jsonData['content'].isEmpty) {
+              stockDataList = jsonData['content']
+                  .map((data) => AaplData.fromJson(data))
+                  .toList();
+              await isar.writeTxn(() async {
+                await isar.aaplDatas.putAll(stockDataList.cast<AaplData>());
+              });
+            }
+            final dataList =
+                await isar.aaplDatas.where().sortByTimeKey().findAll();
             docList = dataList.map((data) => data.toJson()).toList();
             break;
           default:

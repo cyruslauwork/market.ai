@@ -52,6 +52,26 @@ class SubsequentAnalytics {
           candleListListLength = candleListList.length;
           matchRows = MainPresenter.to.gldMatchRows;
           matchLen = matchRows.length;
+        } else if (symbol == 'SLV' && symbol != fiSymbol) {
+          candleListList = MainPresenter.to.slvCandleListList;
+          candleListListLength = candleListList.length;
+          matchRows = MainPresenter.to.slvMatchRows;
+          matchLen = matchRows.length;
+        } else if (symbol == 'IWM' && symbol != fiSymbol) {
+          candleListList = MainPresenter.to.iwmCandleListList;
+          candleListListLength = candleListList.length;
+          matchRows = MainPresenter.to.iwmMatchRows;
+          matchLen = matchRows.length;
+        } else if (symbol == 'XLK' && symbol != fiSymbol) {
+          candleListList = MainPresenter.to.xlkCandleListList;
+          candleListListLength = candleListList.length;
+          matchRows = MainPresenter.to.xlkMatchRows;
+          matchLen = matchRows.length;
+        } else if (symbol == 'AAPL' && symbol != fiSymbol) {
+          candleListList = MainPresenter.to.aaplCandleListList;
+          candleListListLength = candleListList.length;
+          matchRows = MainPresenter.to.aaplMatchRows;
+          matchLen = matchRows.length;
         } else {
           candleListList = MainPresenter.to.candleListList;
           candleListListLength = candleListList.length;
@@ -60,6 +80,10 @@ class SubsequentAnalytics {
         }
         if (matchRows.isEmpty || candleListList.isEmpty) {
           continue;
+        } else if (matchRows.isNotEmpty) {
+          if (matchRows[0] == 0) {
+            continue;
+          }
         }
         bool outerBreak = false;
         int count = 0;

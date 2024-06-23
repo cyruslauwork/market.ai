@@ -415,17 +415,26 @@ class MainPresenter extends GetxController {
   RxList<List<dynamic>> qqqCandleListList = [[]].obs; // Cross-data
   RxList<List<dynamic>> usoCandleListList = [[]].obs; // Cross-data
   RxList<List<dynamic>> gldCandleListList = [[]].obs; // Cross-data
+  RxList<List<dynamic>> slvCandleListList = [[]].obs; // Cross-data
+  RxList<List<dynamic>> iwmCandleListList = [[]].obs; // Cross-data
+  RxList<List<dynamic>> xlkCandleListList = [[]].obs; // Cross-data
+  RxList<List<dynamic>> aaplCandleListList = [[]].obs; // Cross-data
   late Rx<Future<List<CandleData>>> futureListCandledata = init().obs;
   late RxList<CandleData> listCandledata = dummyCandle.obs;
   late RxList<CandleData> spyListCandledata = dummyCandle.obs; // Cross-data
   late RxList<CandleData> qqqListCandledata = dummyCandle.obs; // Cross-data
   late RxList<CandleData> usoListCandledata = dummyCandle.obs; // Cross-data
   late RxList<CandleData> gldListCandledata = dummyCandle.obs; // Cross-data
+  late RxList<CandleData> slvListCandledata = dummyCandle.obs; // Cross-data
+  late RxList<CandleData> iwmListCandledata = dummyCandle.obs; // Cross-data
+  late RxList<CandleData> xlkListCandledata = dummyCandle.obs; // Cross-data
+  late RxList<CandleData> aaplListCandledata = dummyCandle.obs; // Cross-data
   ValueNotifier<bool> showAverageNotifier = ValueNotifier<bool>(true);
   bool isShowAverageListenerAdded = false;
   late RxString marketDataProviderMsg = Rx('mkt_data'.tr)().obs;
   RxBool isMarketDataProviderErr = false.obs;
-  RxList minuteDataList = ['SPY', 'QQQ', 'USO', 'GLD'].obs;
+  RxList minuteDataList =
+      ['SPY', 'QQQ', 'USO', 'GLD', 'SLV', 'IWM', 'XLK', 'AAPL'].obs;
   RxBool hasMinuteData = false.obs;
   late Rx<String> lastDatetime = 'Loading last datetime...'.obs;
   RxBool hasCandleData = false.obs;
@@ -514,6 +523,10 @@ class MainPresenter extends GetxController {
   RxList<int> qqqMatchRows = [0].obs; // Cross-data
   RxList<int> usoMatchRows = [0].obs; // Cross-data
   RxList<int> gldMatchRows = [0].obs; // Cross-data
+  RxList<int> slvMatchRows = [0].obs; // Cross-data
+  RxList<int> iwmMatchRows = [0].obs; // Cross-data
+  RxList<int> xlkMatchRows = [0].obs; // Cross-data
+  RxList<int> aaplMatchRows = [0].obs; // Cross-data
   RxBool trendMatched = false.obs;
   RxBool showAnalytics = false.obs;
   ValueNotifier<bool> showAnalyticsNotifier = ValueNotifier<bool>(false);
@@ -556,11 +569,11 @@ class MainPresenter extends GetxController {
   // A 2nd initialization will be triggered when starting the app
   @override
   void onInit() {
-    // PrefsService.to.prefs
-    //     .setString(SharedPreferencesConstant.financialInstrumentSymbol, 'QQQ');
-    // PrefsService.to.prefs.setString(
-    //     SharedPreferencesConstant.financialInstrumentName,
-    //     'Invesco QQQ Trust, Series 1');
+    PrefsService.to.prefs
+        .setString(SharedPreferencesConstant.financialInstrumentSymbol, 'QQQ');
+    PrefsService.to.prefs.setString(
+        SharedPreferencesConstant.financialInstrumentName,
+        'Invesco QQQ Trust, Series 1');
     // PrefsService.to.prefs.setInt(SharedPreferencesConstant.range, 5);
     // PrefsService.to.prefs.setInt(SharedPreferencesConstant.tolerance, 100);
     // PrefsService.to.prefs
@@ -1075,7 +1088,7 @@ class MainPresenter extends GetxController {
       PrefsService.to.prefs
           .setStringList(SharedPreferencesConstant.watchlist, watchlist);
     } else {
-      if (watchlist.length > 4) {
+      if (watchlist.length > 8) {
         Get.snackbar(
             'notice'.tr,
             colorText: AppColor.whiteColor,
@@ -1329,19 +1342,23 @@ class MainPresenter extends GetxController {
     if (MainPresenter.to.candleListList.isNotEmpty) {
       var lastDatetime = MainPresenter.to.candleListList.last[0];
       // print(lastDatetime);
-      if (alwaysShowMinuteData.value) {
-        DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
-            lastDatetime * 1000,
-            isUtc: true);
-        DateTime subtractedDateTime =
-            TimeService.to.subtractHoursBasedOnTimezone(dateTime);
-        lastDatetime =
-            DateFormat('yyyy-MM-dd HH:mm:ss').format(subtractedDateTime);
-        String timezone =
-            TimeService.to.isEasternDaylightTime(dateTime) ? 'EDT' : 'EST';
-        return '${'as_of'.tr} $lastDatetime $timezone.';
-      } else {
-        return '${'as_of'.tr} $lastDatetime.';
+      try {
+        if (alwaysShowMinuteData.value && hasMinuteData.value) {
+          DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
+              lastDatetime.toInt() * 1000,
+              isUtc: true);
+          DateTime subtractedDateTime =
+              TimeService.to.subtractHoursBasedOnTimezone(dateTime);
+          lastDatetime =
+              DateFormat('yyyy-MM-dd HH:mm:ss').format(subtractedDateTime);
+          String timezone =
+              TimeService.to.isEasternDaylightTime(dateTime) ? 'EDT' : 'EST';
+          return '${'as_of'.tr} $lastDatetime $timezone.';
+        } else {
+          return '${'as_of'.tr} $lastDatetime.';
+        }
+      } catch (e) {
+        return 'Failed to fetch datetime';
       }
     } else {
       return 'Loading';

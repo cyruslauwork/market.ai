@@ -64,6 +64,10 @@ class TrendMatch {
     MainPresenter.to.qqqMatchRows.value = [];
     MainPresenter.to.usoMatchRows.value = [];
     MainPresenter.to.gldMatchRows.value = [];
+    MainPresenter.to.slvMatchRows.value = [];
+    MainPresenter.to.iwmMatchRows.value = [];
+    MainPresenter.to.xlkMatchRows.value = [];
+    MainPresenter.to.aaplMatchRows.value = [];
     MainPresenter.to.matchPercentDifferencesListList.value = [];
     MainPresenter.to.matchActualDifferencesListList.value = [];
     MainPresenter.to.matchActualPricesListList.value = [];
@@ -80,7 +84,6 @@ class TrendMatch {
       if (!hasMa) {
         await Candle().computeTrendLines();
         // listCandledata = MainPresenter.to.listCandledata;
-        dataLength = listCandledata.length;
         hasMa = listCandledata.last.trends.isNotEmpty;
         maLength = listCandledata.last.trends.length;
       }
@@ -152,7 +155,11 @@ class TrendMatch {
       // if (MainPresenter.to.spyListCandledata.length != dummyCandleLen ||
       //     MainPresenter.to.qqqListCandledata.length != dummyCandleLen ||
       //     MainPresenter.to.usoListCandledata.length != dummyCandleLen ||
-      //     MainPresenter.to.gldListCandledata.length != dummyCandleLen) {
+      //     MainPresenter.to.gldListCandledata.length != dummyCandleLen ||
+      //     MainPresenter.to.slvListCandledata.length != dummyCandleLen ||
+      //     MainPresenter.to.iwmListCandledata.length != dummyCandleLen ||
+      //     MainPresenter.to.xlkListCandledata.length != dummyCandleLen ||
+      //     MainPresenter.to.aaplListCandledata.length != dummyCandleLen) {
       //   MainPresenter.to.dispose();
       //   Get.put(MainPresenter());
       //   logger.d('Instance "MainPresenter" has been reloaded');
@@ -168,6 +175,10 @@ class TrendMatch {
       List<CandleData> qqqListCandledata = MainPresenter.to.qqqListCandledata;
       List<CandleData> usoListCandledata = MainPresenter.to.usoListCandledata;
       List<CandleData> gldListCandledata = MainPresenter.to.gldListCandledata;
+      List<CandleData> slvListCandledata = MainPresenter.to.slvListCandledata;
+      List<CandleData> iwmListCandledata = MainPresenter.to.iwmListCandledata;
+      List<CandleData> xlkListCandledata = MainPresenter.to.xlkListCandledata;
+      List<CandleData> aaplListCandledata = MainPresenter.to.aaplListCandledata;
       if (i != 0) {
         if (i == 1 && symbol != 'SPY') {
           if (spyListCandledata.isEmpty ||
@@ -217,8 +228,56 @@ class TrendMatch {
             hasData = true;
             listCandledata = gldListCandledata;
           }
+        } else if (i == 5 && symbol != 'SLV') {
+          if (slvListCandledata.isEmpty ||
+              slvListCandledata.length == dummyCandleLen) {
+            dataList = await isar.slvDatas.where().sortByTimeKey().findAll();
+            thisTurnSymbol = 'SLV';
+            if (dataList.length < 40) {
+              continue;
+            }
+          } else {
+            hasData = true;
+            listCandledata = slvListCandledata;
+          }
+        } else if (i == 6 && symbol != 'IWM') {
+          if (iwmListCandledata.isEmpty ||
+              iwmListCandledata.length == dummyCandleLen) {
+            dataList = await isar.iwmDatas.where().sortByTimeKey().findAll();
+            thisTurnSymbol = 'IWM';
+            if (dataList.length < 40) {
+              continue;
+            }
+          } else {
+            hasData = true;
+            listCandledata = iwmListCandledata;
+          }
+        } else if (i == 7 && symbol != 'XLK') {
+          if (xlkListCandledata.isEmpty ||
+              xlkListCandledata.length == dummyCandleLen) {
+            dataList = await isar.xlkDatas.where().sortByTimeKey().findAll();
+            thisTurnSymbol = 'XLK';
+            if (dataList.length < 40) {
+              continue;
+            }
+          } else {
+            hasData = true;
+            listCandledata = xlkListCandledata;
+          }
+        } else if (i == 8 && symbol != 'AAPL') {
+          if (aaplListCandledata.isEmpty ||
+              aaplListCandledata.length == dummyCandleLen) {
+            dataList = await isar.aaplDatas.where().sortByTimeKey().findAll();
+            thisTurnSymbol = 'AAPL';
+            if (dataList.length < 40) {
+              continue;
+            }
+          } else {
+            hasData = true;
+            listCandledata = aaplListCandledata;
+          }
         } else {
-          if (i == 4) {
+          if (i == 8) {
             break;
           }
           int l = i + 1;
@@ -270,6 +329,54 @@ class TrendMatch {
               hasData = true;
               listCandledata = gldListCandledata;
             }
+          } else if (l == 5 && symbol != 'SLV') {
+            if (slvListCandledata.isEmpty ||
+                slvListCandledata.length == dummyCandleLen) {
+              dataList = await isar.slvDatas.where().sortByTimeKey().findAll();
+              thisTurnSymbol = 'SLV';
+              if (dataList.length < 40) {
+                continue;
+              }
+            } else {
+              hasData = true;
+              listCandledata = slvListCandledata;
+            }
+          } else if (l == 6 && symbol != 'IWM') {
+            if (iwmListCandledata.isEmpty ||
+                iwmListCandledata.length == dummyCandleLen) {
+              dataList = await isar.iwmDatas.where().sortByTimeKey().findAll();
+              thisTurnSymbol = 'IWM';
+              if (dataList.length < 40) {
+                continue;
+              }
+            } else {
+              hasData = true;
+              listCandledata = iwmListCandledata;
+            }
+          } else if (l == 7 && symbol != 'XLK') {
+            if (xlkListCandledata.isEmpty ||
+                xlkListCandledata.length == dummyCandleLen) {
+              dataList = await isar.xlkDatas.where().sortByTimeKey().findAll();
+              thisTurnSymbol = 'XLK';
+              if (dataList.length < 40) {
+                continue;
+              }
+            } else {
+              hasData = true;
+              listCandledata = xlkListCandledata;
+            }
+          } else if (l == 8 && symbol != 'AAPL') {
+            if (aaplListCandledata.isEmpty ||
+                aaplListCandledata.length == dummyCandleLen) {
+              dataList = await isar.aaplDatas.where().sortByTimeKey().findAll();
+              thisTurnSymbol = 'AAPL';
+              if (dataList.length < 40) {
+                continue;
+              }
+            } else {
+              hasData = true;
+              listCandledata = aaplListCandledata;
+            }
           } else {
             throw Exception('There is no minute interval data for $i');
           }
@@ -294,6 +401,22 @@ class TrendMatch {
                 .toList();
           } else if (thisTurnSymbol == 'GLD') {
             docList = List<GldData>.from(dataList)
+                .map<Map<String, dynamic>>((data) => data.toJson())
+                .toList();
+          } else if (thisTurnSymbol == 'SLV') {
+            docList = List<SlvData>.from(dataList)
+                .map<Map<String, dynamic>>((data) => data.toJson())
+                .toList();
+          } else if (thisTurnSymbol == 'IWM') {
+            docList = List<IwmData>.from(dataList)
+                .map<Map<String, dynamic>>((data) => data.toJson())
+                .toList();
+          } else if (thisTurnSymbol == 'XLK') {
+            docList = List<XlkData>.from(dataList)
+                .map<Map<String, dynamic>>((data) => data.toJson())
+                .toList();
+          } else if (thisTurnSymbol == 'AAPL') {
+            docList = List<AaplData>.from(dataList)
                 .map<Map<String, dynamic>>((data) => data.toJson())
                 .toList();
           } else {
@@ -321,6 +444,14 @@ class TrendMatch {
           MainPresenter.to.usoMatchRows.add(rowId);
         } else if (thisTurnSymbol == 'GLD') {
           MainPresenter.to.gldMatchRows.add(rowId);
+        } else if (thisTurnSymbol == 'SLV') {
+          MainPresenter.to.slvMatchRows.add(rowId);
+        } else if (thisTurnSymbol == 'IWM') {
+          MainPresenter.to.iwmMatchRows.add(rowId);
+        } else if (thisTurnSymbol == 'XLK') {
+          MainPresenter.to.xlkMatchRows.add(rowId);
+        } else if (thisTurnSymbol == 'AAPL') {
+          MainPresenter.to.aaplMatchRows.add(rowId);
         } else if (thisTurnSymbol == '') {
           MainPresenter.to.matchRows.add(rowId);
         } else {
@@ -843,6 +974,18 @@ class TrendMatch {
         } else if (symbol == 'GLD' && symbol != fiSymbol) {
           matchRows = MainPresenter.to.gldMatchRows;
           candleListList = MainPresenter.to.gldCandleListList;
+        } else if (symbol == 'SLV' && symbol != fiSymbol) {
+          matchRows = MainPresenter.to.slvMatchRows;
+          candleListList = MainPresenter.to.slvCandleListList;
+        } else if (symbol == 'IWM' && symbol != fiSymbol) {
+          matchRows = MainPresenter.to.iwmMatchRows;
+          candleListList = MainPresenter.to.iwmCandleListList;
+        } else if (symbol == 'XLK' && symbol != fiSymbol) {
+          matchRows = MainPresenter.to.xlkMatchRows;
+          candleListList = MainPresenter.to.xlkCandleListList;
+        } else if (symbol == 'AAPL' && symbol != fiSymbol) {
+          matchRows = MainPresenter.to.aaplMatchRows;
+          candleListList = MainPresenter.to.aaplCandleListList;
         } else {
           matchRows = MainPresenter.to.matchRows;
           candleListList = MainPresenter.to.candleListList;
@@ -1010,6 +1153,18 @@ class TrendMatch {
         } else if (symbol == 'GLD' && symbol != fiSymbol) {
           matchRows = MainPresenter.to.gldMatchRows;
           candleListList = MainPresenter.to.gldCandleListList;
+        } else if (symbol == 'SLV' && symbol != fiSymbol) {
+          matchRows = MainPresenter.to.slvMatchRows;
+          candleListList = MainPresenter.to.slvCandleListList;
+        } else if (symbol == 'IWM' && symbol != fiSymbol) {
+          matchRows = MainPresenter.to.iwmMatchRows;
+          candleListList = MainPresenter.to.iwmCandleListList;
+        } else if (symbol == 'XLK' && symbol != fiSymbol) {
+          matchRows = MainPresenter.to.xlkMatchRows;
+          candleListList = MainPresenter.to.xlkCandleListList;
+        } else if (symbol == 'AAPL' && symbol != fiSymbol) {
+          matchRows = MainPresenter.to.aaplMatchRows;
+          candleListList = MainPresenter.to.aaplCandleListList;
         } else {
           matchRows = MainPresenter.to.matchRows;
           candleListList = MainPresenter.to.candleListList;

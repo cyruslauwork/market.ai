@@ -19,7 +19,11 @@ class IsarService {
       SpyDataSchema,
       QqqDataSchema,
       UsoDataSchema,
-      GldDataSchema
+      GldDataSchema,
+      SlvDataSchema,
+      IwmDataSchema,
+      XlkDataSchema,
+      AaplDataSchema
     ];
     if (_isar == null) {
       final dir = await getApplicationDocumentsDirectory();
@@ -34,6 +38,10 @@ class IsarService {
       //     await isar.qqqDatas.clear();
       //     await isar.usoDatas.clear();
       //     await isar.gldDatas.clear();
+      //     await isar.slvDatas.clear();
+      //     await isar.iwmDatas.clear();
+      //     await isar.xlkDatas.clear();
+      //     await isar.aaplDatas.clear();
       //   });
       //   print('clear all Isac data');
       // }

@@ -624,10 +624,15 @@ class _MainViewState extends State<MainView> {
                         } else if (value != 'watchlistEmpty') {
                           List<SymbolAndName> listSymbolAndName =
                               MainPresenter.to.listSymbolAndName;
-                          String newName = listSymbolAndName
-                              .firstWhere((SymbolAndName symbolAndName) =>
-                                  symbolAndName.symbol == value)
-                              .name;
+                          String newName;
+                          try {
+                            newName = listSymbolAndName
+                                .firstWhere((SymbolAndName symbolAndName) =>
+                                    symbolAndName.symbol == value)
+                                .name;
+                          } catch (e) {
+                            newName = 'Failed to fetch financial symbol name.';
+                          }
                           PrefsService.to.prefs.setString(
                               SharedPreferencesConstant.financialInstrumentName,
                               newName);

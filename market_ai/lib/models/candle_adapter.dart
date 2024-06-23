@@ -96,6 +96,14 @@ class CandleAdapter {
       MainPresenter.to.usoCandleListList.value = listList;
     } else if (param.$3 == 'GLD') {
       MainPresenter.to.gldCandleListList.value = listList;
+    } else if (param.$3 == 'SLV') {
+      MainPresenter.to.slvCandleListList.value = listList;
+    } else if (param.$3 == 'IWM') {
+      MainPresenter.to.iwmCandleListList.value = listList;
+    } else if (param.$3 == 'XLK') {
+      MainPresenter.to.xlkCandleListList.value = listList;
+    } else if (param.$3 == 'AAPL') {
+      MainPresenter.to.aaplCandleListList.value = listList;
     } else {
       throw Exception('There is no candleListList for ${param.$3}');
     }
@@ -120,6 +128,14 @@ class CandleAdapter {
         MainPresenter.to.usoListCandledata.value = listCandledata;
       } else if (param.$3 == 'GLD') {
         MainPresenter.to.gldListCandledata.value = listCandledata;
+      } else if (param.$3 == 'SLV') {
+        MainPresenter.to.slvListCandledata.value = listCandledata;
+      } else if (param.$3 == 'IWM') {
+        MainPresenter.to.iwmListCandledata.value = listCandledata;
+      } else if (param.$3 == 'XLK') {
+        MainPresenter.to.xlkListCandledata.value = listCandledata;
+      } else if (param.$3 == 'AAPL') {
+        MainPresenter.to.aaplListCandledata.value = listCandledata;
       } else {
         throw Exception('There is no listCandledata for ${param.$3}');
       }
@@ -143,6 +159,14 @@ class CandleAdapter {
         MainPresenter.to.usoListCandledata.value = listCandledata;
       } else if (param.$3 == 'GLD') {
         MainPresenter.to.gldListCandledata.value = listCandledata;
+      } else if (param.$3 == 'SLV') {
+        MainPresenter.to.slvListCandledata.value = listCandledata;
+      } else if (param.$3 == 'IWM') {
+        MainPresenter.to.iwmListCandledata.value = listCandledata;
+      } else if (param.$3 == 'XLK') {
+        MainPresenter.to.xlkListCandledata.value = listCandledata;
+      } else if (param.$3 == 'AAPL') {
+        MainPresenter.to.aaplListCandledata.value = listCandledata;
       } else {
         throw Exception('There is no listCandledata for ${param.$3}');
       }

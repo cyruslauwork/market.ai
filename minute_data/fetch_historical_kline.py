@@ -25,10 +25,12 @@ import pandas as pd
 
 FUTUOPEND_ADDRESS = '127.0.0.1'
 FUTUOPEND_PORT = 11111
-TRADING_FINANCIAL_INSTRUMENTS = ['US.SPY', 'US.QQQ', 'US.USO', 'US.GLD']
-OUTPUT_NAMES = ['spy', 'qqq', 'uso', 'gld']
-START_DATE = '2024-05-30'
-END_DATE = '2024-06-11'
+# TRADING_FINANCIAL_INSTRUMENTS = ['US.SPY', 'US.QQQ', 'US.USO', 'US.GLD']
+TRADING_FINANCIAL_INSTRUMENTS = ['US.SLV', 'US.IWM', 'US.XLK', 'US.AAPL']
+# OUTPUT_NAMES = ['spy', 'qqq', 'uso', 'gld']
+OUTPUT_NAMES = ['slv', 'iwm', 'xlk', 'aapl']
+START_DATE = '2016-06-21'
+END_DATE = '2024-06-21'
 
 quote_ctx = OpenQuoteContext(host=FUTUOPEND_ADDRESS, port=FUTUOPEND_PORT, is_encrypt=False)  # Create quote object
 
