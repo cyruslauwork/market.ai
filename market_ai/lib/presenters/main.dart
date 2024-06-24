@@ -444,7 +444,6 @@ class MainPresenter extends GetxController {
           ? '🟠EMA5 🔴EMA10 🟢EMA15 🔵EMA20'
           : '🟠MA5 🔴MA20 🟢MA60 🔵MA120 🟣MA240')
       .obs;
-  RxInt schemasLen = 0.obs;
   RxBool hasSpyMinuteData = false.obs;
   RxBool hasQqqMinuteData = false.obs;
   RxBool hasUsoMinuteData = false.obs;
@@ -579,11 +578,11 @@ class MainPresenter extends GetxController {
   // A 2nd initialization will be triggered when starting the app
   @override
   void onInit() {
-    PrefsService.to.prefs
-        .setString(SharedPreferencesConstant.financialInstrumentSymbol, 'QQQ');
-    PrefsService.to.prefs.setString(
-        SharedPreferencesConstant.financialInstrumentName,
-        'Invesco QQQ Trust, Series 1');
+    // PrefsService.to.prefs
+    //     .setString(SharedPreferencesConstant.financialInstrumentSymbol, 'QQQ');
+    // PrefsService.to.prefs.setString(
+    //     SharedPreferencesConstant.financialInstrumentName,
+    //     'Invesco QQQ Trust, Series 1');
     // PrefsService.to.prefs.setInt(SharedPreferencesConstant.range, 5);
     // PrefsService.to.prefs.setInt(SharedPreferencesConstant.tolerance, 100);
     // PrefsService.to.prefs

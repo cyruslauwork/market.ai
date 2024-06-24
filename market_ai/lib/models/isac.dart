@@ -1,5 +1,4 @@
 import 'package:isar/isar.dart';
-import 'package:market_ai/presenters/presenters.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'collections.dart';
@@ -47,8 +46,6 @@ class IsarService {
       // }
 
       // await clearAllData(_isar!);
-
-      MainPresenter.to.schemasLen.value = schemas.length;
     }
     return _isar!;
   }

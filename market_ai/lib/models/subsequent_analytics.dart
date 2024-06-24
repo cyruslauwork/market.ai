@@ -27,6 +27,7 @@ class SubsequentAnalytics {
     double minValueOfAllTrends = double.infinity;
     double maxValueOfAllTrends = double.negativeInfinity;
 
+    int count = 0;
     if (MainPresenter.to.alwaysUseCrossData.value) {
       List<String> minuteDataList =
           List<String>.from(MainPresenter.to.minuteDataList);
@@ -86,8 +87,7 @@ class SubsequentAnalytics {
           }
         }
         bool outerBreak = false;
-        int count = 0;
-        for (int i = 0; i < (matchLen > 499 ? 499 : matchLen); i++) {
+        for (int i = 0; i < matchLen; i++) {
           // Takes 500 only to avoid a Cloud Functions crash
           if (count >= 500) {
             outerBreak = true;

@@ -149,9 +149,9 @@ class TrendMatch {
     int thisLen;
     bool alwaysUseCrossData = MainPresenter.to.alwaysUseCrossData.value;
     String symbol = MainPresenter.to.financialInstrumentSymbol.value;
-    int dummyCandleLen = MainPresenter.to.dummyCandle.length;
+    // int dummyCandleLen = MainPresenter.to.dummyCandle.length;
     if (alwaysUseCrossData) {
-      thisLen = MainPresenter.to.schemasLen.value + 1;
+      thisLen = MainPresenter.to.minuteDataList.length + 1;
       // if (MainPresenter.to.spyListCandledata.length != dummyCandleLen ||
       //     MainPresenter.to.qqqListCandledata.length != dummyCandleLen ||
       //     MainPresenter.to.usoListCandledata.length != dummyCandleLen ||
@@ -170,266 +170,266 @@ class TrendMatch {
     for (int i = 0; i < thisLen; i++) {
       String thisTurnSymbol = '';
       dynamic dataList;
-      bool hasData = false;
-      List<CandleData> spyListCandledata = MainPresenter.to.spyListCandledata;
-      List<CandleData> qqqListCandledata = MainPresenter.to.qqqListCandledata;
-      List<CandleData> usoListCandledata = MainPresenter.to.usoListCandledata;
-      List<CandleData> gldListCandledata = MainPresenter.to.gldListCandledata;
-      List<CandleData> slvListCandledata = MainPresenter.to.slvListCandledata;
-      List<CandleData> iwmListCandledata = MainPresenter.to.iwmListCandledata;
-      List<CandleData> xlkListCandledata = MainPresenter.to.xlkListCandledata;
-      List<CandleData> aaplListCandledata = MainPresenter.to.aaplListCandledata;
+      // bool hasData = false;
+      // List<CandleData> spyListCandledata = MainPresenter.to.spyListCandledata;
+      // List<CandleData> qqqListCandledata = MainPresenter.to.qqqListCandledata;
+      // List<CandleData> usoListCandledata = MainPresenter.to.usoListCandledata;
+      // List<CandleData> gldListCandledata = MainPresenter.to.gldListCandledata;
+      // List<CandleData> slvListCandledata = MainPresenter.to.slvListCandledata;
+      // List<CandleData> iwmListCandledata = MainPresenter.to.iwmListCandledata;
+      // List<CandleData> xlkListCandledata = MainPresenter.to.xlkListCandledata;
+      // List<CandleData> aaplListCandledata = MainPresenter.to.aaplListCandledata;
       if (i != 0) {
         if (i == 1 && symbol != 'SPY') {
-          if (spyListCandledata.isEmpty ||
-              spyListCandledata.length == dummyCandleLen) {
-            dataList = await isar.spyDatas.where().sortByTimeKey().findAll();
-            thisTurnSymbol = 'SPY';
-            if (dataList.length < 40) {
-              continue;
-            }
-          } else {
-            hasData = true;
-            listCandledata = spyListCandledata;
+          // if (spyListCandledata.isEmpty ||
+          //     spyListCandledata.length <= dummyCandleLen) {
+          dataList = await isar.spyDatas.where().sortByTimeKey().findAll();
+          thisTurnSymbol = 'SPY';
+          if (dataList.length < 60) {
+            continue;
           }
+          // } else {
+          //   hasData = true;
+          //   listCandledata = spyListCandledata;
+          // }
         } else if (i == 2 && symbol != 'QQQ') {
-          if (qqqListCandledata.isEmpty ||
-              qqqListCandledata.length == dummyCandleLen) {
-            dataList = await isar.qqqDatas.where().sortByTimeKey().findAll();
-            thisTurnSymbol = 'QQQ';
-            if (dataList.length < 40) {
-              continue;
-            }
-          } else {
-            hasData = true;
-            listCandledata = qqqListCandledata;
+          // if (qqqListCandledata.isEmpty ||
+          //     qqqListCandledata.length <= dummyCandleLen) {
+          dataList = await isar.qqqDatas.where().sortByTimeKey().findAll();
+          thisTurnSymbol = 'QQQ';
+          if (dataList.length < 60) {
+            continue;
           }
+          // } else {
+          //   hasData = true;
+          //   listCandledata = qqqListCandledata;
+          // }
         } else if (i == 3 && symbol != 'USO') {
-          if (usoListCandledata.isEmpty ||
-              usoListCandledata.length == dummyCandleLen) {
-            dataList = await isar.usoDatas.where().sortByTimeKey().findAll();
-            thisTurnSymbol = 'USO';
-            if (dataList.length < 40) {
-              continue;
-            }
-          } else {
-            hasData = true;
-            listCandledata = usoListCandledata;
+          // if (usoListCandledata.isEmpty ||
+          //     usoListCandledata.length <= dummyCandleLen) {
+          dataList = await isar.usoDatas.where().sortByTimeKey().findAll();
+          thisTurnSymbol = 'USO';
+          if (dataList.length < 60) {
+            continue;
           }
+          // } else {
+          //   hasData = true;
+          //   listCandledata = usoListCandledata;
+          // }
         } else if (i == 4 && symbol != 'GLD') {
-          if (gldListCandledata.isEmpty ||
-              gldListCandledata.length == dummyCandleLen) {
-            dataList = await isar.gldDatas.where().sortByTimeKey().findAll();
-            thisTurnSymbol = 'GLD';
-            if (dataList.length < 40) {
-              continue;
-            }
-          } else {
-            hasData = true;
-            listCandledata = gldListCandledata;
+          // if (gldListCandledata.isEmpty ||
+          //     gldListCandledata.length <= dummyCandleLen) {
+          dataList = await isar.gldDatas.where().sortByTimeKey().findAll();
+          thisTurnSymbol = 'GLD';
+          if (dataList.length < 60) {
+            continue;
           }
+          // } else {
+          //   hasData = true;
+          //   listCandledata = gldListCandledata;
+          // }
         } else if (i == 5 && symbol != 'SLV') {
-          if (slvListCandledata.isEmpty ||
-              slvListCandledata.length == dummyCandleLen) {
-            dataList = await isar.slvDatas.where().sortByTimeKey().findAll();
-            thisTurnSymbol = 'SLV';
-            if (dataList.length < 40) {
-              continue;
-            }
-          } else {
-            hasData = true;
-            listCandledata = slvListCandledata;
+          // if (slvListCandledata.isEmpty ||
+          //     slvListCandledata.length <= dummyCandleLen) {
+          dataList = await isar.slvDatas.where().sortByTimeKey().findAll();
+          thisTurnSymbol = 'SLV';
+          if (dataList.length < 60) {
+            continue;
           }
+          // } else {
+          //   hasData = true;
+          //   listCandledata = slvListCandledata;
+          // }
         } else if (i == 6 && symbol != 'IWM') {
-          if (iwmListCandledata.isEmpty ||
-              iwmListCandledata.length == dummyCandleLen) {
-            dataList = await isar.iwmDatas.where().sortByTimeKey().findAll();
-            thisTurnSymbol = 'IWM';
-            if (dataList.length < 40) {
-              continue;
-            }
-          } else {
-            hasData = true;
-            listCandledata = iwmListCandledata;
+          // if (iwmListCandledata.isEmpty ||
+          //     iwmListCandledata.length <= dummyCandleLen) {
+          dataList = await isar.iwmDatas.where().sortByTimeKey().findAll();
+          thisTurnSymbol = 'IWM';
+          if (dataList.length < 60) {
+            continue;
           }
+          // } else {
+          //   hasData = true;
+          //   listCandledata = iwmListCandledata;
+          // }
         } else if (i == 7 && symbol != 'XLK') {
-          if (xlkListCandledata.isEmpty ||
-              xlkListCandledata.length == dummyCandleLen) {
-            dataList = await isar.xlkDatas.where().sortByTimeKey().findAll();
-            thisTurnSymbol = 'XLK';
-            if (dataList.length < 40) {
-              continue;
-            }
-          } else {
-            hasData = true;
-            listCandledata = xlkListCandledata;
+          // if (xlkListCandledata.isEmpty ||
+          //     xlkListCandledata.length <= dummyCandleLen) {
+          dataList = await isar.xlkDatas.where().sortByTimeKey().findAll();
+          thisTurnSymbol = 'XLK';
+          if (dataList.length < 60) {
+            continue;
           }
+          // } else {
+          //   hasData = true;
+          //   listCandledata = xlkListCandledata;
+          // }
         } else if (i == 8 && symbol != 'AAPL') {
-          if (aaplListCandledata.isEmpty ||
-              aaplListCandledata.length == dummyCandleLen) {
-            dataList = await isar.aaplDatas.where().sortByTimeKey().findAll();
-            thisTurnSymbol = 'AAPL';
-            if (dataList.length < 40) {
-              continue;
-            }
-          } else {
-            hasData = true;
-            listCandledata = aaplListCandledata;
+          // if (aaplListCandledata.isEmpty ||
+          //     aaplListCandledata.length <= dummyCandleLen) {
+          dataList = await isar.aaplDatas.where().sortByTimeKey().findAll();
+          thisTurnSymbol = 'AAPL';
+          if (dataList.length < 60) {
+            continue;
           }
+          // } else {
+          //   hasData = true;
+          //   listCandledata = aaplListCandledata;
+          // }
         } else {
           if (i == 8) {
             break;
           }
           int l = i + 1;
           if (l == 1 && symbol != 'SPY') {
-            if (spyListCandledata.isEmpty ||
-                spyListCandledata.length == dummyCandleLen) {
-              dataList = await isar.spyDatas.where().sortByTimeKey().findAll();
-              thisTurnSymbol = 'SPY';
-              if (dataList.length < 40) {
-                continue;
-              }
-            } else {
-              hasData = true;
-              listCandledata = spyListCandledata;
+            // if (spyListCandledata.isEmpty ||
+            //     spyListCandledata.length <= dummyCandleLen) {
+            dataList = await isar.spyDatas.where().sortByTimeKey().findAll();
+            thisTurnSymbol = 'SPY';
+            if (dataList.length < 60) {
+              continue;
             }
+            // } else {
+            //   hasData = true;
+            //   listCandledata = spyListCandledata;
+            // }
           } else if (l == 2 && symbol != 'QQQ') {
-            if (qqqListCandledata.isEmpty ||
-                qqqListCandledata.length == dummyCandleLen) {
-              dataList = await isar.qqqDatas.where().sortByTimeKey().findAll();
-              thisTurnSymbol = 'QQQ';
-              if (dataList.length < 40) {
-                continue;
-              }
-            } else {
-              hasData = true;
-              listCandledata = qqqListCandledata;
+            // if (qqqListCandledata.isEmpty ||
+            //     qqqListCandledata.length <= dummyCandleLen) {
+            dataList = await isar.qqqDatas.where().sortByTimeKey().findAll();
+            thisTurnSymbol = 'QQQ';
+            if (dataList.length < 60) {
+              continue;
             }
+            // } else {
+            //   hasData = true;
+            //   listCandledata = qqqListCandledata;
+            // }
           } else if (l == 3 && symbol != 'USO') {
-            if (usoListCandledata.isEmpty ||
-                usoListCandledata.length == dummyCandleLen) {
-              dataList = await isar.usoDatas.where().sortByTimeKey().findAll();
-              thisTurnSymbol = 'USO';
-              if (dataList.length < 40) {
-                continue;
-              }
-            } else {
-              hasData = true;
-              listCandledata = usoListCandledata;
+            // if (usoListCandledata.isEmpty ||
+            //     usoListCandledata.length <= dummyCandleLen) {
+            dataList = await isar.usoDatas.where().sortByTimeKey().findAll();
+            thisTurnSymbol = 'USO';
+            if (dataList.length < 60) {
+              continue;
             }
+            // } else {
+            //   hasData = true;
+            //   listCandledata = usoListCandledata;
+            // }
           } else if (l == 4 && symbol != 'GLD') {
-            if (gldListCandledata.isEmpty ||
-                gldListCandledata.length == dummyCandleLen) {
-              dataList = await isar.gldDatas.where().sortByTimeKey().findAll();
-              thisTurnSymbol = 'GLD';
-              if (dataList.length < 40) {
-                continue;
-              }
-            } else {
-              hasData = true;
-              listCandledata = gldListCandledata;
+            // if (gldListCandledata.isEmpty ||
+            //     gldListCandledata.length <= dummyCandleLen) {
+            dataList = await isar.gldDatas.where().sortByTimeKey().findAll();
+            thisTurnSymbol = 'GLD';
+            if (dataList.length < 60) {
+              continue;
             }
+            // } else {
+            //   hasData = true;
+            //   listCandledata = gldListCandledata;
+            // }
           } else if (l == 5 && symbol != 'SLV') {
-            if (slvListCandledata.isEmpty ||
-                slvListCandledata.length == dummyCandleLen) {
-              dataList = await isar.slvDatas.where().sortByTimeKey().findAll();
-              thisTurnSymbol = 'SLV';
-              if (dataList.length < 40) {
-                continue;
-              }
-            } else {
-              hasData = true;
-              listCandledata = slvListCandledata;
+            // if (slvListCandledata.isEmpty ||
+            //     slvListCandledata.length <= dummyCandleLen) {
+            dataList = await isar.slvDatas.where().sortByTimeKey().findAll();
+            thisTurnSymbol = 'SLV';
+            if (dataList.length < 60) {
+              continue;
             }
+            // } else {
+            //   hasData = true;
+            //   listCandledata = slvListCandledata;
+            // }
           } else if (l == 6 && symbol != 'IWM') {
-            if (iwmListCandledata.isEmpty ||
-                iwmListCandledata.length == dummyCandleLen) {
-              dataList = await isar.iwmDatas.where().sortByTimeKey().findAll();
-              thisTurnSymbol = 'IWM';
-              if (dataList.length < 40) {
-                continue;
-              }
-            } else {
-              hasData = true;
-              listCandledata = iwmListCandledata;
+            // if (iwmListCandledata.isEmpty ||
+            //     iwmListCandledata.length <= dummyCandleLen) {
+            dataList = await isar.iwmDatas.where().sortByTimeKey().findAll();
+            thisTurnSymbol = 'IWM';
+            if (dataList.length < 60) {
+              continue;
             }
+            // } else {
+            //   hasData = true;
+            //   listCandledata = iwmListCandledata;
+            // }
           } else if (l == 7 && symbol != 'XLK') {
-            if (xlkListCandledata.isEmpty ||
-                xlkListCandledata.length == dummyCandleLen) {
-              dataList = await isar.xlkDatas.where().sortByTimeKey().findAll();
-              thisTurnSymbol = 'XLK';
-              if (dataList.length < 40) {
-                continue;
-              }
-            } else {
-              hasData = true;
-              listCandledata = xlkListCandledata;
+            // if (xlkListCandledata.isEmpty ||
+            //     xlkListCandledata.length <= dummyCandleLen) {
+            dataList = await isar.xlkDatas.where().sortByTimeKey().findAll();
+            thisTurnSymbol = 'XLK';
+            if (dataList.length < 60) {
+              continue;
             }
+            // } else {
+            //   hasData = true;
+            //   listCandledata = xlkListCandledata;
+            // }
           } else if (l == 8 && symbol != 'AAPL') {
-            if (aaplListCandledata.isEmpty ||
-                aaplListCandledata.length == dummyCandleLen) {
-              dataList = await isar.aaplDatas.where().sortByTimeKey().findAll();
-              thisTurnSymbol = 'AAPL';
-              if (dataList.length < 40) {
-                continue;
-              }
-            } else {
-              hasData = true;
-              listCandledata = aaplListCandledata;
+            // if (aaplListCandledata.isEmpty ||
+            //     aaplListCandledata.length <= dummyCandleLen) {
+            dataList = await isar.aaplDatas.where().sortByTimeKey().findAll();
+            thisTurnSymbol = 'AAPL';
+            if (dataList.length < 60) {
+              continue;
             }
+            // } else {
+            //   hasData = true;
+            //   listCandledata = aaplListCandledata;
+            // }
           } else {
             throw Exception('There is no minute interval data for $i');
           }
           i++;
         }
-        if (hasData && listCandledata.length < 40) {
-          continue;
-        }
+        // if (hasData && listCandledata.length < 60) {
+        //   continue;
+        // }
         List<Map<String, dynamic>> docList = [];
-        if (!hasData) {
-          if (thisTurnSymbol == 'SPY') {
-            docList = List<SpyData>.from(dataList)
-                .map<Map<String, dynamic>>((data) => data.toJson())
-                .toList();
-          } else if (thisTurnSymbol == 'QQQ') {
-            docList = List<QqqData>.from(dataList)
-                .map<Map<String, dynamic>>((data) => data.toJson())
-                .toList();
-          } else if (thisTurnSymbol == 'USO') {
-            docList = List<UsoData>.from(dataList)
-                .map<Map<String, dynamic>>((data) => data.toJson())
-                .toList();
-          } else if (thisTurnSymbol == 'GLD') {
-            docList = List<GldData>.from(dataList)
-                .map<Map<String, dynamic>>((data) => data.toJson())
-                .toList();
-          } else if (thisTurnSymbol == 'SLV') {
-            docList = List<SlvData>.from(dataList)
-                .map<Map<String, dynamic>>((data) => data.toJson())
-                .toList();
-          } else if (thisTurnSymbol == 'IWM') {
-            docList = List<IwmData>.from(dataList)
-                .map<Map<String, dynamic>>((data) => data.toJson())
-                .toList();
-          } else if (thisTurnSymbol == 'XLK') {
-            docList = List<XlkData>.from(dataList)
-                .map<Map<String, dynamic>>((data) => data.toJson())
-                .toList();
-          } else if (thisTurnSymbol == 'AAPL') {
-            docList = List<AaplData>.from(dataList)
-                .map<Map<String, dynamic>>((data) => data.toJson())
-                .toList();
-          } else {
-            throw Exception(
-                'There is no Isac data structure for $thisTurnSymbol');
-          }
-          listCandledata =
-              await CandleAdapter().crossDataListListTolistCandledata((
-            CandleAdapter().jsonToListList(Future.value(docList)),
-            SrcFileType.json,
-            thisTurnSymbol
-          ));
+        // if (!hasData) {
+        if (thisTurnSymbol == 'SPY') {
+          docList = List<SpyData>.from(dataList)
+              .map<Map<String, dynamic>>((data) => data.toJson())
+              .toList();
+        } else if (thisTurnSymbol == 'QQQ') {
+          docList = List<QqqData>.from(dataList)
+              .map<Map<String, dynamic>>((data) => data.toJson())
+              .toList();
+        } else if (thisTurnSymbol == 'USO') {
+          docList = List<UsoData>.from(dataList)
+              .map<Map<String, dynamic>>((data) => data.toJson())
+              .toList();
+        } else if (thisTurnSymbol == 'GLD') {
+          docList = List<GldData>.from(dataList)
+              .map<Map<String, dynamic>>((data) => data.toJson())
+              .toList();
+        } else if (thisTurnSymbol == 'SLV') {
+          docList = List<SlvData>.from(dataList)
+              .map<Map<String, dynamic>>((data) => data.toJson())
+              .toList();
+        } else if (thisTurnSymbol == 'IWM') {
+          docList = List<IwmData>.from(dataList)
+              .map<Map<String, dynamic>>((data) => data.toJson())
+              .toList();
+        } else if (thisTurnSymbol == 'XLK') {
+          docList = List<XlkData>.from(dataList)
+              .map<Map<String, dynamic>>((data) => data.toJson())
+              .toList();
+        } else if (thisTurnSymbol == 'AAPL') {
+          docList = List<AaplData>.from(dataList)
+              .map<Map<String, dynamic>>((data) => data.toJson())
+              .toList();
+        } else {
+          throw Exception(
+              'There is no Isac data structure for $thisTurnSymbol');
         }
+        listCandledata =
+            await CandleAdapter().crossDataListListTolistCandledata((
+          CandleAdapter().jsonToListList(Future.value(docList)),
+          SrcFileType.json,
+          thisTurnSymbol
+        ));
+        // }
         dataLength = listCandledata.length;
         totalDataLength += dataLength;
         await Candle().computeTrendLines(listCandledata: listCandledata);
