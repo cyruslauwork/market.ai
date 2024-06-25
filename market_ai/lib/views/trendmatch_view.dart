@@ -33,6 +33,7 @@ class TrendMatchView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Obx(() => MainPresenter.to.advancedTm.value),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

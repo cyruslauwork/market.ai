@@ -6,7 +6,6 @@ import 'package:interactive_chart/interactive_chart.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:isar/isar.dart';
 import 'collections.dart';
-// import 'package:get/get.dart';
 
 import 'package:market_ai/presenters/presenters.dart';
 import 'package:market_ai/styles/styles.dart';
@@ -46,8 +45,6 @@ class TrendMatch {
     List<List<double>> matchPercentDifferencesListList = [];
     List<List<double>> matchActualDifferencesListList = [];
     List<List<double>> matchActualPricesListList = [];
-
-    MainPresenter.to.adjustedTrendsAndSelectedTrendList.value = [];
 
     int trueCount = 0;
     int falseCount = 0;
@@ -605,6 +602,9 @@ class TrendMatch {
     ];
 
     MainPresenter.to.sidePlot.value = const SizedBox.shrink();
+    if (!MainPresenter.to.isLockTrend.value) {
+      MainPresenter.to.showLockTrendBtn();
+    }
     MainPresenter.to.trendMatched.value = true;
   }
 

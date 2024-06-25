@@ -121,6 +121,8 @@ class Msg extends Translations {
           'btn_clear_iwm_minute': 'Clear IWM 1-minute data',
           'btn_clear_xlk_minute': 'Clear XLK 1-minute data',
           'btn_clear_aapl_minute': 'Clear AAPL 1-minute data',
+          'lock_trend': 'Lock Trend',
+          'unlock_trend': 'Unlock Trend',
         },
         'zh_HK': {
           'app_name': '市場慧眼📈',
@@ -216,6 +218,8 @@ class Msg extends Translations {
           'btn_clear_iwm_minute': '清除 IWM 1 分鐘數據',
           'btn_clear_xlk_minute': '清除 XLK 1 分鐘數據',
           'btn_clear_aapl_minute': '清除 AAPL 1 分鐘數據',
+          'lock_trend': '鎖定走勢',
+          'unlock_trend': '解鎖走勢',
         },
       };
 }

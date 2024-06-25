@@ -347,6 +347,7 @@ class MainPresenter extends GetxController {
       volume: 10000,
     ),
   ];
+  bool isInit = false;
 
   /* Preference */
   RxBool darkMode =
@@ -501,9 +502,9 @@ class MainPresenter extends GetxController {
 
   /* Trend match */
   RxInt length =
-      (PrefsService.to.prefs.getInt(SharedPreferencesConstant.length) ?? 5).obs;
+      (PrefsService.to.prefs.getInt(SharedPreferencesConstant.length) ?? 4).obs;
   RxInt tolerance =
-      (PrefsService.to.prefs.getInt(SharedPreferencesConstant.tolerance) ?? 50)
+      (PrefsService.to.prefs.getInt(SharedPreferencesConstant.tolerance) ?? 40)
           .obs;
   RxList<double> selectedPeriodPercentDifferencesList = [0.0].obs;
   RxList<double> selectedPeriodActualDifferencesList = [0.0].obs;
@@ -547,9 +548,14 @@ class MainPresenter extends GetxController {
   Rx<Widget> sidePlot = (const SizedBox.shrink()).obs;
   late RxDouble tmChartWidth = 135.w.obs;
   RxInt subLength =
-      (PrefsService.to.prefs.getInt(SharedPreferencesConstant.subLength) ?? 5)
+      (PrefsService.to.prefs.getInt(SharedPreferencesConstant.subLength) ?? 12)
           .obs;
   RxInt maxMa = 240.obs;
+  Rx<Widget> advancedTm = (const Column()).obs;
+  RxBool isLockTrend =
+      (PrefsService.to.prefs.getBool(SharedPreferencesConstant.lockTrend) ??
+              false)
+          .obs;
 
   /* Subsequent analytics */
   RxInt lastClosePriceAndSubsequentTrendsExeTime = 0.obs;
@@ -570,27 +576,28 @@ class MainPresenter extends GetxController {
   RxString maxSilhouetteScore = ''.obs;
   ValueNotifier<bool> subsequentAnalyticsNotifier = ValueNotifier<bool>(false);
   bool isSubsequentAnalyticsNotifierAdded = false;
-  RxList<List<double>> adjustedTrendsAndSelectedTrendList = [
-    [0.0]
-  ].obs;
   RxInt saCount = 0.obs;
 
   // A 2nd initialization will be triggered when starting the app
   @override
   void onInit() {
-    // PrefsService.to.prefs
-    //     .setString(SharedPreferencesConstant.financialInstrumentSymbol, 'QQQ');
-    // PrefsService.to.prefs.setString(
-    //     SharedPreferencesConstant.financialInstrumentName,
-    //     'Invesco QQQ Trust, Series 1');
-    // PrefsService.to.prefs.setInt(SharedPreferencesConstant.range, 5);
-    // PrefsService.to.prefs.setInt(SharedPreferencesConstant.tolerance, 100);
-    // PrefsService.to.prefs
-    //     .setStringList(SharedPreferencesConstant.watchlist, []);
-    // PrefsService.to.prefs
-    //     .setBool(SharedPreferencesConstant.alwaysShowMinuteData, false);
-    // PrefsService.to.prefs
-    //     .setBool(SharedPreferencesConstant.alwaysUseCrossData, false);
+    if (!isInit) {
+      // PrefsService.to.prefs
+      //     .setString(SharedPreferencesConstant.financialInstrumentSymbol, 'QQQ');
+      // PrefsService.to.prefs.setString(
+      //     SharedPreferencesConstant.financialInstrumentName,
+      //     'Invesco QQQ Trust, Series 1');
+      // PrefsService.to.prefs.setInt(SharedPreferencesConstant.range, 5);
+      // PrefsService.to.prefs.setInt(SharedPreferencesConstant.tolerance, 100);
+      // PrefsService.to.prefs
+      //     .setStringList(SharedPreferencesConstant.watchlist, []);
+      // PrefsService.to.prefs
+      //     .setBool(SharedPreferencesConstant.alwaysShowMinuteData, false);
+      alwaysUseCrossData.value = false;
+      PrefsService.to.prefs
+          .setBool(SharedPreferencesConstant.alwaysUseCrossData, false);
+      isInit = true;
+    }
 
     super.onInit();
     if (!isDarkModeInit) {
@@ -1508,5 +1515,53 @@ class MainPresenter extends GetxController {
     } else {
       return const SizedBox.shrink();
     }
+  }
+
+  showLockTrendBtn() {
+    MainPresenter.to.advancedTm.value = Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        ElevatedButton.icon(
+          onPressed: () {
+            PrefsService.to.prefs
+                .setBool(SharedPreferencesConstant.lockTrend, true);
+            MainPresenter.to.isLockTrend.value = true;
+            showLockedTrend();
+          },
+          icon: Icon(
+            Icons.lock_clock,
+            size: 10.h,
+          ),
+          label: Text(
+            'lock_trend'.tr,
+            style: const TextTheme().sp5.w700,
+          ),
+        ),
+      ],
+    );
+  }
+
+  showLockedTrend() {
+    MainPresenter.to.advancedTm.value = Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        ElevatedButton.icon(
+          onPressed: () {
+            PrefsService.to.prefs
+                .setBool(SharedPreferencesConstant.lockTrend, false);
+            MainPresenter.to.isLockTrend.value = false;
+            MainPresenter.to.advancedTm.value = const Column();
+          },
+          icon: Icon(
+            Icons.lock_open_rounded,
+            size: 10.h,
+          ),
+          label: Text(
+            'unlock_trend'.tr,
+            style: const TextTheme().sp5.w700,
+          ),
+        ),
+      ],
+    );
   }
 }
