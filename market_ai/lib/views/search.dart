@@ -24,15 +24,15 @@ class SearchView extends StatefulWidget {
 
 class _SearchViewState extends State<SearchView> {
   double _currentTolerance =
-      (PrefsService.to.prefs.getInt(SharedPreferencesConstant.tolerance) ?? 100)
+      (PrefsService.to.prefs.getInt(SharedPreferencesConstant.tolerance) ?? 40)
           .toDouble();
   int _currentLength =
-      PrefsService.to.prefs.getInt(SharedPreferencesConstant.length) ?? 5;
+      PrefsService.to.prefs.getInt(SharedPreferencesConstant.length) ?? 4;
   TextEditingController _textEditingController = TextEditingController();
   bool _autocomplete = true;
   List<SymbolAndName> listSymbolAndName = MainPresenter.to.listSymbolAndName;
   int _currentSubLength =
-      PrefsService.to.prefs.getInt(SharedPreferencesConstant.subLength) ?? 5;
+      PrefsService.to.prefs.getInt(SharedPreferencesConstant.subLength) ?? 12;
 
   Widget sizedBox = const SizedBox.shrink();
   final ScrollController _scrollController = ScrollController();
