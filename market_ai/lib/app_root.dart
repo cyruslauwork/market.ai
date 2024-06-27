@@ -1,13 +1,16 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:wakelock/wakelock.dart';
+import 'package:window_size/window_size.dart';
 
 import 'package:market_ai/services/services.dart';
 import 'package:market_ai/views/views.dart';
 import 'package:market_ai/presenters/presenters.dart';
 import 'package:market_ai/styles/styles.dart';
+import 'package:market_ai/utils/utils.dart';
 
 var logger = Logger();
 
@@ -69,6 +72,33 @@ class _AppRootWidgetState extends State<AppRoot> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     // The following line will enable the Android and iOS wakelock.
     Wakelock.enable();
+
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+      final defaultHeight = ScreenUtils.defaultSize.height;
+      final defaultWidth = ScreenUtils.defaultSize.height;
+      final preferredHeight = defaultHeight - 50;
+      final preferredWidth = defaultWidth / View.of(context).devicePixelRatio;
+      setWindowTitle("Market.AI");
+      setWindowMinSize(
+        Size(
+          preferredWidth,
+          defaultHeight / (View.of(context).devicePixelRatio * 0.75),
+        ),
+      );
+      setWindowMaxSize(
+        Size(
+          (defaultWidth / View.of(context).devicePixelRatio) * 1.5,
+          preferredHeight,
+        ),
+      );
+      final frame = Rect.fromLTWH(
+        0,
+        0,
+        preferredWidth,
+        preferredHeight,
+      );
+      setWindowFrame(frame);
+    }
 
     return Obx(
       () => GetMaterialApp(
