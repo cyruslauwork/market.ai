@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
@@ -1225,7 +1226,12 @@ class TrendMatch {
         rightTitles:
             const AxisTitles(sideTitles: SideTitles(showTitles: false)),
         leftTitles: AxisTitles(
-            sideTitles: SideTitles(reservedSize: 16.w, showTitles: true)),
+            sideTitles: SideTitles(
+                reservedSize:
+                    (Platform.isWindows || Platform.isLinux || Platform.isMacOS
+                        ? 24.w
+                        : 16.w),
+                showTitles: true)),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -350,7 +351,11 @@ class _ChatViewState extends State<ChatView> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   SizedBox(
-                    height: 15.h,
+                    height: (Platform.isWindows ||
+                            Platform.isLinux ||
+                            Platform.isMacOS
+                        ? 22.5.h
+                        : 15.h),
                     child: Container(
                       decoration: BoxDecoration(
                           shape: BoxShape.circle,

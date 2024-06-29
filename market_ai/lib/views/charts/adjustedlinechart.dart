@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 
 import 'package:fl_chart/fl_chart.dart';
@@ -30,7 +31,10 @@ class AdjustedLineChart extends StatelessWidget {
             children: [
               SizedBox(
                 width: MainPresenter.to.tmChartWidth.value,
-                height: 85.h,
+                height:
+                    (Platform.isWindows || Platform.isLinux || Platform.isMacOS
+                        ? 120.h
+                        : 85.h),
                 child: LineChart(lineChartData),
               ),
               MainPresenter.to.sidePlot.value,

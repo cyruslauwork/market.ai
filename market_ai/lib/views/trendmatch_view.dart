@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -50,7 +51,10 @@ class TrendMatchView extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: 10.h,
+              height:
+                  (Platform.isWindows || Platform.isLinux || Platform.isMacOS
+                      ? 14.h
+                      : 10.h),
               child: Container(
                 decoration: BoxDecoration(
                     shape: BoxShape.circle, color: ThemeColor.primary.value),

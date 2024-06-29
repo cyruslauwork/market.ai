@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -546,7 +547,10 @@ class MainPresenter extends GetxController {
   bool isChartExpandNotifierAdded = false;
   Rx<IconData> expandOrShrinkIcon = Icons.vertical_align_center_rounded.obs;
   Rx<Widget> sidePlot = (const SizedBox.shrink()).obs;
-  late RxDouble tmChartWidth = 135.w.obs;
+  late RxDouble tmChartWidth =
+      (Platform.isWindows || Platform.isLinux || Platform.isMacOS
+          ? (Get.width - 5.w).obs
+          : 135.w.obs);
   RxInt subLength =
       (PrefsService.to.prefs.getInt(SharedPreferencesConstant.subLength) ?? 12)
           .obs;
@@ -718,34 +722,44 @@ class MainPresenter extends GetxController {
   }
 
   void subsequentAnalyticsListener() {
+    double width = (Platform.isWindows || Platform.isLinux || Platform.isMacOS
+        ? (Get.width - 10.w)
+        : 135.w);
     if (subsequentAnalyticsNotifier.value &&
         subsequentAnalyticsErr.value != '') {
       hasSubsequentAnalytics.value = true;
       sidePlot.value = const SizedBox.shrink();
-      tmChartWidth.value = 135.w;
+      tmChartWidth.value = width;
     } else if (subsequentAnalyticsNotifier.value &&
         subsequentAnalyticsErr.value == '') {
       hasSubsequentAnalytics.value = true;
       var img10 = img10Bytes.value;
       if (img10.isEmpty) {
         sidePlot.value = const SizedBox.shrink();
-        tmChartWidth.value = 135.w;
+        tmChartWidth.value = width;
       } else {
         sidePlot.value = SizedBox(
             child: Padding(
           padding: EdgeInsets.only(top: 7.5.h),
           child: Image.memory(
             img10,
-            width: 52.5.w,
-            height: 78.h,
+            width: (Platform.isWindows || Platform.isLinux || Platform.isMacOS
+                ? ((Get.width - 5.w) * 0.3)
+                : 52.5.w),
+            height: (Platform.isWindows || Platform.isLinux || Platform.isMacOS
+                ? 110.1.h
+                : 80.h),
             fit: BoxFit.fill,
           ),
         ));
-        tmChartWidth.value = 90.w;
+        tmChartWidth.value =
+            (Platform.isWindows || Platform.isLinux || Platform.isMacOS
+                ? ((Get.width - 5.w) * 0.7)
+                : 90.w);
       }
     } else {
       sidePlot.value = const SizedBox.shrink();
-      tmChartWidth.value = 135.w;
+      tmChartWidth.value = width;
       hasSubsequentAnalytics.value = false;
     }
   }

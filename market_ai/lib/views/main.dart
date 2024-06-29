@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
@@ -946,7 +947,11 @@ class _MainViewState extends State<MainView> {
                           children: [
                             MainPresenter.to.buildMktDataProviderRichText(),
                             SizedBox(
-                              height: 10.h,
+                              height: (Platform.isWindows ||
+                                      Platform.isLinux ||
+                                      Platform.isMacOS
+                                  ? 14.h
+                                  : 10.h),
                               child: Container(
                                 decoration: BoxDecoration(
                                     shape: BoxShape.circle,
