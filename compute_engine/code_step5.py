@@ -18,11 +18,11 @@ app = Flask(__name__)
 API_KEY = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
 
 # Counter and timestamp for tracking the number of requests and the start of each month
-GCE_OUTBOUND_KB_LIMIT = 1048576 # Free tier: 1 GB
+GCE_OUTBOUND_KB_LIMIT = 1048576 * 2 # Free tier: 1 GB
 storage_client = storage.Client()
 BUCKET_NAME = 'market-ai-2024'
 FILE_NAME = 'gce_monthly_kb_counters.json'
-AVAILABLE_SYMBOL = ['SPY', 'QQQ', 'USO', 'GLD', 'SLV', 'IWM', 'XLK', 'AAPL', 'BA', 'BAC', 'MCD', 'NVDA', 'MSFT', 'GOOG', 'TSLA', 'AMZN']
+AVAILABLE_SYMBOL = ['SPY', 'QQQ', 'USO', 'GLD', 'SLV', 'IWM', 'XLK', 'AAPL', 'BA', 'BAC', 'MCD', 'NVDA', 'MSFT', 'GSK', 'TSLA', 'AMZN']
 
 def return_jsonify(json_data, response_code, blob, current_month, gce_monthly_kb_counters, kb):
     # Check if it's a new month and reset the counter if needed

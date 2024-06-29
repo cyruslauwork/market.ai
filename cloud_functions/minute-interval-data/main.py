@@ -17,7 +17,7 @@ API_KEY = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 db = firestore.Client(project='market-ai-2024')
 storage_client = storage.Client()
 BUCKET_NAME = 'market-ai-2024-minute-data-public_v74-x4b37-v_47'
-AVAILABLE_SYMBOL = ['spy', 'qqq', 'uso', 'gld', 'slv', 'iwm', 'xlk', 'aapl', 'ba', 'bac', 'mcd', 'msft', 'nvda', 'goog', 'tsla', 'amzn']
+AVAILABLE_SYMBOL = ['spy', 'qqq', 'uso', 'gld', 'slv', 'iwm', 'xlk', 'aapl', 'ba', 'bac', 'mcd', 'msft', 'nvda', 'gsk', 'tsla', 'amzn']
 last_time_key = None
 BATCH_SIZE = 390  # Firestore batch limit is 390 operations per batch
 
