@@ -78,7 +78,7 @@ def round_values_in_collection():
         print(f'Processing {symbol} collections')
         collection_ref = db.collection(symbol)
         update_collection_ref = db.collection(symbol + '_update')
-        new_month_collection_ref = update_collection_ref.document('temp').collection(symbol + '_new_month')
+        new_month_collection_ref = update_collection_ref.document('temp').collection(symbol + '_last_fifteen_days')
         try:
             collection_to_be_rounded(collection_ref)
             collection_to_be_rounded(new_month_collection_ref)

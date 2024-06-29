@@ -86,7 +86,9 @@ class TrendMatchView extends StatelessWidget {
       children: [
         SizedBox(
           width: 20.w,
-          height: 20.h,
+          height: (Platform.isWindows || Platform.isLinux || Platform.isMacOS
+              ? 25.h
+              : 20.h),
           child: const CircularProgressIndicator(),
         ),
         Padding(

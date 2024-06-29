@@ -987,6 +987,7 @@ class _MainViewState extends State<MainView> {
                         SizedBox(height: 10.h),
                         SubsequentAnalyticsView(context: context),
                         MainPresenter.to.buildCloudFunctionCol(),
+                        SizedBox(height: 100.h),
                       ],
                     ),
                   ),

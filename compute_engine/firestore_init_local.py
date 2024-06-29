@@ -6,7 +6,7 @@ db = firestore.Client(project='market-ai-2024')
 
 # FILE_NAME_WITH_EXTENSION = ['spy.json', 'qqq.json', 'uso.json', 'gld.json']
 # FILE_NAME_WITH_EXTENSION = ['slv.json', 'iwm.json', 'xlk.json', 'aapl.json']
-FILE_NAME_WITH_EXTENSION = ['xlk.json', 'aapl.json']
+FILE_NAME_WITH_EXTENSION = ['ba.json', 'bac.json', 'mcd.json', 'tsla.json', 'nvda.json', 'msft.json', 'gsk.json', 'amzn.json']
 script_dir = os.path.dirname(os.path.abspath(__file__)) # Get the current directory of the Python script
 
 # 1. 

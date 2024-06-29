@@ -17,7 +17,7 @@ API_KEY = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 db = firestore.Client(project='market-ai-2024')
 storage_client = storage.Client()
 BUCKET_NAME = 'market-ai-2024-minute-data-public_v74-x4b37-v_47'
-AVAILABLE_SYMBOL = ['spy', 'qqq', 'uso', 'gld', 'slv', 'iwm', 'xlk', 'aapl']
+AVAILABLE_SYMBOL = ['spy', 'qqq', 'uso', 'gld', 'slv', 'iwm', 'xlk', 'aapl', 'ba', 'bac', 'mcd', 'msft', 'nvda', 'goog', 'tsla', 'amzn']
 last_time_key = None
 BATCH_SIZE = 390  # Firestore batch limit is 390 operations per batch
 
@@ -63,7 +63,7 @@ def https(request):
             print(f'Finding {symbol} collection')
             collection_ref = db.collection(symbol)
             update_collection_ref = db.collection(symbol + '_update')
-            new_month_collection_ref = update_collection_ref.document('temp').collection(symbol + '_new_month')
+            new_month_collection_ref = update_collection_ref.document('temp').collection(symbol + '_last_fifteen_days')
             json_data = {}
             bucket = storage_client.bucket(BUCKET_NAME)
             bucket.storage_class = 'STANDARD'
@@ -90,8 +90,8 @@ def https(request):
                 if count % BATCH_SIZE != 0:
                     batch.commit()
 
-            def delete_thirty_days_ago_documents_in_batches(collection_ref, thirty_days_ago_timestamp):
-                query = collection_ref.where('time_key', '<', thirty_days_ago_timestamp)
+            def delete_fifteen_days_ago_documents_in_batches(collection_ref, fifteen_days_ago_timestamp):
+                query = collection_ref.where('time_key', '<', fifteen_days_ago_timestamp)
                 docs_to_delete = query.stream(retry=Retry())
                 batch = db.batch()
                 count = 0
@@ -273,11 +273,11 @@ def https(request):
                         print(f'Inserting new document(s)')
                         add_documents_in_batches(collection_ref, new_documents)
                         add_documents_in_batches(new_month_collection_ref, new_documents)
-                        # Delete documents older than 30 days
-                        print(f'Deleting documents older than 30 days from {symbol} collection')
-                        thirty_days_ago = datetime.fromtimestamp(last_time_key) - timedelta(days=30)
-                        thirty_days_ago_timestamp = thirty_days_ago.timestamp()
-                        delete_thirty_days_ago_documents_in_batches(new_month_collection_ref, thirty_days_ago_timestamp)
+                        # Delete documents older than 15 days
+                        print(f'Deleting documents older than 15 days from {symbol} collection')
+                        fifteen_days_ago = datetime.fromtimestamp(last_time_key) - timedelta(days=15)
+                        fifteen_days_ago_timestamp = fifteen_days_ago.timestamp()
+                        delete_fifteen_days_ago_documents_in_batches(new_month_collection_ref, fifteen_days_ago_timestamp)
                         # Reset queue and update status
                         docs = update_queue_collection_ref.stream(retry=Retry())
                         for doc in docs:
@@ -422,15 +422,15 @@ def https(request):
                     print({'error': 'last_time_key cannot be None'})
                     return jsonify({'error': 'last_time_key cannot be None'})
                 if last_time_key > timestamp:
-                    print(f'Retrieving all documents in {symbol}_new_month collection under {symbol}_update collection that have values greater than {timestamp}')
+                    print(f'Retrieving all documents in {symbol}_last_fifteen_days collection under {symbol}_update collection that have values greater than {timestamp}')
                     docs = new_month_collection_ref.where('time_key', '>', timestamp).order_by('time_key').stream(retry=Retry())
                     docs_list = [doc.to_dict() for doc in docs]
-                    print(f'Retrieved required document(s) in {symbol}_new_month collection')
+                    print(f'Retrieved required document(s) in {symbol}_last_fifteen_days collection')
                     timestamp_datetime = datetime.fromtimestamp(timestamp)
                     for doc_data in docs_list:
                         time_key = doc_data.get('time_key')
                         time_key_datetime = datetime.fromtimestamp(time_key)
-                        if time_key_datetime > timestamp_datetime + timedelta(days=30):
+                        if time_key_datetime > timestamp_datetime + timedelta(days=15):
                             print('Outdated user data detected, please reinstall the app. Returning message')
                             return jsonify({'message': 'User data outdated'})
                     print(f'Preparing to return JSON')

@@ -1063,7 +1063,11 @@ class MainPresenter extends GetxController {
                     ),
                     child: Image.asset(
                       'images/futubull.png',
-                      height: 6.h, // Adjust the height as needed
+                      height: (Platform.isWindows ||
+                              Platform.isLinux ||
+                              Platform.isMacOS
+                          ? 8.h
+                          : 6.h), // Adjust the height as needed
                     ),
                   ),
                 )
@@ -1076,7 +1080,10 @@ class MainPresenter extends GetxController {
               ),
               child: Image.asset(
                 'images/yahoofinance.png',
-                height: 6.h, // Adjust the height as needed
+                height:
+                    (Platform.isWindows || Platform.isLinux || Platform.isMacOS
+                        ? 8.h
+                        : 6.h), // Adjust the height as needed
               ),
             ),
           ),
@@ -1097,7 +1104,9 @@ class MainPresenter extends GetxController {
           offset: Offset(0.0, 3.h),
           child: Image.asset(
             'images/cloudfunction.png',
-            height: 18.h, // Adjust the height as needed
+            height: (Platform.isWindows || Platform.isLinux || Platform.isMacOS
+                ? 25.h
+                : 18.h), // Adjust the height as needed
           ),
         ),
       ),
@@ -1117,7 +1126,9 @@ class MainPresenter extends GetxController {
           offset: Offset(0.0, 3.h),
           child: Image.asset(
             'images/hsuhk_cs_dept.png',
-            height: 18.h, // Adjust the height as needed
+            height: (Platform.isWindows || Platform.isLinux || Platform.isMacOS
+                ? 25.h
+                : 18.h), // Adjust the height as needed
           ),
         ),
       ),

@@ -82,7 +82,7 @@ def main():
         print(f'Processing {symbol} collections')
         collection_ref = db.collection(symbol)
         update_collection_ref = db.collection(symbol + '_update')
-        new_month_collection_ref = update_collection_ref.document('temp').collection(symbol + '_new_month')
+        new_month_collection_ref = update_collection_ref.document('temp').collection(symbol + '_last_fifteen_days')
         try:
             delete_documents_based_on_time_key(collection_ref, 1718121600)
             delete_all_documents(new_month_collection_ref)

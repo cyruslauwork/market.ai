@@ -27,10 +27,10 @@ FUTUOPEND_ADDRESS = '127.0.0.1'
 FUTUOPEND_PORT = 11111
 # TRADING_FINANCIAL_INSTRUMENTS = ['US.SPY', 'US.QQQ', 'US.USO', 'US.GLD']
 # TRADING_FINANCIAL_INSTRUMENTS = ['US.SLV', 'US.IWM', 'US.XLK', 'US.AAPL']
-TRADING_FINANCIAL_INSTRUMENTS = ['US.TSLA', 'US.MSFT', 'US.AMZN', 'US.GOOG', 'US.BA', 'US.BAC', 'US.MCD', 'US.NVDA']
+TRADING_FINANCIAL_INSTRUMENTS = ['US.TSLA', 'US.MSFT', 'US.AMZN', 'US.GSK', 'US.BA', 'US.BAC', 'US.MCD', 'US.NVDA']
 # OUTPUT_NAMES = ['spy', 'qqq', 'uso', 'gld']
 # OUTPUT_NAMES = ['slv', 'iwm', 'xlk', 'aapl']
-OUTPUT_NAMES = ['tsla', 'msft', 'amzn', 'goog', 'ba', 'bac', 'mcd', 'nvda']
+OUTPUT_NAMES = ['tsla', 'msft', 'amzn', 'gsk', 'ba', 'bac', 'mcd', 'nvda']
 START_DATE = '2016-06-27'
 END_DATE = '2024-06-26'
 
