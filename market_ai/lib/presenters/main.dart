@@ -423,6 +423,14 @@ class MainPresenter extends GetxController {
   RxList<List<dynamic>> iwmCandleListList = [[]].obs; // Cross-data
   RxList<List<dynamic>> xlkCandleListList = [[]].obs; // Cross-data
   RxList<List<dynamic>> aaplCandleListList = [[]].obs; // Cross-data
+  RxList<List<dynamic>> baCandleListList = [[]].obs; // Cross-data
+  RxList<List<dynamic>> bacCandleListList = [[]].obs; // Cross-data
+  RxList<List<dynamic>> mcdCandleListList = [[]].obs; // Cross-data
+  RxList<List<dynamic>> nvdaCandleListList = [[]].obs; // Cross-data
+  RxList<List<dynamic>> msftCandleListList = [[]].obs; // Cross-data
+  RxList<List<dynamic>> gskCandleListList = [[]].obs; // Cross-data
+  RxList<List<dynamic>> tslaCandleListList = [[]].obs; // Cross-data
+  RxList<List<dynamic>> amznCandleListList = [[]].obs; // Cross-data
   late Rx<Future<List<CandleData>>> futureListCandledata = init().obs;
   late RxList<CandleData> listCandledata = dummyCandle.obs;
   late RxList<CandleData> spyListCandledata = dummyCandle.obs; // Cross-data
@@ -433,12 +441,36 @@ class MainPresenter extends GetxController {
   late RxList<CandleData> iwmListCandledata = dummyCandle.obs; // Cross-data
   late RxList<CandleData> xlkListCandledata = dummyCandle.obs; // Cross-data
   late RxList<CandleData> aaplListCandledata = dummyCandle.obs; // Cross-data
+  late RxList<CandleData> baListCandledata = dummyCandle.obs; // Cross-data
+  late RxList<CandleData> bacListCandledata = dummyCandle.obs; // Cross-data
+  late RxList<CandleData> mcdListCandledata = dummyCandle.obs; // Cross-data
+  late RxList<CandleData> nvdaListCandledata = dummyCandle.obs; // Cross-data
+  late RxList<CandleData> msftListCandledata = dummyCandle.obs; // Cross-data
+  late RxList<CandleData> gskListCandledata = dummyCandle.obs; // Cross-data
+  late RxList<CandleData> tslaListCandledata = dummyCandle.obs; // Cross-data
+  late RxList<CandleData> amznListCandledata = dummyCandle.obs; // Cross-data
   ValueNotifier<bool> showAverageNotifier = ValueNotifier<bool>(true);
   bool isShowAverageListenerAdded = false;
   late RxString marketDataProviderMsg = Rx('mkt_data'.tr)().obs;
   RxBool isMarketDataProviderErr = false.obs;
-  RxList minuteDataList =
-      ['SPY', 'QQQ', 'USO', 'GLD', 'SLV', 'IWM', 'XLK', 'AAPL'].obs;
+  RxList minuteDataList = [
+    'SPY',
+    'QQQ',
+    'USO',
+    'GLD',
+    'SLV',
+    'IWM',
+    'XLK',
+    'AAPL',
+    'BA',
+    'BAC',
+    'MCD',
+    'NVDA',
+    'MSFT',
+    'GSK',
+    'TSLA',
+    'AMZN',
+  ].obs;
   RxBool hasMinuteData = false.obs;
   late Rx<String> lastDatetime = 'Loading last datetime...'.obs;
   RxBool hasCandleData = false.obs;
@@ -454,6 +486,14 @@ class MainPresenter extends GetxController {
   RxBool hasIwmMinuteData = false.obs;
   RxBool hasXlkMinuteData = false.obs;
   RxBool hasAaplMinuteData = false.obs;
+  RxBool hasBaMinuteData = false.obs;
+  RxBool hasBacMinuteData = false.obs;
+  RxBool hasMcdMinuteData = false.obs;
+  RxBool hasNvdaMinuteData = false.obs;
+  RxBool hasMsftMinuteData = false.obs;
+  RxBool hasGskMinuteData = false.obs;
+  RxBool hasTslaMinuteData = false.obs;
+  RxBool hasAmznMinuteData = false.obs;
 
   /* Listings */
   RxInt listingsDownloadTime = 0.obs;
@@ -538,6 +578,14 @@ class MainPresenter extends GetxController {
   RxList<int> iwmMatchRows = [0].obs; // Cross-data
   RxList<int> xlkMatchRows = [0].obs; // Cross-data
   RxList<int> aaplMatchRows = [0].obs; // Cross-data
+  RxList<int> baMatchRows = [0].obs; // Cross-data
+  RxList<int> bacMatchRows = [0].obs; // Cross-data
+  RxList<int> mcdMatchRows = [0].obs; // Cross-data
+  RxList<int> nvdaMatchRows = [0].obs; // Cross-data
+  RxList<int> msftMatchRows = [0].obs; // Cross-data
+  RxList<int> gskMatchRows = [0].obs; // Cross-data
+  RxList<int> tslaMatchRows = [0].obs; // Cross-data
+  RxList<int> amznMatchRows = [0].obs; // Cross-data
   RxBool trendMatched = false.obs;
   RxBool showAnalytics = false.obs;
   ValueNotifier<bool> showAnalyticsNotifier = ValueNotifier<bool>(false);
@@ -555,11 +603,16 @@ class MainPresenter extends GetxController {
       (PrefsService.to.prefs.getInt(SharedPreferencesConstant.subLength) ?? 12)
           .obs;
   RxInt maxMa = 240.obs;
-  Rx<Widget> advancedTm = (const Column()).obs;
   RxBool isLockTrend =
       (PrefsService.to.prefs.getBool(SharedPreferencesConstant.lockTrend) ??
               false)
           .obs;
+  RxBool isFirstThirtyMins = true.obs;
+  RxBool hitCeilingOrFloor = true.obs;
+  RxBool goOpposite = true.obs;
+  RxString instruction = 'Awaiting for instruction...'.obs;
+  RxDouble expectedReturn = 0.0.obs;
+  RxDouble expectedMdd = 0.0.obs;
 
   /* Subsequent analytics */
   RxInt lastClosePriceAndSubsequentTrendsExeTime = 0.obs;
@@ -821,6 +874,14 @@ class MainPresenter extends GetxController {
     var iwmData = await isar.iwmDatas.where().findFirst();
     var xlkData = await isar.xlkDatas.where().findFirst();
     var aaplData = await isar.aaplDatas.where().findFirst();
+    var baData = await isar.baDatas.where().findFirst();
+    var bacData = await isar.bacDatas.where().findFirst();
+    var mcdData = await isar.mcdDatas.where().findFirst();
+    var nvdaData = await isar.nvdaDatas.where().findFirst();
+    var msftData = await isar.msftDatas.where().findFirst();
+    var gskData = await isar.gskDatas.where().findFirst();
+    var tslaData = await isar.tslaDatas.where().findFirst();
+    var amznData = await isar.amznDatas.where().findFirst();
     if (spyData == null) {
       hasSpyMinuteData.value = false;
     } else {
@@ -860,6 +921,46 @@ class MainPresenter extends GetxController {
       hasAaplMinuteData.value = false;
     } else {
       hasAaplMinuteData.value = true;
+    }
+    if (baData == null) {
+      hasBaMinuteData.value = false;
+    } else {
+      hasBaMinuteData.value = true;
+    }
+    if (bacData == null) {
+      hasBacMinuteData.value = false;
+    } else {
+      hasBacMinuteData.value = true;
+    }
+    if (mcdData == null) {
+      hasMcdMinuteData.value = false;
+    } else {
+      hasMcdMinuteData.value = true;
+    }
+    if (nvdaData == null) {
+      hasNvdaMinuteData.value = false;
+    } else {
+      hasNvdaMinuteData.value = true;
+    }
+    if (msftData == null) {
+      hasMsftMinuteData.value = false;
+    } else {
+      hasMsftMinuteData.value = true;
+    }
+    if (gskData == null) {
+      hasGskMinuteData.value = false;
+    } else {
+      hasGskMinuteData.value = true;
+    }
+    if (tslaData == null) {
+      hasTslaMinuteData.value = false;
+    } else {
+      hasTslaMinuteData.value = true;
+    }
+    if (amznData == null) {
+      hasAmznMinuteData.value = false;
+    } else {
+      hasAmznMinuteData.value = true;
     }
   }
 
@@ -1182,7 +1283,7 @@ class MainPresenter extends GetxController {
       PrefsService.to.prefs
           .setStringList(SharedPreferencesConstant.watchlist, watchlist);
     } else {
-      if (watchlist.length > 8) {
+      if (watchlist.length >= 16) {
         Get.snackbar(
             'notice'.tr,
             colorText: AppColor.whiteColor,
@@ -1540,53 +1641,5 @@ class MainPresenter extends GetxController {
     } else {
       return const SizedBox.shrink();
     }
-  }
-
-  showLockTrendBtn() {
-    MainPresenter.to.advancedTm.value = Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        ElevatedButton.icon(
-          onPressed: () {
-            PrefsService.to.prefs
-                .setBool(SharedPreferencesConstant.lockTrend, true);
-            MainPresenter.to.isLockTrend.value = true;
-            showLockedTrend();
-          },
-          icon: Icon(
-            Icons.lock_clock,
-            size: 10.h,
-          ),
-          label: Text(
-            'lock_trend'.tr,
-            style: const TextTheme().sp5.w700,
-          ),
-        ),
-      ],
-    );
-  }
-
-  showLockedTrend() {
-    MainPresenter.to.advancedTm.value = Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        ElevatedButton.icon(
-          onPressed: () {
-            PrefsService.to.prefs
-                .setBool(SharedPreferencesConstant.lockTrend, false);
-            MainPresenter.to.isLockTrend.value = false;
-            MainPresenter.to.advancedTm.value = const Column();
-          },
-          icon: Icon(
-            Icons.lock_open_rounded,
-            size: 10.h,
-          ),
-          label: Text(
-            'unlock_trend'.tr,
-            style: const TextTheme().sp5.w700,
-          ),
-        ),
-      ],
-    );
   }
 }

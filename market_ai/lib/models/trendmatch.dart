@@ -66,6 +66,14 @@ class TrendMatch {
     MainPresenter.to.iwmMatchRows.value = [];
     MainPresenter.to.xlkMatchRows.value = [];
     MainPresenter.to.aaplMatchRows.value = [];
+    MainPresenter.to.baMatchRows.value = [];
+    MainPresenter.to.bacMatchRows.value = [];
+    MainPresenter.to.mcdMatchRows.value = [];
+    MainPresenter.to.nvdaMatchRows.value = [];
+    MainPresenter.to.msftMatchRows.value = [];
+    MainPresenter.to.gskMatchRows.value = [];
+    MainPresenter.to.tslaMatchRows.value = [];
+    MainPresenter.to.amznMatchRows.value = [];
     MainPresenter.to.matchPercentDifferencesListList.value = [];
     MainPresenter.to.matchActualDifferencesListList.value = [];
     MainPresenter.to.matchActualPricesListList.value = [];
@@ -157,7 +165,15 @@ class TrendMatch {
       //     MainPresenter.to.slvListCandledata.length != dummyCandleLen ||
       //     MainPresenter.to.iwmListCandledata.length != dummyCandleLen ||
       //     MainPresenter.to.xlkListCandledata.length != dummyCandleLen ||
-      //     MainPresenter.to.aaplListCandledata.length != dummyCandleLen) {
+      //     MainPresenter.to.aaplListCandledata.length != dummyCandleLen ||
+      //     MainPresenter.to.baListCandledata.length != dummyCandleLen ||
+      //     MainPresenter.to.bacListCandledata.length != dummyCandleLen ||
+      //     MainPresenter.to.mcdListCandledata.length != dummyCandleLen ||
+      //     MainPresenter.to.nvdaListCandledata.length != dummyCandleLen ||
+      //     MainPresenter.to.msftListCandledata.length != dummyCandleLen ||
+      //     MainPresenter.to.gskListCandledata.length != dummyCandleLen ||
+      //     MainPresenter.to.tslaListCandledata.length != dummyCandleLen ||
+      //     MainPresenter.to.amznListCandledata.length != dummyCandleLen) {
       //   MainPresenter.to.dispose();
       //   Get.put(MainPresenter());
       //   logger.d('Instance "MainPresenter" has been reloaded');
@@ -177,6 +193,14 @@ class TrendMatch {
       // List<CandleData> iwmListCandledata = MainPresenter.to.iwmListCandledata;
       // List<CandleData> xlkListCandledata = MainPresenter.to.xlkListCandledata;
       // List<CandleData> aaplListCandledata = MainPresenter.to.aaplListCandledata;
+      // List<CandleData> baListCandledata = MainPresenter.to.baListCandledata;
+      // List<CandleData> bacListCandledata = MainPresenter.to.bacListCandledata;
+      // List<CandleData> mcdListCandledata = MainPresenter.to.mcdListCandledata;
+      // List<CandleData> nvdaListCandledata = MainPresenter.to.nvdaListCandledata;
+      // List<CandleData> msftListCandledata = MainPresenter.to.msftListCandledata;
+      // List<CandleData> gskListCandledata = MainPresenter.to.gskListCandledata;
+      // List<CandleData> tslaListCandledata = MainPresenter.to.tslaListCandledata;
+      // List<CandleData> amznListCandledata = MainPresenter.to.amznListCandledata;
       if (i != 0) {
         if (i == 1 && symbol != 'SPY') {
           // if (spyListCandledata.isEmpty ||
@@ -273,6 +297,102 @@ class TrendMatch {
           // } else {
           //   hasData = true;
           //   listCandledata = aaplListCandledata;
+          // }
+        } else if (i == 9 && symbol != 'BA') {
+          // if (baListCandledata.isEmpty ||
+          //     baListCandledata.length <= dummyCandleLen) {
+          dataList = await isar.baDatas.where().sortByTimeKey().findAll();
+          thisTurnSymbol = 'BA';
+          if (dataList.length < 60) {
+            continue;
+          }
+          // } else {
+          //   hasData = true;
+          //   listCandledata = baListCandledata;
+          // }
+        } else if (i == 10 && symbol != 'BAC') {
+          // if (bacListCandledata.isEmpty ||
+          //     bacListCandledata.length <= dummyCandleLen) {
+          dataList = await isar.bacDatas.where().sortByTimeKey().findAll();
+          thisTurnSymbol = 'BAC';
+          if (dataList.length < 60) {
+            continue;
+          }
+          // } else {
+          //   hasData = true;
+          //   listCandledata = bacListCandledata;
+          // }
+        } else if (i == 11 && symbol != 'MCD') {
+          // if (mcdListCandledata.isEmpty ||
+          //     mcdListCandledata.length <= dummyCandleLen) {
+          dataList = await isar.mcdDatas.where().sortByTimeKey().findAll();
+          thisTurnSymbol = 'MCD';
+          if (dataList.length < 60) {
+            continue;
+          }
+          // } else {
+          //   hasData = true;
+          //   listCandledata = mcdListCandledata;
+          // }
+        } else if (i == 12 && symbol != 'NVDA') {
+          // if (nvdaListCandledata.isEmpty ||
+          //     nvdaListCandledata.length <= dummyCandleLen) {
+          dataList = await isar.nvdaDatas.where().sortByTimeKey().findAll();
+          thisTurnSymbol = 'NVDA';
+          if (dataList.length < 60) {
+            continue;
+          }
+          // } else {
+          //   hasData = true;
+          //   listCandledata = nvdaListCandledata;
+          // }
+        } else if (i == 13 && symbol != 'MSFT') {
+          // if (msftListCandledata.isEmpty ||
+          //     msftListCandledata.length <= dummyCandleLen) {
+          dataList = await isar.msftDatas.where().sortByTimeKey().findAll();
+          thisTurnSymbol = 'MSFT';
+          if (dataList.length < 60) {
+            continue;
+          }
+          // } else {
+          //   hasData = true;
+          //   listCandledata = msftListCandledata;
+          // }
+        } else if (i == 14 && symbol != 'GSK') {
+          // if (gskListCandledata.isEmpty ||
+          //     gskListCandledata.length <= dummyCandleLen) {
+          dataList = await isar.gskDatas.where().sortByTimeKey().findAll();
+          thisTurnSymbol = 'GSK';
+          if (dataList.length < 60) {
+            continue;
+          }
+          // } else {
+          //   hasData = true;
+          //   listCandledata = gskListCandledata;
+          // }
+        } else if (i == 15 && symbol != 'TSLA') {
+          // if (tslaListCandledata.isEmpty ||
+          //     tslaListCandledata.length <= dummyCandleLen) {
+          dataList = await isar.tslaDatas.where().sortByTimeKey().findAll();
+          thisTurnSymbol = 'TSLA';
+          if (dataList.length < 60) {
+            continue;
+          }
+          // } else {
+          //   hasData = true;
+          //   listCandledata = tslaListCandledata;
+          // }
+        } else if (i == 16 && symbol != 'AMZN') {
+          // if (amznListCandledata.isEmpty ||
+          //     amznListCandledata.length <= dummyCandleLen) {
+          dataList = await isar.amznDatas.where().sortByTimeKey().findAll();
+          thisTurnSymbol = 'AMZN';
+          if (dataList.length < 60) {
+            continue;
+          }
+          // } else {
+          //   hasData = true;
+          //   listCandledata = amznListCandledata;
           // }
         } else {
           if (i == 8) {
@@ -375,6 +495,102 @@ class TrendMatch {
             //   hasData = true;
             //   listCandledata = aaplListCandledata;
             // }
+          } else if (l == 9 && symbol != 'BA') {
+            // if (baListCandledata.isEmpty ||
+            //     baListCandledata.length <= dummyCandleLen) {
+            dataList = await isar.baDatas.where().sortByTimeKey().findAll();
+            thisTurnSymbol = 'BA';
+            if (dataList.length < 60) {
+              continue;
+            }
+            // } else {
+            //   hasData = true;
+            //   listCandledata = baListCandledata;
+            // }
+          } else if (l == 10 && symbol != 'BAC') {
+            // if (bacListCandledata.isEmpty ||
+            //     bacListCandledata.length <= dummyCandleLen) {
+            dataList = await isar.bacDatas.where().sortByTimeKey().findAll();
+            thisTurnSymbol = 'BAC';
+            if (dataList.length < 60) {
+              continue;
+            }
+            // } else {
+            //   hasData = true;
+            //   listCandledata = bacListCandledata;
+            // }
+          } else if (l == 11 && symbol != 'MCD') {
+            // if (mcdListCandledata.isEmpty ||
+            //     mcdListCandledata.length <= dummyCandleLen) {
+            dataList = await isar.mcdDatas.where().sortByTimeKey().findAll();
+            thisTurnSymbol = 'MCD';
+            if (dataList.length < 60) {
+              continue;
+            }
+            // } else {
+            //   hasData = true;
+            //   listCandledata = mcdListCandledata;
+            // }
+          } else if (l == 12 && symbol != 'NVDA') {
+            // if (nvdaListCandledata.isEmpty ||
+            //     nvdaListCandledata.length <= dummyCandleLen) {
+            dataList = await isar.nvdaDatas.where().sortByTimeKey().findAll();
+            thisTurnSymbol = 'NVDA';
+            if (dataList.length < 60) {
+              continue;
+            }
+            // } else {
+            //   hasData = true;
+            //   listCandledata = nvdaListCandledata;
+            // }
+          } else if (l == 13 && symbol != 'MSFT') {
+            // if (msftListCandledata.isEmpty ||
+            //     msftListCandledata.length <= dummyCandleLen) {
+            dataList = await isar.msftDatas.where().sortByTimeKey().findAll();
+            thisTurnSymbol = 'MSFT';
+            if (dataList.length < 60) {
+              continue;
+            }
+            // } else {
+            //   hasData = true;
+            //   listCandledata = msftListCandledata;
+            // }
+          } else if (l == 14 && symbol != 'GSK') {
+            // if (gskListCandledata.isEmpty ||
+            //     gskListCandledata.length <= dummyCandleLen) {
+            dataList = await isar.gskDatas.where().sortByTimeKey().findAll();
+            thisTurnSymbol = 'GSK';
+            if (dataList.length < 60) {
+              continue;
+            }
+            // } else {
+            //   hasData = true;
+            //   listCandledata = gskListCandledata;
+            // }
+          } else if (l == 15 && symbol != 'TSLA') {
+            // if (tslaListCandledata.isEmpty ||
+            //     tslaListCandledata.length <= dummyCandleLen) {
+            dataList = await isar.tslaDatas.where().sortByTimeKey().findAll();
+            thisTurnSymbol = 'TSLA';
+            if (dataList.length < 60) {
+              continue;
+            }
+            // } else {
+            //   hasData = true;
+            //   listCandledata = tslaListCandledata;
+            // }
+          } else if (l == 16 && symbol != 'AMZN') {
+            // if (amznListCandledata.isEmpty ||
+            //     amznListCandledata.length <= dummyCandleLen) {
+            dataList = await isar.amznDatas.where().sortByTimeKey().findAll();
+            thisTurnSymbol = 'AMZN';
+            if (dataList.length < 60) {
+              continue;
+            }
+            // } else {
+            //   hasData = true;
+            //   listCandledata = amznListCandledata;
+            // }
           } else {
             throw Exception('There is no minute interval data for $i');
           }
@@ -417,6 +633,38 @@ class TrendMatch {
           docList = List<AaplData>.from(dataList)
               .map<Map<String, dynamic>>((data) => data.toJson())
               .toList();
+        } else if (thisTurnSymbol == 'BA') {
+          docList = List<BaData>.from(dataList)
+              .map<Map<String, dynamic>>((data) => data.toJson())
+              .toList();
+        } else if (thisTurnSymbol == 'BAC') {
+          docList = List<BacData>.from(dataList)
+              .map<Map<String, dynamic>>((data) => data.toJson())
+              .toList();
+        } else if (thisTurnSymbol == 'MCD') {
+          docList = List<McdData>.from(dataList)
+              .map<Map<String, dynamic>>((data) => data.toJson())
+              .toList();
+        } else if (thisTurnSymbol == 'NVDA') {
+          docList = List<NvdaData>.from(dataList)
+              .map<Map<String, dynamic>>((data) => data.toJson())
+              .toList();
+        } else if (thisTurnSymbol == 'MSFT') {
+          docList = List<MsftData>.from(dataList)
+              .map<Map<String, dynamic>>((data) => data.toJson())
+              .toList();
+        } else if (thisTurnSymbol == 'GSK') {
+          docList = List<GskData>.from(dataList)
+              .map<Map<String, dynamic>>((data) => data.toJson())
+              .toList();
+        } else if (thisTurnSymbol == 'TSLA') {
+          docList = List<TslaData>.from(dataList)
+              .map<Map<String, dynamic>>((data) => data.toJson())
+              .toList();
+        } else if (thisTurnSymbol == 'AMZN') {
+          docList = List<AmznData>.from(dataList)
+              .map<Map<String, dynamic>>((data) => data.toJson())
+              .toList();
         } else {
           throw Exception(
               'There is no Isac data structure for $thisTurnSymbol');
@@ -450,6 +698,22 @@ class TrendMatch {
           MainPresenter.to.xlkMatchRows.add(rowId);
         } else if (thisTurnSymbol == 'AAPL') {
           MainPresenter.to.aaplMatchRows.add(rowId);
+        } else if (thisTurnSymbol == 'BA') {
+          MainPresenter.to.baMatchRows.add(rowId);
+        } else if (thisTurnSymbol == 'BAC') {
+          MainPresenter.to.bacMatchRows.add(rowId);
+        } else if (thisTurnSymbol == 'MCD') {
+          MainPresenter.to.mcdMatchRows.add(rowId);
+        } else if (thisTurnSymbol == 'NVDA') {
+          MainPresenter.to.nvdaMatchRows.add(rowId);
+        } else if (thisTurnSymbol == 'MSFT') {
+          MainPresenter.to.msftMatchRows.add(rowId);
+        } else if (thisTurnSymbol == 'GSK') {
+          MainPresenter.to.gskMatchRows.add(rowId);
+        } else if (thisTurnSymbol == 'TSLA') {
+          MainPresenter.to.tslaMatchRows.add(rowId);
+        } else if (thisTurnSymbol == 'AMZN') {
+          MainPresenter.to.amznMatchRows.add(rowId);
         } else if (thisTurnSymbol == '') {
           MainPresenter.to.matchRows.add(rowId);
         } else {
@@ -603,9 +867,6 @@ class TrendMatch {
     ];
 
     MainPresenter.to.sidePlot.value = const SizedBox.shrink();
-    if (!MainPresenter.to.isLockTrend.value) {
-      MainPresenter.to.showLockTrendBtn();
-    }
     MainPresenter.to.trendMatched.value = true;
   }
 
@@ -987,6 +1248,30 @@ class TrendMatch {
         } else if (symbol == 'AAPL' && symbol != fiSymbol) {
           matchRows = MainPresenter.to.aaplMatchRows;
           candleListList = MainPresenter.to.aaplCandleListList;
+        } else if (symbol == 'BA' && symbol != fiSymbol) {
+          matchRows = MainPresenter.to.baMatchRows;
+          candleListList = MainPresenter.to.baCandleListList;
+        } else if (symbol == 'BAC' && symbol != fiSymbol) {
+          matchRows = MainPresenter.to.bacMatchRows;
+          candleListList = MainPresenter.to.bacCandleListList;
+        } else if (symbol == 'MCD' && symbol != fiSymbol) {
+          matchRows = MainPresenter.to.mcdMatchRows;
+          candleListList = MainPresenter.to.mcdCandleListList;
+        } else if (symbol == 'NVDA' && symbol != fiSymbol) {
+          matchRows = MainPresenter.to.nvdaMatchRows;
+          candleListList = MainPresenter.to.nvdaCandleListList;
+        } else if (symbol == 'MSFT' && symbol != fiSymbol) {
+          matchRows = MainPresenter.to.msftMatchRows;
+          candleListList = MainPresenter.to.msftCandleListList;
+        } else if (symbol == 'GSK' && symbol != fiSymbol) {
+          matchRows = MainPresenter.to.gskMatchRows;
+          candleListList = MainPresenter.to.gskCandleListList;
+        } else if (symbol == 'TSLA' && symbol != fiSymbol) {
+          matchRows = MainPresenter.to.tslaMatchRows;
+          candleListList = MainPresenter.to.tslaCandleListList;
+        } else if (symbol == 'AMZN' && symbol != fiSymbol) {
+          matchRows = MainPresenter.to.amznMatchRows;
+          candleListList = MainPresenter.to.amznCandleListList;
         } else {
           matchRows = MainPresenter.to.matchRows;
           candleListList = MainPresenter.to.candleListList;
@@ -1166,6 +1451,30 @@ class TrendMatch {
         } else if (symbol == 'AAPL' && symbol != fiSymbol) {
           matchRows = MainPresenter.to.aaplMatchRows;
           candleListList = MainPresenter.to.aaplCandleListList;
+        } else if (symbol == 'BA' && symbol != fiSymbol) {
+          matchRows = MainPresenter.to.baMatchRows;
+          candleListList = MainPresenter.to.baCandleListList;
+        } else if (symbol == 'BAC' && symbol != fiSymbol) {
+          matchRows = MainPresenter.to.bacMatchRows;
+          candleListList = MainPresenter.to.bacCandleListList;
+        } else if (symbol == 'MCD' && symbol != fiSymbol) {
+          matchRows = MainPresenter.to.mcdMatchRows;
+          candleListList = MainPresenter.to.mcdCandleListList;
+        } else if (symbol == 'NVDA' && symbol != fiSymbol) {
+          matchRows = MainPresenter.to.nvdaMatchRows;
+          candleListList = MainPresenter.to.nvdaCandleListList;
+        } else if (symbol == 'MSFT' && symbol != fiSymbol) {
+          matchRows = MainPresenter.to.msftMatchRows;
+          candleListList = MainPresenter.to.msftCandleListList;
+        } else if (symbol == 'GSK' && symbol != fiSymbol) {
+          matchRows = MainPresenter.to.gskMatchRows;
+          candleListList = MainPresenter.to.gskCandleListList;
+        } else if (symbol == 'TSLA' && symbol != fiSymbol) {
+          matchRows = MainPresenter.to.tslaMatchRows;
+          candleListList = MainPresenter.to.tslaCandleListList;
+        } else if (symbol == 'AMZN' && symbol != fiSymbol) {
+          matchRows = MainPresenter.to.amznMatchRows;
+          candleListList = MainPresenter.to.amznCandleListList;
         } else {
           matchRows = MainPresenter.to.matchRows;
           candleListList = MainPresenter.to.candleListList;

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:market_ai/presenters/presenters.dart';
+import 'package:market_ai/services/prefs/prefs.dart';
 import 'package:market_ai/styles/styles.dart';
 import 'package:market_ai/utils/utils.dart';
 import 'package:market_ai/views/charts/charts.dart';
@@ -34,7 +35,112 @@ class TrendMatchView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Obx(() => MainPresenter.to.advancedTm.value),
+        Obx(
+          () {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () {
+                    if (MainPresenter.to.isLockTrend.value) {
+                      PrefsService.to.prefs
+                          .setBool(SharedPreferencesConstant.lockTrend, false);
+                      MainPresenter.to.isLockTrend.value = false;
+                    } else {
+                      PrefsService.to.prefs
+                          .setBool(SharedPreferencesConstant.lockTrend, true);
+                      MainPresenter.to.isLockTrend.value = true;
+                    }
+                  },
+                  icon: Icon(
+                    (MainPresenter.to.isLockTrend.value
+                        ? Icons.lock_open_rounded
+                        : Icons.lock_clock),
+                    size: 10.h,
+                  ),
+                  label: Text(
+                    (MainPresenter.to.isLockTrend.value
+                        ? 'unlock_trend'.tr
+                        : 'lock_trend'.tr),
+                    style: const TextTheme().sp5.w700,
+                  ),
+                ),
+                (MainPresenter.to.isLockTrend.value
+                    ? Text(
+                        'instruction'.tr,
+                        style: const TextTheme().sp5.w700,
+                      )
+                    : const SizedBox.shrink()),
+                (MainPresenter.to.isLockTrend.value
+                    ? Text(
+                        MainPresenter.to.instruction.value,
+                        style: const TextTheme().sp10.primaryTextColor.w700,
+                      )
+                    : const SizedBox.shrink()),
+                (MainPresenter.to.isLockTrend.value
+                    ? Text(
+                        'prediction'.tr,
+                        style: const TextTheme().sp5.w700,
+                      )
+                    : const SizedBox.shrink()),
+                (MainPresenter.to.isLockTrend.value
+                    ? Text(
+                        'Expected Return (Mean): ${MainPresenter.to.expectedReturn.value}',
+                        style: const TextTheme().sp7.primaryTextColor.w700,
+                      )
+                    : const SizedBox.shrink()),
+                (MainPresenter.to.isLockTrend.value
+                    ? Text(
+                        'Expected MDD: ${MainPresenter.to.expectedMdd.value.toString()}',
+                        style: const TextTheme().sp7.primaryTextColor.w700,
+                      )
+                    : const SizedBox.shrink()),
+                (MainPresenter.to.isLockTrend.value
+                    ? Text(
+                        'considerations'.tr,
+                        style: const TextTheme().sp5.w700,
+                      )
+                    : const SizedBox.shrink()),
+                (MainPresenter.to.isLockTrend.value
+                    ? (MainPresenter.to.isFirstThirtyMins.value
+                        ? Text(
+                            'is_first_thirty_mins'.tr,
+                            style: const TextTheme().sp5.primaryTextColor.w700,
+                          )
+                        : Text(
+                            'is_not_first_thirty_mins'.tr,
+                            style: const TextTheme().sp5.primaryTextColor.w700,
+                          ))
+                    : const SizedBox.shrink()),
+                (MainPresenter.to.isLockTrend.value
+                    ? (MainPresenter.to.hitCeilingOrFloor.value
+                        ? Text(
+                            'hit_ceiling_or_floor'.tr,
+                            style: const TextTheme().sp5.primaryTextColor.w700,
+                          )
+                        : Text(
+                            'not_hit_ceiling_or_floor'.tr,
+                            style: const TextTheme().sp5.primaryTextColor.w700,
+                          ))
+                    : const SizedBox.shrink()),
+                (MainPresenter.to.isLockTrend.value
+                    ? (MainPresenter.to.goOpposite.value
+                        ? Text(
+                            'go_opposite'.tr,
+                            style: const TextTheme().sp5.primaryTextColor.w700,
+                          )
+                        : Text(
+                            'not_go_opposite'.tr,
+                            style: const TextTheme().sp5.primaryTextColor.w700,
+                          ))
+                    : const SizedBox.shrink()),
+                SizedBox(
+                  height: 5.h,
+                ),
+              ],
+            );
+          },
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

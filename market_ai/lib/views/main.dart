@@ -504,6 +504,190 @@ class MainView extends StatefulWidget {
                 return const SizedBox.shrink();
               }
             }),
+            Obx(() {
+              if (MainPresenter.to.hasBaMinuteData.value) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 2.w),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      IsarService().clearBaData();
+                      MainPresenter.to.hasBaMinuteData.value = false;
+                    },
+                    icon: Icon(
+                      Icons.clean_hands_rounded,
+                      size: 10.h,
+                    ),
+                    label: Text(
+                      'btn_clear_ba_minute'.tr,
+                      style: const TextTheme().sp5.w700,
+                    ),
+                  ),
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            }),
+            Obx(() {
+              if (MainPresenter.to.hasBacMinuteData.value) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 2.w),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      IsarService().clearBacData();
+                      MainPresenter.to.hasBacMinuteData.value = false;
+                    },
+                    icon: Icon(
+                      Icons.clean_hands_rounded,
+                      size: 10.h,
+                    ),
+                    label: Text(
+                      'btn_clear_bac_minute'.tr,
+                      style: const TextTheme().sp5.w700,
+                    ),
+                  ),
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            }),
+            Obx(() {
+              if (MainPresenter.to.hasMcdMinuteData.value) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 2.w),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      IsarService().clearMcdData();
+                      MainPresenter.to.hasMcdMinuteData.value = false;
+                    },
+                    icon: Icon(
+                      Icons.clean_hands_rounded,
+                      size: 10.h,
+                    ),
+                    label: Text(
+                      'btn_clear_mcd_minute'.tr,
+                      style: const TextTheme().sp5.w700,
+                    ),
+                  ),
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            }),
+            Obx(() {
+              if (MainPresenter.to.hasNvdaMinuteData.value) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 2.w),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      IsarService().clearNvdaData();
+                      MainPresenter.to.hasNvdaMinuteData.value = false;
+                    },
+                    icon: Icon(
+                      Icons.clean_hands_rounded,
+                      size: 10.h,
+                    ),
+                    label: Text(
+                      'btn_clear_nvda_minute'.tr,
+                      style: const TextTheme().sp5.w700,
+                    ),
+                  ),
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            }),
+            Obx(() {
+              if (MainPresenter.to.hasMsftMinuteData.value) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 2.w),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      IsarService().clearMsftData();
+                      MainPresenter.to.hasMsftMinuteData.value = false;
+                    },
+                    icon: Icon(
+                      Icons.clean_hands_rounded,
+                      size: 10.h,
+                    ),
+                    label: Text(
+                      'btn_clear_msft_minute'.tr,
+                      style: const TextTheme().sp5.w700,
+                    ),
+                  ),
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            }),
+            Obx(() {
+              if (MainPresenter.to.hasGskMinuteData.value) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 2.w),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      IsarService().clearGskData();
+                      MainPresenter.to.hasGskMinuteData.value = false;
+                    },
+                    icon: Icon(
+                      Icons.clean_hands_rounded,
+                      size: 10.h,
+                    ),
+                    label: Text(
+                      'btn_clear_gsk_minute'.tr,
+                      style: const TextTheme().sp5.w700,
+                    ),
+                  ),
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            }),
+            Obx(() {
+              if (MainPresenter.to.hasTslaMinuteData.value) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 2.w),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      IsarService().clearTslaData();
+                      MainPresenter.to.hasTslaMinuteData.value = false;
+                    },
+                    icon: Icon(
+                      Icons.clean_hands_rounded,
+                      size: 10.h,
+                    ),
+                    label: Text(
+                      'btn_clear_tsla_minute'.tr,
+                      style: const TextTheme().sp5.w700,
+                    ),
+                  ),
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            }),
+            Obx(() {
+              if (MainPresenter.to.hasAmznMinuteData.value) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 2.w),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      IsarService().clearAmznData();
+                      MainPresenter.to.hasAmznMinuteData.value = false;
+                    },
+                    icon: Icon(
+                      Icons.clean_hands_rounded,
+                      size: 10.h,
+                    ),
+                    label: Text(
+                      'btn_clear_amzn_minute'.tr,
+                      style: const TextTheme().sp5.w700,
+                    ),
+                  ),
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            }),
             SizedBox(height: 5.h),
           ],
         ),

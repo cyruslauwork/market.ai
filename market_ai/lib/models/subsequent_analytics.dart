@@ -73,6 +73,46 @@ class SubsequentAnalytics {
           candleListListLength = candleListList.length;
           matchRows = MainPresenter.to.aaplMatchRows;
           matchLen = matchRows.length;
+        } else if (symbol == 'BA' && symbol != fiSymbol) {
+          candleListList = MainPresenter.to.baCandleListList;
+          candleListListLength = candleListList.length;
+          matchRows = MainPresenter.to.baMatchRows;
+          matchLen = matchRows.length;
+        } else if (symbol == 'BAC' && symbol != fiSymbol) {
+          candleListList = MainPresenter.to.bacCandleListList;
+          candleListListLength = candleListList.length;
+          matchRows = MainPresenter.to.bacMatchRows;
+          matchLen = matchRows.length;
+        } else if (symbol == 'MCD' && symbol != fiSymbol) {
+          candleListList = MainPresenter.to.mcdCandleListList;
+          candleListListLength = candleListList.length;
+          matchRows = MainPresenter.to.mcdMatchRows;
+          matchLen = matchRows.length;
+        } else if (symbol == 'NVDA' && symbol != fiSymbol) {
+          candleListList = MainPresenter.to.nvdaCandleListList;
+          candleListListLength = candleListList.length;
+          matchRows = MainPresenter.to.nvdaMatchRows;
+          matchLen = matchRows.length;
+        } else if (symbol == 'MSFT' && symbol != fiSymbol) {
+          candleListList = MainPresenter.to.msftCandleListList;
+          candleListListLength = candleListList.length;
+          matchRows = MainPresenter.to.msftMatchRows;
+          matchLen = matchRows.length;
+        } else if (symbol == 'GSK' && symbol != fiSymbol) {
+          candleListList = MainPresenter.to.gskCandleListList;
+          candleListListLength = candleListList.length;
+          matchRows = MainPresenter.to.gskMatchRows;
+          matchLen = matchRows.length;
+        } else if (symbol == 'TSLA' && symbol != fiSymbol) {
+          candleListList = MainPresenter.to.tslaCandleListList;
+          candleListListLength = candleListList.length;
+          matchRows = MainPresenter.to.tslaMatchRows;
+          matchLen = matchRows.length;
+        } else if (symbol == 'AMZN' && symbol != fiSymbol) {
+          candleListList = MainPresenter.to.amznCandleListList;
+          candleListListLength = candleListList.length;
+          matchRows = MainPresenter.to.amznMatchRows;
+          matchLen = matchRows.length;
         } else {
           candleListList = MainPresenter.to.candleListList;
           candleListListLength = candleListList.length;
