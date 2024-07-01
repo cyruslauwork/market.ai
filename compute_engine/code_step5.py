@@ -323,7 +323,7 @@ def forward_request():
             else:
                 time.sleep(3)
                 return return_string('Invalid API key', 401, blob, current_month, gce_monthly_kb_counters, 1)
-        elif func_name == 'nyse-etfs-symbol-name':
+        elif func_name == 'nyse-etfs-symbol-and-name-list-jul01hkg20241056ammon':
             BUCKET_NAME = 'market-ai-2024'
             object_name = 'nyse-etfs-symbol-name.json'
             url_encoded_BUCKET_NAME = quote(BUCKET_NAME)
@@ -356,6 +356,8 @@ def forward_request():
             except subprocess.TimeoutExpired:
                 # Handle the case when the command exceeds the timeout
                 return return_jsonify({'error': 'nyse-etfs-symbol-name execution timed out'}, 504, blob, current_month, gce_monthly_kb_counters, 1)
+        elif func_name == 'uptime-monitoring-jul01hkg20241056ammon':
+            return return_string(str(now), 200, blob, current_month, gce_monthly_kb_counters, 1)
         else:
             time.sleep(3)
             return return_jsonify({'error': 'Invalid function name'}, 400, blob, current_month, gce_monthly_kb_counters, 1)

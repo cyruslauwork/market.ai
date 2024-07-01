@@ -254,7 +254,7 @@ class HTTPService extends GetxService {
       Uri.parse(
           'https://api.nasdaq.com/api/screener/stocks?tableonly=true&limit=99999&exchange=amex'),
       Uri.parse(
-          'http://${MainPresenter.to.jumpServerUrl.value}/?func=nyse-etfs-symbol-name'),
+          'http://${MainPresenter.to.jumpServerUrl.value}/?func=nyse-etfs-symbol-and-name-list-jul01hkg20241056ammon'),
     ];
 
     // Send the HTTP GET request with the updated URL and headers
