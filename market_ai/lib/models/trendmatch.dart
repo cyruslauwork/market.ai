@@ -395,7 +395,7 @@ class TrendMatch {
           //   listCandledata = amznListCandledata;
           // }
         } else {
-          if (i == 8) {
+          if (i == 16) {
             break;
           }
           int l = i + 1;
