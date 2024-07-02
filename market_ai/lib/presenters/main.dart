@@ -610,6 +610,8 @@ class MainPresenter extends GetxController {
   RxBool isFirstThirtyMins = true.obs;
   RxBool hitCeilingOrFloor = true.obs;
   RxBool goOpposite = true.obs;
+  RxBool lowReturn = true.obs;
+  RxBool lowProb = true.obs;
   RxString instruction = 'Awaiting for instruction...'.obs;
   RxDouble expectedReturn = 0.0.obs;
   RxDouble expectedMdd = 0.0.obs;
@@ -653,6 +655,28 @@ class MainPresenter extends GetxController {
       alwaysUseCrossData.value = false;
       PrefsService.to.prefs
           .setBool(SharedPreferencesConstant.alwaysUseCrossData, false);
+
+      matchRows.value = [];
+      spyMatchRows.value = []; // Cross-data
+      qqqMatchRows.value = []; // Cross-data
+      usoMatchRows.value = []; // Cross-data
+      gldMatchRows.value = []; // Cross-data
+      slvMatchRows.value = []; // Cross-data
+      iwmMatchRows.value = []; // Cross-data
+      xlkMatchRows.value = []; // Cross-data
+      aaplMatchRows.value = []; // Cross-data
+      baMatchRows.value = []; // Cross-data
+      bacMatchRows.value = []; // Cross-data
+      mcdMatchRows.value = []; // Cross-data
+      nvdaMatchRows.value = []; // Cross-data
+      msftMatchRows.value = []; // Cross-data
+      gskMatchRows.value = []; // Cross-data
+      tslaMatchRows.value = []; // Cross-data
+      amznMatchRows.value = []; // Cross-data
+
+      isLockTrend.value = false;
+      PrefsService.to.prefs.setBool(SharedPreferencesConstant.lockTrend, false);
+
       isInit = true;
     }
 
@@ -740,10 +764,14 @@ class MainPresenter extends GetxController {
   void isEnListener() {
     if (isEnNotifier.value) {
       LangService.to.changeLanguage(Lang.en);
-      SubsequentAnalytics().init();
+      if (!isLockTrend.value) {
+        SubsequentAnalytics().init();
+      }
     } else {
       LangService.to.changeLanguage(Lang.zh);
-      SubsequentAnalytics().init();
+      if (!isLockTrend.value) {
+        SubsequentAnalytics().init();
+      }
     }
   }
 
@@ -853,7 +881,7 @@ class MainPresenter extends GetxController {
       if (showAverageNotifier.value) {
         await Candle().computeTrendLines();
       }
-      if (listCandledata.isNotEmpty) {
+      if (listCandledata.isNotEmpty && !isLockTrend.value) {
         await TrendMatch().init();
         if (apiKey.value != '') {
           SubsequentAnalytics().init();
@@ -974,13 +1002,18 @@ class MainPresenter extends GetxController {
   }
 
   /* UI Logic (mainly focused on show/hide) */
-  List<Widget> buildListingRelatedIcons() {
+  List<Widget> buildListingRelatedIcons({required BuildContext context}) {
     if (isListingInit.value) {
       return [
         IconButton(
           icon: const Icon(Icons.search),
           onPressed: () {
-            MainPresenter.to.route(RouteName.searchView.path);
+            if (!MainPresenter.to.isLockTrend.value) {
+              MainPresenter.to.route(RouteName.searchView.path);
+            } else {
+              showScaffoldMessenger(
+                  context: context, localizedMsg: 'lock_trend_alert'.tr);
+            }
           },
         ),
         IconButton(
@@ -1001,6 +1034,15 @@ class MainPresenter extends GetxController {
         return TrendMatchView().showAdjustedLineChart();
       } else if (showAnalytics.value) {
         return TrendMatchView().showCircularProgressIndicator();
+      }
+      return const SizedBox.shrink();
+    });
+  }
+
+  Widget showCluster() {
+    return Obx(() {
+      if (trendMatched.value && showAnalytics.value) {
+        return TrendMatchView().showAdjustedLineChart();
       }
       return const SizedBox.shrink();
     });
@@ -1049,10 +1091,14 @@ class MainPresenter extends GetxController {
 
   Widget showSa() {
     return Obx(() {
-      if (hasSubsequentAnalytics.value &&
-          showAnalytics.value &&
-          devMode.value &&
-          apiKey.value != '') {
+      if ((hasSubsequentAnalytics.value &&
+              showAnalytics.value &&
+              devMode.value &&
+              apiKey.value != '') ||
+          (showAnalytics.value &&
+              devMode.value &&
+              apiKey.value != '' &&
+              isLockTrend.value)) {
         if (subsequentAnalyticsErr.value == '' && apiKeyErr.value == '') {
           return Column(
             children: [
@@ -1070,9 +1116,10 @@ class MainPresenter extends GetxController {
             ],
           );
         }
-      } else if (hasSubsequentAnalytics.value &&
-          showAnalytics.value &&
-          apiKey.value != '') {
+      } else if ((hasSubsequentAnalytics.value &&
+              showAnalytics.value &&
+              apiKey.value != '') ||
+          (showAnalytics.value && apiKey.value != '' && isLockTrend.value)) {
         if (subsequentAnalyticsErr.value == '' && apiKeyErr.value == '') {
           return SubsequentAnalyticsView().showSaChart();
         } else if (apiKeyErr.value == '') {
@@ -1295,14 +1342,10 @@ class MainPresenter extends GetxController {
         watchlist.add(financialInstrumentSymbol.value);
         PrefsService.to.prefs
             .setStringList(SharedPreferencesConstant.watchlist, watchlist);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Center(
-            child: Text(
-              'bookmarked'.tr,
-              style: const TextTheme().sp5.greyColor,
-            ),
-          ),
-        ));
+        showScaffoldMessenger(
+          context: context,
+          localizedMsg: 'bookmarked'.tr,
+        );
       }
     }
   }
@@ -1376,31 +1419,42 @@ class MainPresenter extends GetxController {
   }
 
   alwaysShowMinuteDataToggle(bool value, BuildContext context) {
-    alwaysShowMinuteData.value = value;
-    PrefsService.to.prefs
-        .setBool(SharedPreferencesConstant.alwaysShowMinuteData, value);
-    dataGranularity.value = (value ? Icons.timer_outlined : Icons.today);
-    if (value) {
-      legends.value = '🟠EMA5 🔴EMA10 🟢EMA15 🔵EMA20';
-      showScaffoldMessenger(context: context, localizedMsg: 'show_one_minute');
+    if (!isLockTrend.value) {
+      alwaysShowMinuteData.value = value;
+      PrefsService.to.prefs
+          .setBool(SharedPreferencesConstant.alwaysShowMinuteData, value);
+      dataGranularity.value = (value ? Icons.timer_outlined : Icons.today);
+      if (value) {
+        legends.value = '🟠EMA5 🔴EMA10 🟢EMA15 🔵EMA20';
+        showScaffoldMessenger(
+            context: context, localizedMsg: 'show_one_minute');
+      } else {
+        legends.value = '🟠MA5 🔴MA20 🟢MA60 🔵MA120 🟣MA240';
+        showScaffoldMessenger(context: context, localizedMsg: 'show_one_day');
+      }
+      futureListCandledata.value = init();
     } else {
-      legends.value = '🟠MA5 🔴MA20 🟢MA60 🔵MA120 🟣MA240';
-      showScaffoldMessenger(context: context, localizedMsg: 'show_one_day');
+      showScaffoldMessenger(
+          context: context, localizedMsg: 'lock_trend_alert'.tr);
     }
-    futureListCandledata.value = init();
   }
 
   alwaysUseCrossDataToggle(bool value, BuildContext context) {
-    alwaysUseCrossData.value = value;
-    PrefsService.to.prefs
-        .setBool(SharedPreferencesConstant.alwaysUseCrossData, value);
-    crossData.value = (value ? Icons.dataset_linked : Icons.dataset);
-    if (value) {
-      showScaffoldMessenger(context: context, localizedMsg: 'cross_data');
+    if (!isLockTrend.value) {
+      alwaysUseCrossData.value = value;
+      PrefsService.to.prefs
+          .setBool(SharedPreferencesConstant.alwaysUseCrossData, value);
+      crossData.value = (value ? Icons.dataset_linked : Icons.dataset);
+      if (value) {
+        showScaffoldMessenger(context: context, localizedMsg: 'cross_data');
+      } else {
+        showScaffoldMessenger(context: context, localizedMsg: 'cross_data_off');
+      }
+      futureListCandledata.value = init();
     } else {
-      showScaffoldMessenger(context: context, localizedMsg: 'cross_data_off');
+      showScaffoldMessenger(
+          context: context, localizedMsg: 'lock_trend_alert'.tr);
     }
-    futureListCandledata.value = init();
   }
 
   showApiKeyInput() {
@@ -1442,8 +1496,10 @@ class MainPresenter extends GetxController {
                     apiKeyErr.value = '';
                     PrefsService.to.prefs
                         .setString(SharedPreferencesConstant.apiKeyErr, '');
-                    TrendMatch().init();
-                    SubsequentAnalytics().init();
+                    if (!MainPresenter.to.isLockTrend.value) {
+                      TrendMatch().init();
+                      SubsequentAnalytics().init();
+                    }
                   },
                 ),
               ),

@@ -135,19 +135,24 @@ class Msg extends Translations {
           'is_not_first_thirty_mins':
               '✅︎ Regular trading hours excluding the first 30 mins',
           'hit_ceiling_or_floor':
-              '❌ half of the prices hit the opposite ceiling/floor',
+              '❌ Half of the prices hit the opposite ceiling/floor',
           'not_hit_ceiling_or_floor':
               '✅︎ No half of the prices hit the opposite ceiling/floor',
           'go_opposite': '❌ Half of the prices go in the opposite direction',
           'not_go_opposite':
               '✅︎ No half of the prices go in the opposite direction',
           'low_return_rate': '❌ Return rate is lower than 0.025%',
+          'profitable_return_rate':
+              '✅︎ Return rate is higher than or equal to 0.025%',
+          'low_probability': '❌ Probability is lower than 70%',
+          'high_probability': '✅︎ Probability is higher than or equal to 70%',
           'instruction': 'Instruction',
           'considerations': 'Considerations',
           'long': 'Long',
           'short': 'Short',
           'close_pos_or_wait_n_see': 'Close Position/ Wait-and-see',
           'prediction': 'Prediction',
+          'lock_trend_alert': 'Unlock trend for new search',
         },
         'zh_HK': {
           'app_name': '市場慧眼📈',
@@ -260,12 +265,16 @@ class Msg extends Translations {
           'go_opposite': '❌ 半數收市價走相反方向',
           'not_go_opposite': '✅︎ 沒有半數收市價走相反方向',
           'low_return_rate': '❌ 回報率低於 0.025%',
+          'profitable_return_rate': '✅︎ 回報率高於或等於 0.025%',
+          'low_probability': '❌ 機率低過 70%',
+          'high_probability': '✅︎ 機率高於或等於 70%',
           'instruction': '指示',
           'considerations': '考慮因素',
           'long': '長倉',
           'short': '短倉',
           'close_pos_or_wait_n_see': '平倉/觀望',
           'prediction': '預測',
+          'lock_trend_alert': '進行搜尋前請解鎖走勢',
         },
       };
 }

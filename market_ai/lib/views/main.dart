@@ -927,7 +927,7 @@ class _MainViewState extends State<MainView> {
             ),
           ),
           actions: MainPresenter.to.listCandledata.length > 1
-              ? MainPresenter.to.buildListingRelatedIcons() +
+              ? MainPresenter.to.buildListingRelatedIcons(context: context) +
                   [
                     IconButton(
                       icon: Icon(MainPresenter.to.darkMode.value
@@ -991,30 +991,38 @@ class _MainViewState extends State<MainView> {
                                 !MainPresenter.to.devModeNotifier.value;
                           });
                         } else if (value != 'watchlistEmpty') {
-                          List<SymbolAndName> listSymbolAndName =
-                              MainPresenter.to.listSymbolAndName;
-                          String newName;
-                          try {
-                            newName = listSymbolAndName
-                                .firstWhere((SymbolAndName symbolAndName) =>
-                                    symbolAndName.symbol == value)
-                                .name;
-                          } catch (e) {
-                            newName = 'Failed to fetch financial symbol name.';
+                          if (!MainPresenter.to.isLockTrend.value) {
+                            List<SymbolAndName> listSymbolAndName =
+                                MainPresenter.to.listSymbolAndName;
+                            String newName;
+                            try {
+                              newName = listSymbolAndName
+                                  .firstWhere((SymbolAndName symbolAndName) =>
+                                      symbolAndName.symbol == value)
+                                  .name;
+                            } catch (e) {
+                              newName =
+                                  'Failed to fetch financial symbol name.';
+                            }
+                            PrefsService.to.prefs.setString(
+                                SharedPreferencesConstant
+                                    .financialInstrumentName,
+                                newName);
+                            MainPresenter.to.financialInstrumentName.value =
+                                newName;
+                            String newSymbol = value;
+                            PrefsService.to.prefs.setString(
+                                SharedPreferencesConstant
+                                    .financialInstrumentSymbol,
+                                newSymbol);
+                            MainPresenter.to.financialInstrumentSymbol.value =
+                                newSymbol;
+                            MainPresenter.to.searchCountNotifier.value++;
+                          } else {
+                            MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg: 'lock_trend_alert'.tr);
                           }
-                          PrefsService.to.prefs.setString(
-                              SharedPreferencesConstant.financialInstrumentName,
-                              newName);
-                          MainPresenter.to.financialInstrumentName.value =
-                              newName;
-                          String newSymbol = value;
-                          PrefsService.to.prefs.setString(
-                              SharedPreferencesConstant
-                                  .financialInstrumentSymbol,
-                              newSymbol);
-                          MainPresenter.to.financialInstrumentSymbol.value =
-                              newSymbol;
-                          MainPresenter.to.searchCountNotifier.value++;
                         }
                       },
                     ),

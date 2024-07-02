@@ -27,6 +27,16 @@ class TrendMatchView extends StatelessWidget {
       children: [
         MainPresenter.to.showStartBtn(),
         Center(child: MainPresenter.to.showTm()),
+        (MainPresenter.to.isLockTrend.value
+            ? Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AdjustedLineChart(isCluster: true),
+                  ],
+                ),
+              )
+            : const SizedBox.shrink()),
       ],
     );
   }
@@ -46,10 +56,32 @@ class TrendMatchView extends StatelessWidget {
                       PrefsService.to.prefs
                           .setBool(SharedPreferencesConstant.lockTrend, false);
                       MainPresenter.to.isLockTrend.value = false;
+                      MainPresenter.to.alwaysUseCrossData.value = false;
+                      PrefsService.to.prefs.setBool(
+                          SharedPreferencesConstant.alwaysUseCrossData, false);
+                      MainPresenter.to.refreshIndicator();
                     } else {
                       PrefsService.to.prefs
                           .setBool(SharedPreferencesConstant.lockTrend, true);
                       MainPresenter.to.isLockTrend.value = true;
+
+                      MainPresenter.to.matchRows;
+                      MainPresenter.to.spyMatchRows;
+                      MainPresenter.to.qqqMatchRows;
+                      MainPresenter.to.usoMatchRows;
+                      MainPresenter.to.gldMatchRows;
+                      MainPresenter.to.slvMatchRows;
+                      MainPresenter.to.iwmMatchRows;
+                      MainPresenter.to.xlkMatchRows;
+                      MainPresenter.to.aaplMatchRows;
+                      MainPresenter.to.baMatchRows;
+                      MainPresenter.to.bacMatchRows;
+                      MainPresenter.to.mcdMatchRows;
+                      MainPresenter.to.nvdaMatchRows;
+                      MainPresenter.to.msftMatchRows;
+                      MainPresenter.to.gskMatchRows;
+                      MainPresenter.to.tslaMatchRows;
+                      MainPresenter.to.amznMatchRows;
                     }
                   },
                   icon: Icon(
@@ -109,6 +141,28 @@ class TrendMatchView extends StatelessWidget {
                           )
                         : Text(
                             'is_not_first_thirty_mins'.tr,
+                            style: const TextTheme().sp5.primaryTextColor.w700,
+                          ))
+                    : const SizedBox.shrink()),
+                (MainPresenter.to.isLockTrend.value
+                    ? (MainPresenter.to.lowReturn.value
+                        ? Text(
+                            'low_return_rate'.tr,
+                            style: const TextTheme().sp5.primaryTextColor.w700,
+                          )
+                        : Text(
+                            'profitable_return_rate'.tr,
+                            style: const TextTheme().sp5.primaryTextColor.w700,
+                          ))
+                    : const SizedBox.shrink()),
+                (MainPresenter.to.isLockTrend.value
+                    ? (MainPresenter.to.lowProb.value
+                        ? Text(
+                            'low_probability'.tr,
+                            style: const TextTheme().sp5.primaryTextColor.w700,
+                          )
+                        : Text(
+                            'high_probability'.tr,
                             style: const TextTheme().sp5.primaryTextColor.w700,
                           ))
                     : const SizedBox.shrink()),
@@ -180,7 +234,7 @@ class TrendMatchView extends StatelessWidget {
             )
           ],
         ),
-        AdjustedLineChart(),
+        AdjustedLineChart(isCluster: false),
         MainPresenter.to.showMatchesExceededMsg(),
       ],
     );

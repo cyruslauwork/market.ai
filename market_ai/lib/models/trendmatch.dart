@@ -1098,7 +1098,8 @@ class TrendMatch {
 
     // Whether to normalize
     if (normalized) {
-      if (MainPresenter.to.alwaysUseCrossData.value) {
+      if (MainPresenter.to.alwaysUseCrossData.value ||
+          MainPresenter.to.isLockTrend.value) {
         List<double> closePrices = [];
 
         for (int l = 0; l < matchRows!.length; l++) {
@@ -1177,7 +1178,8 @@ class TrendMatch {
         }
       }
     } else {
-      if (MainPresenter.to.alwaysUseCrossData.value) {
+      if (MainPresenter.to.alwaysUseCrossData.value ||
+          MainPresenter.to.isLockTrend.value) {
         for (double i = 0;
             i <
                 MainPresenter.to.selectedPeriodPercentDifferencesList.length +
@@ -1217,7 +1219,8 @@ class TrendMatch {
 
   LineChartData getDefaultSimpleLineChartData(bool normalized) {
     List<LineChartBarData> lineBarsData = [];
-    if (MainPresenter.to.alwaysUseCrossData.value) {
+    if (MainPresenter.to.alwaysUseCrossData.value ||
+        MainPresenter.to.isLockTrend.value) {
       List<String> minuteDataList =
           List<String>.from(MainPresenter.to.minuteDataList);
       String fiSymbol = MainPresenter.to.financialInstrumentSymbol.value;
@@ -1293,9 +1296,8 @@ class TrendMatch {
                 isCurved: true,
                 barWidth: 1,
                 color: AppColor.greyColor))
-            .take(500 -
-                lineBarsData
-                    .length) // Add this line to limit the items to the first 500
+            .take((500 - lineBarsData.length).clamp(0,
+                500)) // Limit the items to the first 500 or the available number of lineBarsData
             .toList();
         lineBarsData.addAll(newLineBarsData);
       }
@@ -1418,107 +1420,105 @@ class TrendMatch {
     return flspotList;
   }
 
-  LineChartData getDefaultAdjustedLineChartData() {
-    List<LineChartBarData> lineBarsData = [];
-    if (MainPresenter.to.alwaysUseCrossData.value) {
-      List<String> minuteDataList =
-          List<String>.from(MainPresenter.to.minuteDataList);
-      String fiSymbol = MainPresenter.to.financialInstrumentSymbol.value;
-      for (String symbol in minuteDataList) {
-        List<int> matchRows;
-        List<List<dynamic>> candleListList;
-        if (symbol == 'SPY' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.spyMatchRows;
-          candleListList = MainPresenter.to.spyCandleListList;
-        } else if (symbol == 'QQQ' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.qqqMatchRows;
-          candleListList = MainPresenter.to.qqqCandleListList;
-        } else if (symbol == 'USO' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.usoMatchRows;
-          candleListList = MainPresenter.to.usoCandleListList;
-        } else if (symbol == 'GLD' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.gldMatchRows;
-          candleListList = MainPresenter.to.gldCandleListList;
-        } else if (symbol == 'SLV' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.slvMatchRows;
-          candleListList = MainPresenter.to.slvCandleListList;
-        } else if (symbol == 'IWM' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.iwmMatchRows;
-          candleListList = MainPresenter.to.iwmCandleListList;
-        } else if (symbol == 'XLK' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.xlkMatchRows;
-          candleListList = MainPresenter.to.xlkCandleListList;
-        } else if (symbol == 'AAPL' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.aaplMatchRows;
-          candleListList = MainPresenter.to.aaplCandleListList;
-        } else if (symbol == 'BA' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.baMatchRows;
-          candleListList = MainPresenter.to.baCandleListList;
-        } else if (symbol == 'BAC' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.bacMatchRows;
-          candleListList = MainPresenter.to.bacCandleListList;
-        } else if (symbol == 'MCD' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.mcdMatchRows;
-          candleListList = MainPresenter.to.mcdCandleListList;
-        } else if (symbol == 'NVDA' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.nvdaMatchRows;
-          candleListList = MainPresenter.to.nvdaCandleListList;
-        } else if (symbol == 'MSFT' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.msftMatchRows;
-          candleListList = MainPresenter.to.msftCandleListList;
-        } else if (symbol == 'GSK' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.gskMatchRows;
-          candleListList = MainPresenter.to.gskCandleListList;
-        } else if (symbol == 'TSLA' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.tslaMatchRows;
-          candleListList = MainPresenter.to.tslaCandleListList;
-        } else if (symbol == 'AMZN' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.amznMatchRows;
-          candleListList = MainPresenter.to.amznCandleListList;
-        } else {
-          matchRows = MainPresenter.to.matchRows;
-          candleListList = MainPresenter.to.candleListList;
+  List<FlSpot> getCurrentPriceLine() {
+    List<FlSpot> flspotList = [];
+
+    double selectedLength =
+        MainPresenter.to.selectedPeriodPercentDifferencesList.length.toDouble();
+    double subLen = MainPresenter.to.subLength.value.toDouble();
+    double lastSelectedClosePrice = MainPresenter.to.candleListList.last[4];
+
+    flspotList.add(FlSpot(0, lastSelectedClosePrice));
+    flspotList.add(FlSpot(selectedLength + subLen, lastSelectedClosePrice));
+
+    return flspotList;
+  }
+
+  LineChartData getDefaultAdjustedLineChartData({required bool isCluster}) {
+    if (!isCluster) {
+      List<LineChartBarData> lineBarsData = [];
+      if (MainPresenter.to.alwaysUseCrossData.value ||
+          MainPresenter.to.isLockTrend.value) {
+        List<String> minuteDataList =
+            List<String>.from(MainPresenter.to.minuteDataList);
+        String fiSymbol = MainPresenter.to.financialInstrumentSymbol.value;
+        for (String symbol in minuteDataList) {
+          List<int> matchRows;
+          List<List<dynamic>> candleListList;
+          if (symbol == 'SPY' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.spyMatchRows;
+            candleListList = MainPresenter.to.spyCandleListList;
+          } else if (symbol == 'QQQ' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.qqqMatchRows;
+            candleListList = MainPresenter.to.qqqCandleListList;
+          } else if (symbol == 'USO' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.usoMatchRows;
+            candleListList = MainPresenter.to.usoCandleListList;
+          } else if (symbol == 'GLD' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.gldMatchRows;
+            candleListList = MainPresenter.to.gldCandleListList;
+          } else if (symbol == 'SLV' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.slvMatchRows;
+            candleListList = MainPresenter.to.slvCandleListList;
+          } else if (symbol == 'IWM' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.iwmMatchRows;
+            candleListList = MainPresenter.to.iwmCandleListList;
+          } else if (symbol == 'XLK' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.xlkMatchRows;
+            candleListList = MainPresenter.to.xlkCandleListList;
+          } else if (symbol == 'AAPL' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.aaplMatchRows;
+            candleListList = MainPresenter.to.aaplCandleListList;
+          } else if (symbol == 'BA' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.baMatchRows;
+            candleListList = MainPresenter.to.baCandleListList;
+          } else if (symbol == 'BAC' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.bacMatchRows;
+            candleListList = MainPresenter.to.bacCandleListList;
+          } else if (symbol == 'MCD' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.mcdMatchRows;
+            candleListList = MainPresenter.to.mcdCandleListList;
+          } else if (symbol == 'NVDA' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.nvdaMatchRows;
+            candleListList = MainPresenter.to.nvdaCandleListList;
+          } else if (symbol == 'MSFT' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.msftMatchRows;
+            candleListList = MainPresenter.to.msftCandleListList;
+          } else if (symbol == 'GSK' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.gskMatchRows;
+            candleListList = MainPresenter.to.gskCandleListList;
+          } else if (symbol == 'TSLA' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.tslaMatchRows;
+            candleListList = MainPresenter.to.tslaCandleListList;
+          } else if (symbol == 'AMZN' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.amznMatchRows;
+            candleListList = MainPresenter.to.amznCandleListList;
+          } else {
+            matchRows = MainPresenter.to.matchRows;
+            candleListList = MainPresenter.to.candleListList;
+          }
+          if (matchRows.isEmpty || candleListList.isEmpty) {
+            continue;
+          }
+          if (lineBarsData.length >= 500) {
+            break;
+          }
+          List<LineChartBarData> newLineBarsData = matchRows
+              .mapIndexed((index, row) => LineChartBarData(
+                  spots: getAdjustedlineBarsData(
+                    index,
+                    matchRows: matchRows,
+                    candleListList: candleListList,
+                  ),
+                  isCurved: true,
+                  barWidth: 1,
+                  color: ThemeColor.secondary.value))
+              .take((500 - lineBarsData.length).clamp(0,
+                  500)) // Limit the items to the first 500 or the available number of lineBarsData
+              .toList();
+          lineBarsData.addAll(newLineBarsData);
         }
-        if (matchRows.isEmpty || candleListList.isEmpty) {
-          continue;
-        }
-        if (lineBarsData.length >= 500) {
-          break;
-        }
-        List<LineChartBarData> newLineBarsData = matchRows
-            .mapIndexed((index, row) => LineChartBarData(
-                spots: getAdjustedlineBarsData(
-                  index,
-                  matchRows: matchRows,
-                  candleListList: candleListList,
-                ),
-                isCurved: true,
-                barWidth: 1,
-                color: ThemeColor.secondary.value))
-            .take(500 -
-                lineBarsData
-                    .length) // Add this line to limit the items to the first 500
-            .toList();
-        lineBarsData.addAll(newLineBarsData);
-      }
-      lineBarsData.add(
-        LineChartBarData(
-          spots: getSelectedPeriodClosePrices(),
-          isCurved: true,
-          barWidth: 3,
-          color: ThemeColor.primary.value,
-        ),
-      );
-    } else {
-      lineBarsData = MainPresenter.to.matchRows
-          .mapIndexed((index, row) => LineChartBarData(
-              spots: getAdjustedlineBarsData(index),
-              isCurved: true,
-              barWidth: 1,
-              color: ThemeColor.secondary.value))
-          .take(500) // Add this line to limit the items to the first 500
-          .toList()
-        ..add(
+        lineBarsData.add(
           LineChartBarData(
             spots: getSelectedPeriodClosePrices(),
             isCurved: true,
@@ -1526,7 +1526,41 @@ class TrendMatch {
             color: ThemeColor.primary.value,
           ),
         );
-    }
+        lineBarsData.add(
+          LineChartBarData(
+            spots: getCurrentPriceLine(),
+            isCurved: false,
+            barWidth: 1,
+            color: AppColor.blackColor,
+          ),
+        );
+      } else {
+        lineBarsData = MainPresenter.to.matchRows
+            .mapIndexed((index, row) => LineChartBarData(
+                spots: getAdjustedlineBarsData(index),
+                isCurved: true,
+                barWidth: 1,
+                color: ThemeColor.secondary.value))
+            .take(500) // Add this line to limit the items to the first 500
+            .toList()
+          ..add(
+            LineChartBarData(
+              spots: getSelectedPeriodClosePrices(),
+              isCurved: true,
+              barWidth: 3,
+              color: ThemeColor.primary.value,
+            ),
+          )
+          ..add(
+            LineChartBarData(
+              spots: getCurrentPriceLine(),
+              isCurved: false,
+              barWidth: 1,
+              color: AppColor.blackColor,
+            ),
+          );
+      }
+    } else {}
     return LineChartData(
       lineTouchData: const LineTouchData(enabled: false),
       borderData: FlBorderData(show: false),

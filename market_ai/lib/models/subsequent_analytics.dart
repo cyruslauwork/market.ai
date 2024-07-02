@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:market_ai/presenters/presenters.dart';
 import 'package:market_ai/services/services.dart';
-// import 'package:market_ai/utils/utils.dart';
+import 'package:market_ai/utils/utils.dart';
 
 class SubsequentAnalytics {
   // Singleton implementation
@@ -28,7 +28,8 @@ class SubsequentAnalytics {
     double maxValueOfAllTrends = double.negativeInfinity;
 
     int count = 0;
-    if (MainPresenter.to.alwaysUseCrossData.value) {
+    if (MainPresenter.to.alwaysUseCrossData.value ||
+        MainPresenter.to.isLockTrend.value) {
       List<String> minuteDataList =
           List<String>.from(MainPresenter.to.minuteDataList);
       String fiSymbol = MainPresenter.to.financialInstrumentSymbol.value;
@@ -246,6 +247,7 @@ class SubsequentAnalytics {
           MainPresenter.to.cloudSubsequentAnalyticsTime.value = exeTime;
           try {
             Map<String, dynamic> csvPngFiles = parsedResponse['csv_png_files'];
+            logger.d(csvPngFiles);
             MainPresenter.to.subsequentAnalyticsErr.value = '';
             parseJson(csvPngFiles);
             MainPresenter.to.apiKeyErr.value = '';

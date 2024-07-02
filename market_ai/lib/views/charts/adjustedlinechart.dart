@@ -11,10 +11,12 @@ import 'package:market_ai/utils/utils.dart';
 
 class AdjustedLineChart extends StatelessWidget {
   final LineChartData lineChartData;
+  final isCluster = false;
 
-  AdjustedLineChart({Key? key, LineChartData? lineChartData})
-      : lineChartData =
-            lineChartData ?? TrendMatch().getDefaultAdjustedLineChartData(),
+  AdjustedLineChart(
+      {Key? key, LineChartData? lineChartData, required bool isCluster})
+      : lineChartData = lineChartData ??
+            TrendMatch().getDefaultAdjustedLineChartData(isCluster: isCluster),
         super(key: key);
 
   @override

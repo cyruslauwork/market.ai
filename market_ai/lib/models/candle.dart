@@ -22,7 +22,11 @@ class Candle {
   Future<List<CandleData>> init({String? stockSymbol}) {
     stockSymbol ??= MainPresenter.to.financialInstrumentSymbol.value;
     MainPresenter.to.hasCandleData.value = false;
-    MainPresenter.to.trendMatched.value = false;
+    if (!MainPresenter.to.isLockTrend.value) {
+      MainPresenter.to.trendMatched.value = false;
+    } else {
+      MainPresenter.to.trendMatched.value = true;
+    }
     MainPresenter.to.hasSubsequentAnalytics.value = false;
     // print(stockSymbol);
     return CandleAdapter().listListTolistCandledata(
