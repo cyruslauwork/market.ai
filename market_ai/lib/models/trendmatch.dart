@@ -1560,7 +1560,9 @@ class TrendMatch {
             ),
           );
       }
-    } else {}
+    } else {
+      MainPresenter.to.cluster.value;
+    }
     return LineChartData(
       lineTouchData: const LineTouchData(enabled: false),
       borderData: FlBorderData(show: false),

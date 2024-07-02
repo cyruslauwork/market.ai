@@ -615,6 +615,7 @@ class MainPresenter extends GetxController {
   RxString instruction = 'Awaiting for instruction...'.obs;
   RxDouble expectedReturn = 0.0.obs;
   RxDouble expectedMdd = 0.0.obs;
+  Rx<List<Map<String, List<double>>> cluster = Rx<List<Map<String, List<double>>>([]);
 
   /* Subsequent analytics */
   RxInt lastClosePriceAndSubsequentTrendsExeTime = 0.obs;
