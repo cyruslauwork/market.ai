@@ -23,21 +23,24 @@ class TrendMatchView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        MainPresenter.to.showStartBtn(),
-        Center(child: MainPresenter.to.showTm()),
-        (MainPresenter.to.isLockTrend.value
-            ? Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AdjustedLineChart(isCluster: true),
-                  ],
-                ),
-              )
-            : const SizedBox.shrink()),
-      ],
+    return Obx(
+      () => Column(
+        children: [
+          MainPresenter.to.showStartBtn(),
+          (MainPresenter.to.isLockTrend.value &&
+                  MainPresenter.to.cluster.isNotEmpty
+              ? Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AdjustedLineChart(isCluster: true),
+                    ],
+                  ),
+                )
+              : const SizedBox.shrink()),
+          Center(child: MainPresenter.to.showTm()),
+        ],
+      ),
     );
   }
 

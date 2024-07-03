@@ -1367,7 +1367,7 @@ class TrendMatch {
     );
   }
 
-  List<FlSpot> getAdjustedlineBarsData(int index,
+  List<FlSpot> getAdjustedLineData(int index,
       {List<int>? matchRows, List<List<dynamic>>? candleListList}) {
     List<FlSpot> flspotList = [];
 
@@ -1434,9 +1434,21 @@ class TrendMatch {
     return flspotList;
   }
 
+  List<FlSpot> getClusterData(
+      Map<String, dynamic> map, List<String> sortedKeys, int index) {
+    List<FlSpot> flspotList = [];
+
+    for (int i = 0; i < map.length; i++) {
+      flspotList
+          .add(FlSpot(i.toDouble(), map[sortedKeys[i]][index].toDouble()));
+    }
+
+    return flspotList;
+  }
+
   LineChartData getDefaultAdjustedLineChartData({required bool isCluster}) {
+    List<LineChartBarData> lineBarsData = [];
     if (!isCluster) {
-      List<LineChartBarData> lineBarsData = [];
       if (MainPresenter.to.alwaysUseCrossData.value ||
           MainPresenter.to.isLockTrend.value) {
         List<String> minuteDataList =
@@ -1505,7 +1517,7 @@ class TrendMatch {
           }
           List<LineChartBarData> newLineBarsData = matchRows
               .mapIndexed((index, row) => LineChartBarData(
-                  spots: getAdjustedlineBarsData(
+                  spots: getAdjustedLineData(
                     index,
                     matchRows: matchRows,
                     candleListList: candleListList,
@@ -1537,7 +1549,7 @@ class TrendMatch {
       } else {
         lineBarsData = MainPresenter.to.matchRows
             .mapIndexed((index, row) => LineChartBarData(
-                spots: getAdjustedlineBarsData(index),
+                spots: getAdjustedLineData(index),
                 isCurved: true,
                 barWidth: 1,
                 color: ThemeColor.secondary.value))
@@ -1561,7 +1573,75 @@ class TrendMatch {
           );
       }
     } else {
-      MainPresenter.to.cluster.value;
+      List cluster = MainPresenter.to.cluster;
+      List<Color> colors = [
+        Colors.red,
+        Colors.orange,
+        Colors.yellow,
+        Colors.lightGreen,
+        Colors.green,
+        Colors.lightBlue,
+        Colors.blue,
+        Colors.pink,
+        Colors.purple,
+        Colors.grey,
+      ];
+      double initialClosePrice = 0;
+      int mapLength = 0;
+
+      // Iterate over each map in the cluster list
+      cluster.asMap().forEach((mapIndex, map) {
+        // Assign a color based on the map index
+        final color = colors[mapIndex % colors.length];
+
+        // Collect keys and sort them
+        List<String> sortedKeys = map.keys
+            .where((key) =>
+                key.startsWith('Close ') &&
+                int.tryParse(key.split(" ")[1]) != null)
+            .toList()
+          ..sort((a, b) =>
+              int.parse(a.split(' ')[1]).compareTo(int.parse(b.split(' ')[1])));
+
+        // Ensure the keys are within the desired range
+        sortedKeys = sortedKeys
+            .where((key) => int.parse(key.split(' ')[1]) <= 20)
+            .toList();
+
+        int length = map['Close 1']!.length;
+        for (int i = 0; i < length; i++) {
+          lineBarsData.add(LineChartBarData(
+            spots: getClusterData(map, sortedKeys, i),
+            isCurved: true,
+            barWidth: 1,
+            color: color,
+          ));
+        }
+        if (initialClosePrice == 0) {
+          initialClosePrice = map['Close 1'][0];
+        }
+        if (mapLength == 0) {
+          mapLength = map.length;
+        }
+      });
+
+      // Limit to 500 items if necessary
+      lineBarsData = lineBarsData.take(500).toList();
+
+      List<FlSpot> spots = [];
+      for (int i = 0; i < mapLength; i++) {
+        spots.add(FlSpot(i.toDouble(), initialClosePrice));
+      }
+      lineBarsData.add(
+        LineChartBarData(
+          spots: spots,
+          isCurved: false,
+          barWidth: 1,
+          color: AppColor.blackColor,
+        ),
+      );
+
+      MainPresenter.to.cluster.value = [];
     }
     return LineChartData(
       lineTouchData: const LineTouchData(enabled: false),

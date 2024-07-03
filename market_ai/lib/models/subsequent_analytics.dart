@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:market_ai/presenters/presenters.dart';
 import 'package:market_ai/services/services.dart';
-import 'package:market_ai/utils/utils.dart';
+// import 'package:market_ai/utils/utils.dart';
 
 class SubsequentAnalytics {
   // Singleton implementation
@@ -345,7 +345,8 @@ class SubsequentAnalytics {
     MainPresenter.to.img10Bytes.value = base64Decode(img10);
 
     MainPresenter.to.numOfClusters.value = csvPngFiles['num_of_clusters'];
-    MainPresenter.to.clusters.value = csvPngFiles['clusters.csv'];
+    MainPresenter.to.cluster.value = csvPngFiles['clusters.csv'];
+    // logger.d(MainPresenter.to.cluster);
 
     MainPresenter.to.maxSilhouetteScore.value =
         double.parse(csvPngFiles['max_silhouette_score']).toStringAsFixed(3);

@@ -615,7 +615,7 @@ class MainPresenter extends GetxController {
   RxString instruction = 'Awaiting for instruction...'.obs;
   RxDouble expectedReturn = 0.0.obs;
   RxDouble expectedMdd = 0.0.obs;
-  Rx<List<Map<String, List<double>>> cluster = Rx<List<Map<String, List<double>>>([]);
+  RxList cluster = [].obs;
 
   /* Subsequent analytics */
   RxInt lastClosePriceAndSubsequentTrendsExeTime = 0.obs;
@@ -633,7 +633,7 @@ class MainPresenter extends GetxController {
   Rx<Uint8List> img10Bytes = Rx<Uint8List>(Uint8List.fromList([0]));
   RxString subsequentAnalyticsErr = ''.obs;
   RxInt numOfClusters = 0.obs;
-  RxString maxSilhouetteScore = ''.obs;
+  RxString maxSilhouetteScore = '0'.obs;
   ValueNotifier<bool> subsequentAnalyticsNotifier = ValueNotifier<bool>(false);
   bool isSubsequentAnalyticsNotifierAdded = false;
   RxInt saCount = 0.obs;
@@ -816,7 +816,8 @@ class MainPresenter extends GetxController {
         subsequentAnalyticsErr.value == '') {
       hasSubsequentAnalytics.value = true;
       var img10 = img10Bytes.value;
-      if (img10.isEmpty) {
+      if (img10.isEmpty ||
+          img10.toString() == Uint8List.fromList([0]).toString()) {
         sidePlot.value = const SizedBox.shrink();
         tmChartWidth.value = width;
       } else {
