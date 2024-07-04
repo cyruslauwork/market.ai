@@ -25,10 +25,176 @@ class TrendMatchView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(
       () => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          MainPresenter.to.showStartBtn(),
+          Center(child: MainPresenter.to.showStartBtn()),
+          (MainPresenter.to.trendMatched.value &&
+                  MainPresenter.to.showAnalytics.value
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        if (MainPresenter.to.isLockTrend.value) {
+                          PrefsService.to.prefs.setBool(
+                              SharedPreferencesConstant.lockTrend, false);
+                          MainPresenter.to.isLockTrend.value = false;
+                          MainPresenter.to.alwaysUseCrossData.value = false;
+                          PrefsService.to.prefs.setBool(
+                              SharedPreferencesConstant.alwaysUseCrossData,
+                              false);
+                          PrefsService.to.prefs
+                              .setString(SharedPreferencesConstant.img1, '');
+                          PrefsService.to.prefs
+                              .setString(SharedPreferencesConstant.img2, '');
+                          PrefsService.to.prefs
+                              .setString(SharedPreferencesConstant.img3, '');
+                          PrefsService.to.prefs
+                              .setString(SharedPreferencesConstant.img4, '');
+                          PrefsService.to.prefs
+                              .setString(SharedPreferencesConstant.img5, '');
+                          PrefsService.to.prefs
+                              .setString(SharedPreferencesConstant.img6, '');
+                          PrefsService.to.prefs
+                              .setString(SharedPreferencesConstant.img7, '');
+                          PrefsService.to.prefs
+                              .setString(SharedPreferencesConstant.img8, '');
+                          PrefsService.to.prefs
+                              .setString(SharedPreferencesConstant.img9, '');
+                          PrefsService.to.prefs
+                              .setString(SharedPreferencesConstant.img10, '');
+                          MainPresenter.to.clusters.value = [];
+                          PrefsService.to.prefs.setStringList(
+                              SharedPreferencesConstant.cluster, []);
+                          MainPresenter.to.refreshIndicator();
+                        } else {
+                          PrefsService.to.prefs.setBool(
+                              SharedPreferencesConstant.lockTrend, true);
+                          MainPresenter.to.isLockTrend.value = true;
+                        }
+                      },
+                      icon: Icon(
+                        (MainPresenter.to.isLockTrend.value
+                            ? Icons.lock_open_rounded
+                            : Icons.lock_clock),
+                        size: 10.h,
+                      ),
+                      label: Text(
+                        (MainPresenter.to.isLockTrend.value
+                            ? 'unlock_trend'.tr
+                            : 'lock_trend'.tr),
+                        style: const TextTheme().sp5.w700,
+                      ),
+                    ),
+                    (MainPresenter.to.isLockTrend.value
+                        ? Text(
+                            'instruction'.tr,
+                            style: const TextTheme().sp5.w700,
+                          )
+                        : const SizedBox.shrink()),
+                    (MainPresenter.to.isLockTrend.value
+                        ? Text(
+                            MainPresenter.to.instruction.value,
+                            style: const TextTheme().sp10.primaryTextColor.w700,
+                          )
+                        : const SizedBox.shrink()),
+                    (MainPresenter.to.isLockTrend.value
+                        ? Text(
+                            'prediction'.tr,
+                            style: const TextTheme().sp5.w700,
+                          )
+                        : const SizedBox.shrink()),
+                    (MainPresenter.to.isLockTrend.value
+                        ? Text(
+                            'Expected Return (Mean): ${MainPresenter.to.expectedReturn.value}',
+                            style: const TextTheme().sp7.primaryTextColor.w700,
+                          )
+                        : const SizedBox.shrink()),
+                    (MainPresenter.to.isLockTrend.value
+                        ? Text(
+                            'Expected MDD: ${MainPresenter.to.expectedMdd.value.toString()}',
+                            style: const TextTheme().sp7.primaryTextColor.w700,
+                          )
+                        : const SizedBox.shrink()),
+                    (MainPresenter.to.isLockTrend.value
+                        ? Text(
+                            'considerations'.tr,
+                            style: const TextTheme().sp5.w700,
+                          )
+                        : const SizedBox.shrink()),
+                    (MainPresenter.to.isLockTrend.value
+                        ? (MainPresenter.to.isFirstThirtyMins.value
+                            ? Text(
+                                'is_first_thirty_mins'.tr,
+                                style:
+                                    const TextTheme().sp5.primaryTextColor.w700,
+                              )
+                            : Text(
+                                'is_not_first_thirty_mins'.tr,
+                                style:
+                                    const TextTheme().sp5.primaryTextColor.w700,
+                              ))
+                        : const SizedBox.shrink()),
+                    (MainPresenter.to.isLockTrend.value
+                        ? (MainPresenter.to.lowReturn.value
+                            ? Text(
+                                'low_return_rate'.tr,
+                                style:
+                                    const TextTheme().sp5.primaryTextColor.w700,
+                              )
+                            : Text(
+                                'profitable_return_rate'.tr,
+                                style:
+                                    const TextTheme().sp5.primaryTextColor.w700,
+                              ))
+                        : const SizedBox.shrink()),
+                    (MainPresenter.to.isLockTrend.value
+                        ? (MainPresenter.to.lowProb.value
+                            ? Text(
+                                'low_probability'.tr,
+                                style:
+                                    const TextTheme().sp5.primaryTextColor.w700,
+                              )
+                            : Text(
+                                'high_probability'.tr,
+                                style:
+                                    const TextTheme().sp5.primaryTextColor.w700,
+                              ))
+                        : const SizedBox.shrink()),
+                    (MainPresenter.to.isLockTrend.value
+                        ? (MainPresenter.to.hitCeilingOrFloor.value
+                            ? Text(
+                                'hit_ceiling_or_floor'.tr,
+                                style:
+                                    const TextTheme().sp5.primaryTextColor.w700,
+                              )
+                            : Text(
+                                'not_hit_ceiling_or_floor'.tr,
+                                style:
+                                    const TextTheme().sp5.primaryTextColor.w700,
+                              ))
+                        : const SizedBox.shrink()),
+                    (MainPresenter.to.isLockTrend.value
+                        ? (MainPresenter.to.goOpposite.value
+                            ? Text(
+                                'go_opposite'.tr,
+                                style:
+                                    const TextTheme().sp5.primaryTextColor.w700,
+                              )
+                            : Text(
+                                'not_go_opposite'.tr,
+                                style:
+                                    const TextTheme().sp5.primaryTextColor.w700,
+                              ))
+                        : const SizedBox.shrink()),
+                    SizedBox(
+                      height: 5.h,
+                    ),
+                  ],
+                )
+              : const SizedBox.shrink()),
           (MainPresenter.to.isLockTrend.value &&
-                  MainPresenter.to.cluster.isNotEmpty
+                  MainPresenter.to.clusters.isNotEmpty
               ? Center(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,7 +204,9 @@ class TrendMatchView extends StatelessWidget {
                   ),
                 )
               : const SizedBox.shrink()),
-          Center(child: MainPresenter.to.showTm()),
+          (!MainPresenter.to.isLockTrend.value
+              ? Center(child: MainPresenter.to.showTm())
+              : const SizedBox.shrink()),
         ],
       ),
     );
@@ -48,156 +216,6 @@ class TrendMatchView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Obx(
-          () {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ElevatedButton.icon(
-                  onPressed: () {
-                    if (MainPresenter.to.isLockTrend.value) {
-                      PrefsService.to.prefs
-                          .setBool(SharedPreferencesConstant.lockTrend, false);
-                      MainPresenter.to.isLockTrend.value = false;
-                      MainPresenter.to.alwaysUseCrossData.value = false;
-                      PrefsService.to.prefs.setBool(
-                          SharedPreferencesConstant.alwaysUseCrossData, false);
-                      MainPresenter.to.refreshIndicator();
-                    } else {
-                      PrefsService.to.prefs
-                          .setBool(SharedPreferencesConstant.lockTrend, true);
-                      MainPresenter.to.isLockTrend.value = true;
-
-                      MainPresenter.to.matchRows;
-                      MainPresenter.to.spyMatchRows;
-                      MainPresenter.to.qqqMatchRows;
-                      MainPresenter.to.usoMatchRows;
-                      MainPresenter.to.gldMatchRows;
-                      MainPresenter.to.slvMatchRows;
-                      MainPresenter.to.iwmMatchRows;
-                      MainPresenter.to.xlkMatchRows;
-                      MainPresenter.to.aaplMatchRows;
-                      MainPresenter.to.baMatchRows;
-                      MainPresenter.to.bacMatchRows;
-                      MainPresenter.to.mcdMatchRows;
-                      MainPresenter.to.nvdaMatchRows;
-                      MainPresenter.to.msftMatchRows;
-                      MainPresenter.to.gskMatchRows;
-                      MainPresenter.to.tslaMatchRows;
-                      MainPresenter.to.amznMatchRows;
-                    }
-                  },
-                  icon: Icon(
-                    (MainPresenter.to.isLockTrend.value
-                        ? Icons.lock_open_rounded
-                        : Icons.lock_clock),
-                    size: 10.h,
-                  ),
-                  label: Text(
-                    (MainPresenter.to.isLockTrend.value
-                        ? 'unlock_trend'.tr
-                        : 'lock_trend'.tr),
-                    style: const TextTheme().sp5.w700,
-                  ),
-                ),
-                (MainPresenter.to.isLockTrend.value
-                    ? Text(
-                        'instruction'.tr,
-                        style: const TextTheme().sp5.w700,
-                      )
-                    : const SizedBox.shrink()),
-                (MainPresenter.to.isLockTrend.value
-                    ? Text(
-                        MainPresenter.to.instruction.value,
-                        style: const TextTheme().sp10.primaryTextColor.w700,
-                      )
-                    : const SizedBox.shrink()),
-                (MainPresenter.to.isLockTrend.value
-                    ? Text(
-                        'prediction'.tr,
-                        style: const TextTheme().sp5.w700,
-                      )
-                    : const SizedBox.shrink()),
-                (MainPresenter.to.isLockTrend.value
-                    ? Text(
-                        'Expected Return (Mean): ${MainPresenter.to.expectedReturn.value}',
-                        style: const TextTheme().sp7.primaryTextColor.w700,
-                      )
-                    : const SizedBox.shrink()),
-                (MainPresenter.to.isLockTrend.value
-                    ? Text(
-                        'Expected MDD: ${MainPresenter.to.expectedMdd.value.toString()}',
-                        style: const TextTheme().sp7.primaryTextColor.w700,
-                      )
-                    : const SizedBox.shrink()),
-                (MainPresenter.to.isLockTrend.value
-                    ? Text(
-                        'considerations'.tr,
-                        style: const TextTheme().sp5.w700,
-                      )
-                    : const SizedBox.shrink()),
-                (MainPresenter.to.isLockTrend.value
-                    ? (MainPresenter.to.isFirstThirtyMins.value
-                        ? Text(
-                            'is_first_thirty_mins'.tr,
-                            style: const TextTheme().sp5.primaryTextColor.w700,
-                          )
-                        : Text(
-                            'is_not_first_thirty_mins'.tr,
-                            style: const TextTheme().sp5.primaryTextColor.w700,
-                          ))
-                    : const SizedBox.shrink()),
-                (MainPresenter.to.isLockTrend.value
-                    ? (MainPresenter.to.lowReturn.value
-                        ? Text(
-                            'low_return_rate'.tr,
-                            style: const TextTheme().sp5.primaryTextColor.w700,
-                          )
-                        : Text(
-                            'profitable_return_rate'.tr,
-                            style: const TextTheme().sp5.primaryTextColor.w700,
-                          ))
-                    : const SizedBox.shrink()),
-                (MainPresenter.to.isLockTrend.value
-                    ? (MainPresenter.to.lowProb.value
-                        ? Text(
-                            'low_probability'.tr,
-                            style: const TextTheme().sp5.primaryTextColor.w700,
-                          )
-                        : Text(
-                            'high_probability'.tr,
-                            style: const TextTheme().sp5.primaryTextColor.w700,
-                          ))
-                    : const SizedBox.shrink()),
-                (MainPresenter.to.isLockTrend.value
-                    ? (MainPresenter.to.hitCeilingOrFloor.value
-                        ? Text(
-                            'hit_ceiling_or_floor'.tr,
-                            style: const TextTheme().sp5.primaryTextColor.w700,
-                          )
-                        : Text(
-                            'not_hit_ceiling_or_floor'.tr,
-                            style: const TextTheme().sp5.primaryTextColor.w700,
-                          ))
-                    : const SizedBox.shrink()),
-                (MainPresenter.to.isLockTrend.value
-                    ? (MainPresenter.to.goOpposite.value
-                        ? Text(
-                            'go_opposite'.tr,
-                            style: const TextTheme().sp5.primaryTextColor.w700,
-                          )
-                        : Text(
-                            'not_go_opposite'.tr,
-                            style: const TextTheme().sp5.primaryTextColor.w700,
-                          ))
-                    : const SizedBox.shrink()),
-                SizedBox(
-                  height: 5.h,
-                ),
-              ],
-            );
-          },
-        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

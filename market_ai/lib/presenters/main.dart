@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
@@ -615,7 +616,7 @@ class MainPresenter extends GetxController {
   RxString instruction = 'Awaiting for instruction...'.obs;
   RxDouble expectedReturn = 0.0.obs;
   RxDouble expectedMdd = 0.0.obs;
-  RxList cluster = [].obs;
+  RxList clusters = [].obs;
 
   /* Subsequent analytics */
   RxInt lastClosePriceAndSubsequentTrendsExeTime = 0.obs;
@@ -675,8 +676,10 @@ class MainPresenter extends GetxController {
       tslaMatchRows.value = []; // Cross-data
       amznMatchRows.value = []; // Cross-data
 
-      isLockTrend.value = false;
-      PrefsService.to.prefs.setBool(SharedPreferencesConstant.lockTrend, false);
+      // isLockTrend.value = false;
+      // PrefsService.to.prefs.setBool(SharedPreferencesConstant.lockTrend, false);
+      // PrefsService.to.prefs
+      //     .setStringList(SharedPreferencesConstant.cluster, []);
 
       isInit = true;
     }
@@ -815,9 +818,13 @@ class MainPresenter extends GetxController {
     } else if (subsequentAnalyticsNotifier.value &&
         subsequentAnalyticsErr.value == '') {
       hasSubsequentAnalytics.value = true;
-      var img10 = img10Bytes.value;
-      if (img10.isEmpty ||
-          img10.toString() == Uint8List.fromList([0]).toString()) {
+      String? img10 =
+          PrefsService.to.prefs.getString(SharedPreferencesConstant.img10);
+      Uint8List img10Bytes = ((img10 != null || img10 != '')
+          ? base64Decode(img10!)
+          : this.img10Bytes.value);
+      if (img10Bytes.isEmpty ||
+          img10Bytes.toString() == Uint8List.fromList([0]).toString()) {
         sidePlot.value = const SizedBox.shrink();
         tmChartWidth.value = width;
       } else {
@@ -825,7 +832,7 @@ class MainPresenter extends GetxController {
             child: Padding(
           padding: EdgeInsets.only(top: 7.5.h),
           child: Image.memory(
-            img10,
+            img10Bytes,
             width: (Platform.isWindows || Platform.isLinux || Platform.isMacOS
                 ? ((Get.width - 5.w) * 0.3)
                 : 52.5.w),

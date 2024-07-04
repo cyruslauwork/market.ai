@@ -344,8 +344,26 @@ class SubsequentAnalytics {
     MainPresenter.to.img9Bytes.value = base64Decode(img9);
     MainPresenter.to.img10Bytes.value = base64Decode(img10);
 
+    PrefsService.to.prefs.setString(SharedPreferencesConstant.img1, img1);
+    PrefsService.to.prefs.setString(SharedPreferencesConstant.img2, img2);
+    PrefsService.to.prefs.setString(SharedPreferencesConstant.img3, img3);
+    PrefsService.to.prefs.setString(SharedPreferencesConstant.img4, img4);
+    PrefsService.to.prefs.setString(SharedPreferencesConstant.img5, img5);
+    PrefsService.to.prefs.setString(SharedPreferencesConstant.img6, img6);
+    PrefsService.to.prefs.setString(SharedPreferencesConstant.img7, img7);
+    PrefsService.to.prefs.setString(SharedPreferencesConstant.img8, img8);
+    PrefsService.to.prefs.setString(SharedPreferencesConstant.img9, img9);
+    PrefsService.to.prefs.setString(SharedPreferencesConstant.img10, img10);
+
     MainPresenter.to.numOfClusters.value = csvPngFiles['num_of_clusters'];
-    MainPresenter.to.cluster.value = csvPngFiles['clusters.csv'];
+
+    List clusters = csvPngFiles['clusters.csv'];
+    List<String> clusterJsonList =
+        clusters.map((map) => jsonEncode(map)).toList();
+    // print(clusterJsonList);
+    PrefsService.to.prefs
+        .setStringList(SharedPreferencesConstant.cluster, clusterJsonList);
+    MainPresenter.to.clusters.value = clusters;
     // logger.d(MainPresenter.to.cluster);
 
     MainPresenter.to.maxSilhouetteScore.value =

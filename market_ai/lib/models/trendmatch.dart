@@ -2,10 +2,12 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'dart:convert'; // For jsonEncode
 
 import 'package:interactive_chart/interactive_chart.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:isar/isar.dart';
+import 'package:market_ai/services/prefs/prefs.dart';
 import 'collections.dart';
 
 import 'package:market_ai/presenters/presenters.dart';
@@ -1573,7 +1575,22 @@ class TrendMatch {
           );
       }
     } else {
-      List cluster = MainPresenter.to.cluster;
+      List cluster = MainPresenter.to.clusters;
+
+      if (cluster.isEmpty) {
+        List<String> clusterJsonList = PrefsService.to.prefs
+            .getStringList(SharedPreferencesConstant.cluster)!;
+
+        List<Map<String, List<dynamic>>>? retrieveCluster() {
+          return clusterJsonList
+              .map((jsonStr) =>
+                  Map<String, List<dynamic>>.from(jsonDecode(jsonStr)))
+              .toList();
+        }
+
+        cluster = retrieveCluster()!;
+      }
+
       List<Color> colors = [
         Colors.red,
         Colors.orange,
@@ -1641,7 +1658,7 @@ class TrendMatch {
         ),
       );
 
-      MainPresenter.to.cluster.value = [];
+      MainPresenter.to.clusters.value = [];
     }
     return LineChartData(
       lineTouchData: const LineTouchData(enabled: false),
