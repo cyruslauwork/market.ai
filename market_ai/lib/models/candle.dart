@@ -24,10 +24,9 @@ class Candle {
     MainPresenter.to.hasCandleData.value = false;
     if (!MainPresenter.to.isLockTrend.value) {
       MainPresenter.to.trendMatched.value = false;
-      MainPresenter.to.clusters.value = PrefsService.to.prefs
-          .getStringList(SharedPreferencesConstant.cluster)!;
     } else {
       MainPresenter.to.trendMatched.value = true;
+      MainPresenter.to.hasCluster.value = true;
     }
     MainPresenter.to.hasSubsequentAnalytics.value = false;
     // print(stockSymbol);

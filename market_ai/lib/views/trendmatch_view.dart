@@ -66,6 +66,7 @@ class TrendMatchView extends StatelessWidget {
                           MainPresenter.to.clusters.value = [];
                           PrefsService.to.prefs.setStringList(
                               SharedPreferencesConstant.cluster, []);
+                          MainPresenter.to.hasCluster.value = false;
                           MainPresenter.to.refreshIndicator();
                         } else {
                           PrefsService.to.prefs.setBool(
@@ -193,8 +194,10 @@ class TrendMatchView extends StatelessWidget {
                   ],
                 )
               : const SizedBox.shrink()),
-          (MainPresenter.to.isLockTrend.value &&
-                  MainPresenter.to.clusters.isNotEmpty
+          ((MainPresenter.to.isLockTrend.value &&
+                      MainPresenter.to.clusters.isNotEmpty) ||
+                  (MainPresenter.to.isLockTrend.value &&
+                      MainPresenter.to.hasCluster.value)
               ? Center(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

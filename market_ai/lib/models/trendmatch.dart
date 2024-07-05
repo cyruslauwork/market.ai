@@ -1589,6 +1589,7 @@ class TrendMatch {
         }
 
         cluster = retrieveCluster()!;
+        MainPresenter.to.subsequentAnalyticsNotifier.value = true;
       }
 
       List<Color> colors = [
@@ -1603,7 +1604,7 @@ class TrendMatch {
         Colors.purple,
         Colors.grey,
       ];
-      double initialClosePrice = 0;
+      double initialClosePrice = 0.0;
       int mapLength = 0;
 
       // Iterate over each map in the cluster list
@@ -1634,7 +1635,7 @@ class TrendMatch {
             color: color,
           ));
         }
-        if (initialClosePrice == 0) {
+        if (initialClosePrice == 0.0) {
           initialClosePrice = map['Close 1'][0];
         }
         if (mapLength == 0) {

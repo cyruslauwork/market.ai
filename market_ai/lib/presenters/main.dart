@@ -617,6 +617,7 @@ class MainPresenter extends GetxController {
   RxDouble expectedReturn = 0.0.obs;
   RxDouble expectedMdd = 0.0.obs;
   RxList clusters = [].obs;
+  RxBool hasCluster = false.obs;
 
   /* Subsequent analytics */
   RxInt lastClosePriceAndSubsequentTrendsExeTime = 0.obs;
