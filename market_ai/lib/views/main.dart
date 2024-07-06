@@ -986,10 +986,18 @@ class _MainViewState extends State<MainView> {
                       onSelected: (String value) {
                         // Handle the selected value here
                         if (value == 'devMode') {
-                          setState(() {
-                            MainPresenter.to.devModeNotifier.value =
-                                !MainPresenter.to.devModeNotifier.value;
-                          });
+                          if (!MainPresenter.to.isLockTrend.value ||
+                              (MainPresenter.to.matchRows.first != 0 &&
+                                  MainPresenter.to.matchRows.isNotEmpty)) {
+                            setState(() {
+                              MainPresenter.to.devModeNotifier.value =
+                                  !MainPresenter.to.devModeNotifier.value;
+                            });
+                          } else {
+                            MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg: 'lock_trend_alert'.tr);
+                          }
                         } else if (value != 'watchlistEmpty') {
                           if (!MainPresenter.to.isLockTrend.value) {
                             List<SymbolAndName> listSymbolAndName =

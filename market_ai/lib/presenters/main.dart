@@ -1450,21 +1450,16 @@ class MainPresenter extends GetxController {
   }
 
   alwaysUseCrossDataToggle(bool value, BuildContext context) {
-    if (!isLockTrend.value) {
-      alwaysUseCrossData.value = value;
-      PrefsService.to.prefs
-          .setBool(SharedPreferencesConstant.alwaysUseCrossData, value);
-      crossData.value = (value ? Icons.dataset_linked : Icons.dataset);
-      if (value) {
-        showScaffoldMessenger(context: context, localizedMsg: 'cross_data');
-      } else {
-        showScaffoldMessenger(context: context, localizedMsg: 'cross_data_off');
-      }
-      futureListCandledata.value = init();
+    alwaysUseCrossData.value = value;
+    PrefsService.to.prefs
+        .setBool(SharedPreferencesConstant.alwaysUseCrossData, value);
+    crossData.value = (value ? Icons.dataset_linked : Icons.dataset);
+    if (value) {
+      showScaffoldMessenger(context: context, localizedMsg: 'cross_data');
     } else {
-      showScaffoldMessenger(
-          context: context, localizedMsg: 'lock_trend_alert'.tr);
+      showScaffoldMessenger(context: context, localizedMsg: 'cross_data_off');
     }
+    futureListCandledata.value = init();
   }
 
   showApiKeyInput() {
