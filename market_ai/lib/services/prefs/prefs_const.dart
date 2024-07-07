@@ -41,4 +41,5 @@ class SharedPreferencesConstant {
   static String img10 = 'img10';
   static String cluster = 'cluster';
   static String lockTrendLastRow = 'lockTrendLastRow';
+  static String lockTrendLastDatetime = 'lockTrendLastDatetime';
 }

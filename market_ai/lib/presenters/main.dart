@@ -495,7 +495,6 @@ class MainPresenter extends GetxController {
   RxBool hasGskMinuteData = false.obs;
   RxBool hasTslaMinuteData = false.obs;
   RxBool hasAmznMinuteData = false.obs;
-  RxInt lockTrendLastRow = 0.obs;
 
   /* Listings */
   RxInt listingsDownloadTime = 0.obs;
@@ -897,6 +896,8 @@ class MainPresenter extends GetxController {
         if (apiKey.value != '') {
           SubsequentAnalytics().init();
         }
+      } else {
+        MainPresenter.to.checkLockTrend();
       }
     }
     checkMinuteData();
@@ -1000,6 +1001,34 @@ class MainPresenter extends GetxController {
       hasAmznMinuteData.value = false;
     } else {
       hasAmznMinuteData.value = true;
+    }
+  }
+
+  checkLockTrend() {
+    int lockTrendDatetime = PrefsService.to.prefs
+        .getInt(SharedPreferencesConstant.lockTrendLastDatetime)!;
+    if (lockTrendDatetime != 0) {
+      DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
+          lockTrendDatetime * 1000,
+          isUtc: true);
+      DateTime subtractedDateTime =
+          TimeService.to.subtractHoursBasedOnTimezone(dateTime);
+      // Define trading start time
+      DateTime tradingStartTime = DateTime.utc(subtractedDateTime.year,
+          subtractedDateTime.month, subtractedDateTime.day, 9, 30);
+      // Check if the dateTime is within the first 30 minutes of trading
+      DateTime tradingEndTimeUTC =
+          tradingStartTime.add(const Duration(minutes: 30));
+      bool isWithinFirst30Minutes =
+          subtractedDateTime.isAfter(tradingStartTime) &&
+              subtractedDateTime.isBefore(tradingEndTimeUTC);
+      if (isWithinFirst30Minutes) {
+        instruction.value = 'close_pos_or_wait_n_see'.tr;
+        return;
+      }
+    } else {
+      instruction.value = 'Error: lockTrendDatetime == 0';
+      return;
     }
   }
 

@@ -43,6 +43,7 @@ class TrendMatchView extends StatelessWidget {
                           PrefsService.to.prefs.setBool(
                               SharedPreferencesConstant.alwaysUseCrossData,
                               false);
+
                           PrefsService.to.prefs
                               .setString(SharedPreferencesConstant.img1, '');
                           PrefsService.to.prefs
@@ -67,18 +68,21 @@ class TrendMatchView extends StatelessWidget {
                           PrefsService.to.prefs.setStringList(
                               SharedPreferencesConstant.cluster, []);
                           MainPresenter.to.hasCluster.value = false;
-                          MainPresenter.to.lockTrendLastRow.value = 0;
                           PrefsService.to.prefs.setInt(
                               SharedPreferencesConstant.lockTrendLastRow, 0);
+                          PrefsService.to.prefs.setInt(
+                              SharedPreferencesConstant.lockTrendLastDatetime,
+                              0);
                           MainPresenter.to.refreshIndicator();
                         } else {
-                          int lockTrendLastRow =
-                              MainPresenter.to.candleListList.length - 1;
-                          MainPresenter.to.lockTrendLastRow.value =
-                              lockTrendLastRow;
                           PrefsService.to.prefs.setInt(
                               SharedPreferencesConstant.lockTrendLastRow,
-                              lockTrendLastRow);
+                              MainPresenter.to.candleListList.length - 1);
+                          PrefsService.to.prefs.setInt(
+                              SharedPreferencesConstant.lockTrendLastDatetime,
+                              MainPresenter.to.candleListList.last[0].toInt());
+
+                          MainPresenter.to.checkLockTrend();
                           PrefsService.to.prefs.setBool(
                               SharedPreferencesConstant.lockTrend, true);
                           MainPresenter.to.isLockTrend.value = true;

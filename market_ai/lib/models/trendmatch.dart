@@ -1659,24 +1659,27 @@ class TrendMatch {
         ),
       );
       spots = [];
-      int lockTrendLastRow = MainPresenter.to.lockTrendLastRow.value;
-      int lastRow = MainPresenter.to.candleListList.length - 1;
-      for (int i = 0; i < MainPresenter.to.subLength.value; i++) {
-        if ((lastRow + i) <= lockTrendLastRow) {
-          spots.add(FlSpot(
-              i.toDouble(), MainPresenter.to.candleListList[lastRow + i][4]));
-        } else {
-          break;
+      int lockTrendLastRow = PrefsService.to.prefs
+          .getInt(SharedPreferencesConstant.lockTrendLastRow)!;
+      if (lockTrendLastRow != 0) {
+        int lastRow = MainPresenter.to.candleListList.length - 1;
+        for (int i = 0; i < MainPresenter.to.subLength.value; i++) {
+          if ((lockTrendLastRow + i) <= lastRow) {
+            spots.add(FlSpot(i.toDouble(),
+                MainPresenter.to.candleListList[lockTrendLastRow + i][4]));
+          } else {
+            break;
+          }
         }
+        lineBarsData.add(
+          LineChartBarData(
+            spots: spots,
+            isCurved: true,
+            barWidth: 2,
+            color: AppColor.whiteColor,
+          ),
+        );
       }
-      lineBarsData.add(
-        LineChartBarData(
-          spots: spots,
-          isCurved: true,
-          barWidth: 2,
-          color: AppColor.whiteColor,
-        ),
-      );
 
       MainPresenter.to.clusters.value = [];
     }
