@@ -67,8 +67,18 @@ class TrendMatchView extends StatelessWidget {
                           PrefsService.to.prefs.setStringList(
                               SharedPreferencesConstant.cluster, []);
                           MainPresenter.to.hasCluster.value = false;
+                          MainPresenter.to.lockTrendLastRow.value = 0;
+                          PrefsService.to.prefs.setInt(
+                              SharedPreferencesConstant.lockTrendLastRow, 0);
                           MainPresenter.to.refreshIndicator();
                         } else {
+                          int lockTrendLastRow =
+                              MainPresenter.to.candleListList.length - 1;
+                          MainPresenter.to.lockTrendLastRow.value =
+                              lockTrendLastRow;
+                          PrefsService.to.prefs.setInt(
+                              SharedPreferencesConstant.lockTrendLastRow,
+                              lockTrendLastRow);
                           PrefsService.to.prefs.setBool(
                               SharedPreferencesConstant.lockTrend, true);
                           MainPresenter.to.isLockTrend.value = true;

@@ -495,6 +495,7 @@ class MainPresenter extends GetxController {
   RxBool hasGskMinuteData = false.obs;
   RxBool hasTslaMinuteData = false.obs;
   RxBool hasAmznMinuteData = false.obs;
+  RxInt lockTrendLastRow = 0.obs;
 
   /* Listings */
   RxInt listingsDownloadTime = 0.obs;
