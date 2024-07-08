@@ -1664,9 +1664,9 @@ class TrendMatch {
       if (lockTrendLastRow != 0) {
         int lastRow = MainPresenter.to.candleListList.length - 1;
         for (int i = 0; i < MainPresenter.to.subLength.value + 1; i++) {
-          if ((lockTrendLastRow + i - 1) <= lastRow) {
+          if ((lockTrendLastRow + i) <= lastRow) {
             spots.add(FlSpot(i.toDouble(),
-                MainPresenter.to.candleListList[lockTrendLastRow + i - 1][4]));
+                MainPresenter.to.candleListList[lockTrendLastRow + i][4]));
           } else {
             break;
           }
