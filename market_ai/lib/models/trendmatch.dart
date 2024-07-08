@@ -1594,15 +1594,15 @@ class TrendMatch {
 
       List<Color> colors = [
         Colors.red,
-        Colors.orange,
-        Colors.yellow,
-        Colors.lightGreen,
-        Colors.green,
-        Colors.lightBlue,
         Colors.blue,
-        Colors.pink,
+        Colors.green,
         Colors.purple,
+        Colors.orange,
+        Colors.pink,
+        Colors.brown,
         Colors.grey,
+        Colors.cyan,
+        const Color(0xFFFF00FF), // Magenta
       ];
       double initialClosePrice = 0.0;
       int mapLength = 0;
@@ -1663,10 +1663,10 @@ class TrendMatch {
           .getInt(SharedPreferencesConstant.lockTrendLastRow)!;
       if (lockTrendLastRow != 0) {
         int lastRow = MainPresenter.to.candleListList.length - 1;
-        for (int i = 0; i < MainPresenter.to.subLength.value; i++) {
-          if ((lockTrendLastRow + i) <= lastRow) {
+        for (int i = 0; i < MainPresenter.to.subLength.value + 1; i++) {
+          if ((lockTrendLastRow + i - 1) <= lastRow) {
             spots.add(FlSpot(i.toDouble(),
-                MainPresenter.to.candleListList[lockTrendLastRow + i][4]));
+                MainPresenter.to.candleListList[lockTrendLastRow + i - 1][4]));
           } else {
             break;
           }

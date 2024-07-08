@@ -103,6 +103,12 @@ class TrendMatchView extends StatelessWidget {
                     ),
                     (MainPresenter.to.isLockTrend.value
                         ? Text(
+                            MainPresenter.to.lockTrendDatetimeString.value,
+                            style: const TextTheme().sp7.primaryTextColor.w700,
+                          )
+                        : const SizedBox.shrink()),
+                    (MainPresenter.to.isLockTrend.value
+                        ? Text(
                             'instruction'.tr,
                             style: const TextTheme().sp5.w700,
                           )

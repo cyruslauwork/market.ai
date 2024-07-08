@@ -618,6 +618,7 @@ class MainPresenter extends GetxController {
   RxDouble expectedMdd = 0.0.obs;
   RxList clusters = [].obs;
   RxBool hasCluster = false.obs;
+  RxString lockTrendDatetimeString = ''.obs;
 
   /* Subsequent analytics */
   RxInt lastClosePriceAndSubsequentTrendsExeTime = 0.obs;
@@ -1013,6 +1014,11 @@ class MainPresenter extends GetxController {
           isUtc: true);
       DateTime subtractedDateTime =
           TimeService.to.subtractHoursBasedOnTimezone(dateTime);
+      String lastDatetime =
+          DateFormat('yyyy-MM-dd HH:mm:ss').format(subtractedDateTime);
+      String timezone =
+          TimeService.to.isEasternDaylightTime(dateTime) ? 'EDT' : 'EST';
+      lockTrendDatetimeString.value = '$lastDatetime $timezone';
       // Define trading start time
       DateTime tradingStartTime = DateTime.utc(subtractedDateTime.year,
           subtractedDateTime.month, subtractedDateTime.day, 9, 30);
@@ -1639,7 +1645,7 @@ class MainPresenter extends GetxController {
               DateFormat('yyyy-MM-dd HH:mm:ss').format(subtractedDateTime);
           String timezone =
               TimeService.to.isEasternDaylightTime(dateTime) ? 'EDT' : 'EST';
-          return '${'as_of'.tr} $lastDatetime $timezone.';
+          return '${'as_of'.tr} $lastDatetime $timezone';
         } else {
           return '${'as_of'.tr} $lastDatetime.';
         }
