@@ -619,6 +619,7 @@ class MainPresenter extends GetxController {
   RxList clusters = [].obs;
   RxBool hasCluster = false.obs;
   RxString lockTrendDatetimeString = ''.obs;
+  RxList lockTrendSubTrendList = [].obs;
 
   /* Subsequent analytics */
   RxInt lastClosePriceAndSubsequentTrendsExeTime = 0.obs;
@@ -1018,7 +1019,9 @@ class MainPresenter extends GetxController {
           DateFormat('yyyy-MM-dd HH:mm:ss').format(subtractedDateTime);
       String timezone =
           TimeService.to.isEasternDaylightTime(dateTime) ? 'EDT' : 'EST';
-      lockTrendDatetimeString.value = '$lastDatetime $timezone';
+      Future.microtask(() {
+        lockTrendDatetimeString.value = '$lastDatetime $timezone';
+      });
       // Define trading start time
       DateTime tradingStartTime = DateTime.utc(subtractedDateTime.year,
           subtractedDateTime.month, subtractedDateTime.day, 9, 30);
@@ -1029,11 +1032,19 @@ class MainPresenter extends GetxController {
           subtractedDateTime.isAfter(tradingStartTime) &&
               subtractedDateTime.isBefore(tradingEndTimeUTC);
       if (isWithinFirst30Minutes) {
-        instruction.value = 'close_pos_or_wait_n_see'.tr;
+        isFirstThirtyMins.value = true;
+        Future.microtask(() {
+          instruction.value = 'close_pos_or_wait_n_see'.tr;
+        });
         return;
       }
+      Future.microtask(() {
+        isFirstThirtyMins.value = false;
+      });
     } else {
-      instruction.value = 'Error: lockTrendDatetime == 0';
+      Future.microtask(() {
+        instruction.value = 'Error: lockTrendDatetime == 0';
+      });
       return;
     }
   }

@@ -153,6 +153,8 @@ class Msg extends Translations {
           'close_pos_or_wait_n_see': 'Close Position/ Wait-and-see',
           'prediction': 'Prediction',
           'lock_trend_alert': 'Unlock trend for new search',
+          'expected_return_mean': 'Expected Return (Mean):',
+          'expected_mdd': 'Expected MDD:',
         },
         'zh_HK': {
           'app_name': '市場慧眼📈',
@@ -275,6 +277,8 @@ class Msg extends Translations {
           'close_pos_or_wait_n_see': '平倉/觀望',
           'prediction': '預測',
           'lock_trend_alert': '進行搜尋前請解鎖走勢',
+          'expected_return_mean': '預期回報率 (平均)',
+          'expected_mdd': '預期最大回撤:',
         },
       };
 }

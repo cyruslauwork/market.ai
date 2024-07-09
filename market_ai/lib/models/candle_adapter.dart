@@ -42,6 +42,12 @@ class CandleAdapter {
     MainPresenter.to.candleListList.value = listList;
     late List<CandleData> listCandledata;
 
+    if (!MainPresenter.to.isLockTrend.value) {
+      PrefsService.to.prefs.setInt(
+          SharedPreferencesConstant.lockTrendLastDatetime,
+          MainPresenter.to.candleListList.last[0].toInt());
+    }
+
     MainPresenter.to.lastDatetime.value = MainPresenter.to.getLastDatetime();
     if (param.$2 == SrcFileType.csv) {
       listCandledata = listList

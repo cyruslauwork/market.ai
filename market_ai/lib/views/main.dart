@@ -987,8 +987,8 @@ class _MainViewState extends State<MainView> {
                         // Handle the selected value here
                         if (value == 'devMode') {
                           if (!MainPresenter.to.isLockTrend.value ||
-                              (MainPresenter.to.matchRows.first != 0 &&
-                                  MainPresenter.to.matchRows.isNotEmpty)) {
+                              (MainPresenter.to.matchRows.isNotEmpty &&
+                                  MainPresenter.to.matchRows.first != 0)) {
                             setState(() {
                               MainPresenter.to.devModeNotifier.value =
                                   !MainPresenter.to.devModeNotifier.value;

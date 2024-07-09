@@ -1372,6 +1372,7 @@ class TrendMatch {
   List<FlSpot> getAdjustedLineData(int index,
       {List<int>? matchRows, List<List<dynamic>>? candleListList}) {
     List<FlSpot> flspotList = [];
+    List<double> newLockTrendSubTrendList = [];
 
     matchRows ??= MainPresenter.to.matchRows;
     candleListList ??= MainPresenter.to.candleListList;
@@ -1389,6 +1390,23 @@ class TrendMatch {
     for (double i = 0; i < selectedLength + subLen + 1; i++) {
       if (i == selectedLength) {
         flspotList.add(FlSpot(i, lastSelectedClosePrice));
+        newLockTrendSubTrendList.add(lastSelectedClosePrice);
+      } else if (i == 0) {
+        double adjustedMatchedTrendClosePrice =
+            candleListList[matchRows[index] + i.toInt()]
+                    [4] // Close price of matched trend
+                *
+                lastActualDifference;
+
+        flspotList.add(FlSpot(i, adjustedMatchedTrendClosePrice));
+      } else if (i == selectedLength + subLen) {
+        double adjustedMatchedTrendClosePrice =
+            candleListList[matchRows[index] + i.toInt()]
+                    [4] // Close price of matched trend
+                *
+                lastActualDifference;
+
+        flspotList.add(FlSpot(i, adjustedMatchedTrendClosePrice));
       } else {
         double adjustedMatchedTrendClosePrice =
             candleListList[matchRows[index] + i.toInt()]
@@ -1397,9 +1415,11 @@ class TrendMatch {
                 lastActualDifference;
 
         flspotList.add(FlSpot(i, adjustedMatchedTrendClosePrice));
+        newLockTrendSubTrendList.add(adjustedMatchedTrendClosePrice);
       }
     }
 
+    MainPresenter.to.lockTrendSubTrendList.add(newLockTrendSubTrendList);
     return flspotList;
   }
 
@@ -1451,8 +1471,8 @@ class TrendMatch {
   LineChartData getDefaultAdjustedLineChartData({required bool isCluster}) {
     List<LineChartBarData> lineBarsData = [];
     if (!isCluster) {
-      if (MainPresenter.to.alwaysUseCrossData.value ||
-          MainPresenter.to.isLockTrend.value) {
+      MainPresenter.to.lockTrendSubTrendList.value = [];
+      if (MainPresenter.to.alwaysUseCrossData.value) {
         List<String> minuteDataList =
             List<String>.from(MainPresenter.to.minuteDataList);
         String fiSymbol = MainPresenter.to.financialInstrumentSymbol.value;

@@ -21,6 +21,9 @@ class AdjustedLineChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!isCluster) {
+      MainPresenter.to.checkLockTrend();
+    }
     return SingleChildScrollView(
       physics: const NeverScrollableScrollPhysics(),
       scrollDirection: Axis.horizontal,
