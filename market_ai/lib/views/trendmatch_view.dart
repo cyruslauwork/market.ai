@@ -88,6 +88,24 @@ class TrendMatchView extends StatelessWidget {
                             'high_probability'.tr,
                             style: const TextTheme().sp5.primaryTextColor.w700,
                           )),
+                    (MainPresenter.to.trendsLessThanFive.value
+                        ? Text(
+                            'trends_less_than_five'.tr,
+                            style: const TextTheme().sp5.primaryTextColor.w700,
+                          )
+                        : Text(
+                            'trends_more_than_four'.tr,
+                            style: const TextTheme().sp5.primaryTextColor.w700,
+                          )),
+                    (MainPresenter.to.trendsOneSidedButLessThanFour.value
+                        ? Text(
+                            'trends_one_sided_but_less_than_four'.tr,
+                            style: const TextTheme().sp5.primaryTextColor.w700,
+                          )
+                        : Text(
+                            'trends_one_sided_but_more_than_three'.tr,
+                            style: const TextTheme().sp5.primaryTextColor.w700,
+                          )),
                     (MainPresenter.to.isLockTrend.value
                         ? (MainPresenter.to.hitCeilingOrFloor.value
                             ? Text(

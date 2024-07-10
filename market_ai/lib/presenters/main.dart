@@ -609,10 +609,18 @@ class MainPresenter extends GetxController {
               false)
           .obs;
   RxBool isFirstThirtyMins = true.obs;
-  RxBool hitCeilingOrFloor = true.obs;
-  RxBool goOpposite = true.obs;
-  RxBool lowReturn = true.obs;
-  RxBool lowProb = true.obs;
+  RxBool hitCeilingOrFloor = (PrefsService.to.prefs
+          .getBool(SharedPreferencesConstant.hitCeilingOrFloor) ?? true).obs;
+  RxBool goOpposite = (PrefsService.to.prefs
+          .getBool(SharedPreferencesConstant.goOpposite) ??true).obs;
+  RxBool lowReturn = (PrefsService.to.prefs
+          .getBool(SharedPreferencesConstant.lowReturn) ??true).obs;
+  RxBool lowProb = (PrefsService.to.prefs
+          .getBool(SharedPreferencesConstant.lowProb) ??true).obs;
+  RxBool trendsLessThanFive = (PrefsService.to.prefs
+          .getBool(SharedPreferencesConstant.trendsLessThanFive) ??true).obs;
+  RxBool trendsOneSidedButLessThanFour = (PrefsService.to.prefs
+          .getBool(SharedPreferencesConstant.trendsOneSidedButLessThanFour) ??true).obs;
   RxString instruction = 'Awaiting for instruction...'.obs;
   RxDouble expectedReturn = 0.0.obs;
   RxDouble expectedMdd = 0.0.obs;
@@ -1007,7 +1015,8 @@ class MainPresenter extends GetxController {
   }
 
   checkLockTrend() {
-    int lockTrendDatetime = PrefsService.to.prefs
+    if (!isLockTrend.value) {
+          int lockTrendDatetime = PrefsService.to.prefs
         .getInt(SharedPreferencesConstant.lockTrendLastDatetime)!;
     if (lockTrendDatetime != 0) {
       DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
@@ -1032,21 +1041,49 @@ class MainPresenter extends GetxController {
           subtractedDateTime.isAfter(tradingStartTime) &&
               subtractedDateTime.isBefore(tradingEndTimeUTC);
       if (isWithinFirst30Minutes) {
-        isFirstThirtyMins.value = true;
         Future.microtask(() {
-          instruction.value = 'close_pos_or_wait_n_see'.tr;
-        });
-        return;
+        isFirstThirtyMins.value = true;
+});
       }
       Future.microtask(() {
         isFirstThirtyMins.value = false;
       });
     } else {
-      Future.microtask(() {
+                  Future.microtask(() {
         instruction.value = 'Error: lockTrendDatetime == 0';
       });
       return;
     }
+
+      PrefsService.to.prefs
+          .setBool(SharedPreferencesConstant.hitCeilingOrFloor, xxx);
+          PrefsService.to.prefs
+          .setBool(SharedPreferencesConstant.goOpposite, xxx);
+          PrefsService.to.prefs
+          .setBool(SharedPreferencesConstant.lowReturn, xxx);
+          PrefsService.to.prefs
+          .setBool(SharedPreferencesConstant.lowProb, xxx);
+          PrefsService.to.prefs
+          .setBool(SharedPreferencesConstant.trendsLessThanFive, xxx);
+          PrefsService.to.prefs
+          .setBool(SharedPreferencesConstant.trendsOneSidedButLessThanFour, xxx);
+    }
+    if () {
+      if () {
+              Future.microtask(() {
+          instruction.value = 'long'.tr;
+        });
+      } else {
+              Future.microtask(() {
+          instruction.value = 'short'.tr;
+        });
+      }
+    } else {
+              Future.microtask(() {
+          instruction.value = 'close_pos_or_wait_n_see'.tr;
+        });
+    }
+    logger.d(lockTrendSubTrendList);
   }
 
   /* Route */
@@ -1091,15 +1128,6 @@ class MainPresenter extends GetxController {
         return TrendMatchView().showAdjustedLineChart();
       } else if (showAnalytics.value) {
         return TrendMatchView().showCircularProgressIndicator();
-      }
-      return const SizedBox.shrink();
-    });
-  }
-
-  Widget showCluster() {
-    return Obx(() {
-      if (trendMatched.value && showAnalytics.value) {
-        return TrendMatchView().showAdjustedLineChart();
       }
       return const SizedBox.shrink();
     });

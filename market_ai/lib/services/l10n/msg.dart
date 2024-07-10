@@ -146,6 +146,10 @@ class Msg extends Translations {
               '✅︎ Return rate is higher than or equal to 0.025%',
           'low_probability': '❌ Probability is lower than 70%',
           'high_probability': '✅︎ Probability is higher than or equal to 70%',
+          'trends_less_than_five': '❌ Trends < 5',
+          'trends_more_than_four': '✅︎ Trends ≥ 5',
+          'trends_one_sided_but_less_than_four': '❌ Trends one-sided but < 4',
+          'trends_one_sided_but_more_than_three': '✅︎ Trends one-sided ≥ 4',
           'instruction': 'Instruction',
           'considerations': 'Considerations',
           'long': 'Long',
@@ -279,6 +283,10 @@ class Msg extends Translations {
           'lock_trend_alert': '進行搜尋前請解鎖走勢',
           'expected_return_mean': '預期回報率 (平均)',
           'expected_mdd': '預期最大回撤:',
+          'trends_less_than_five': '❌ 走勢 < 5',
+          'trends_more_than_four': '✅︎ 走勢 ≥ 5',
+          'trends_one_sided_but_less_than_four': '❌ 單邊走勢但 < 4',
+          'trends_one_sided_but_more_than_three': '✅︎ 單邊走勢 ≥ 4',
         },
       };
 }
