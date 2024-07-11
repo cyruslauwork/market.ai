@@ -49,4 +49,6 @@ class SharedPreferencesConstant {
   static String lowProb = 'lowProb';
   static String trendsLessThanFive = 'trendsLessThanFive';
   static String trendsOneSidedButLessThanFour = 'trendsOneSidedButLessThanFour';
+  static String expectedReturn = 'expectedReturn';
+  static String expectedMdd = 'expectedMdd';
 }

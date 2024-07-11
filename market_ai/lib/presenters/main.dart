@@ -609,10 +609,8 @@ class MainPresenter extends GetxController {
               false)
           .obs;
   RxBool isFirstThirtyMins = true.obs;
-  RxBool hitCeilingOrFloor = (PrefsService.to.prefs
-          .getBool(SharedPreferencesConstant.hitCeilingOrFloor) ?? true).obs;
-  RxBool goOpposite = (PrefsService.to.prefs
-          .getBool(SharedPreferencesConstant.goOpposite) ??true).obs;
+  RxBool hitCeilingOrFloor =  true.obs;
+  RxBool goOpposite = true.obs;
   RxBool lowReturn = (PrefsService.to.prefs
           .getBool(SharedPreferencesConstant.lowReturn) ??true).obs;
   RxBool lowProb = (PrefsService.to.prefs
@@ -622,8 +620,10 @@ class MainPresenter extends GetxController {
   RxBool trendsOneSidedButLessThanFour = (PrefsService.to.prefs
           .getBool(SharedPreferencesConstant.trendsOneSidedButLessThanFour) ??true).obs;
   RxString instruction = 'Awaiting for instruction...'.obs;
-  RxDouble expectedReturn = 0.0.obs;
-  RxDouble expectedMdd = 0.0.obs;
+  RxDouble expectedReturn = (PrefsService.to.prefs
+          .getDouble(SharedPreferencesConstant.expectedReturn) ?? 0.0).obs;
+  RxDouble expectedMdd = (PrefsService.to.prefs
+          .getDouble(SharedPreferencesConstant.expectedMdd) ??0.0).obs;
   RxList clusters = [].obs;
   RxBool hasCluster = false.obs;
   RxString lockTrendDatetimeString = ''.obs;
@@ -1015,7 +1015,6 @@ class MainPresenter extends GetxController {
   }
 
   checkLockTrend() {
-    if (!isLockTrend.value) {
           int lockTrendDatetime = PrefsService.to.prefs
         .getInt(SharedPreferencesConstant.lockTrendLastDatetime)!;
     if (lockTrendDatetime != 0) {
@@ -1054,19 +1053,32 @@ class MainPresenter extends GetxController {
       });
       return;
     }
-
-      PrefsService.to.prefs
-          .setBool(SharedPreferencesConstant.hitCeilingOrFloor, xxx);
+    if (!isLockTrend.value) {
+logger.d(lockTrendSubTrendList);
+List<List<double>> upper = [];
+List<List<double>> lower = [];
+lockTrendSubTrendList.map((values) => {
+  if(values.last >= values[0]) {
+    upper.add(values)
+  } else if (values.last < values[0]) {
+lower.add(values)
+  }
+});
           PrefsService.to.prefs
-          .setBool(SharedPreferencesConstant.goOpposite, xxx);
+          .setBool(SharedPreferencesConstant.lowReturn, lowReturn.value);
           PrefsService.to.prefs
-          .setBool(SharedPreferencesConstant.lowReturn, xxx);
+          .setBool(SharedPreferencesConstant.lowProb, lowProb.value);
           PrefsService.to.prefs
-          .setBool(SharedPreferencesConstant.lowProb, xxx);
+          .setBool(SharedPreferencesConstant.trendsLessThanFive, trendsLessThanFive.value);
           PrefsService.to.prefs
-          .setBool(SharedPreferencesConstant.trendsLessThanFive, xxx);
-          PrefsService.to.prefs
-          .setBool(SharedPreferencesConstant.trendsOneSidedButLessThanFour, xxx);
+          .setBool(SharedPreferencesConstant.trendsOneSidedButLessThanFour, trendsOneSidedButLessThanFour.value);
+            PrefsService.to.prefs
+          .setDouble(SharedPreferencesConstant.expectedReturn, expectedReturn.value);
+  PrefsService.to.prefs
+          .setDouble(SharedPreferencesConstant.expectedMdd, expectedMdd.value);
+    } else {
+      hitCeilingOrFloor.value;
+          goOpposite.value;
     }
     if () {
       if () {
@@ -1083,7 +1095,6 @@ class MainPresenter extends GetxController {
           instruction.value = 'close_pos_or_wait_n_see'.tr;
         });
     }
-    logger.d(lockTrendSubTrendList);
   }
 
   /* Route */
