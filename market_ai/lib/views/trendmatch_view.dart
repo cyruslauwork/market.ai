@@ -50,11 +50,11 @@ class TrendMatchView extends StatelessWidget {
                       style: const TextTheme().sp5.w700,
                     ),
                     Text(
-                      '${'expected_return_mean'.tr} ${MainPresenter.to.expectedReturn.value}',
+                      '${'expected_return_mean'.tr} +${MainPresenter.to.expectedReturn.value.toStringAsFixed(4)}%',
                       style: const TextTheme().sp7.primaryTextColor.w700,
                     ),
                     Text(
-                      '${'expected_mdd'.tr} ${MainPresenter.to.expectedMdd.value.toString()}',
+                      '${'expected_mdd'.tr} ${MainPresenter.to.expectedMdd.value}%',
                       style: const TextTheme().sp7.primaryTextColor.w700,
                     ),
                     Text(
@@ -88,24 +88,29 @@ class TrendMatchView extends StatelessWidget {
                             'high_probability'.tr,
                             style: const TextTheme().sp5.primaryTextColor.w700,
                           )),
-                    (MainPresenter.to.trendsLessThanFive.value
-                        ? Text(
-                            'trends_less_than_five'.tr,
-                            style: const TextTheme().sp5.primaryTextColor.w700,
-                          )
-                        : Text(
-                            'trends_more_than_four'.tr,
-                            style: const TextTheme().sp5.primaryTextColor.w700,
-                          )),
-                    (MainPresenter.to.trendsOneSidedButLessThanFour.value
-                        ? Text(
-                            'trends_one_sided_but_less_than_four'.tr,
-                            style: const TextTheme().sp5.primaryTextColor.w700,
-                          )
-                        : Text(
-                            'trends_one_sided_but_more_than_three'.tr,
-                            style: const TextTheme().sp5.primaryTextColor.w700,
-                          )),
+                    (MainPresenter.to.trendsNotOneSided.value
+                        ? (MainPresenter.to.trendsLessThanFive.value
+                            ? Text(
+                                'trends_less_than_five'.tr,
+                                style:
+                                    const TextTheme().sp5.primaryTextColor.w700,
+                              )
+                            : Text(
+                                'trends_more_than_four'.tr,
+                                style:
+                                    const TextTheme().sp5.primaryTextColor.w700,
+                              ))
+                        : (MainPresenter.to.trendsOneSidedButLessThanFour.value
+                            ? Text(
+                                'trends_one_sided_but_less_than_four'.tr,
+                                style:
+                                    const TextTheme().sp5.primaryTextColor.w700,
+                              )
+                            : Text(
+                                'trends_one_sided_but_more_than_three'.tr,
+                                style:
+                                    const TextTheme().sp5.primaryTextColor.w700,
+                              ))),
                     (MainPresenter.to.isLockTrend.value
                         ? (MainPresenter.to.hitCeilingOrFloor.value
                             ? Text(
@@ -177,6 +182,30 @@ class TrendMatchView extends StatelessWidget {
                               0);
                           MainPresenter.to.refreshIndicator();
                         } else {
+                          int matchedTrends =
+                              MainPresenter.to.matchRows.length +
+                                  MainPresenter.to.spyMatchRows.length +
+                                  MainPresenter.to.qqqMatchRows.length +
+                                  MainPresenter.to.usoMatchRows.length +
+                                  MainPresenter.to.gldMatchRows.length +
+                                  MainPresenter.to.slvMatchRows.length +
+                                  MainPresenter.to.iwmMatchRows.length +
+                                  MainPresenter.to.xlkMatchRows.length +
+                                  MainPresenter.to.aaplMatchRows.length +
+                                  MainPresenter.to.baMatchRows.length +
+                                  MainPresenter.to.bacMatchRows.length +
+                                  MainPresenter.to.mcdMatchRows.length +
+                                  MainPresenter.to.nvdaMatchRows.length +
+                                  MainPresenter.to.msftMatchRows.length +
+                                  MainPresenter.to.gskMatchRows.length +
+                                  MainPresenter.to.tslaMatchRows.length +
+                                  MainPresenter.to.amznMatchRows.length;
+                          if (matchedTrends < 4) {
+                            MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg: 'trends_not_enough'.tr);
+                            return;
+                          }
                           PrefsService.to.prefs.setInt(
                               SharedPreferencesConstant.lockTrendLastRow,
                               MainPresenter.to.candleListList.length - 1);

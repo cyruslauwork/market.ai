@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:get/get.dart';
 import 'package:market_ai/presenters/presenters.dart';
 import 'package:market_ai/services/services.dart';
 // import 'package:market_ai/utils/utils.dart';
@@ -276,8 +277,7 @@ class SubsequentAnalytics {
             'An unexpected error occurred in getCsvAndPng(): $error';
       });
     } else {
-      MainPresenter.to.subsequentAnalyticsErr.value =
-          'The number of subsequent trends must be equal to or greater than 4.';
+      MainPresenter.to.subsequentAnalyticsErr.value = 'trends_not_enough'.tr;
     }
     if (MainPresenter.to.subsequentAnalyticsNotifier.value) {
       MainPresenter.to.subsequentAnalyticsNotifier.value = false;

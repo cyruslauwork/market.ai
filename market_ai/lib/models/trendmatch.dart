@@ -1415,7 +1415,9 @@ class TrendMatch {
                 lastActualDifference;
 
         flspotList.add(FlSpot(i, adjustedMatchedTrendClosePrice));
-        newLockTrendSubTrendList.add(adjustedMatchedTrendClosePrice);
+        if (i > selectedLength) {
+          newLockTrendSubTrendList.add(adjustedMatchedTrendClosePrice);
+        }
       }
     }
 

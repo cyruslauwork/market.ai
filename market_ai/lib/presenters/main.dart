@@ -609,25 +609,49 @@ class MainPresenter extends GetxController {
               false)
           .obs;
   RxBool isFirstThirtyMins = true.obs;
-  RxBool hitCeilingOrFloor =  true.obs;
+  RxBool hitCeilingOrFloor = true.obs;
   RxBool goOpposite = true.obs;
-  RxBool lowReturn = (PrefsService.to.prefs
-          .getBool(SharedPreferencesConstant.lowReturn) ??true).obs;
-  RxBool lowProb = (PrefsService.to.prefs
-          .getBool(SharedPreferencesConstant.lowProb) ??true).obs;
+  RxBool lowReturn =
+      (PrefsService.to.prefs.getBool(SharedPreferencesConstant.lowReturn) ??
+              true)
+          .obs;
+  RxBool lowProb =
+      (PrefsService.to.prefs.getBool(SharedPreferencesConstant.lowProb) ?? true)
+          .obs;
   RxBool trendsLessThanFive = (PrefsService.to.prefs
-          .getBool(SharedPreferencesConstant.trendsLessThanFive) ??true).obs;
-  RxBool trendsOneSidedButLessThanFour = (PrefsService.to.prefs
-          .getBool(SharedPreferencesConstant.trendsOneSidedButLessThanFour) ??true).obs;
+              .getBool(SharedPreferencesConstant.trendsLessThanFive) ??
+          true)
+      .obs;
+  RxBool trendsOneSidedButLessThanFour = (PrefsService.to.prefs.getBool(
+              SharedPreferencesConstant.trendsOneSidedButLessThanFour) ??
+          true)
+      .obs;
+  RxBool trendsNotOneSided = (PrefsService.to.prefs
+              .getBool(SharedPreferencesConstant.trendsNotOneSided) ??
+          true)
+      .obs;
   RxString instruction = 'Awaiting for instruction...'.obs;
   RxDouble expectedReturn = (PrefsService.to.prefs
-          .getDouble(SharedPreferencesConstant.expectedReturn) ?? 0.0).obs;
-  RxDouble expectedMdd = (PrefsService.to.prefs
-          .getDouble(SharedPreferencesConstant.expectedMdd) ??0.0).obs;
+              .getDouble(SharedPreferencesConstant.expectedReturn) ??
+          0.0)
+      .obs;
+  RxString expectedMdd =
+      (PrefsService.to.prefs.getString(SharedPreferencesConstant.expectedMdd) ??
+              '')
+          .obs;
+  RxBool isLong =
+      (PrefsService.to.prefs.getBool(SharedPreferencesConstant.isLong) ?? false)
+          .obs;
+  RxBool isShort =
+      (PrefsService.to.prefs.getBool(SharedPreferencesConstant.isShort) ??
+              false)
+          .obs;
   RxList clusters = [].obs;
   RxBool hasCluster = false.obs;
   RxString lockTrendDatetimeString = ''.obs;
-  RxList lockTrendSubTrendList = [].obs;
+  RxList<List<double>> lockTrendSubTrendList = [
+    [0.0]
+  ].obs;
 
   /* Subsequent analytics */
   RxInt lastClosePriceAndSubsequentTrendsExeTime = 0.obs;
@@ -691,6 +715,8 @@ class MainPresenter extends GetxController {
       // PrefsService.to.prefs.setBool(SharedPreferencesConstant.lockTrend, false);
       // PrefsService.to.prefs
       //     .setStringList(SharedPreferencesConstant.cluster, []);
+      // isShort.value = false;
+      // PrefsService.to.prefs.setBool(SharedPreferencesConstant.isShort, false);
 
       isInit = true;
     }
@@ -1015,8 +1041,15 @@ class MainPresenter extends GetxController {
   }
 
   checkLockTrend() {
-          int lockTrendDatetime = PrefsService.to.prefs
+    int lockTrendDatetime = PrefsService.to.prefs
         .getInt(SharedPreferencesConstant.lockTrendLastDatetime)!;
+    List<List<double>> upper = [];
+    List<List<double>> lower = [];
+    int lockTrendLastRow = PrefsService.to.prefs
+        .getInt(SharedPreferencesConstant.lockTrendLastRow)!;
+    double startingClosePrice =
+        MainPresenter.to.candleListList[lockTrendLastRow][4];
+
     if (lockTrendDatetime != 0) {
       DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
           lockTrendDatetime * 1000,
@@ -1041,59 +1074,350 @@ class MainPresenter extends GetxController {
               subtractedDateTime.isBefore(tradingEndTimeUTC);
       if (isWithinFirst30Minutes) {
         Future.microtask(() {
-        isFirstThirtyMins.value = true;
-});
+          isFirstThirtyMins.value = true;
+        });
       }
       Future.microtask(() {
         isFirstThirtyMins.value = false;
       });
     } else {
-                  Future.microtask(() {
+      Future.microtask(() {
         instruction.value = 'Error: lockTrendDatetime == 0';
       });
       return;
     }
+
     if (!isLockTrend.value) {
-logger.d(lockTrendSubTrendList);
-List<List<double>> upper = [];
-List<List<double>> lower = [];
-lockTrendSubTrendList.map((values) => {
-  if(values.last >= values[0]) {
-    upper.add(values)
-  } else if (values.last < values[0]) {
-lower.add(values)
-  }
-});
-          PrefsService.to.prefs
-          .setBool(SharedPreferencesConstant.lowReturn, lowReturn.value);
-          PrefsService.to.prefs
-          .setBool(SharedPreferencesConstant.lowProb, lowProb.value);
-          PrefsService.to.prefs
-          .setBool(SharedPreferencesConstant.trendsLessThanFive, trendsLessThanFive.value);
-          PrefsService.to.prefs
-          .setBool(SharedPreferencesConstant.trendsOneSidedButLessThanFour, trendsOneSidedButLessThanFour.value);
-            PrefsService.to.prefs
-          .setDouble(SharedPreferencesConstant.expectedReturn, expectedReturn.value);
-  PrefsService.to.prefs
-          .setDouble(SharedPreferencesConstant.expectedMdd, expectedMdd.value);
-    } else {
-      hitCeilingOrFloor.value;
-          goOpposite.value;
-    }
-    if () {
-      if () {
-              Future.microtask(() {
-          instruction.value = 'long'.tr;
+      if (lockTrendSubTrendList.length < 5) {
+        Future.microtask(() {
+          trendsLessThanFive.value = true;
         });
       } else {
-              Future.microtask(() {
+        Future.microtask(() {
+          trendsLessThanFive.value = false;
+        });
+      }
+      if (lockTrendSubTrendList.isNotEmpty) {
+        // logger.d(lockTrendSubTrendList);
+        for (var values in lockTrendSubTrendList) {
+          if (values.last >= values.first) {
+            upper.add(values);
+          } else if (values.last < values.first) {
+            lower.add(values);
+          }
+        }
+      }
+      double upperProb = upper.length / (upper.length + lower.length);
+      double lowerProb = lower.length / (upper.length + lower.length);
+      if (upperProb > 0.7) {
+        Future.microtask(() {
+          isLong.value = true;
+          lowProb.value = false;
+        });
+        if (upperProb == 1.0) {
+          Future.microtask(() {
+            trendsNotOneSided.value = false;
+          });
+          if (upper.length < 4) {
+            Future.microtask(() {
+              trendsOneSidedButLessThanFour.value = true;
+            });
+          } else {
+            Future.microtask(() {
+              trendsOneSidedButLessThanFour.value = false;
+            });
+          }
+        }
+      } else if (lowerProb > 0.7) {
+        Future.microtask(() {
+          isShort.value = true;
+          lowProb.value = false;
+        });
+        if (lowerProb == 1.0) {
+          Future.microtask(() {
+            trendsNotOneSided.value = false;
+          });
+          if (lower.length < 4) {
+            Future.microtask(() {
+              trendsOneSidedButLessThanFour.value = true;
+            });
+          } else {
+            Future.microtask(() {
+              trendsOneSidedButLessThanFour.value = false;
+            });
+          }
+        }
+      } else {
+        Future.microtask(() {
+          lowProb.value = true;
+          trendsNotOneSided.value = true;
+        });
+      }
+
+      double calculateMeanOfLastValues(List<List<double>> list) {
+        double sum = 0;
+        int count = 0;
+        if (list.isNotEmpty) {
+          for (List<double> innerList in list) {
+            if (innerList.isNotEmpty) {
+              double lastValue = innerList.last;
+              sum += lastValue;
+              count++;
+            }
+          }
+        } else {
+          return 0.0;
+        }
+        if (count > 0) {
+          return sum / count;
+        } else {
+          return 0; // or any other appropriate value for an empty list
+        }
+      }
+
+      double findMaxOfLastValues(List<List<double>> list) {
+        double max = double.negativeInfinity;
+        if (list.isNotEmpty) {
+          for (List<double> innerList in list) {
+            if (innerList.isNotEmpty) {
+              double lastValue = innerList.last;
+              if (lastValue > max) {
+                max = lastValue;
+              }
+            }
+          }
+        } else {
+          return 0.0;
+        }
+        return max;
+      }
+
+      double findMinOfLastValues(List<List<double>> list) {
+        double min = double.infinity;
+        if (list.isNotEmpty) {
+          for (List<double> innerList in list) {
+            if (innerList.isNotEmpty) {
+              double lastValue = innerList.last;
+              if (lastValue < min) {
+                min = lastValue;
+              }
+            }
+          }
+        } else {
+          return 0.0;
+        }
+        return min;
+      }
+
+      double returnRate = 0.0;
+      if (isLong.value) {
+        double meanOfLastClosePrices = calculateMeanOfLastValues(upper);
+        returnRate =
+            (meanOfLastClosePrices - startingClosePrice) / startingClosePrice;
+        if (returnRate >= 0.025) {
+          Future.microtask(() {
+            lowReturn.value = false;
+          });
+        } else {
+          Future.microtask(() {
+            lowReturn.value = true;
+          });
+        }
+        Future.microtask(() {
+          expectedMdd.value =
+              '-${findMinOfLastValues(lower).toStringAsFixed(4)}';
+        });
+      } else if (isShort.value) {
+        double meanOfLastClosePrices = calculateMeanOfLastValues(lower);
+        returnRate =
+            (meanOfLastClosePrices - startingClosePrice) / startingClosePrice;
+        if (returnRate <= -0.025) {
+          Future.microtask(() {
+            lowReturn.value = false;
+          });
+        } else {
+          Future.microtask(() {
+            lowReturn.value = true;
+          });
+        }
+        Future.microtask(() {
+          expectedMdd.value =
+              '+${findMaxOfLastValues(upper).toStringAsFixed(4)}';
+        });
+      } else {
+        double meanOfLastClosePrices =
+            calculateMeanOfLastValues(lockTrendSubTrendList);
+        if (meanOfLastClosePrices != 0.0 || meanOfLastClosePrices != 0) {
+          returnRate =
+              (meanOfLastClosePrices - startingClosePrice) / startingClosePrice;
+          if (returnRate >= 0.025) {
+            Future.microtask(() {
+              lowReturn.value = false;
+            });
+          } else if (returnRate <= -0.025) {
+            Future.microtask(() {
+              lowReturn.value = false;
+            });
+          } else {
+            Future.microtask(() {
+              lowReturn.value = true;
+            });
+          }
+        } else {
+          Future.microtask(() {
+            lowReturn.value = true;
+          });
+        }
+        double maxPercentageDifference = 0;
+        double minPercentageDifference = 0;
+        double max = findMaxOfLastValues(upper);
+        double min = findMinOfLastValues(lower);
+        maxPercentageDifference =
+            ((max - startingClosePrice) / startingClosePrice);
+        minPercentageDifference =
+            ((min - startingClosePrice) / startingClosePrice);
+        if (maxPercentageDifference > minPercentageDifference) {
+          Future.microtask(() {
+            expectedMdd.value =
+                '±${maxPercentageDifference.toStringAsFixed(4)}';
+          });
+        } else if (minPercentageDifference > maxPercentageDifference) {
+          Future.microtask(() {
+            expectedMdd.value =
+                '±${minPercentageDifference.toStringAsFixed(4)}';
+          });
+        } else {
+          Future.microtask(() {
+            expectedMdd.value =
+                '±${maxPercentageDifference.toStringAsFixed(4)}';
+          });
+        }
+      }
+      Future.microtask(() {
+        expectedReturn.value = returnRate;
+      });
+
+      Future.microtask(() {
+        PrefsService.to.prefs
+            .setBool(SharedPreferencesConstant.lowReturn, lowReturn.value);
+        PrefsService.to.prefs
+            .setBool(SharedPreferencesConstant.lowProb, lowProb.value);
+        PrefsService.to.prefs.setBool(
+            SharedPreferencesConstant.trendsLessThanFive,
+            trendsLessThanFive.value);
+        PrefsService.to.prefs.setBool(
+            SharedPreferencesConstant.trendsOneSidedButLessThanFour,
+            trendsOneSidedButLessThanFour.value);
+        PrefsService.to.prefs.setBool(
+            SharedPreferencesConstant.trendsNotOneSided,
+            trendsNotOneSided.value);
+        PrefsService.to.prefs.setDouble(
+            SharedPreferencesConstant.expectedReturn, expectedReturn.value);
+        PrefsService.to.prefs.setString(
+            SharedPreferencesConstant.expectedMdd, expectedMdd.value);
+        PrefsService.to.prefs
+            .setBool(SharedPreferencesConstant.isLong, isLong.value);
+        PrefsService.to.prefs
+            .setBool(SharedPreferencesConstant.isShort, isShort.value);
+      });
+    } else {
+      List<double> spots = [];
+      if (lockTrendLastRow != 0) {
+        int lastRow = MainPresenter.to.candleListList.length - 1;
+        for (int i = 0; i < MainPresenter.to.subLength.value + 1; i++) {
+          if ((lockTrendLastRow + i) <= lastRow) {
+            spots.add(MainPresenter.to.candleListList[lockTrendLastRow + i][4]);
+          } else {
+            break;
+          }
+        }
+      }
+
+      if (expectedMdd.value != '0' &&
+          expectedMdd.value != '0.0' &&
+          expectedMdd.value != '') {
+        Future.microtask(() {
+          hitCeilingOrFloor.value = false;
+        });
+      } else {
+        double mdd = double.parse(expectedMdd.value.substring(1));
+        int hitOppositeCeilingOrBottomCount = 0;
+        if (isLong.value) {
+          for (double value in spots) {
+            if (value <= -mdd) {
+              hitOppositeCeilingOrBottomCount++;
+            }
+          }
+        } else if (isShort.value) {
+          for (double value in spots) {
+            if (value >= mdd) {
+              hitOppositeCeilingOrBottomCount++;
+            }
+          }
+        } else {
+          for (double value in spots) {
+            if (value <= -mdd || value >= mdd) {
+              hitOppositeCeilingOrBottomCount++;
+            }
+          }
+        }
+        if (hitOppositeCeilingOrBottomCount >= subLength.value ~/ 3) {
+          Future.microtask(() {
+            hitCeilingOrFloor.value = true;
+          });
+        } else {
+          Future.microtask(() {
+            hitCeilingOrFloor.value = false;
+          });
+        }
+      }
+
+      int goOppositeCount = 0;
+      if (isLong.value) {
+        for (double value in spots) {
+          if (value < startingClosePrice) {
+            goOppositeCount++;
+          }
+        }
+      } else if (isShort.value) {
+        for (double value in spots) {
+          if (value > startingClosePrice) {
+            goOppositeCount++;
+          }
+        }
+      }
+      int halfSubLength = subLength.value ~/ 2;
+      if (goOppositeCount >= halfSubLength) {
+        Future.microtask(() {
+          goOpposite.value = true;
+        });
+      } else {
+        Future.microtask(() {
+          goOpposite.value = false;
+        });
+      }
+    }
+    if ((!lowProb.value &&
+            !lowReturn.value &&
+            trendsNotOneSided.value &&
+            !trendsLessThanFive.value) ||
+        (!lowProb.value &&
+            !lowReturn.value &&
+            !trendsNotOneSided.value &&
+            !trendsOneSidedButLessThanFour.value)) {
+      if (isLong.value) {
+        Future.microtask(() {
+          instruction.value = 'long'.tr;
+        });
+      } else if (isShort.value) {
+        Future.microtask(() {
           instruction.value = 'short'.tr;
         });
       }
     } else {
-              Future.microtask(() {
-          instruction.value = 'close_pos_or_wait_n_see'.tr;
-        });
+      Future.microtask(() {
+        instruction.value = 'close_pos_or_wait_n_see'.tr;
+      });
     }
   }
 

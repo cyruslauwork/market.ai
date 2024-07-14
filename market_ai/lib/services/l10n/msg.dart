@@ -135,15 +135,15 @@ class Msg extends Translations {
           'is_not_first_thirty_mins':
               '✅︎ Regular trading hours excluding the first 30 mins',
           'hit_ceiling_or_floor':
-              '❌ Half of the prices hit the opposite ceiling/floor',
+              '❌ One-third of the prices hit the opposite ceiling/floor',
           'not_hit_ceiling_or_floor':
-              '✅︎ No half of the prices hit the opposite ceiling/floor',
+              '✅︎ No one-third of the prices hit the opposite ceiling/floor',
           'go_opposite': '❌ Half of the prices go in the opposite direction',
           'not_go_opposite':
               '✅︎ No half of the prices go in the opposite direction',
-          'low_return_rate': '❌ Return rate is lower than 0.025%',
+          'low_return_rate': '❌ Return rate is lower than 2.5%',
           'profitable_return_rate':
-              '✅︎ Return rate is higher than or equal to 0.025%',
+              '✅︎ Return rate is higher than or equal to 2.5%',
           'low_probability': '❌ Probability is lower than 70%',
           'high_probability': '✅︎ Probability is higher than or equal to 70%',
           'trends_less_than_five': '❌ Trends < 5',
@@ -159,6 +159,8 @@ class Msg extends Translations {
           'lock_trend_alert': 'Unlock trend for new search',
           'expected_return_mean': 'Expected Return (Mean):',
           'expected_mdd': 'Expected MDD:',
+          'trends_not_enough':
+              'The number of subsequent trends must be equal to or greater than 4.',
         },
         'zh_HK': {
           'app_name': '市場慧眼📈',
@@ -266,12 +268,12 @@ class Msg extends Translations {
           'unlock_trend': '解鎖走勢',
           'is_first_thirty_mins': '❌ 前 30 分鐘正常交易時間',
           'is_not_first_thirty_mins': '✅︎ 非前 30 分鐘正常交易時間',
-          'hit_ceiling_or_floor': '❌ 半數收市價觸及對面的上限/下限',
-          'not_hit_ceiling_or_floor': '✅︎ 沒有半數收市價觸及對面的上限/下限',
+          'hit_ceiling_or_floor': '❌ 三分之一收市價觸及對面的上限/下限',
+          'not_hit_ceiling_or_floor': '✅︎ 沒有三分之一收市價觸及對面的上限/下限',
           'go_opposite': '❌ 半數收市價走相反方向',
           'not_go_opposite': '✅︎ 沒有半數收市價走相反方向',
-          'low_return_rate': '❌ 回報率低於 0.025%',
-          'profitable_return_rate': '✅︎ 回報率高於或等於 0.025%',
+          'low_return_rate': '❌ 回報率低於 2.5%',
+          'profitable_return_rate': '✅︎ 回報率高於或等於 2.5%',
           'low_probability': '❌ 機率低過 70%',
           'high_probability': '✅︎ 機率高於或等於 70%',
           'instruction': '指示',
@@ -287,6 +289,7 @@ class Msg extends Translations {
           'trends_more_than_four': '✅︎ 走勢 ≥ 5',
           'trends_one_sided_but_less_than_four': '❌ 單邊走勢但 < 4',
           'trends_one_sided_but_more_than_three': '✅︎ 單邊走勢 ≥ 4',
+          'trends_not_enough': '後續走勢數量必須等於或大於 4',
         },
       };
 }
