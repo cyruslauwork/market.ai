@@ -35,7 +35,7 @@ class TrendMatchView extends StatelessWidget {
                   children: [
                     Text(
                       MainPresenter.to.lockTrendDatetimeString.value,
-                      style: const TextTheme().sp7.primaryTextColor.w700,
+                      style: const TextTheme().sp7.tertiarythemeTextColor.w700,
                     ),
                     Text(
                       'instruction'.tr,
@@ -43,7 +43,7 @@ class TrendMatchView extends StatelessWidget {
                     ),
                     Text(
                       MainPresenter.to.instruction.value,
-                      style: const TextTheme().sp10.primaryTextColor.w700,
+                      style: const TextTheme().sp10.tertiarythemeTextColor.w700,
                     ),
                     Text(
                       'prediction'.tr,
@@ -51,11 +51,11 @@ class TrendMatchView extends StatelessWidget {
                     ),
                     Text(
                       '${'expected_return_mean'.tr} +${MainPresenter.to.expectedReturn.value.toStringAsFixed(4)}%',
-                      style: const TextTheme().sp7.primaryTextColor.w700,
+                      style: const TextTheme().sp7.tertiarythemeTextColor.w700,
                     ),
                     Text(
                       '${'expected_mdd'.tr} ${MainPresenter.to.expectedMdd.value}%',
-                      style: const TextTheme().sp7.primaryTextColor.w700,
+                      style: const TextTheme().sp7.tertiarythemeTextColor.w700,
                     ),
                     Text(
                       'considerations'.tr,
@@ -64,77 +64,111 @@ class TrendMatchView extends StatelessWidget {
                     (MainPresenter.to.isFirstThirtyMins.value
                         ? Text(
                             'is_first_thirty_mins'.tr,
-                            style: const TextTheme().sp5.primaryTextColor.w700,
+                            style: const TextTheme()
+                                .sp5
+                                .tertiarythemeTextColor
+                                .w700,
                           )
                         : Text(
                             'is_not_first_thirty_mins'.tr,
-                            style: const TextTheme().sp5.primaryTextColor.w700,
+                            style: const TextTheme()
+                                .sp5
+                                .tertiarythemeTextColor
+                                .w700,
                           )),
                     (MainPresenter.to.lowReturn.value
                         ? Text(
                             'low_return_rate'.tr,
-                            style: const TextTheme().sp5.primaryTextColor.w700,
+                            style: const TextTheme()
+                                .sp5
+                                .tertiarythemeTextColor
+                                .w700,
                           )
                         : Text(
                             'profitable_return_rate'.tr,
-                            style: const TextTheme().sp5.primaryTextColor.w700,
+                            style: const TextTheme()
+                                .sp5
+                                .tertiarythemeTextColor
+                                .w700,
                           )),
                     (MainPresenter.to.lowProb.value
                         ? Text(
                             'low_probability'.tr,
-                            style: const TextTheme().sp5.primaryTextColor.w700,
+                            style: const TextTheme()
+                                .sp5
+                                .tertiarythemeTextColor
+                                .w700,
                           )
                         : Text(
                             'high_probability'.tr,
-                            style: const TextTheme().sp5.primaryTextColor.w700,
+                            style: const TextTheme()
+                                .sp5
+                                .tertiarythemeTextColor
+                                .w700,
                           )),
                     (MainPresenter.to.trendsNotOneSided.value
                         ? (MainPresenter.to.trendsLessThanFive.value
                             ? Text(
                                 'trends_less_than_five'.tr,
-                                style:
-                                    const TextTheme().sp5.primaryTextColor.w700,
+                                style: const TextTheme()
+                                    .sp5
+                                    .tertiarythemeTextColor
+                                    .w700,
                               )
                             : Text(
                                 'trends_more_than_four'.tr,
-                                style:
-                                    const TextTheme().sp5.primaryTextColor.w700,
+                                style: const TextTheme()
+                                    .sp5
+                                    .tertiarythemeTextColor
+                                    .w700,
                               ))
                         : (MainPresenter.to.trendsOneSidedButLessThanFour.value
                             ? Text(
                                 'trends_one_sided_but_less_than_four'.tr,
-                                style:
-                                    const TextTheme().sp5.primaryTextColor.w700,
+                                style: const TextTheme()
+                                    .sp5
+                                    .tertiarythemeTextColor
+                                    .w700,
                               )
                             : Text(
                                 'trends_one_sided_but_more_than_three'.tr,
-                                style:
-                                    const TextTheme().sp5.primaryTextColor.w700,
+                                style: const TextTheme()
+                                    .sp5
+                                    .tertiarythemeTextColor
+                                    .w700,
                               ))),
                     (MainPresenter.to.isLockTrend.value
                         ? (MainPresenter.to.hitCeilingOrFloor.value
                             ? Text(
                                 'hit_ceiling_or_floor'.tr,
-                                style:
-                                    const TextTheme().sp5.primaryTextColor.w700,
+                                style: const TextTheme()
+                                    .sp5
+                                    .tertiarythemeTextColor
+                                    .w700,
                               )
                             : Text(
                                 'not_hit_ceiling_or_floor'.tr,
-                                style:
-                                    const TextTheme().sp5.primaryTextColor.w700,
+                                style: const TextTheme()
+                                    .sp5
+                                    .tertiarythemeTextColor
+                                    .w700,
                               ))
                         : const SizedBox.shrink()),
                     (MainPresenter.to.isLockTrend.value
                         ? (MainPresenter.to.goOpposite.value
                             ? Text(
                                 'go_opposite'.tr,
-                                style:
-                                    const TextTheme().sp5.primaryTextColor.w700,
+                                style: const TextTheme()
+                                    .sp5
+                                    .tertiarythemeTextColor
+                                    .w700,
                               )
                             : Text(
                                 'not_go_opposite'.tr,
-                                style:
-                                    const TextTheme().sp5.primaryTextColor.w700,
+                                style: const TextTheme()
+                                    .sp5
+                                    .tertiarythemeTextColor
+                                    .w700,
                               ))
                         : const SizedBox.shrink()),
                     SizedBox(
