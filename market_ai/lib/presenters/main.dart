@@ -1214,7 +1214,7 @@ class MainPresenter extends GetxController {
         double meanOfLastClosePrices = calculateMeanOfLastValues(upper);
         returnRate =
             (meanOfLastClosePrices - startingClosePrice) / startingClosePrice;
-        if (returnRate >= 0.025) {
+        if (returnRate >= 0.001) {
           Future.microtask(() {
             lowReturn.value = false;
           });
@@ -1240,7 +1240,7 @@ class MainPresenter extends GetxController {
         double meanOfLastClosePrices = calculateMeanOfLastValues(lower);
         returnRate =
             (meanOfLastClosePrices - startingClosePrice) / startingClosePrice;
-        if (returnRate <= -0.025) {
+        if (returnRate <= -0.001) {
           Future.microtask(() {
             lowReturn.value = false;
           });
@@ -1268,11 +1268,11 @@ class MainPresenter extends GetxController {
         if (meanOfLastClosePrices != 0.0 || meanOfLastClosePrices != 0) {
           returnRate =
               (meanOfLastClosePrices - startingClosePrice) / startingClosePrice;
-          if (returnRate >= 0.025) {
+          if (returnRate >= 0.001) {
             Future.microtask(() {
               lowReturn.value = false;
             });
-          } else if (returnRate <= -0.025) {
+          } else if (returnRate <= -0.001) {
             Future.microtask(() {
               lowReturn.value = false;
             });
