@@ -1223,10 +1223,19 @@ class MainPresenter extends GetxController {
             lowReturn.value = true;
           });
         }
-        Future.microtask(() {
-          expectedMdd.value =
-              '-${findMinOfLastValues(lower).toStringAsFixed(4)}';
-        });
+        double min = findMinOfLastValues(lower);
+        if (min != 0.0) {
+          double minPercentageDifference =
+              (min - startingClosePrice) / startingClosePrice;
+          Future.microtask(() {
+            expectedMdd.value =
+                '-${minPercentageDifference.abs().toStringAsFixed(4)}';
+          });
+        } else {
+          Future.microtask(() {
+            expectedMdd.value = '-${min.toStringAsFixed(4)}';
+          });
+        }
       } else if (isShort.value) {
         double meanOfLastClosePrices = calculateMeanOfLastValues(lower);
         returnRate =
@@ -1240,10 +1249,19 @@ class MainPresenter extends GetxController {
             lowReturn.value = true;
           });
         }
-        Future.microtask(() {
-          expectedMdd.value =
-              '+${findMaxOfLastValues(upper).toStringAsFixed(4)}';
-        });
+        double max = findMaxOfLastValues(upper);
+        if (max != 0.0) {
+          double maxPercentageDifference =
+              (max - startingClosePrice) / startingClosePrice;
+          Future.microtask(() {
+            expectedMdd.value =
+                '+${maxPercentageDifference.toStringAsFixed(4)}';
+          });
+        } else {
+          Future.microtask(() {
+            expectedMdd.value = '+${max.toStringAsFixed(4)}';
+          });
+        }
       } else {
         double meanOfLastClosePrices =
             calculateMeanOfLastValues(lockTrendSubTrendList);
@@ -1272,24 +1290,30 @@ class MainPresenter extends GetxController {
         double minPercentageDifference = 0;
         double max = findMaxOfLastValues(upper);
         double min = findMinOfLastValues(lower);
-        maxPercentageDifference =
-            ((max - startingClosePrice) / startingClosePrice);
-        minPercentageDifference =
-            ((min - startingClosePrice) / startingClosePrice);
-        if (maxPercentageDifference > minPercentageDifference) {
-          Future.microtask(() {
-            expectedMdd.value =
-                '±${maxPercentageDifference.toStringAsFixed(4)}';
-          });
-        } else if (minPercentageDifference > maxPercentageDifference) {
-          Future.microtask(() {
-            expectedMdd.value =
-                '±${minPercentageDifference.toStringAsFixed(4)}';
-          });
+        if (max != 0.0 && min != 0.0) {
+          maxPercentageDifference =
+              ((max - startingClosePrice) / startingClosePrice);
+          minPercentageDifference =
+              ((min - startingClosePrice) / startingClosePrice);
+          if (maxPercentageDifference > minPercentageDifference) {
+            Future.microtask(() {
+              expectedMdd.value =
+                  '±${maxPercentageDifference.abs().toStringAsFixed(4)}';
+            });
+          } else if (minPercentageDifference > maxPercentageDifference) {
+            Future.microtask(() {
+              expectedMdd.value =
+                  '±${minPercentageDifference.abs().toStringAsFixed(4)}';
+            });
+          } else {
+            Future.microtask(() {
+              expectedMdd.value =
+                  '±${maxPercentageDifference.abs().toStringAsFixed(4)}';
+            });
+          }
         } else {
           Future.microtask(() {
-            expectedMdd.value =
-                '±${maxPercentageDifference.toStringAsFixed(4)}';
+            expectedMdd.value = '±${max.toStringAsFixed(4)}';
           });
         }
       }
