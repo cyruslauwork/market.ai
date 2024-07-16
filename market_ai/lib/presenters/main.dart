@@ -1212,12 +1212,18 @@ class MainPresenter extends GetxController {
       double returnRate = 0.0;
       if (isLong.value) {
         double meanOfLastClosePrices = calculateMeanOfLastValues(upper);
-        returnRate =
-            (meanOfLastClosePrices - startingClosePrice) / startingClosePrice;
-        if (returnRate >= 0.001) {
-          Future.microtask(() {
-            lowReturn.value = false;
-          });
+        if (meanOfLastClosePrices != 0.0 || meanOfLastClosePrices != 0) {
+          returnRate =
+              (meanOfLastClosePrices - startingClosePrice) / startingClosePrice;
+          if (returnRate >= 0.001) {
+            Future.microtask(() {
+              lowReturn.value = false;
+            });
+          } else {
+            Future.microtask(() {
+              lowReturn.value = true;
+            });
+          }
         } else {
           Future.microtask(() {
             lowReturn.value = true;
@@ -1238,12 +1244,18 @@ class MainPresenter extends GetxController {
         }
       } else if (isShort.value) {
         double meanOfLastClosePrices = calculateMeanOfLastValues(lower);
-        returnRate =
-            (meanOfLastClosePrices - startingClosePrice) / startingClosePrice;
-        if (returnRate <= -0.001) {
-          Future.microtask(() {
-            lowReturn.value = false;
-          });
+        if (meanOfLastClosePrices != 0.0 || meanOfLastClosePrices != 0) {
+          returnRate =
+              (meanOfLastClosePrices - startingClosePrice) / startingClosePrice;
+          if (returnRate <= -0.001) {
+            Future.microtask(() {
+              lowReturn.value = false;
+            });
+          } else {
+            Future.microtask(() {
+              lowReturn.value = true;
+            });
+          }
         } else {
           Future.microtask(() {
             lowReturn.value = true;
@@ -1318,7 +1330,7 @@ class MainPresenter extends GetxController {
         }
       }
       Future.microtask(() {
-        expectedReturn.value = returnRate;
+        expectedReturn.value = returnRate.abs();
       });
 
       Future.microtask(() {

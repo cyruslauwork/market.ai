@@ -1702,8 +1702,6 @@ class TrendMatch {
           ),
         );
       }
-
-      MainPresenter.to.clusters.value = [];
     }
     return LineChartData(
       lineTouchData: const LineTouchData(enabled: false),
