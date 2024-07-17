@@ -43,6 +43,8 @@ class CandleAdapter {
     late List<CandleData> listCandledata;
 
     if (!MainPresenter.to.isLockTrend.value) {
+      PrefsService.to.prefs.setInt(SharedPreferencesConstant.lockTrendLastRow,
+          MainPresenter.to.candleListList.length - 1);
       PrefsService.to.prefs.setInt(
           SharedPreferencesConstant.lockTrendLastDatetime,
           MainPresenter.to.candleListList.last[0].toInt());

@@ -240,13 +240,6 @@ class TrendMatchView extends StatelessWidget {
                                 localizedMsg: 'trends_not_enough'.tr);
                             return;
                           }
-                          PrefsService.to.prefs.setInt(
-                              SharedPreferencesConstant.lockTrendLastRow,
-                              MainPresenter.to.candleListList.length - 1);
-                          PrefsService.to.prefs.setInt(
-                              SharedPreferencesConstant.lockTrendLastDatetime,
-                              MainPresenter.to.candleListList.last[0].toInt());
-
                           PrefsService.to.prefs.setBool(
                               SharedPreferencesConstant.lockTrend, true);
                           MainPresenter.to.isLockTrend.value = true;
