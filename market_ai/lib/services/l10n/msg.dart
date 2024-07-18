@@ -161,6 +161,8 @@ class Msg extends Translations {
           'expected_mdd': 'Expected MDD:',
           'trends_not_enough':
               'The number of subsequent trends must be equal to or greater than 4.',
+              
+          'btn_backtest_spy_minute': 'Backtest SPY 1-minute data and export CSV',
         },
         'zh_HK': {
           'app_name': '市場慧眼📈',
@@ -290,6 +292,7 @@ class Msg extends Translations {
           'trends_one_sided_but_less_than_four': '❌ 單邊走勢但 < 4',
           'trends_one_sided_but_more_than_three': '✅︎ 單邊走勢 ≥ 4',
           'trends_not_enough': '後續走勢數量必須等於或大於 4',
+          'btn_backtest_spy_minute': '回測 SPY 1 分鐘數據並匯出 CSV',
         },
       };
 }

@@ -323,8 +323,10 @@ class MainView extends StatefulWidget {
             Obx(() {
               if (MainPresenter.to.hasSpyMinuteData.value) {
                 return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 2.w),
-                  child: ElevatedButton.icon(
+                  padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.5.h),
+                  child:
+                   Column(children:[
+                     ElevatedButton.icon(
                     onPressed: () {
                       IsarService().clearSpyData();
                       MainPresenter.to.hasSpyMinuteData.value = false;
@@ -338,6 +340,22 @@ class MainView extends StatefulWidget {
                       style: const TextTheme().sp5.w700,
                     ),
                   ),
+
+                    ElevatedButton.icon(
+                    onPressed: () {
+                      MainPresenter.to.backtest('SPY');
+                    },
+                    icon: Icon(
+                      Icons.insights_outlined,
+                      size: 10.h,
+                    ),
+                    label: Text(
+                      'btn_backtest_spy_minute'.tr,
+                      style: const TextTheme().sp5.w700,
+                    ),
+                  ),
+
+                  ],),
                 );
               } else {
                 return const SizedBox.shrink();
