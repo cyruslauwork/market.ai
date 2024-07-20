@@ -769,20 +769,12 @@ class TrendMatch {
                       compareFirstPrice);
             }
 
-            bool isMaMatched = false;
-            for (int i = 0;
-                i < comparePeriodMaPercentDifferencesListList.length;
-                i++) {
-              isMaMatched = maDifferencesLessThanOrEqualToCertainPercent(
-                  selectedPeriodFirstMaAndPricePercentDifferencesList,
-                  selectedPeriodMaPercentDifferencesListList,
-                  comparePeriodFirstMaAndPricePercentDifferencesList,
-                  comparePeriodMaPercentDifferencesListList,
-                  tolerance);
-              if (!isMaMatched) {
-                break; // Exit the loop
-              }
-            }
+            bool isMaMatched = maDifferencesLessThanOrEqualToCertainPercent(
+                selectedPeriodFirstMaAndPricePercentDifferencesList,
+                selectedPeriodMaPercentDifferencesListList,
+                comparePeriodFirstMaAndPricePercentDifferencesList,
+                comparePeriodMaPercentDifferencesListList,
+                tolerance);
             if (isMaMatched) {
               trueCount += 1;
               if (alwaysUseCrossData) {

@@ -32,7 +32,7 @@ class MainView extends StatefulWidget {
   }
   const MainView._internal();
 
-  Widget devModeViewOne() {
+  Widget devModeViewOne(BuildContext context) {
     String jumpServerUrl = MainPresenter.to.jumpServerUrl.value;
     return Column(children: [
       Column(children: [
@@ -323,39 +323,39 @@ class MainView extends StatefulWidget {
             Obx(() {
               if (MainPresenter.to.hasSpyMinuteData.value) {
                 return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.5.h),
-                  child:
-                   Column(children:[
-                     ElevatedButton.icon(
-                    onPressed: () {
-                      IsarService().clearSpyData();
-                      MainPresenter.to.hasSpyMinuteData.value = false;
-                    },
-                    icon: Icon(
-                      Icons.clean_hands_rounded,
-                      size: 10.h,
-                    ),
-                    label: Text(
-                      'btn_clear_spy_minute'.tr,
-                      style: const TextTheme().sp5.w700,
-                    ),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.5.h),
+                  child: Column(
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          IsarService().clearSpyData();
+                          MainPresenter.to.hasSpyMinuteData.value = false;
+                        },
+                        icon: Icon(
+                          Icons.clean_hands_rounded,
+                          size: 10.h,
+                        ),
+                        label: Text(
+                          'btn_clear_spy_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          MainPresenter.to.backtest('SPY', context);
+                        },
+                        icon: Icon(
+                          Icons.insights_outlined,
+                          size: 10.h,
+                        ),
+                        label: Text(
+                          'btn_backtest_spy_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                    ],
                   ),
-
-                    ElevatedButton.icon(
-                    onPressed: () {
-                      MainPresenter.to.backtest('SPY');
-                    },
-                    icon: Icon(
-                      Icons.insights_outlined,
-                      size: 10.h,
-                    ),
-                    label: Text(
-                      'btn_backtest_spy_minute'.tr,
-                      style: const TextTheme().sp5.w700,
-                    ),
-                  ),
-
-                  ],),
                 );
               } else {
                 return const SizedBox.shrink();
@@ -1198,7 +1198,7 @@ class _MainViewState extends State<MainView> {
                         const Divider(),
                         SizedBox(height: 5.h),
                         MainPresenter.to.showDevModeViewOne(
-                            MainPresenter.to.devModeNotifier.value),
+                            MainPresenter.to.devModeNotifier.value, context),
                         MainPresenter.to.showDevModeViewTwo(
                             MainPresenter.to.devModeNotifier.value),
                         TrendMatchView(),

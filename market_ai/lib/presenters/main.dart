@@ -1458,119 +1458,138 @@ class MainPresenter extends GetxController {
     }
   }
 
-  backtest(String symbol) {
-    // ID | Datetime | Close Price 1 | Close Price 2 | Close Price 3 | Probability | Return Rate | Count | Hit Rate | MDD | Fund Remaining |
+  backtest(String symbol, BuildContext context) {
+    if (!alwaysShowMinuteData.value || !hasMinuteData.value) {
+      showScaffoldMessenger(
+          context: context, localizedMsg: 'backtest_no_minute_data'.tr);
+      return;
+    }
+
+    // TODO: Start backtest loading effect
+
     int id = 0;
     String datetime = '';
     List<double> closePrices = [];
     double prob = 0.0;
     double returnRate = 0.0;
-    double hitRate = 1.0;
-    int count=0;
-    double sharpe =0; 
+    double hitRate = 0.0;
+    int matchedTrendCount = 0;
+    double sharpe = 0;
     double mdd = 0;
-    double initialFund = 100000;
-   List<CandleData> data = [];
-    List<CandleData> candle;
-    int initIndex = 20;
-
-    data.add( ['ID', 'Datetime', 'Close Price 1', 'Close Price 2', 'Close Price 3', 'Probability', 'Return Rate', 'Count', 'Hit Rate', 'MDD', 'Fund Remaining']);
-
-// Make reference to the correct minute data list
-  if (symbol == 'SPY') {
-candle = listCandledata.value;
-  }  
-
-// Split the candle list of list
-  List<List<List<dynamic>>> splitCandleLists = [];
-
-final int sublistSize = (candle.length / 10).ceil();
-
-for (int i = 0; i < candle.length; i += sublistSize) {
-  final sublist = candle.sublist(i, i + sublistSize);
-  splitCandleLists.add(sublist);
-}
-
-// Pick up a list randomly to run the backtesting
-
-final random = Random();
-    int len = length.value;
-        int trueCount = 0;
+    double initialFund = 10000;
+    double commissions = 0.85;
+    List<List<dynamic>> data = [];
+    List<CandleData> candle = [];
+    int initIndex = 20; // Assume that the backtest must be minute data
+    int trueCount = 0;
     int falseCount = 0;
+    int len = length.value;
 
     if (len <= 1) {
       throw ArgumentError('Selected period must greater than 1 time unit.');
     }
 
-bool hasMa = candle.last.trends.isNotEmpty;
-int dataLength = candle.length;
-List<double> selectedPeriodPercentDifferencesList = [];
-    List<List<double>> selectedPeriodMaPercentDifferencesListList = [];
-    List<double> selectedPeriodFirstMaAndPricePercentDifferencesList = [];
+// CSV headers
+    data.add([
+      'ID',
+      'Datetime',
+      'Selected',
+      ...List.generate(len, (index) => 'Close Price ${index + 1}'),
+      'Probability',
+      'Mean Return Rate',
+      'Matched Trend Count',
+      'Hit Rate',
+      'MDD',
+      'Fund Remaining (commission deducted)'
+    ]);
 
+// Make reference to the correct minute data list
+    if (symbol == 'SPY') {
+      candle = listCandledata;
+    }
+
+    bool hasMa = candle.last.trends.isNotEmpty;
+    int maLength = candle.last.trends.length;
+
+    // Assume it must be an MA trend matching
+    if (!hasMa) {
+      Candle().computeTrendLines();
+      hasMa = candle.last.trends.isNotEmpty;
+      maLength = candle.last.trends.length;
+    }
+
+// Split the candle list of list
+    List<List<CandleData>> splitCandleLists = [];
+    final int sublistSize = (candle.length / 10).ceil();
+
+    for (int i = initIndex; i < candle.length; i += sublistSize) {
+      final sublist = candle.sublist(i, i + sublistSize);
+      splitCandleLists.add(sublist);
+    }
+
+// Randomly pick a list to run backtest
+    final random = Random();
+    final int tolerance = MainPresenter.to.tolerance.value;
+
+    while (splitCandleLists.isNotEmpty) {
+      final randomIndex = random.nextInt(splitCandleLists.length);
+      final sublist = splitCandleLists[randomIndex];
+      final subLen = sublist.length;
+
+      // TODO: Show the remaining number of backtest data
+
+      for (int l = 0; l < subLen; l++) {
+        double startingClosePrice = sublist[l].close!;
+
+        // Loop selected data
+        List<double> selectedPeriodPercentDifferencesList = [];
+        List<List<double>> selectedPeriodMaPercentDifferencesListList = [];
+        List<double> selectedPeriodFirstMaAndPricePercentDifferencesList = [];
+
+        for (int i = len; i > 1; i--) {
+          double newVal = sublist[subLen - (i - 1)].close!;
+          double oriVal = sublist[subLen - i].close!;
+          double percentDiff = (newVal - oriVal) / oriVal;
+
+          selectedPeriodPercentDifferencesList.add(percentDiff);
+
+          List<double> selectedPeriodMaPercentDifferencesList = [];
+          for (int l = 0; l < maLength; l++) {
+            double newVal = sublist[subLen - (i - 1)].trends[l]!;
+            double oriVal = sublist[subLen - i].trends[l]!;
+            double maPercentDiff = (newVal - oriVal) / oriVal;
+            selectedPeriodMaPercentDifferencesList.add(maPercentDiff);
+          }
+          selectedPeriodMaPercentDifferencesListList
+              .add(selectedPeriodMaPercentDifferencesList);
+        }
+        for (int l = 0; l < maLength; l++) {
+          selectedPeriodFirstMaAndPricePercentDifferencesList.add(
+              (sublist[subLen - len].trends[l]! - startingClosePrice) /
+                  startingClosePrice);
+        }
+
+        // Loop other data
         List<double> comparePeriodPercentDifferencesList = [];
 
-        int tolerance = MainPresenter.to.tolerance.value;
-
-// Assume it must be an MA trend matching
-      if (!hasMa) {
-        await Candle().computeTrendLines();
-        hasMa = candle.last.trends.isNotEmpty;
-        maLength = candle.last.trends.length;
-      }
-
-            double selectedFirstPrice = candle[dataLength - len].close!;
-      // Loop selected data
-      for (int i = len; i > 1; i--) {
-        double newVal = candle[dataLength - (i - 1)].close!;
-        double oriVal = candle[dataLength - i].close!;
-        double percentDiff = (newVal - oriVal) / oriVal;
-
-        selectedPeriodPercentDifferencesList.add(percentDiff);
-
-        List<double> selectedPeriodMaPercentDifferencesList = [];
-        for (int l = 0; l < maLength; l++) {
-          double newVal = candle[dataLength - (i - 1)].trends[l]!;
-          double oriVal = candle[dataLength - i].trends[l]!;
-          double maPercentDiff = (newVal - oriVal) / oriVal;
-          selectedPeriodMaPercentDifferencesList.add(maPercentDiff);
-        }
-        selectedPeriodMaPercentDifferencesListList
-            .add(selectedPeriodMaPercentDifferencesList);
-      }
-      for (int l = 0; l < maLength; l++) {
-        selectedPeriodFirstMaAndPricePercentDifferencesList.add(
-            (candle[dataLength - len].trends[l]! - selectedFirstPrice) /
-                selectedFirstPrice);
-      }
-
-while (splitCandleLists.isNotEmpty) {
-  final randomIndex = random.nextInt(splitCandleLists.length);
-  final sublist = splitCandleLists[randomIndex];
-
-//  Backtesting
-for (l = initIndex; l < sublist.length - len;l++){
-      List<List<double>> upper = [];
-    List<List<double>> lower = [];
-
-  double startingClosePrice = sublist[l].close!;
+        for (int l = 0; l < sublist.length - len; l++) {
+          List<List<double>> upper = [];
+          List<List<double>> lower = [];
 
           for (int i = 0; i < len - 1; i++) {
-          double percentDiff = (sublist[l + i + 1].close! -
-                  sublist[l + i].close!) /
-              (sublist[l + i].close!);
-          comparePeriodPercentDifferencesList.add(percentDiff);
-        }
+            double percentDiff =
+                (sublist[l + i + 1].close! - sublist[l + i].close!) /
+                    (sublist[l + i].close!);
+            comparePeriodPercentDifferencesList.add(percentDiff);
+          }
 
-         (
-          bool,
-          List<double>
-        ) comparisonResult = TrendMatch().areDifferencesLessThanOrEqualToCertainPercent(
-            selectedPeriodPercentDifferencesList,
-            comparePeriodPercentDifferencesList,
-            tolerance); // Record data type in Dart is equivalent to Tuple in Java and Python
+          (bool, List<double>) comparisonResult = TrendMatch()
+              .areDifferencesLessThanOrEqualToCertainPercent(
+                  selectedPeriodPercentDifferencesList,
+                  comparePeriodPercentDifferencesList,
+                  tolerance); // Record data type in Dart is equivalent to Tuple in Java and Python
 
-        if (comparisonResult.$1) {
+          if (comparisonResult.$1) {
             List<double> comparePeriodFirstMaAndPricePercentDifferencesList =
                 [];
             List<List<double>> comparePeriodMaPercentDifferencesListList = [];
@@ -1593,57 +1612,32 @@ for (l = initIndex; l < sublist.length - len;l++){
                       compareFirstPrice);
             }
 
-            bool isMaMatched = false;
-            for (int i = 0;
-                i < comparePeriodMaPercentDifferencesListList.length;
-                i++) {
-              isMaMatched = maDifferencesLessThanOrEqualToCertainPercent(
-                  selectedPeriodFirstMaAndPricePercentDifferencesList,
-                  selectedPeriodMaPercentDifferencesListList,
-                  comparePeriodFirstMaAndPricePercentDifferencesList,
-                  comparePeriodMaPercentDifferencesListList,
-                  tolerance);
-              if (!isMaMatched) {
-                break; // Exit the loop
-              }
-            }
+            bool isMaMatched = TrendMatch()
+                .maDifferencesLessThanOrEqualToCertainPercent(
+                    selectedPeriodFirstMaAndPricePercentDifferencesList,
+                    selectedPeriodMaPercentDifferencesListList,
+                    comparePeriodFirstMaAndPricePercentDifferencesList,
+                    comparePeriodMaPercentDifferencesListList,
+                    tolerance);
             if (isMaMatched) {
               trueCount += 1;
-              if (alwaysUseCrossData) {
-                addMatchRow(l);
-              } else {
-                MainPresenter.to.matchRows.add(l);
-              }
-              matchPercentDifferencesListList.add(comparisonResult.$2);
-              for (int i = 0; i < comparisonResult.$2.length; i++) {
-                double actual = sublist[l + i + 1].close! -
-                    sublist[l + i].close!;
-                matchActualDifferencesList.add(actual);
-              }
-              for (int i = 0; i < comparisonResult.$2.length + 1; i++) {
-                matchActualPricesList.add(sublist[l + i].close!);
-              }
-              matchActualDifferencesListList.add(matchActualDifferencesList);
-              matchActualPricesListList.add(matchActualPricesList);
+              // Matched row number: l
+              // TODO: backtesting
             } else {
               falseCount += 1;
             }
-        } else {
-          falseCount += 1;
+          } else {
+            falseCount += 1;
+          }
+
+          comparePeriodPercentDifferencesList = [];
         }
+      }
 
-        // TODO: check whether 'if (comparisonResult.$1) {}' has undefined variable(s) or not
+      splitCandleLists.removeAt(randomIndex);
+    }
 
-        // TODO: backtesting
-
-        // TODO: backtesting loading effect
-
-                comparePeriodPercentDifferencesList = [];
-}
-
-  splitCandleLists.removeAt(randomIndex);
-}
-
+    // TODO: Stop backtest loading effect
   }
 
   /* Route */
@@ -1718,9 +1712,9 @@ for (l = initIndex; l < sublist.length - len;l++){
     });
   }
 
-  Widget showDevModeViewOne(bool devMode) {
+  Widget showDevModeViewOne(bool devMode, BuildContext context) {
     if (devMode) {
-      return MainView().devModeViewOne();
+      return MainView().devModeViewOne(context);
     } else {
       return const SizedBox.shrink();
     }
