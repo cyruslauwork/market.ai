@@ -1467,43 +1467,37 @@ class MainPresenter extends GetxController {
 
     // TODO: Start backtest loading effect
 
-    int id = 0;
-    String datetime = '';
-    List<double> closePrices = [];
-    double prob = 0.0;
-    double returnRate = 0.0;
-    double hitRate = 0.0;
-    int matchedTrendCount = 0;
-    double sharpe = 0;
-    double mdd = 0;
-    double initialFund = 10000;
-    double commissions = 0.85;
-    List<List<dynamic>> data = [];
+    List<List<dynamic>> listList = [];
     List<CandleData> candle = [];
+
     int initIndex = 20; // Assume that the backtest must be minute data
-    int trueCount = 0;
-    int falseCount = 0;
     int len = length.value;
+    double commissions = 0.85;
+    int yFinMinuteDelay = 1;
+    int hitCount = 0;
+    int noHitCount = 0;
 
     if (len <= 1) {
       throw ArgumentError('Selected period must greater than 1 time unit.');
     }
 
-// CSV headers
-    data.add([
+    // CSV headers
+    listList.add([
       'ID',
       'Datetime',
       'Selected',
-      ...List.generate(len, (index) => 'Close Price ${index + 1}'),
       'Probability',
       'Mean Return Rate',
       'Matched Trend Count',
-      'Hit Rate',
+      'Hit Rate (after first 30 mins)',
       'MDD',
-      'Fund Remaining (commission deducted)'
+      'Fund Remaining (commission deducted)',
+      'Commission',
+      'yFin Minute Delay',
+      ...List.generate(len, (index) => 'Close Price ${index + 1}'),
     ]);
 
-// Make reference to the correct minute data list
+    // Make reference to the correct minute data list
     if (symbol == 'SPY') {
       candle = listCandledata;
     }
@@ -1518,7 +1512,7 @@ class MainPresenter extends GetxController {
       maLength = candle.last.trends.length;
     }
 
-// Split the candle list of list
+    // Split the candle list of list
     List<List<CandleData>> splitCandleLists = [];
     final int sublistSize = (candle.length / 10).ceil();
 
@@ -1527,7 +1521,7 @@ class MainPresenter extends GetxController {
       splitCandleLists.add(sublist);
     }
 
-// Randomly pick a list to run backtest
+    // Randomly pick a list to run backtest
     final random = Random();
     final int tolerance = MainPresenter.to.tolerance.value;
 
@@ -1539,9 +1533,52 @@ class MainPresenter extends GetxController {
       // TODO: Show the remaining number of backtest data
 
       for (int l = 0; l < subLen; l++) {
-        double startingClosePrice = sublist[l].close!;
+        List<dynamic> list = [];
+
+        int id = l;
+        String datetime = '';
+        int selected = len;
+        double prob = 0.0;
+        double meanReturnRate = 0.0;
+        double hitRate = 0.0;
+        int matchedTrendCount = 0;
+        double mdd = 0;
+        double initialFund = 10000;
+        List<double> closePrices = [];
+
+        int trueCount = 0;
+
+        // Check if the dateTime is within the first 30 minutes of trading
+        int timestamp = sublist[l].timestamp;
+        if (timestamp != 0) {
+          DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
+              timestamp * 1000,
+              isUtc: true);
+          DateTime subtractedDateTime =
+              TimeService.to.subtractHoursBasedOnTimezone(dateTime);
+          // Define trading start time
+          DateTime tradingStartTime = DateTime.utc(subtractedDateTime.year,
+              subtractedDateTime.month, subtractedDateTime.day, 9, 30);
+          // Check if the dateTime is within the first 30 minutes of trading
+          DateTime tradingEndTimeUTC =
+              tradingStartTime.add(const Duration(minutes: 30));
+          bool isWithinFirst30Minutes =
+              subtractedDateTime.isAfter(tradingStartTime) &&
+                  subtractedDateTime.isBefore(tradingEndTimeUTC);
+          if (isWithinFirst30Minutes) {
+            continue;
+          }
+          String lastDatetime =
+              DateFormat('yyyy-MM-dd HH:mm:ss').format(subtractedDateTime);
+          String timezone =
+              TimeService.to.isEasternDaylightTime(dateTime) ? 'EDT' : 'EST';
+          datetime = '$lastDatetime $timezone';
+        } else {
+          continue;
+        }
 
         // Loop selected data
+        double startingClosePrice = sublist[l].close!;
         List<double> selectedPeriodPercentDifferencesList = [];
         List<List<double>> selectedPeriodMaPercentDifferencesListList = [];
         List<double> selectedPeriodFirstMaAndPricePercentDifferencesList = [];
@@ -1569,17 +1606,17 @@ class MainPresenter extends GetxController {
                   startingClosePrice);
         }
 
-        // Loop other data
-        List<double> comparePeriodPercentDifferencesList = [];
+        List<List<double>> upper = [];
+        List<List<double>> lower = [];
 
-        for (int l = 0; l < sublist.length - len; l++) {
-          List<List<double>> upper = [];
-          List<List<double>> lower = [];
+        // Loop other data
+        for (int m = 0; m < sublist.length - len; m++) {
+          List<double> comparePeriodPercentDifferencesList = [];
 
           for (int i = 0; i < len - 1; i++) {
             double percentDiff =
-                (sublist[l + i + 1].close! - sublist[l + i].close!) /
-                    (sublist[l + i].close!);
+                (sublist[m + i + 1].close! - sublist[m + i].close!) /
+                    (sublist[m + i].close!);
             comparePeriodPercentDifferencesList.add(percentDiff);
           }
 
@@ -1593,13 +1630,13 @@ class MainPresenter extends GetxController {
             List<double> comparePeriodFirstMaAndPricePercentDifferencesList =
                 [];
             List<List<double>> comparePeriodMaPercentDifferencesListList = [];
-            double compareFirstPrice = sublist[l].close!;
+            double compareFirstPrice = sublist[m].close!;
 
-            for (int m = 0; m < len - 1; m++) {
+            for (int n = 0; n < len - 1; n++) {
               List<double> comparePeriodMaPercentDifferencesList = [];
               for (int i = 0; i < maLength; i++) {
-                double newVal = sublist[l + m + 1].trends[i]!;
-                double oriVal = sublist[l + m].trends[i]!;
+                double newVal = sublist[m + n + 1].trends[i]!;
+                double oriVal = sublist[m + n].trends[i]!;
                 double maPercentDiff = (newVal - oriVal) / oriVal;
                 comparePeriodMaPercentDifferencesList.add(maPercentDiff);
               }
@@ -1608,7 +1645,7 @@ class MainPresenter extends GetxController {
             }
             for (int i = 0; i < maLength; i++) {
               comparePeriodFirstMaAndPricePercentDifferencesList.add(
-                  (sublist[l].trends[i]! - compareFirstPrice) /
+                  (sublist[m].trends[i]! - compareFirstPrice) /
                       compareFirstPrice);
             }
 
@@ -1621,16 +1658,8 @@ class MainPresenter extends GetxController {
                     tolerance);
             if (isMaMatched) {
               trueCount += 1;
-              // Matched row number: l
-              // TODO: backtesting
-            } else {
-              falseCount += 1;
             }
-          } else {
-            falseCount += 1;
           }
-
-          comparePeriodPercentDifferencesList = [];
         }
       }
 
