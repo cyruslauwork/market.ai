@@ -1041,6 +1041,61 @@ class MainPresenter extends GetxController {
     }
   }
 
+  double calculateMeanOfLastValues(List<List<double>> list) {
+    double sum = 0;
+    int count = 0;
+    if (list.isNotEmpty) {
+      for (List<double> innerList in list) {
+        if (innerList.isNotEmpty) {
+          double lastValue = innerList.last;
+          sum += lastValue;
+          count++;
+        }
+      }
+    } else {
+      return 0.0;
+    }
+    if (count > 0) {
+      return sum / count;
+    } else {
+      return 0; // or any other appropriate value for an empty list
+    }
+  }
+
+  double findMaxOfLastValues(List<List<double>> list) {
+    double max = double.negativeInfinity;
+    if (list.isNotEmpty) {
+      for (List<double> innerList in list) {
+        if (innerList.isNotEmpty) {
+          double lastValue = innerList.last;
+          if (lastValue > max) {
+            max = lastValue;
+          }
+        }
+      }
+    } else {
+      return 0.0;
+    }
+    return max;
+  }
+
+  double findMinOfLastValues(List<List<double>> list) {
+    double min = double.infinity;
+    if (list.isNotEmpty) {
+      for (List<double> innerList in list) {
+        if (innerList.isNotEmpty) {
+          double lastValue = innerList.last;
+          if (lastValue < min) {
+            min = lastValue;
+          }
+        }
+      }
+    } else {
+      return 0.0;
+    }
+    return min;
+  }
+
   checkLockTrend() {
     int lockTrendDatetime = PrefsService.to.prefs
         .getInt(SharedPreferencesConstant.lockTrendLastDatetime)!;
@@ -1153,61 +1208,6 @@ class MainPresenter extends GetxController {
           lowProb.value = true;
           trendsNotOneSided.value = true;
         });
-      }
-
-      double calculateMeanOfLastValues(List<List<double>> list) {
-        double sum = 0;
-        int count = 0;
-        if (list.isNotEmpty) {
-          for (List<double> innerList in list) {
-            if (innerList.isNotEmpty) {
-              double lastValue = innerList.last;
-              sum += lastValue;
-              count++;
-            }
-          }
-        } else {
-          return 0.0;
-        }
-        if (count > 0) {
-          return sum / count;
-        } else {
-          return 0; // or any other appropriate value for an empty list
-        }
-      }
-
-      double findMaxOfLastValues(List<List<double>> list) {
-        double max = double.negativeInfinity;
-        if (list.isNotEmpty) {
-          for (List<double> innerList in list) {
-            if (innerList.isNotEmpty) {
-              double lastValue = innerList.last;
-              if (lastValue > max) {
-                max = lastValue;
-              }
-            }
-          }
-        } else {
-          return 0.0;
-        }
-        return max;
-      }
-
-      double findMinOfLastValues(List<List<double>> list) {
-        double min = double.infinity;
-        if (list.isNotEmpty) {
-          for (List<double> innerList in list) {
-            if (innerList.isNotEmpty) {
-              double lastValue = innerList.last;
-              if (lastValue < min) {
-                min = lastValue;
-              }
-            }
-          }
-        } else {
-          return 0.0;
-        }
-        return min;
       }
 
       double returnRate = 0.0;
@@ -1532,21 +1532,18 @@ class MainPresenter extends GetxController {
 
       // TODO: Show the remaining number of backtest data
 
-      for (int l = 0; l < subLen; l++) {
-        List<dynamic> list = [];
+      double hitRate = 0.0;
+      double mdd = 0.0;
+      double initialFund = 10000;
 
+      for (int l = 0; l < subLen; l++) {
         int id = l;
-        String datetime = '';
+        List<String> datetime = [];
         int selected = len;
         double prob = 0.0;
         double meanReturnRate = 0.0;
-        double hitRate = 0.0;
         int matchedTrendCount = 0;
-        double mdd = 0;
-        double initialFund = 10000;
-        List<double> closePrices = [];
-
-        int trueCount = 0;
+        List<List<double>> closePrices = [];
 
         // Check if the dateTime is within the first 30 minutes of trading
         int timestamp = sublist[l].timestamp;
@@ -1572,7 +1569,7 @@ class MainPresenter extends GetxController {
               DateFormat('yyyy-MM-dd HH:mm:ss').format(subtractedDateTime);
           String timezone =
               TimeService.to.isEasternDaylightTime(dateTime) ? 'EDT' : 'EST';
-          datetime = '$lastDatetime $timezone';
+          datetime.add('$lastDatetime $timezone');
         } else {
           continue;
         }
@@ -1583,31 +1580,33 @@ class MainPresenter extends GetxController {
         List<List<double>> selectedPeriodMaPercentDifferencesListList = [];
         List<double> selectedPeriodFirstMaAndPricePercentDifferencesList = [];
 
-        for (int i = len; i > 1; i--) {
-          double newVal = sublist[subLen - (i - 1)].close!;
-          double oriVal = sublist[subLen - i].close!;
+        for (int i = 0; i < len - 1; i++) {
+          double newVal = sublist[i + 1].close!;
+          double oriVal = sublist[i].close!;
           double percentDiff = (newVal - oriVal) / oriVal;
 
           selectedPeriodPercentDifferencesList.add(percentDiff);
 
           List<double> selectedPeriodMaPercentDifferencesList = [];
           for (int l = 0; l < maLength; l++) {
-            double newVal = sublist[subLen - (i - 1)].trends[l]!;
-            double oriVal = sublist[subLen - i].trends[l]!;
+            double newVal = sublist[i + 1].trends[l]!;
+            double oriVal = sublist[i].trends[l]!;
             double maPercentDiff = (newVal - oriVal) / oriVal;
             selectedPeriodMaPercentDifferencesList.add(maPercentDiff);
           }
           selectedPeriodMaPercentDifferencesListList
               .add(selectedPeriodMaPercentDifferencesList);
         }
-        for (int l = 0; l < maLength; l++) {
+        for (int m = 0; m < maLength; m++) {
           selectedPeriodFirstMaAndPricePercentDifferencesList.add(
-              (sublist[subLen - len].trends[l]! - startingClosePrice) /
+              (sublist[l].trends[m]! - startingClosePrice) /
                   startingClosePrice);
         }
 
         List<List<double>> upper = [];
         List<List<double>> lower = [];
+        bool isLong = false;
+        bool isShort = false;
 
         // Loop other data
         for (int m = 0; m < sublist.length - len; m++) {
@@ -1657,14 +1656,104 @@ class MainPresenter extends GetxController {
                     comparePeriodMaPercentDifferencesListList,
                     tolerance);
             if (isMaMatched) {
-              trueCount += 1;
+              matchedTrendCount += 1;
+
+              List<double> matchedAdjustedCloseList = [];
+              double lastActualDifference =
+                  startingClosePrice / sublist[m + len - 1].close!;
+              for (int i = 0; i < len; i++) {
+                double adjustedClosePrice =
+                    sublist[m + i].close! * lastActualDifference;
+                matchedAdjustedCloseList.add(adjustedClosePrice);
+              }
+              if (matchedAdjustedCloseList.last >=
+                  matchedAdjustedCloseList.first) {
+                upper.add(matchedAdjustedCloseList);
+              } else if (matchedAdjustedCloseList.last <
+                  matchedAdjustedCloseList.first) {
+                lower.add(matchedAdjustedCloseList);
+              }
+              double upperProb = upper.length / (upper.length + lower.length);
+              double lowerProb = lower.length / (upper.length + lower.length);
+              if (upperProb == 1.0) {
+                if (upper.length < 4) {
+                  continue;
+                }
+                isLong = true;
+              } else if (upperProb > 0.7) {
+                if (upper.length < 5) {
+                  continue;
+                }
+                isLong = true;
+              } else if (lowerProb == 1.0) {
+                if (lower.length < 4) {
+                  continue;
+                }
+                isShort = true;
+              } else if (lowerProb > 0.7) {
+                if (lower.length < 5) {
+                  continue;
+                }
+                isShort = true;
+              } else {
+                continue;
+              }
             }
           }
         }
+        if (isLong) {
+          double meanOfLastClosePrices = calculateMeanOfLastValues(upper);
+          if (meanOfLastClosePrices != 0.0 || meanOfLastClosePrices != 0) {
+            meanReturnRate = (meanOfLastClosePrices - startingClosePrice) /
+                startingClosePrice;
+            if (meanReturnRate <= 0.001) {
+              continue;
+            }
+          } else {
+            continue;
+          }
+          double min = findMinOfLastValues(lower);
+          if (min != 0.0) {
+            double minPercentageDifference =
+                (min - startingClosePrice) / startingClosePrice;
+            mdd = max(mdd, minPercentageDifference.abs());
+          } else {
+            continue;
+          }
+        } else if (isShort) {
+          double meanOfLastClosePrices = calculateMeanOfLastValues(lower);
+          if (meanOfLastClosePrices != 0.0 || meanOfLastClosePrices != 0) {
+            meanReturnRate = (meanOfLastClosePrices - startingClosePrice) /
+                startingClosePrice;
+            if (meanReturnRate >= -0.001) {
+              continue;
+            }
+          } else {
+            continue;
+          }
+          double thisMax = findMaxOfLastValues(upper);
+          if (thisMax != 0.0) {
+            double maxPercentageDifference =
+                (thisMax - startingClosePrice) / startingClosePrice;
+            mdd = max(mdd, maxPercentageDifference.abs());
+          } else {
+            continue;
+          }
+        } else {
+          continue;
+        }
+
+        // TODO: Check the number of trend go to the opposite side
+
+        // TODO: Check if hit the opposite side ceiling or bottom
+
+        // TODO: Save results one by one into listList
       }
 
       splitCandleLists.removeAt(randomIndex);
     }
+
+    // TODO: Export CSV to device's local file directory
 
     // TODO: Stop backtest loading effect
   }
