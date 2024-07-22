@@ -1236,7 +1236,7 @@ class MainPresenter extends GetxController {
               (min - startingClosePrice) / startingClosePrice;
           Future.microtask(() {
             expectedMdd.value =
-                '-${minPercentageDifference.abs().toStringAsFixed(4)}';
+                '-${(minPercentageDifference.abs() * 100).toStringAsFixed(4)}';
           });
         } else {
           Future.microtask(() {
@@ -1268,7 +1268,7 @@ class MainPresenter extends GetxController {
               (max - startingClosePrice) / startingClosePrice;
           Future.microtask(() {
             expectedMdd.value =
-                '+${maxPercentageDifference.toStringAsFixed(4)}';
+                '+${(maxPercentageDifference * 100).toStringAsFixed(4)}';
           });
         } else {
           Future.microtask(() {
@@ -1311,17 +1311,17 @@ class MainPresenter extends GetxController {
           if (maxPercentageDifference > minPercentageDifference) {
             Future.microtask(() {
               expectedMdd.value =
-                  '±${maxPercentageDifference.abs().toStringAsFixed(4)}';
+                  '±${(maxPercentageDifference * 100).abs().toStringAsFixed(4)}';
             });
           } else if (minPercentageDifference > maxPercentageDifference) {
             Future.microtask(() {
               expectedMdd.value =
-                  '±${minPercentageDifference.abs().toStringAsFixed(4)}';
+                  '±${(minPercentageDifference * 100).abs().toStringAsFixed(4)}';
             });
           } else {
             Future.microtask(() {
               expectedMdd.value =
-                  '±${maxPercentageDifference.abs().toStringAsFixed(4)}';
+                  '±${(maxPercentageDifference * 100).abs().toStringAsFixed(4)}';
             });
           }
         } else {
@@ -1370,9 +1370,10 @@ class MainPresenter extends GetxController {
         }
       }
 
-      if (expectedMdd.value != '0' &&
-          expectedMdd.value != '0.0' &&
-          expectedMdd.value != '') {
+      if (expectedMdd.value == '0' ||
+          expectedMdd.value == '0.0' ||
+          expectedMdd.value == '0.000' ||
+          expectedMdd.value == '') {
         Future.microtask(() {
           hitCeilingOrFloor.value = false;
         });
@@ -1381,18 +1382,21 @@ class MainPresenter extends GetxController {
         int hitOppositeCeilingOrBottomCount = 0;
         if (isLong.value) {
           for (double value in spots) {
+            value = ((value - startingClosePrice) / startingClosePrice) * 100;
             if (value <= -mdd) {
               hitOppositeCeilingOrBottomCount++;
             }
           }
         } else if (isShort.value) {
           for (double value in spots) {
+            value = ((value - startingClosePrice) / startingClosePrice) * 100;
             if (value >= mdd) {
               hitOppositeCeilingOrBottomCount++;
             }
           }
         } else {
           for (double value in spots) {
+            value = ((value - startingClosePrice) / startingClosePrice) * 100;
             if (value <= -mdd || value >= mdd) {
               hitOppositeCeilingOrBottomCount++;
             }
@@ -1658,6 +1662,7 @@ class MainPresenter extends GetxController {
             if (isMaMatched) {
               matchedTrendCount += 1;
 
+              // Probability calculation and amount of matched trends
               List<double> matchedAdjustedCloseList = [];
               double lastActualDifference =
                   startingClosePrice / sublist[m + len - 1].close!;
@@ -1701,6 +1706,7 @@ class MainPresenter extends GetxController {
             }
           }
         }
+        // Mean return rate
         if (isLong) {
           double meanOfLastClosePrices = calculateMeanOfLastValues(upper);
           if (meanOfLastClosePrices != 0.0 || meanOfLastClosePrices != 0) {
@@ -1743,38 +1749,58 @@ class MainPresenter extends GetxController {
           continue;
         }
 
-        // TODO: Check the number of trend go to the opposite side
+        // Check the number of trend go to the opposite side
         int hitOppositeCeilingOrBottomCount = 0;
         if (isLong) {
-          for (double value in spots) {
-            if (value <= -mdd) {
-              hitOppositeCeilingOrBottomCount++;
+          for (List<double> trend in upper) {
+            for (double value in trend) {
+              double percentChange =
+                  (value - startingClosePrice) / startingClosePrice;
+              if (percentChange <= -mdd) {
+                hitOppositeCeilingOrBottomCount++;
+              }
             }
           }
         } else if (isShort) {
-          for (double value in spots) {
-            if (value >= mdd) {
-              hitOppositeCeilingOrBottomCount++;
+          for (List<double> trend in lower) {
+            for (double value in trend) {
+              double percentChange =
+                  (value - startingClosePrice) / startingClosePrice;
+              if (percentChange >= mdd) {
+                hitOppositeCeilingOrBottomCount++;
+              }
             }
           }
         } else {
-          for (double value in spots) {
-            if (value <= -mdd || value >= mdd) {
-              hitOppositeCeilingOrBottomCount++;
-            }
-          }
+          continue;
         }
         if (hitOppositeCeilingOrBottomCount >= subLength.value ~/ 3) {
-          Future.microtask(() {
-            hitCeilingOrFloor.value = true;
-          });
-        } else {
-          Future.microtask(() {
-            hitCeilingOrFloor.value = false;
-          });
+          continue;
         }
 
-        // TODO: Check if hit the opposite side ceiling or bottom
+        // Check if hit the opposite side ceiling or bottom
+        int goOppositeCount = 0;
+        if (isLong) {
+          for (List<double> trend in upper) {
+            for (double value in trend) {
+              if (value < startingClosePrice) {
+                goOppositeCount++;
+              }
+            }
+          }
+        } else if (isShort) {
+          for (List<double> trend in lower) {
+            for (double value in trend) {
+              if (value > startingClosePrice) {
+                goOppositeCount++;
+              }
+            }
+          }
+        }
+        int halfSubLength = subLength.value ~/ 2;
+        if (goOppositeCount >= halfSubLength) {
+          continue;
+        }
 
         // TODO: Save results one by one into listList
       }
