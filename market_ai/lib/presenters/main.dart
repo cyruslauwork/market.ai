@@ -1744,6 +1744,35 @@ class MainPresenter extends GetxController {
         }
 
         // TODO: Check the number of trend go to the opposite side
+        int hitOppositeCeilingOrBottomCount = 0;
+        if (isLong) {
+          for (double value in spots) {
+            if (value <= -mdd) {
+              hitOppositeCeilingOrBottomCount++;
+            }
+          }
+        } else if (isShort) {
+          for (double value in spots) {
+            if (value >= mdd) {
+              hitOppositeCeilingOrBottomCount++;
+            }
+          }
+        } else {
+          for (double value in spots) {
+            if (value <= -mdd || value >= mdd) {
+              hitOppositeCeilingOrBottomCount++;
+            }
+          }
+        }
+        if (hitOppositeCeilingOrBottomCount >= subLength.value ~/ 3) {
+          Future.microtask(() {
+            hitCeilingOrFloor.value = true;
+          });
+        } else {
+          Future.microtask(() {
+            hitCeilingOrFloor.value = false;
+          });
+        }
 
         // TODO: Check if hit the opposite side ceiling or bottom
 
