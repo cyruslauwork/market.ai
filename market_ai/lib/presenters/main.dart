@@ -1491,8 +1491,10 @@ class MainPresenter extends GetxController {
       'Datetime',
       'Selected',
       'Probability',
-      'Mean Return Rate',
+      'Expected Mean Return Rate',
+      'Actual Return Rate',
       'Matched Trend Count',
+      'Trend Go/Hit Oppo.',
       'Hit Rate (after first 30 mins)',
       'MDD',
       'Fund Remaining (commission deducted)',
@@ -1529,6 +1531,11 @@ class MainPresenter extends GetxController {
     final random = Random();
     final int tolerance = MainPresenter.to.tolerance.value;
 
+    double hitRate = 0.0;
+    double mdd = 0.0;
+    double initialFund = 10000;
+    int selected = len;
+
     while (splitCandleLists.isNotEmpty) {
       final randomIndex = random.nextInt(splitCandleLists.length);
       final sublist = splitCandleLists[randomIndex];
@@ -1536,16 +1543,12 @@ class MainPresenter extends GetxController {
 
       // TODO: Show the remaining number of backtest data
 
-      double hitRate = 0.0;
-      double mdd = 0.0;
-      double initialFund = 10000;
-
       for (int l = 0; l < subLen; l++) {
         int id = l;
         List<String> datetime = [];
-        int selected = len;
         double prob = 0.0;
-        double meanReturnRate = 0.0;
+        double expectedMeanReturnRate = 0.0;
+        double actualReturnRate = 0.0;
         int matchedTrendCount = 0;
         List<List<double>> closePrices = [];
 
@@ -1662,7 +1665,7 @@ class MainPresenter extends GetxController {
             if (isMaMatched) {
               matchedTrendCount += 1;
 
-              // Probability calculation and amount of matched trends
+              // Store the adjusted close prices into different lists
               List<double> matchedAdjustedCloseList = [];
               double lastActualDifference =
                   startingClosePrice / sublist[m + len - 1].close!;
@@ -1678,6 +1681,7 @@ class MainPresenter extends GetxController {
                   matchedAdjustedCloseList.first) {
                 lower.add(matchedAdjustedCloseList);
               }
+              // Probability calculation and amount of matched trends
               double upperProb = upper.length / (upper.length + lower.length);
               double lowerProb = lower.length / (upper.length + lower.length);
               if (upperProb == 1.0) {
@@ -1706,13 +1710,15 @@ class MainPresenter extends GetxController {
             }
           }
         }
+
         // Mean return rate
         if (isLong) {
           double meanOfLastClosePrices = calculateMeanOfLastValues(upper);
           if (meanOfLastClosePrices != 0.0 || meanOfLastClosePrices != 0) {
-            meanReturnRate = (meanOfLastClosePrices - startingClosePrice) /
-                startingClosePrice;
-            if (meanReturnRate <= 0.001) {
+            expectedMeanReturnRate =
+                (meanOfLastClosePrices - startingClosePrice) /
+                    startingClosePrice;
+            if (expectedMeanReturnRate <= 0.001) {
               continue;
             }
           } else {
@@ -1729,9 +1735,10 @@ class MainPresenter extends GetxController {
         } else if (isShort) {
           double meanOfLastClosePrices = calculateMeanOfLastValues(lower);
           if (meanOfLastClosePrices != 0.0 || meanOfLastClosePrices != 0) {
-            meanReturnRate = (meanOfLastClosePrices - startingClosePrice) /
-                startingClosePrice;
-            if (meanReturnRate >= -0.001) {
+            expectedMeanReturnRate =
+                (meanOfLastClosePrices - startingClosePrice) /
+                    startingClosePrice;
+            if (expectedMeanReturnRate >= -0.001) {
               continue;
             }
           } else {
@@ -1748,6 +1755,13 @@ class MainPresenter extends GetxController {
         } else {
           continue;
         }
+
+        // TODO: Pick up a trend randomly from upper/lower by overall probability
+        // Pseudo code:
+        // actualReturnRate = the trend last close price's return rate
+
+        // TODO: Modify Hit Oppo. and Go Oppo. code to only fit a single trend
+        // TODO: Get the failed trend last close price return rate as actual return rate
 
         // Check the number of trend go to the opposite side
         int hitOppositeCeilingOrBottomCount = 0;
@@ -1802,7 +1816,13 @@ class MainPresenter extends GetxController {
           continue;
         }
 
+        // TODO: Calculate the return of a (Micro E-mini S&P 500 Index Futures) transaction
+        // by the return rate to get the index points (0.25) contract value (5 USD)
+        // and deduct commission
+        // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
+
         // TODO: Save results one by one into listList
+        listList.add([]);
       }
 
       splitCandleLists.removeAt(randomIndex);
