@@ -1759,6 +1759,14 @@ class MainPresenter extends GetxController {
         // TODO: Pick up a trend randomly from upper/lower by overall probability
         // Pseudo code:
         // actualReturnRate = the trend last close price's return rate
+        List<List<double>> combinedList = [];
+combinedList.addAll(upper);
+combinedList.addAll(lower);
+  int randomIndex = random.nextInt(combinedList.length);
+    // Get the randomly selected trend from the combinedList
+  List<double> randomTrend = combinedList[randomIndex];
+  double returnRate = (( randomTrend.last - startingClosePrice) / startingClosePrice);
+   actualReturnRate = double.parse(returnRate.toStringAsFixed(4));
 
         // TODO: Modify Hit Oppo. and Go Oppo. code to only fit a single trend
         // TODO: Get the failed trend last close price return rate as actual return rate
