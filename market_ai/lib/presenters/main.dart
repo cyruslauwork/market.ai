@@ -1756,71 +1756,79 @@ class MainPresenter extends GetxController {
           continue;
         }
 
-        // TODO: Pick up a trend randomly from upper/lower by overall probability
-        // Pseudo code:
-        // actualReturnRate = the trend last close price's return rate
+        // Pick up a trend randomly from upper/lower by overall probability
         List<List<double>> combinedList = [];
-combinedList.addAll(upper);
-combinedList.addAll(lower);
-  int randomIndex = random.nextInt(combinedList.length);
-    // Get the randomly selected trend from the combinedList
-  List<double> randomTrend = combinedList[randomIndex];
-  double returnRate = (( randomTrend.last - startingClosePrice) / startingClosePrice);
-   actualReturnRate = double.parse(returnRate.toStringAsFixed(4));
+        combinedList.addAll(upper);
+        combinedList.addAll(lower);
+        int randomIndex = random.nextInt(combinedList.length);
+        // Get the randomly selected trend from the combinedList
+        List<double> randomTrend = combinedList[randomIndex];
+        double returnRate =
+            ((randomTrend.last - startingClosePrice) / startingClosePrice);
+        actualReturnRate = double.parse(returnRate.toStringAsFixed(4));
 
-        // TODO: Modify Hit Oppo. and Go Oppo. code to only fit a single trend
-        // TODO: Get the failed trend last close price return rate as actual return rate
-
+        double lastReturnRate = 0.0;
         // Check the number of trend go to the opposite side
         int hitOppositeCeilingOrBottomCount = 0;
         if (isLong) {
-          for (List<double> trend in upper) {
-            for (double value in trend) {
-              double percentChange =
-                  (value - startingClosePrice) / startingClosePrice;
-              if (percentChange <= -mdd) {
-                hitOppositeCeilingOrBottomCount++;
-              }
+          for (int v = 0; v < randomTrend.length; v++) {
+            double percentChange =
+                (randomTrend[v] - startingClosePrice) / startingClosePrice;
+            if (percentChange <= -mdd) {
+              lastReturnRate =
+                  (randomTrend[v + yFinMinuteDelay] - startingClosePrice) /
+                      startingClosePrice;
+              hitOppositeCeilingOrBottomCount++;
             }
           }
         } else if (isShort) {
-          for (List<double> trend in lower) {
-            for (double value in trend) {
-              double percentChange =
-                  (value - startingClosePrice) / startingClosePrice;
-              if (percentChange >= mdd) {
-                hitOppositeCeilingOrBottomCount++;
-              }
+          for (int v = 0; v < randomTrend.length; v++) {
+            double percentChange =
+                (randomTrend[v] - startingClosePrice) / startingClosePrice;
+            if (percentChange >= mdd) {
+              lastReturnRate =
+                  (randomTrend[v + yFinMinuteDelay] - startingClosePrice) /
+                      startingClosePrice;
+              hitOppositeCeilingOrBottomCount++;
             }
           }
         } else {
           continue;
         }
         if (hitOppositeCeilingOrBottomCount >= subLength.value ~/ 3) {
+          // TODO: Get the failed trend last close price return and deduct the fund
+          // by the return rate to get the index points (0.25) contract value (5 USD)
+          // and deduct commission
+          // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
           continue;
         }
-
         // Check if hit the opposite side ceiling or bottom
         int goOppositeCount = 0;
         if (isLong) {
-          for (List<double> trend in upper) {
-            for (double value in trend) {
-              if (value < startingClosePrice) {
-                goOppositeCount++;
-              }
+          for (int v = 0; v < randomTrend.length; v++) {
+            if (randomTrend[v] < startingClosePrice) {
+              lastReturnRate =
+                  (randomTrend[v + yFinMinuteDelay] - startingClosePrice) /
+                      startingClosePrice;
+              goOppositeCount++;
             }
           }
         } else if (isShort) {
-          for (List<double> trend in lower) {
-            for (double value in trend) {
-              if (value > startingClosePrice) {
-                goOppositeCount++;
-              }
+          for (int v = 0; v < randomTrend.length; v++) {
+            if (randomTrend[v] > startingClosePrice) {
+              lastReturnRate =
+                  (randomTrend[v + yFinMinuteDelay] - startingClosePrice) /
+                      startingClosePrice;
+              goOppositeCount++;
             }
           }
         }
         int halfSubLength = subLength.value ~/ 2;
         if (goOppositeCount >= halfSubLength) {
+          // TODO: Get the failed trend last close price return and deduct the fund
+          // by the return rate to get the index points (0.25) contract value (5 USD)
+          // and deduct commission
+          // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
           continue;
         }
 
