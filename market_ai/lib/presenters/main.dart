@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'dart:math';
@@ -1476,7 +1477,7 @@ class MainPresenter extends GetxController {
 
     int initIndex = 20; // Assume that the backtest must be minute data
     int len = length.value;
-    double commissions = 0.85;
+    double commissionsAndFees = (0.25 * 2) + (0.021 * 2);
     int yFinMinuteDelay = 1;
     int hitCount = 0;
     int noHitCount = 0;
@@ -1494,10 +1495,10 @@ class MainPresenter extends GetxController {
       'Expected Mean Return Rate',
       'Final Return Rate',
       'Matched Trend Count',
-      'Trend Go/Hit Oppo.',
+      'Trend Go/Hit Opp.',
       'Hit Rate (after first 30 mins)',
       'MDD',
-      'Fund Remaining (commission deducted)',
+      'Fund Remaining (commns. and fees deducted)',
       'Commission',
       'yFin Minute Delay',
       ...List.generate(len, (index) => 'Close Price ${index + 1}'),
@@ -1623,7 +1624,7 @@ class MainPresenter extends GetxController {
         bool isShort = false;
 
         // Look for similar trend(s)
-        for (int m = 0; m < candle.length - len; m++) {
+        for (int m = initIndex; m < candle.length - len - subLen; m++) {
           List<double> comparePeriodPercentDifferencesList = [];
 
           for (int i = 0; i < len - 1; i++) {
@@ -1670,8 +1671,6 @@ class MainPresenter extends GetxController {
                     comparePeriodMaPercentDifferencesListList,
                     tolerance);
             if (isMaMatched) {
-              matchedTrendCount += 1;
-
               // Store the adjusted close prices into different lists
               List<double> matchedAdjustedCloseList = [];
               double lastActualDifference =
@@ -1690,34 +1689,38 @@ class MainPresenter extends GetxController {
                 lower.add(matchedAdjustedCloseList);
                 lowerRowID.add(m);
               }
-              // Probability calculation and amount of matched trends
-              double upperProb = upper.length / (upper.length + lower.length);
-              double lowerProb = lower.length / (upper.length + lower.length);
-              if (upperProb == 1.0) {
-                if (upper.length < 4) {
-                  continue;
-                }
-                isLong = true;
-              } else if (upperProb > 0.7) {
-                if (upper.length < 5) {
-                  continue;
-                }
-                isLong = true;
-              } else if (lowerProb == 1.0) {
-                if (lower.length < 4) {
-                  continue;
-                }
-                isShort = true;
-              } else if (lowerProb > 0.7) {
-                if (lower.length < 5) {
-                  continue;
-                }
-                isShort = true;
-              } else {
-                continue;
-              }
             }
           }
+        }
+
+        // Probability calculation and amount of matched trends
+        double upperProb = upper.length / (upper.length + lower.length);
+        double lowerProb = lower.length / (upper.length + lower.length);
+        // Round to 3 decimal places
+        upperProb = double.parse(upperProb.toStringAsFixed(4));
+        lowerProb = double.parse(lowerProb.toStringAsFixed(4));
+        if (upperProb.toInt() == 1) {
+          if (upper.length < 4) {
+            continue;
+          }
+          isLong = true;
+        } else if (upperProb > 0.7) {
+          if (upper.length < 5) {
+            continue;
+          }
+          isLong = true;
+        } else if (lowerProb.toInt() == 1) {
+          if (lower.length < 4) {
+            continue;
+          }
+          isShort = true;
+        } else if (lowerProb > 0.7) {
+          if (lower.length < 5) {
+            continue;
+          }
+          isShort = true;
+        } else {
+          continue;
         }
 
         // Mean return rate
@@ -1778,6 +1781,7 @@ class MainPresenter extends GetxController {
         double returnRate = ((randomTrend.last - actualStartingClosePrice) /
             actualStartingClosePrice);
         finalReturnRate = double.parse(returnRate.toStringAsFixed(4));
+        int contractVal = 5;
 
         double lastActualReturn = 0.0;
         // Check the number of trend go to the opposite side
@@ -1820,12 +1824,13 @@ class MainPresenter extends GetxController {
           continue;
         }
         if (hitOppositeCeilingOrBottomCount >= subLength.value ~/ 3) {
-          // Get the failed trend last close price return and deduct the fund
-          // by the return rate to get the index points (0.25) contract value (5 USD)
-          // and deduct commission
+          // Get the failed trend last close price return and change the fund value
+          // - Index points (0.25) contract value (5 USD)
+          // - Commission fee
           // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
-          initialFund = initialFund + ((lastActualReturn * 10) ~/ 0.25 * 5);
-          continue;
+          initialFund = initialFund +
+              ((lastActualReturn * 10) ~/ 0.25 * contractVal) -
+              commissionsAndFees;
         }
         // Check if hit the opposite side ceiling or bottom
         int goOppositeCount = 0;
@@ -1862,22 +1867,57 @@ class MainPresenter extends GetxController {
         }
         int halfSubLength = subLength.value ~/ 2;
         if (goOppositeCount >= halfSubLength) {
-          // Get the failed trend last close price return and deduct the fund
-          // by the return rate to get the index points (0.25) contract value (5 USD)
-          // and deduct commission
+          // Get the failed trend last close price return and change the fund value
+          // - Index points (0.25) contract value (5 USD)
+          // - Commission fee
           // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
-          initialFund = initialFund + ((lastActualReturn * 10) ~/ 0.25 * 5);
-          continue;
+          initialFund = initialFund +
+              ((lastActualReturn * 10) ~/ 0.25 * contractVal) -
+              commissionsAndFees;
         }
 
-        // TODO: Calculate the return of a (Micro E-mini S&P 500 Index Futures) transaction
-        // by the return rate to get the index points (0.25) contract value (5 USD)
-        // and deduct commission
+        matchedTrendCount += 1;
+
+        combinedRowIDList.mapIndexed((index, element) {
+          DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
+              candle[element].timestamp * 1000,
+              isUtc: true);
+          DateTime subtractedDateTime =
+              TimeService.to.subtractHoursBasedOnTimezone(dateTime);
+          String lastDatetime =
+              DateFormat('yyyy-MM-dd HH:mm:ss').format(subtractedDateTime);
+          String timezone =
+              TimeService.to.isEasternDaylightTime(dateTime) ? 'EDT' : 'EST';
+          return datetime.add('$lastDatetime $timezone');
+        });
+
+        // Fund value changes due to the return of transaction
+        // - Index points (0.25) contract value (5 USD)
+        // - Commission fee
         // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
         // Use actualStartingClosePrice instead of startingClosePrice
+        initialFund = initialFund +
+            (((randomTrend.last - actualStartingClosePrice) * 10) ~/
+                0.25 *
+                contractVal) -
+            commissionsAndFees;
+
+        prob = isLong ? upperProb : lowerProb;
+        expectedMeanReturnRate =
+            double.parse(expectedMeanReturnRate.toStringAsFixed(4));
 
         // TODO: Save results one by one into listList
-        listList.add([]);
+        closePrices.mapIndexed((i, innerList) => listList.add([
+              id,
+              datetime[i],
+              selected,
+              prob,
+              expectedMeanReturnRate,
+              finalReturnRate,
+              matchedTrendCount,
+              ...innerList
+            ]));
+        matchedTrendCount = 0;
       }
 
       splitCandleLists.removeAt(randomIndex);
