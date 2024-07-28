@@ -162,10 +162,10 @@ class Msg extends Translations {
           'trends_not_enough':
               'The number of subsequent trends must be equal to or greater than 4.',
           'backtest_no_minute_data': 'Switch to minute data before backtesting',
-          'btn_backtest_spy_minute':
-              'Backtest SPY 1-minute data and export CSV',
+          'btn_backtest_spy_minute': 'Backtest SPY 1 min data and export CSV',
           'search_symbol_before_backtest':
               'Search the same financial instrument before backtesting',
+          'backtesting_disturbance_detected': 'Button disable when backtesting',
         },
         'zh_HK': {
           'app_name': '市場慧眼📈',
@@ -298,6 +298,7 @@ class Msg extends Translations {
           'backtest_no_minute_data': '回測前請切換到分鐘數據',
           'btn_backtest_spy_minute': '回測 SPY 1 分鐘數據並匯出 CSV',
           'search_symbol_before_backtest': '在回測之前搜尋相同的金融工具',
+          'backtesting_disturbance_detected': '在回測時禁用此按鈕',
         },
       };
 }

@@ -7,11 +7,11 @@ void exportCsv(List<List<dynamic>> listList, String fileName) async {
   String csvData = const ListToCsvConverter().convert(listList);
 
   // Get the path to the user's Desktop directory
-  Directory desktopDir = await getApplicationDocumentsDirectory();
-  String desktopPath = desktopDir.path;
+  Directory dir = await getApplicationDocumentsDirectory();
+  String dirPath = dir.path;
 
   // Create a folder called 'market.ai.csv' in the Desktop directory
-  String folderPath = '$desktopPath/market.ai.csv';
+  String folderPath = '$dirPath/market.ai.csv';
   Directory folderDir = Directory(folderPath);
   if (!folderDir.existsSync()) {
     folderDir.createSync();

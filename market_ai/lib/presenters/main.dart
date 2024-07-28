@@ -676,6 +676,12 @@ class MainPresenter extends GetxController {
   bool isSubsequentAnalyticsNotifierAdded = false;
   RxInt saCount = 0.obs;
 
+  // Backtest
+  RxBool isButtonDisabled = false.obs;
+  RxString isBacktesting = ''.obs;
+  RxInt backtestDataLen = 0.obs;
+  RxInt backtestDataRan = 0.obs;
+
   // A 2nd initialization will be triggered when starting the app
   @override
   void onInit() {
@@ -1470,7 +1476,9 @@ class MainPresenter extends GetxController {
       return;
     }
 
-    // TODO: Start backtest loading effect
+    // Start backtest loading effect
+    isButtonDisabled.value = true;
+    isBacktesting.value = symbol;
 
     List<List<dynamic>> listList = [];
     List<CandleData> candle = [];
@@ -1532,6 +1540,9 @@ class MainPresenter extends GetxController {
       splitCandleLists.add(sublist);
     }
 
+    // Show the remaining number of backtest data
+    backtestDataLen.value = splitCandleLists.length;
+
     // Randomly pick a list to run backtest
     final random = Random();
     final int tolerance = MainPresenter.to.tolerance.value;
@@ -1546,9 +1557,10 @@ class MainPresenter extends GetxController {
       final sublist = splitCandleLists[randomIndex];
       final subLen = sublist.length;
 
-      // TODO: Show the remaining number of backtest data
-
       for (int l = 0; l < subLen; l++) {
+        // Show the remaining number of backtest data
+        backtestDataRan.value += 1;
+
         int id = l;
         List<String> datetime = [];
         double prob = 0.0;
@@ -1952,13 +1964,17 @@ class MainPresenter extends GetxController {
       splitCandleLists.removeAt(randomIndex);
     }
 
-    // TODO: Export CSV to device's local file directory
+    // Export CSV to device's local file directory
     String fileName = '$symbol + _backtest_results';
     exportCsv(listList, fileName);
 
-    // TODO: Stop backtest loading effect
+    // Stop backtest loading effect
+    isButtonDisabled.value = false;
+    isBacktesting.value = '';
 
-    // TODO: Add backtesting buttons for all financial instrument
+    // Reset the remaining number of backtest data
+    backtestDataLen.value = 0;
+    backtestDataRan.value = 0;
   }
 
   /* Route */
@@ -2517,8 +2533,12 @@ class MainPresenter extends GetxController {
   Widget showCrossDataToggleBtn({required BuildContext context}) {
     if (hasMinuteData.value) {
       return IconButton(
-        onPressed: () =>
-            alwaysUseCrossDataToggle(!alwaysUseCrossData.value, context),
+        onPressed: isButtonDisabled.value
+            ? () => showScaffoldMessenger(
+                context: context,
+                localizedMsg: 'backtesting_disturbance_detected'.tr)
+            : () =>
+                alwaysUseCrossDataToggle(!alwaysUseCrossData.value, context),
         icon: Obx(
           () => Icon(
             MainPresenter.to.crossData.value,

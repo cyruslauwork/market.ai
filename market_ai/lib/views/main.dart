@@ -321,6 +321,16 @@ class MainView extends StatefulWidget {
             ),
             const Divider(),
             Obx(() {
+              if (MainPresenter.to.backtestDataLen.value != 0) {
+                return Text(
+                  '${MainPresenter.to.backtestDataRan.value}/${MainPresenter.to.backtestDataLen.value}',
+                  style: const TextTheme().sp5.w700,
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            }),
+            Obx(() {
               if (MainPresenter.to.hasSpyMinuteData.value) {
                 return Padding(
                   padding:
@@ -328,10 +338,15 @@ class MainView extends StatefulWidget {
                   child: Column(
                     children: [
                       ElevatedButton.icon(
-                        onPressed: () {
-                          IsarService().clearSpyData();
-                          MainPresenter.to.hasSpyMinuteData.value = false;
-                        },
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                IsarService().clearSpyData();
+                                MainPresenter.to.hasSpyMinuteData.value = false;
+                              },
                         icon: Icon(
                           Icons.clean_hands_rounded,
                           size: 10.h,
@@ -342,13 +357,27 @@ class MainView extends StatefulWidget {
                         ),
                       ),
                       ElevatedButton.icon(
-                        onPressed: () {
-                          MainPresenter.to.backtest('SPY', context);
-                        },
-                        icon: Icon(
-                          Icons.insights_outlined,
-                          size: 10.h,
-                        ),
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                MainPresenter.to.backtest('SPY', context);
+                              },
+                        icon: MainPresenter.to.isBacktesting.value == 'SPY'
+                            ? SizedBox(
+                                width: 10.w,
+                                height: 10.h,
+                                child: const CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(AppColor
+                                      .whiteColor), // Color of the loading indicator
+                                ),
+                              )
+                            : Icon(
+                                Icons.insights_outlined,
+                                size: 10.h,
+                              ),
                         label: Text(
                           'btn_backtest_spy_minute'.tr,
                           style: const TextTheme().sp5.w700,
@@ -364,20 +393,57 @@ class MainView extends StatefulWidget {
             Obx(() {
               if (MainPresenter.to.hasQqqMinuteData.value) {
                 return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 2.w),
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      IsarService().clearQqqData();
-                      MainPresenter.to.hasQqqMinuteData.value = false;
-                    },
-                    icon: Icon(
-                      Icons.clean_hands_rounded,
-                      size: 10.h,
-                    ),
-                    label: Text(
-                      'btn_clear_qqq_minute'.tr,
-                      style: const TextTheme().sp5.w700,
-                    ),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.5.h),
+                  child: Column(
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                IsarService().clearQqqData();
+                                MainPresenter.to.hasQqqMinuteData.value = false;
+                              },
+                        icon: Icon(
+                          Icons.clean_hands_rounded,
+                          size: 10.h,
+                        ),
+                        label: Text(
+                          'btn_clear_qqq_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                MainPresenter.to.backtest('QQQ', context);
+                              },
+                        icon: MainPresenter.to.isBacktesting.value == 'QQQ'
+                            ? SizedBox(
+                                width: 10.w,
+                                height: 10.h,
+                                child: const CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(AppColor
+                                      .whiteColor), // Color of the loading indicator
+                                ),
+                              )
+                            : Icon(
+                                Icons.insights_outlined,
+                                size: 10.h,
+                              ),
+                        label: Text(
+                          'btn_backtest_qqq_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                    ],
                   ),
                 );
               } else {
@@ -387,20 +453,57 @@ class MainView extends StatefulWidget {
             Obx(() {
               if (MainPresenter.to.hasUsoMinuteData.value) {
                 return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 2.w),
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      IsarService().clearUsoData();
-                      MainPresenter.to.hasUsoMinuteData.value = false;
-                    },
-                    icon: Icon(
-                      Icons.clean_hands_rounded,
-                      size: 10.h,
-                    ),
-                    label: Text(
-                      'btn_clear_uso_minute'.tr,
-                      style: const TextTheme().sp5.w700,
-                    ),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.5.h),
+                  child: Column(
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                IsarService().clearUsoData();
+                                MainPresenter.to.hasUsoMinuteData.value = false;
+                              },
+                        icon: Icon(
+                          Icons.clean_hands_rounded,
+                          size: 10.h,
+                        ),
+                        label: Text(
+                          'btn_clear_uso_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                MainPresenter.to.backtest('USO', context);
+                              },
+                        icon: MainPresenter.to.isBacktesting.value == 'USO'
+                            ? SizedBox(
+                                width: 10.w,
+                                height: 10.h,
+                                child: const CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(AppColor
+                                      .whiteColor), // Color of the loading indicator
+                                ),
+                              )
+                            : Icon(
+                                Icons.insights_outlined,
+                                size: 10.h,
+                              ),
+                        label: Text(
+                          'btn_backtest_uso_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                    ],
                   ),
                 );
               } else {
@@ -410,20 +513,57 @@ class MainView extends StatefulWidget {
             Obx(() {
               if (MainPresenter.to.hasGldMinuteData.value) {
                 return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 2.w),
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      IsarService().clearGldData();
-                      MainPresenter.to.hasGldMinuteData.value = false;
-                    },
-                    icon: Icon(
-                      Icons.clean_hands_rounded,
-                      size: 10.h,
-                    ),
-                    label: Text(
-                      'btn_clear_gld_minute'.tr,
-                      style: const TextTheme().sp5.w700,
-                    ),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.5.h),
+                  child: Column(
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                IsarService().clearGldData();
+                                MainPresenter.to.hasGldMinuteData.value = false;
+                              },
+                        icon: Icon(
+                          Icons.clean_hands_rounded,
+                          size: 10.h,
+                        ),
+                        label: Text(
+                          'btn_clear_gld_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                MainPresenter.to.backtest('GLD', context);
+                              },
+                        icon: MainPresenter.to.isBacktesting.value == 'GLD'
+                            ? SizedBox(
+                                width: 10.w,
+                                height: 10.h,
+                                child: const CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(AppColor
+                                      .whiteColor), // Color of the loading indicator
+                                ),
+                              )
+                            : Icon(
+                                Icons.insights_outlined,
+                                size: 10.h,
+                              ),
+                        label: Text(
+                          'btn_backtest_gld_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                    ],
                   ),
                 );
               } else {
@@ -433,20 +573,57 @@ class MainView extends StatefulWidget {
             Obx(() {
               if (MainPresenter.to.hasSlvMinuteData.value) {
                 return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 2.w),
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      IsarService().clearSlvData();
-                      MainPresenter.to.hasSlvMinuteData.value = false;
-                    },
-                    icon: Icon(
-                      Icons.clean_hands_rounded,
-                      size: 10.h,
-                    ),
-                    label: Text(
-                      'btn_clear_slv_minute'.tr,
-                      style: const TextTheme().sp5.w700,
-                    ),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.5.h),
+                  child: Column(
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                IsarService().clearSlvData();
+                                MainPresenter.to.hasSlvMinuteData.value = false;
+                              },
+                        icon: Icon(
+                          Icons.clean_hands_rounded,
+                          size: 10.h,
+                        ),
+                        label: Text(
+                          'btn_clear_slv_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                MainPresenter.to.backtest('SLV', context);
+                              },
+                        icon: MainPresenter.to.isBacktesting.value == 'SLV'
+                            ? SizedBox(
+                                width: 10.w,
+                                height: 10.h,
+                                child: const CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(AppColor
+                                      .whiteColor), // Color of the loading indicator
+                                ),
+                              )
+                            : Icon(
+                                Icons.insights_outlined,
+                                size: 10.h,
+                              ),
+                        label: Text(
+                          'btn_backtest_slv_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                    ],
                   ),
                 );
               } else {
@@ -456,20 +633,57 @@ class MainView extends StatefulWidget {
             Obx(() {
               if (MainPresenter.to.hasIwmMinuteData.value) {
                 return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 2.w),
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      IsarService().clearIwmData();
-                      MainPresenter.to.hasIwmMinuteData.value = false;
-                    },
-                    icon: Icon(
-                      Icons.clean_hands_rounded,
-                      size: 10.h,
-                    ),
-                    label: Text(
-                      'btn_clear_iwm_minute'.tr,
-                      style: const TextTheme().sp5.w700,
-                    ),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.5.h),
+                  child: Column(
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                IsarService().clearIwmData();
+                                MainPresenter.to.hasIwmMinuteData.value = false;
+                              },
+                        icon: Icon(
+                          Icons.clean_hands_rounded,
+                          size: 10.h,
+                        ),
+                        label: Text(
+                          'btn_clear_iwm_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                MainPresenter.to.backtest('IWM', context);
+                              },
+                        icon: MainPresenter.to.isBacktesting.value == 'IWM'
+                            ? SizedBox(
+                                width: 10.w,
+                                height: 10.h,
+                                child: const CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(AppColor
+                                      .whiteColor), // Color of the loading indicator
+                                ),
+                              )
+                            : Icon(
+                                Icons.insights_outlined,
+                                size: 10.h,
+                              ),
+                        label: Text(
+                          'btn_backtest_iwm_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                    ],
                   ),
                 );
               } else {
@@ -479,20 +693,57 @@ class MainView extends StatefulWidget {
             Obx(() {
               if (MainPresenter.to.hasXlkMinuteData.value) {
                 return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 2.w),
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      IsarService().clearXlkData();
-                      MainPresenter.to.hasXlkMinuteData.value = false;
-                    },
-                    icon: Icon(
-                      Icons.clean_hands_rounded,
-                      size: 10.h,
-                    ),
-                    label: Text(
-                      'btn_clear_xlk_minute'.tr,
-                      style: const TextTheme().sp5.w700,
-                    ),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.5.h),
+                  child: Column(
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                IsarService().clearXlkData();
+                                MainPresenter.to.hasXlkMinuteData.value = false;
+                              },
+                        icon: Icon(
+                          Icons.clean_hands_rounded,
+                          size: 10.h,
+                        ),
+                        label: Text(
+                          'btn_clear_xlk_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                MainPresenter.to.backtest('XLK', context);
+                              },
+                        icon: MainPresenter.to.isBacktesting.value == 'XLK'
+                            ? SizedBox(
+                                width: 10.w,
+                                height: 10.h,
+                                child: const CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(AppColor
+                                      .whiteColor), // Color of the loading indicator
+                                ),
+                              )
+                            : Icon(
+                                Icons.insights_outlined,
+                                size: 10.h,
+                              ),
+                        label: Text(
+                          'btn_backtest_xlk_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                    ],
                   ),
                 );
               } else {
@@ -502,20 +753,58 @@ class MainView extends StatefulWidget {
             Obx(() {
               if (MainPresenter.to.hasAaplMinuteData.value) {
                 return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 2.w),
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      IsarService().clearAaplData();
-                      MainPresenter.to.hasAaplMinuteData.value = false;
-                    },
-                    icon: Icon(
-                      Icons.clean_hands_rounded,
-                      size: 10.h,
-                    ),
-                    label: Text(
-                      'btn_clear_aapl_minute'.tr,
-                      style: const TextTheme().sp5.w700,
-                    ),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.5.h),
+                  child: Column(
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                IsarService().clearAaplData();
+                                MainPresenter.to.hasAaplMinuteData.value =
+                                    false;
+                              },
+                        icon: Icon(
+                          Icons.clean_hands_rounded,
+                          size: 10.h,
+                        ),
+                        label: Text(
+                          'btn_clear_aapl_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                MainPresenter.to.backtest('AAPL', context);
+                              },
+                        icon: MainPresenter.to.isBacktesting.value == 'AAPL'
+                            ? SizedBox(
+                                width: 10.w,
+                                height: 10.h,
+                                child: const CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(AppColor
+                                      .whiteColor), // Color of the loading indicator
+                                ),
+                              )
+                            : Icon(
+                                Icons.insights_outlined,
+                                size: 10.h,
+                              ),
+                        label: Text(
+                          'btn_backtest_aapl_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                    ],
                   ),
                 );
               } else {
@@ -525,20 +814,57 @@ class MainView extends StatefulWidget {
             Obx(() {
               if (MainPresenter.to.hasBaMinuteData.value) {
                 return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 2.w),
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      IsarService().clearBaData();
-                      MainPresenter.to.hasBaMinuteData.value = false;
-                    },
-                    icon: Icon(
-                      Icons.clean_hands_rounded,
-                      size: 10.h,
-                    ),
-                    label: Text(
-                      'btn_clear_ba_minute'.tr,
-                      style: const TextTheme().sp5.w700,
-                    ),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.5.h),
+                  child: Column(
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                IsarService().clearBaData();
+                                MainPresenter.to.hasBaMinuteData.value = false;
+                              },
+                        icon: Icon(
+                          Icons.clean_hands_rounded,
+                          size: 10.h,
+                        ),
+                        label: Text(
+                          'btn_clear_ba_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                MainPresenter.to.backtest('BA', context);
+                              },
+                        icon: MainPresenter.to.isBacktesting.value == 'BA'
+                            ? SizedBox(
+                                width: 10.w,
+                                height: 10.h,
+                                child: const CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(AppColor
+                                      .whiteColor), // Color of the loading indicator
+                                ),
+                              )
+                            : Icon(
+                                Icons.insights_outlined,
+                                size: 10.h,
+                              ),
+                        label: Text(
+                          'btn_backtest_ba_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                    ],
                   ),
                 );
               } else {
@@ -548,20 +874,57 @@ class MainView extends StatefulWidget {
             Obx(() {
               if (MainPresenter.to.hasBacMinuteData.value) {
                 return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 2.w),
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      IsarService().clearBacData();
-                      MainPresenter.to.hasBacMinuteData.value = false;
-                    },
-                    icon: Icon(
-                      Icons.clean_hands_rounded,
-                      size: 10.h,
-                    ),
-                    label: Text(
-                      'btn_clear_bac_minute'.tr,
-                      style: const TextTheme().sp5.w700,
-                    ),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.5.h),
+                  child: Column(
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                IsarService().clearBacData();
+                                MainPresenter.to.hasBacMinuteData.value = false;
+                              },
+                        icon: Icon(
+                          Icons.clean_hands_rounded,
+                          size: 10.h,
+                        ),
+                        label: Text(
+                          'btn_clear_bac_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                MainPresenter.to.backtest('BAC', context);
+                              },
+                        icon: MainPresenter.to.isBacktesting.value == 'BAC'
+                            ? SizedBox(
+                                width: 10.w,
+                                height: 10.h,
+                                child: const CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(AppColor
+                                      .whiteColor), // Color of the loading indicator
+                                ),
+                              )
+                            : Icon(
+                                Icons.insights_outlined,
+                                size: 10.h,
+                              ),
+                        label: Text(
+                          'btn_backtest_bac_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                    ],
                   ),
                 );
               } else {
@@ -571,20 +934,57 @@ class MainView extends StatefulWidget {
             Obx(() {
               if (MainPresenter.to.hasMcdMinuteData.value) {
                 return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 2.w),
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      IsarService().clearMcdData();
-                      MainPresenter.to.hasMcdMinuteData.value = false;
-                    },
-                    icon: Icon(
-                      Icons.clean_hands_rounded,
-                      size: 10.h,
-                    ),
-                    label: Text(
-                      'btn_clear_mcd_minute'.tr,
-                      style: const TextTheme().sp5.w700,
-                    ),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.5.h),
+                  child: Column(
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                IsarService().clearMcdData();
+                                MainPresenter.to.hasMcdMinuteData.value = false;
+                              },
+                        icon: Icon(
+                          Icons.clean_hands_rounded,
+                          size: 10.h,
+                        ),
+                        label: Text(
+                          'btn_clear_mcd_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                MainPresenter.to.backtest('MCD', context);
+                              },
+                        icon: MainPresenter.to.isBacktesting.value == 'MCD'
+                            ? SizedBox(
+                                width: 10.w,
+                                height: 10.h,
+                                child: const CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(AppColor
+                                      .whiteColor), // Color of the loading indicator
+                                ),
+                              )
+                            : Icon(
+                                Icons.insights_outlined,
+                                size: 10.h,
+                              ),
+                        label: Text(
+                          'btn_backtest_mcd_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                    ],
                   ),
                 );
               } else {
@@ -594,20 +994,58 @@ class MainView extends StatefulWidget {
             Obx(() {
               if (MainPresenter.to.hasNvdaMinuteData.value) {
                 return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 2.w),
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      IsarService().clearNvdaData();
-                      MainPresenter.to.hasNvdaMinuteData.value = false;
-                    },
-                    icon: Icon(
-                      Icons.clean_hands_rounded,
-                      size: 10.h,
-                    ),
-                    label: Text(
-                      'btn_clear_nvda_minute'.tr,
-                      style: const TextTheme().sp5.w700,
-                    ),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.5.h),
+                  child: Column(
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                IsarService().clearNvdaData();
+                                MainPresenter.to.hasNvdaMinuteData.value =
+                                    false;
+                              },
+                        icon: Icon(
+                          Icons.clean_hands_rounded,
+                          size: 10.h,
+                        ),
+                        label: Text(
+                          'btn_clear_nvda_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                MainPresenter.to.backtest('NVDA', context);
+                              },
+                        icon: MainPresenter.to.isBacktesting.value == 'NVDA'
+                            ? SizedBox(
+                                width: 10.w,
+                                height: 10.h,
+                                child: const CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(AppColor
+                                      .whiteColor), // Color of the loading indicator
+                                ),
+                              )
+                            : Icon(
+                                Icons.insights_outlined,
+                                size: 10.h,
+                              ),
+                        label: Text(
+                          'btn_backtest_nvda_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                    ],
                   ),
                 );
               } else {
@@ -617,20 +1055,58 @@ class MainView extends StatefulWidget {
             Obx(() {
               if (MainPresenter.to.hasMsftMinuteData.value) {
                 return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 2.w),
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      IsarService().clearMsftData();
-                      MainPresenter.to.hasMsftMinuteData.value = false;
-                    },
-                    icon: Icon(
-                      Icons.clean_hands_rounded,
-                      size: 10.h,
-                    ),
-                    label: Text(
-                      'btn_clear_msft_minute'.tr,
-                      style: const TextTheme().sp5.w700,
-                    ),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.5.h),
+                  child: Column(
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                IsarService().clearMsftData();
+                                MainPresenter.to.hasMsftMinuteData.value =
+                                    false;
+                              },
+                        icon: Icon(
+                          Icons.clean_hands_rounded,
+                          size: 10.h,
+                        ),
+                        label: Text(
+                          'btn_clear_msft_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                MainPresenter.to.backtest('MSFT', context);
+                              },
+                        icon: MainPresenter.to.isBacktesting.value == 'MSFT'
+                            ? SizedBox(
+                                width: 10.w,
+                                height: 10.h,
+                                child: const CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(AppColor
+                                      .whiteColor), // Color of the loading indicator
+                                ),
+                              )
+                            : Icon(
+                                Icons.insights_outlined,
+                                size: 10.h,
+                              ),
+                        label: Text(
+                          'btn_backtest_msft_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                    ],
                   ),
                 );
               } else {
@@ -640,20 +1116,57 @@ class MainView extends StatefulWidget {
             Obx(() {
               if (MainPresenter.to.hasGskMinuteData.value) {
                 return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 2.w),
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      IsarService().clearGskData();
-                      MainPresenter.to.hasGskMinuteData.value = false;
-                    },
-                    icon: Icon(
-                      Icons.clean_hands_rounded,
-                      size: 10.h,
-                    ),
-                    label: Text(
-                      'btn_clear_gsk_minute'.tr,
-                      style: const TextTheme().sp5.w700,
-                    ),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.5.h),
+                  child: Column(
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                IsarService().clearGskData();
+                                MainPresenter.to.hasGskMinuteData.value = false;
+                              },
+                        icon: Icon(
+                          Icons.clean_hands_rounded,
+                          size: 10.h,
+                        ),
+                        label: Text(
+                          'btn_clear_gsk_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                MainPresenter.to.backtest('GSK', context);
+                              },
+                        icon: MainPresenter.to.isBacktesting.value == 'GSK'
+                            ? SizedBox(
+                                width: 10.w,
+                                height: 10.h,
+                                child: const CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(AppColor
+                                      .whiteColor), // Color of the loading indicator
+                                ),
+                              )
+                            : Icon(
+                                Icons.insights_outlined,
+                                size: 10.h,
+                              ),
+                        label: Text(
+                          'btn_backtest_gsk_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                    ],
                   ),
                 );
               } else {
@@ -663,20 +1176,58 @@ class MainView extends StatefulWidget {
             Obx(() {
               if (MainPresenter.to.hasTslaMinuteData.value) {
                 return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 2.w),
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      IsarService().clearTslaData();
-                      MainPresenter.to.hasTslaMinuteData.value = false;
-                    },
-                    icon: Icon(
-                      Icons.clean_hands_rounded,
-                      size: 10.h,
-                    ),
-                    label: Text(
-                      'btn_clear_tsla_minute'.tr,
-                      style: const TextTheme().sp5.w700,
-                    ),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.5.h),
+                  child: Column(
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                IsarService().clearTslaData();
+                                MainPresenter.to.hasTslaMinuteData.value =
+                                    false;
+                              },
+                        icon: Icon(
+                          Icons.clean_hands_rounded,
+                          size: 10.h,
+                        ),
+                        label: Text(
+                          'btn_clear_tsla_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                MainPresenter.to.backtest('TSLA', context);
+                              },
+                        icon: MainPresenter.to.isBacktesting.value == 'TSLA'
+                            ? SizedBox(
+                                width: 10.w,
+                                height: 10.h,
+                                child: const CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(AppColor
+                                      .whiteColor), // Color of the loading indicator
+                                ),
+                              )
+                            : Icon(
+                                Icons.insights_outlined,
+                                size: 10.h,
+                              ),
+                        label: Text(
+                          'btn_backtest_tsla_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                    ],
                   ),
                 );
               } else {
@@ -686,20 +1237,58 @@ class MainView extends StatefulWidget {
             Obx(() {
               if (MainPresenter.to.hasAmznMinuteData.value) {
                 return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 2.w),
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      IsarService().clearAmznData();
-                      MainPresenter.to.hasAmznMinuteData.value = false;
-                    },
-                    icon: Icon(
-                      Icons.clean_hands_rounded,
-                      size: 10.h,
-                    ),
-                    label: Text(
-                      'btn_clear_amzn_minute'.tr,
-                      style: const TextTheme().sp5.w700,
-                    ),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.5.h),
+                  child: Column(
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                IsarService().clearAmznData();
+                                MainPresenter.to.hasAmznMinuteData.value =
+                                    false;
+                              },
+                        icon: Icon(
+                          Icons.clean_hands_rounded,
+                          size: 10.h,
+                        ),
+                        label: Text(
+                          'btn_clear_amzn_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: MainPresenter.to.isButtonDisabled.value
+                            ? () => MainPresenter.to.showScaffoldMessenger(
+                                context: context,
+                                localizedMsg:
+                                    'backtesting_disturbance_detected'.tr)
+                            : () {
+                                MainPresenter.to.backtest('AMZN', context);
+                              },
+                        icon: MainPresenter.to.isBacktesting.value == 'AMZN'
+                            ? SizedBox(
+                                width: 10.w,
+                                height: 10.h,
+                                child: const CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(AppColor
+                                      .whiteColor), // Color of the loading indicator
+                                ),
+                              )
+                            : Icon(
+                                Icons.insights_outlined,
+                                size: 10.h,
+                              ),
+                        label: Text(
+                          'btn_backtest_amzn_minute'.tr,
+                          style: const TextTheme().sp5.w700,
+                        ),
+                      ),
+                    ],
                   ),
                 );
               } else {
