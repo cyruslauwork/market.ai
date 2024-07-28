@@ -1476,10 +1476,6 @@ class MainPresenter extends GetxController {
       return;
     }
 
-    // Start backtest loading effect
-    isButtonDisabled.value = true;
-    isBacktesting.value = symbol;
-
     List<List<dynamic>> listList = [];
     List<CandleData> candle = [];
 
@@ -1521,6 +1517,10 @@ class MainPresenter extends GetxController {
       return;
     }
 
+    // Start backtest loading effect
+    isButtonDisabled.value = true;
+    isBacktesting.value = symbol;
+
     bool hasMa = candle.last.trends.isNotEmpty;
     int maLength = candle.last.trends.length;
 
@@ -1531,11 +1531,13 @@ class MainPresenter extends GetxController {
       maLength = candle.last.trends.length;
     }
 
+    candle = candle.sublist(initIndex);
+
     // Split the candle list of list
     List<List<CandleData>> splitCandleLists = [];
     final int sublistSize = (candle.length / 10).ceil();
 
-    for (int i = initIndex; i < candle.length; i += sublistSize) {
+    for (int i = 0; i < candle.length; i += sublistSize) {
       final sublist = candle.sublist(i, i + sublistSize);
       splitCandleLists.add(sublist);
     }
@@ -1557,7 +1559,7 @@ class MainPresenter extends GetxController {
       final sublist = splitCandleLists[randomIndex];
       final subLen = sublist.length;
 
-      for (int l = 0; l < subLen; l++) {
+      for (int l = 0; l < subLen - selected + 1; l++) {
         // Show the remaining number of backtest data
         backtestDataRan.value += 1;
 
@@ -1602,22 +1604,24 @@ class MainPresenter extends GetxController {
 
         // Selecting a trend
         double startingClosePrice = sublist[l].close!;
-        double actualStartingClosePrice = sublist[l + yFinMinuteDelay].close!;
+        double lastClosePrice = sublist[l + len - 1].close!;
+        double actualLastClosePrice =
+            sublist[l + len - 1 + yFinMinuteDelay].close!;
         List<double> selectedPeriodPercentDifferencesList = [];
         List<List<double>> selectedPeriodMaPercentDifferencesListList = [];
         List<double> selectedPeriodFirstMaAndPricePercentDifferencesList = [];
 
-        for (int i = 0; i < len - 1; i++) {
-          double newVal = sublist[i + 1].close!;
-          double oriVal = sublist[i].close!;
+        for (int i = 0; i < len; i++) {
+          double newVal = sublist[l + i + 1].close!;
+          double oriVal = sublist[l + i].close!;
           double percentDiff = (newVal - oriVal) / oriVal;
 
           selectedPeriodPercentDifferencesList.add(percentDiff);
 
           List<double> selectedPeriodMaPercentDifferencesList = [];
-          for (int l = 0; l < maLength; l++) {
-            double newVal = sublist[i + 1].trends[l]!;
-            double oriVal = sublist[i].trends[l]!;
+          for (int n = 0; n < maLength; n++) {
+            double newVal = sublist[l + i + 1].trends[n]!;
+            double oriVal = sublist[l + i].trends[n]!;
             double maPercentDiff = (newVal - oriVal) / oriVal;
             selectedPeriodMaPercentDifferencesList.add(maPercentDiff);
           }
@@ -1636,12 +1640,15 @@ class MainPresenter extends GetxController {
         List<int> lowerRowID = [];
         bool isLong = false;
         bool isShort = false;
+        int subsequentLen = subLength.value;
 
         // Look for similar trend(s)
-        for (int m = initIndex; m < candle.length - len - subLen; m++) {
+        for (int m = initIndex;
+            m < candle.length - len - subsequentLen - 1;
+            m++) {
           List<double> comparePeriodPercentDifferencesList = [];
 
-          for (int i = 0; i < len - 1; i++) {
+          for (int i = 0; i < len; i++) {
             double percentDiff =
                 (candle[m + i + 1].close! - candle[m + i].close!) /
                     (candle[m + i].close!);
@@ -1660,7 +1667,7 @@ class MainPresenter extends GetxController {
             List<List<double>> comparePeriodMaPercentDifferencesListList = [];
             double compareFirstPrice = candle[m].close!;
 
-            for (int n = 0; n < len - 1; n++) {
+            for (int n = 0; n < len; n++) {
               List<double> comparePeriodMaPercentDifferencesList = [];
               for (int i = 0; i < maLength; i++) {
                 double newVal = candle[m + n + 1].trends[i]!;
@@ -1688,19 +1695,17 @@ class MainPresenter extends GetxController {
               // Store the adjusted close prices into different lists
               List<double> matchedAdjustedCloseList = [];
               double lastActualDifference =
-                  startingClosePrice / candle[m + len - 1].close!;
+                  lastClosePrice / candle[m + len - 1].close!;
               for (int i = 0; i < len; i++) {
-                double adjustedClosePrice =
-                    candle[m + i].close! * lastActualDifference;
-                matchedAdjustedCloseList.add(adjustedClosePrice);
+                double adjustedSubsequentClosePrice =
+                    candle[m + i + subsequentLen].close! * lastActualDifference;
+                matchedAdjustedCloseList.add(adjustedSubsequentClosePrice);
               }
-              if (matchedAdjustedCloseList.last >=
-                  matchedAdjustedCloseList.first) {
+              if (matchedAdjustedCloseList.last >= lastClosePrice) {
                 closePrices.add(matchedAdjustedCloseList);
                 upper.add(matchedAdjustedCloseList);
                 upperRowID.add(m);
-              } else if (matchedAdjustedCloseList.last <
-                  matchedAdjustedCloseList.first) {
+              } else if (matchedAdjustedCloseList.last < lastClosePrice) {
                 closePrices.add(matchedAdjustedCloseList);
                 lower.add(matchedAdjustedCloseList);
                 lowerRowID.add(m);
@@ -1745,12 +1750,12 @@ class MainPresenter extends GetxController {
         }
 
         // Mean return rate
+        double thisMdd = 0.0;
         if (isLong) {
           double meanOfLastClosePrices = calculateMeanOfLastValues(upper);
           if (meanOfLastClosePrices != 0.0 || meanOfLastClosePrices != 0) {
             expectedMeanReturnRate =
-                (meanOfLastClosePrices - startingClosePrice) /
-                    startingClosePrice;
+                (meanOfLastClosePrices - lastClosePrice) / lastClosePrice;
             if (expectedMeanReturnRate <= 0.001) {
               missCount += 1;
               continue;
@@ -1762,8 +1767,9 @@ class MainPresenter extends GetxController {
           double min = findMinOfLastValues(lower);
           if (min != 0.0) {
             double minPercentageDifference =
-                (min - startingClosePrice) / startingClosePrice;
+                (min - lastClosePrice) / lastClosePrice;
             mdd = max(mdd, minPercentageDifference.abs());
+            thisMdd = minPercentageDifference.abs();
           } else {
             missCount += 1;
             continue;
@@ -1772,8 +1778,7 @@ class MainPresenter extends GetxController {
           double meanOfLastClosePrices = calculateMeanOfLastValues(lower);
           if (meanOfLastClosePrices != 0.0 || meanOfLastClosePrices != 0) {
             expectedMeanReturnRate =
-                (meanOfLastClosePrices - startingClosePrice) /
-                    startingClosePrice;
+                (meanOfLastClosePrices - lastClosePrice) / lastClosePrice;
             if (expectedMeanReturnRate >= -0.001) {
               missCount += 1;
               continue;
@@ -1785,8 +1790,9 @@ class MainPresenter extends GetxController {
           double thisMax = findMaxOfLastValues(upper);
           if (thisMax != 0.0) {
             double maxPercentageDifference =
-                (thisMax - startingClosePrice) / startingClosePrice;
+                (thisMax - lastClosePrice) / lastClosePrice;
             mdd = max(mdd, maxPercentageDifference.abs());
+            thisMdd = maxPercentageDifference.abs();
           } else {
             missCount += 1;
             continue;
@@ -1808,8 +1814,8 @@ class MainPresenter extends GetxController {
         int randomIndex = random.nextInt(combinedList.length);
         // Get the randomly selected trend from the combinedList
         List<double> randomTrend = combinedList[randomIndex];
-        double returnRate = ((randomTrend.last - actualStartingClosePrice) /
-            actualStartingClosePrice);
+        double returnRate =
+            ((randomTrend.last - actualLastClosePrice) / actualLastClosePrice);
         finalReturnRate = double.parse(returnRate.toStringAsFixed(4));
         int contractVal = 5;
 
@@ -1820,16 +1826,16 @@ class MainPresenter extends GetxController {
         if (isLong) {
           for (int v = 0; v < randomTrend.length; v++) {
             double percentChange =
-                (randomTrend[v] - startingClosePrice) / startingClosePrice;
-            if (percentChange <= -mdd) {
+                (randomTrend[v] - lastClosePrice) / lastClosePrice;
+            if (percentChange <= -thisMdd) {
               if (v >= randomTrend.length - yFinMinuteDelay) {
                 lastActualReturn =
                     candle[combinedRowIDList[randomIndex] + v + yFinMinuteDelay]
                             .close! -
-                        actualStartingClosePrice;
+                        actualLastClosePrice;
               } else {
                 lastActualReturn =
-                    randomTrend[v + yFinMinuteDelay] - actualStartingClosePrice;
+                    randomTrend[v + yFinMinuteDelay] - actualLastClosePrice;
               }
               hitOppositeCeilingOrBottomCount++;
             }
@@ -1837,16 +1843,16 @@ class MainPresenter extends GetxController {
         } else if (isShort) {
           for (int v = 0; v < randomTrend.length; v++) {
             double percentChange =
-                (randomTrend[v] - startingClosePrice) / startingClosePrice;
-            if (percentChange >= mdd) {
+                (randomTrend[v] - lastClosePrice) / lastClosePrice;
+            if (percentChange >= thisMdd) {
               if (v >= randomTrend.length - yFinMinuteDelay) {
                 lastActualReturn =
                     candle[combinedRowIDList[randomIndex] + v + yFinMinuteDelay]
                             .close! -
-                        actualStartingClosePrice;
+                        actualLastClosePrice;
               } else {
                 lastActualReturn =
-                    randomTrend[v + yFinMinuteDelay] - actualStartingClosePrice;
+                    randomTrend[v + yFinMinuteDelay] - actualLastClosePrice;
                 hitOppositeCeilingOrBottomCount++;
               }
             }
@@ -1866,30 +1872,30 @@ class MainPresenter extends GetxController {
         int goOppositeCount = 0;
         if (isLong) {
           for (int v = 0; v < randomTrend.length; v++) {
-            if (randomTrend[v] < startingClosePrice) {
+            if (randomTrend[v] < lastClosePrice) {
               if (v >= randomTrend.length - yFinMinuteDelay) {
                 lastActualReturn =
                     candle[combinedRowIDList[randomIndex] + v + yFinMinuteDelay]
                             .close! -
-                        actualStartingClosePrice;
+                        actualLastClosePrice;
               } else {
                 lastActualReturn =
-                    randomTrend[v + yFinMinuteDelay] - actualStartingClosePrice;
+                    randomTrend[v + yFinMinuteDelay] - actualLastClosePrice;
               }
               goOppositeCount++;
             }
           }
         } else if (isShort) {
           for (int v = 0; v < randomTrend.length; v++) {
-            if (randomTrend[v] > startingClosePrice) {
+            if (randomTrend[v] > lastClosePrice) {
               if (v >= randomTrend.length - yFinMinuteDelay) {
                 lastActualReturn =
                     candle[combinedRowIDList[randomIndex] + v + yFinMinuteDelay]
                             .close! -
-                        actualStartingClosePrice;
+                        actualLastClosePrice;
               } else {
                 lastActualReturn =
-                    randomTrend[v + yFinMinuteDelay] - actualStartingClosePrice;
+                    randomTrend[v + yFinMinuteDelay] - actualLastClosePrice;
               }
               goOppositeCount++;
             }
@@ -1927,9 +1933,9 @@ class MainPresenter extends GetxController {
           // - Index points (0.25) contract value (5 USD)
           // - Commission fee
           // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
-          // Use actualStartingClosePrice instead of startingClosePrice
+          // Use actualLastClosePrice instead of lastClosePrice
           initialFund = initialFund +
-              (((randomTrend.last - actualStartingClosePrice) * 10) ~/
+              (((randomTrend.last - actualLastClosePrice) * 10) ~/
                   0.25 *
                   contractVal) -
               commissionsAndFees;
