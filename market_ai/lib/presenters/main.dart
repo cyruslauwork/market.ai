@@ -1684,10 +1684,12 @@ class MainPresenter extends GetxController {
               }
               if (matchedAdjustedCloseList.last >=
                   matchedAdjustedCloseList.first) {
+                closePrices.add(matchedAdjustedCloseList);
                 upper.add(matchedAdjustedCloseList);
                 upperRowID.add(m);
               } else if (matchedAdjustedCloseList.last <
                   matchedAdjustedCloseList.first) {
+                closePrices.add(matchedAdjustedCloseList);
                 lower.add(matchedAdjustedCloseList);
                 lowerRowID.add(m);
               }
@@ -1951,6 +1953,8 @@ class MainPresenter extends GetxController {
     }
 
     // TODO: Export CSV to device's local file directory
+    String fileName = '$symbol + _backtest_results';
+    exportCsv(listList, fileName);
 
     // TODO: Stop backtest loading effect
 
