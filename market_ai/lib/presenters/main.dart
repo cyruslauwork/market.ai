@@ -1480,7 +1480,7 @@ class MainPresenter extends GetxController {
     double commissionsAndFees = (0.25 * 2) + (0.021 * 2);
     int yFinMinuteDelay = 1;
     int hitCount = 0;
-    int noHitCount = 0;
+    int missCount = 0;
 
     if (len <= 1) {
       throw ArgumentError('Selected period must greater than 1 time unit.');
@@ -1499,7 +1499,7 @@ class MainPresenter extends GetxController {
       'Hit Rate (after first 30 mins)',
       'MDD',
       'Fund Remaining (commns. and fees deducted)',
-      'Commission',
+      'Commns. and Fees (2 contracts)',
       'yFin Minute Delay',
       ...List.generate(len, (index) => 'Close Price ${index + 1}'),
     ]);
@@ -1575,6 +1575,7 @@ class MainPresenter extends GetxController {
               subtractedDateTime.isAfter(tradingStartTime) &&
                   subtractedDateTime.isBefore(tradingEndTimeUTC);
           if (isWithinFirst30Minutes) {
+            // Doesn't count as miss
             continue;
           }
           String lastDatetime =
@@ -1583,6 +1584,7 @@ class MainPresenter extends GetxController {
               TimeService.to.isEasternDaylightTime(dateTime) ? 'EDT' : 'EST';
           datetime.add('$lastDatetime $timezone');
         } else {
+          // Doesn't count as miss
           continue;
         }
 
@@ -1701,25 +1703,30 @@ class MainPresenter extends GetxController {
         lowerProb = double.parse(lowerProb.toStringAsFixed(4));
         if (upperProb.toInt() == 1) {
           if (upper.length < 4) {
+            missCount += 1;
             continue;
           }
           isLong = true;
         } else if (upperProb > 0.7) {
           if (upper.length < 5) {
+            missCount += 1;
             continue;
           }
           isLong = true;
         } else if (lowerProb.toInt() == 1) {
           if (lower.length < 4) {
+            missCount += 1;
             continue;
           }
           isShort = true;
         } else if (lowerProb > 0.7) {
           if (lower.length < 5) {
+            missCount += 1;
             continue;
           }
           isShort = true;
         } else {
+          missCount += 1;
           continue;
         }
 
@@ -1731,9 +1738,11 @@ class MainPresenter extends GetxController {
                 (meanOfLastClosePrices - startingClosePrice) /
                     startingClosePrice;
             if (expectedMeanReturnRate <= 0.001) {
+              missCount += 1;
               continue;
             }
           } else {
+            missCount += 1;
             continue;
           }
           double min = findMinOfLastValues(lower);
@@ -1742,6 +1751,7 @@ class MainPresenter extends GetxController {
                 (min - startingClosePrice) / startingClosePrice;
             mdd = max(mdd, minPercentageDifference.abs());
           } else {
+            missCount += 1;
             continue;
           }
         } else if (isShort) {
@@ -1751,9 +1761,11 @@ class MainPresenter extends GetxController {
                 (meanOfLastClosePrices - startingClosePrice) /
                     startingClosePrice;
             if (expectedMeanReturnRate >= -0.001) {
+              missCount += 1;
               continue;
             }
           } else {
+            missCount += 1;
             continue;
           }
           double thisMax = findMaxOfLastValues(upper);
@@ -1762,11 +1774,15 @@ class MainPresenter extends GetxController {
                 (thisMax - startingClosePrice) / startingClosePrice;
             mdd = max(mdd, maxPercentageDifference.abs());
           } else {
+            missCount += 1;
             continue;
           }
         } else {
+          missCount += 1;
           continue;
         }
+
+        hitCount += 1;
 
         // Pick up a trend randomly from upper/lower by overall probability
         List<List<double>> combinedList = [];
@@ -1784,6 +1800,7 @@ class MainPresenter extends GetxController {
         int contractVal = 5;
 
         double lastActualReturn = 0.0;
+        bool goOrHitOpp = false;
         // Check the number of trend go to the opposite side
         int hitOppositeCeilingOrBottomCount = 0;
         if (isLong) {
@@ -1820,10 +1837,9 @@ class MainPresenter extends GetxController {
               }
             }
           }
-        } else {
-          continue;
         }
         if (hitOppositeCeilingOrBottomCount >= subLength.value ~/ 3) {
+          goOrHitOpp = true;
           // Get the failed trend last close price return and change the fund value
           // - Index points (0.25) contract value (5 USD)
           // - Commission fee
@@ -1867,6 +1883,7 @@ class MainPresenter extends GetxController {
         }
         int halfSubLength = subLength.value ~/ 2;
         if (goOppositeCount >= halfSubLength) {
+          goOrHitOpp = true;
           // Get the failed trend last close price return and change the fund value
           // - Index points (0.25) contract value (5 USD)
           // - Commission fee
@@ -1876,7 +1893,7 @@ class MainPresenter extends GetxController {
               commissionsAndFees;
         }
 
-        matchedTrendCount += 1;
+        matchedTrendCount = combinedList.length;
 
         combinedRowIDList.mapIndexed((index, element) {
           DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
@@ -1891,22 +1908,28 @@ class MainPresenter extends GetxController {
           return datetime.add('$lastDatetime $timezone');
         });
 
-        // Fund value changes due to the return of transaction
-        // - Index points (0.25) contract value (5 USD)
-        // - Commission fee
-        // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
-        // Use actualStartingClosePrice instead of startingClosePrice
-        initialFund = initialFund +
-            (((randomTrend.last - actualStartingClosePrice) * 10) ~/
-                0.25 *
-                contractVal) -
-            commissionsAndFees;
+        if (!goOrHitOpp) {
+          // Fund value changes due to the return of transaction
+          // - Index points (0.25) contract value (5 USD)
+          // - Commission fee
+          // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
+          // Use actualStartingClosePrice instead of startingClosePrice
+          initialFund = initialFund +
+              (((randomTrend.last - actualStartingClosePrice) * 10) ~/
+                  0.25 *
+                  contractVal) -
+              commissionsAndFees;
+        }
 
         prob = isLong ? upperProb : lowerProb;
         expectedMeanReturnRate =
             double.parse(expectedMeanReturnRate.toStringAsFixed(4));
+        hitRate = double.parse(
+            (hitCount / (hitCount + missCount)).toStringAsFixed(4));
+        mdd = double.parse(mdd.toStringAsFixed(4));
+        initialFund = double.parse(initialFund.toStringAsFixed(4));
 
-        // TODO: Save results one by one into listList
+        // Save results one by one into listList
         closePrices.mapIndexed((i, innerList) => listList.add([
               id,
               datetime[i],
@@ -1915,9 +1938,13 @@ class MainPresenter extends GetxController {
               expectedMeanReturnRate,
               finalReturnRate,
               matchedTrendCount,
+              goOrHitOpp,
+              hitRate,
+              mdd,
+              initialFund,
+              commissionsAndFees,
               ...innerList
             ]));
-        matchedTrendCount = 0;
       }
 
       splitCandleLists.removeAt(randomIndex);
