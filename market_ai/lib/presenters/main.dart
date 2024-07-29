@@ -935,11 +935,11 @@ class MainPresenter extends GetxController {
       if (showAverageNotifier.value) {
         await Candle().computeTrendLines();
       }
-      if (listCandledata.isNotEmpty && !isLockTrend.value) {
+      if (listCandledata.isNotEmpty &&
+          !isLockTrend.value &&
+          listCandledata.length != dummyCandle.length) {
         await TrendMatch().init();
-        if (apiKey.value != '' &&
-            listCandledata.isNotEmpty &&
-            listCandledata.length != dummyCandle.length) {
+        if (apiKey.value != '') {
           SubsequentAnalytics().init();
         }
       } else {
@@ -1540,7 +1540,9 @@ class MainPresenter extends GetxController {
     final int sublistSize = (candle.length / 10).ceil();
 
     for (int i = 0; i < candle.length; i += sublistSize) {
-      final sublist = candle.sublist(i, i + sublistSize);
+      final end =
+          (i + sublistSize < candle.length) ? i + sublistSize : candle.length;
+      final sublist = candle.sublist(i, end);
       splitCandleLists.add(sublist);
     }
 
