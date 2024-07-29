@@ -1519,6 +1519,8 @@ class MainPresenter extends GetxController {
       return;
     }
 
+    logger.d('Backtesting started');
+
     // Start backtest loading effect
     isButtonDisabled.value = true;
     isBacktesting.value = symbol;
@@ -1534,6 +1536,7 @@ class MainPresenter extends GetxController {
     }
 
     candle = candle.sublist(initIndex);
+    logger.d('Candle data length: ${candle.length}');
 
     // Split the candle list of list
     List<List<CandleData>> splitCandleLists = [];
@@ -1545,9 +1548,11 @@ class MainPresenter extends GetxController {
       final sublist = candle.sublist(i, end);
       splitCandleLists.add(sublist);
     }
+    logger.d('Number of split candle list: ${splitCandleLists.length}');
+    logger.d('#######################################################');
 
     // Show the remaining number of backtest data
-    backtestDataLen.value = splitCandleLists.length;
+    backtestDataLen.value = candle.length;
 
     // Randomly pick a list to run backtest
     final random = Random();
@@ -1563,6 +1568,10 @@ class MainPresenter extends GetxController {
       final sublist = splitCandleLists[randomIndex];
       final subLen = sublist.length;
 
+      logger.d('Current split candle list number: $randomIndex');
+      logger.d('Current split candle list length: $subLen');
+      logger.d('==============================================');
+
       for (int l = 0; l < subLen - selected + 1; l++) {
         // Show the remaining number of backtest data
         backtestDataRan.value += 1;
@@ -1574,6 +1583,9 @@ class MainPresenter extends GetxController {
         double finalReturnRate = 0.0;
         int matchedTrendCount = 0;
         List<List<double>> closePrices = [];
+
+        logger.d(
+            'Current ID among the total in the split candle list: $id/$subLen');
 
         // Check if the dateTime is within the first 30 minutes of trading
         int timestamp = sublist[l].timestamp;
@@ -1640,8 +1652,7 @@ class MainPresenter extends GetxController {
 
         List<List<double>> upper = [];
         List<List<double>> lower = [];
-        List<int> upperRowID = [];
-        List<int> lowerRowID = [];
+        List<int> closePricesRowID = [];
         bool isLong = false;
         bool isShort = false;
         int subsequentLen = subLength.value;
@@ -1707,12 +1718,12 @@ class MainPresenter extends GetxController {
               }
               if (matchedAdjustedCloseList.last >= lastClosePrice) {
                 closePrices.add(matchedAdjustedCloseList);
+                closePricesRowID.add(m);
                 upper.add(matchedAdjustedCloseList);
-                upperRowID.add(m);
               } else if (matchedAdjustedCloseList.last < lastClosePrice) {
                 closePrices.add(matchedAdjustedCloseList);
+                closePricesRowID.add(m);
                 lower.add(matchedAdjustedCloseList);
-                lowerRowID.add(m);
               }
             }
           }
@@ -1809,15 +1820,9 @@ class MainPresenter extends GetxController {
         hitCount += 1;
 
         // Pick up a trend randomly from upper/lower by overall probability
-        List<List<double>> combinedList = [];
-        combinedList.addAll(upper);
-        combinedList.addAll(lower);
-        List<int> combinedRowIDList = [];
-        combinedRowIDList.addAll(upperRowID);
-        combinedRowIDList.addAll(lowerRowID);
-        int randomIndex = random.nextInt(combinedList.length);
+        int randomIndex = random.nextInt(closePrices.length);
         // Get the randomly selected trend from the combinedList
-        List<double> randomTrend = combinedList[randomIndex];
+        List<double> randomTrend = closePrices[randomIndex];
         double returnRate =
             ((randomTrend.last - actualLastClosePrice) / actualLastClosePrice);
         finalReturnRate = double.parse(returnRate.toStringAsFixed(4));
@@ -1834,7 +1839,7 @@ class MainPresenter extends GetxController {
             if (percentChange <= -thisMdd) {
               if (v >= randomTrend.length - yFinMinuteDelay) {
                 lastActualReturn =
-                    candle[combinedRowIDList[randomIndex] + v + yFinMinuteDelay]
+                    candle[closePricesRowID[randomIndex] + v + yFinMinuteDelay]
                             .close! -
                         actualLastClosePrice;
               } else {
@@ -1851,7 +1856,7 @@ class MainPresenter extends GetxController {
             if (percentChange >= thisMdd) {
               if (v >= randomTrend.length - yFinMinuteDelay) {
                 lastActualReturn =
-                    candle[combinedRowIDList[randomIndex] + v + yFinMinuteDelay]
+                    candle[closePricesRowID[randomIndex] + v + yFinMinuteDelay]
                             .close! -
                         actualLastClosePrice;
               } else {
@@ -1879,7 +1884,7 @@ class MainPresenter extends GetxController {
             if (randomTrend[v] < lastClosePrice) {
               if (v >= randomTrend.length - yFinMinuteDelay) {
                 lastActualReturn =
-                    candle[combinedRowIDList[randomIndex] + v + yFinMinuteDelay]
+                    candle[closePricesRowID[randomIndex] + v + yFinMinuteDelay]
                             .close! -
                         actualLastClosePrice;
               } else {
@@ -1894,7 +1899,7 @@ class MainPresenter extends GetxController {
             if (randomTrend[v] > lastClosePrice) {
               if (v >= randomTrend.length - yFinMinuteDelay) {
                 lastActualReturn =
-                    candle[combinedRowIDList[randomIndex] + v + yFinMinuteDelay]
+                    candle[closePricesRowID[randomIndex] + v + yFinMinuteDelay]
                             .close! -
                         actualLastClosePrice;
               } else {
@@ -1917,9 +1922,9 @@ class MainPresenter extends GetxController {
               commissionsAndFees;
         }
 
-        matchedTrendCount = combinedList.length;
+        matchedTrendCount = closePrices.length;
 
-        combinedRowIDList.mapIndexed((index, element) {
+        closePricesRowID.mapIndexed((index, element) {
           DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
               candle[element].timestamp * 1000,
               isUtc: true);
@@ -1969,14 +1974,28 @@ class MainPresenter extends GetxController {
               commissionsAndFees,
               ...innerList
             ]));
+
+        logger.d('Matched count: $matchedTrendCount');
+        logger.d('Prob.: $prob');
+        logger.d('Final return rate.: $finalReturnRate');
+        logger.d('Fund remaining: US\$$initialFund/US\$10000');
+        logger.d('Hit count: $hitCount');
+        logger.d('Miss count: $missCount');
+        logger.d('Hit rate: $hitRate');
+        logger.d('---------------------------------');
       }
 
       splitCandleLists.removeAt(randomIndex);
     }
 
+    logger.d('Backtesting ended');
+    logger.d('Export backtesting results CSV...');
+
     // Export CSV to device's local file directory
     String fileName = '$symbol + _backtest_results';
     exportCsv(listList, fileName);
+
+    logger.d('Exported backtesting results CSV');
 
     // Stop backtest loading effect
     isButtonDisabled.value = false;
