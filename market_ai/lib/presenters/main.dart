@@ -937,7 +937,9 @@ class MainPresenter extends GetxController {
       }
       if (listCandledata.isNotEmpty && !isLockTrend.value) {
         await TrendMatch().init();
-        if (apiKey.value != '') {
+        if (apiKey.value != '' &&
+            listCandledata.isNotEmpty &&
+            listCandledata.length != dummyCandle.length) {
           SubsequentAnalytics().init();
         }
       } else {

@@ -209,7 +209,7 @@ class TrendMatch {
           //     spyListCandledata.length <= dummyCandleLen) {
           dataList = await isar.spyDatas.where().sortByTimeKey().findAll();
           thisTurnSymbol = 'SPY';
-          if (dataList.length < 60) {
+          if (dataList.isEmpty) {
             continue;
           }
           // } else {
@@ -221,7 +221,7 @@ class TrendMatch {
           //     qqqListCandledata.length <= dummyCandleLen) {
           dataList = await isar.qqqDatas.where().sortByTimeKey().findAll();
           thisTurnSymbol = 'QQQ';
-          if (dataList.length < 60) {
+          if (dataList.isEmpty) {
             continue;
           }
           // } else {
@@ -233,7 +233,7 @@ class TrendMatch {
           //     usoListCandledata.length <= dummyCandleLen) {
           dataList = await isar.usoDatas.where().sortByTimeKey().findAll();
           thisTurnSymbol = 'USO';
-          if (dataList.length < 60) {
+          if (dataList.isEmpty) {
             continue;
           }
           // } else {
@@ -245,7 +245,7 @@ class TrendMatch {
           //     gldListCandledata.length <= dummyCandleLen) {
           dataList = await isar.gldDatas.where().sortByTimeKey().findAll();
           thisTurnSymbol = 'GLD';
-          if (dataList.length < 60) {
+          if (dataList.isEmpty) {
             continue;
           }
           // } else {
@@ -257,7 +257,7 @@ class TrendMatch {
           //     slvListCandledata.length <= dummyCandleLen) {
           dataList = await isar.slvDatas.where().sortByTimeKey().findAll();
           thisTurnSymbol = 'SLV';
-          if (dataList.length < 60) {
+          if (dataList.isEmpty) {
             continue;
           }
           // } else {
@@ -269,7 +269,7 @@ class TrendMatch {
           //     iwmListCandledata.length <= dummyCandleLen) {
           dataList = await isar.iwmDatas.where().sortByTimeKey().findAll();
           thisTurnSymbol = 'IWM';
-          if (dataList.length < 60) {
+          if (dataList.isEmpty) {
             continue;
           }
           // } else {
@@ -281,7 +281,7 @@ class TrendMatch {
           //     xlkListCandledata.length <= dummyCandleLen) {
           dataList = await isar.xlkDatas.where().sortByTimeKey().findAll();
           thisTurnSymbol = 'XLK';
-          if (dataList.length < 60) {
+          if (dataList.isEmpty) {
             continue;
           }
           // } else {
@@ -293,7 +293,7 @@ class TrendMatch {
           //     aaplListCandledata.length <= dummyCandleLen) {
           dataList = await isar.aaplDatas.where().sortByTimeKey().findAll();
           thisTurnSymbol = 'AAPL';
-          if (dataList.length < 60) {
+          if (dataList.isEmpty) {
             continue;
           }
           // } else {
@@ -305,7 +305,7 @@ class TrendMatch {
           //     baListCandledata.length <= dummyCandleLen) {
           dataList = await isar.baDatas.where().sortByTimeKey().findAll();
           thisTurnSymbol = 'BA';
-          if (dataList.length < 60) {
+          if (dataList.isEmpty) {
             continue;
           }
           // } else {
@@ -317,7 +317,7 @@ class TrendMatch {
           //     bacListCandledata.length <= dummyCandleLen) {
           dataList = await isar.bacDatas.where().sortByTimeKey().findAll();
           thisTurnSymbol = 'BAC';
-          if (dataList.length < 60) {
+          if (dataList.isEmpty) {
             continue;
           }
           // } else {
@@ -329,7 +329,7 @@ class TrendMatch {
           //     mcdListCandledata.length <= dummyCandleLen) {
           dataList = await isar.mcdDatas.where().sortByTimeKey().findAll();
           thisTurnSymbol = 'MCD';
-          if (dataList.length < 60) {
+          if (dataList.isEmpty) {
             continue;
           }
           // } else {
@@ -341,7 +341,7 @@ class TrendMatch {
           //     nvdaListCandledata.length <= dummyCandleLen) {
           dataList = await isar.nvdaDatas.where().sortByTimeKey().findAll();
           thisTurnSymbol = 'NVDA';
-          if (dataList.length < 60) {
+          if (dataList.isEmpty) {
             continue;
           }
           // } else {
@@ -353,7 +353,7 @@ class TrendMatch {
           //     msftListCandledata.length <= dummyCandleLen) {
           dataList = await isar.msftDatas.where().sortByTimeKey().findAll();
           thisTurnSymbol = 'MSFT';
-          if (dataList.length < 60) {
+          if (dataList.isEmpty) {
             continue;
           }
           // } else {
@@ -365,7 +365,7 @@ class TrendMatch {
           //     gskListCandledata.length <= dummyCandleLen) {
           dataList = await isar.gskDatas.where().sortByTimeKey().findAll();
           thisTurnSymbol = 'GSK';
-          if (dataList.length < 60) {
+          if (dataList.isEmpty) {
             continue;
           }
           // } else {
@@ -377,7 +377,7 @@ class TrendMatch {
           //     tslaListCandledata.length <= dummyCandleLen) {
           dataList = await isar.tslaDatas.where().sortByTimeKey().findAll();
           thisTurnSymbol = 'TSLA';
-          if (dataList.length < 60) {
+          if (dataList.isEmpty) {
             continue;
           }
           // } else {
@@ -389,7 +389,7 @@ class TrendMatch {
           //     amznListCandledata.length <= dummyCandleLen) {
           dataList = await isar.amznDatas.where().sortByTimeKey().findAll();
           thisTurnSymbol = 'AMZN';
-          if (dataList.length < 60) {
+          if (dataList.isEmpty) {
             continue;
           }
           // } else {
@@ -406,7 +406,7 @@ class TrendMatch {
             //     spyListCandledata.length <= dummyCandleLen) {
             dataList = await isar.spyDatas.where().sortByTimeKey().findAll();
             thisTurnSymbol = 'SPY';
-            if (dataList.length < 60) {
+            if (dataList.isEmpty) {
               continue;
             }
             // } else {
@@ -418,7 +418,7 @@ class TrendMatch {
             //     qqqListCandledata.length <= dummyCandleLen) {
             dataList = await isar.qqqDatas.where().sortByTimeKey().findAll();
             thisTurnSymbol = 'QQQ';
-            if (dataList.length < 60) {
+            if (dataList.isEmpty) {
               continue;
             }
             // } else {
@@ -430,7 +430,7 @@ class TrendMatch {
             //     usoListCandledata.length <= dummyCandleLen) {
             dataList = await isar.usoDatas.where().sortByTimeKey().findAll();
             thisTurnSymbol = 'USO';
-            if (dataList.length < 60) {
+            if (dataList.isEmpty) {
               continue;
             }
             // } else {
@@ -442,7 +442,7 @@ class TrendMatch {
             //     gldListCandledata.length <= dummyCandleLen) {
             dataList = await isar.gldDatas.where().sortByTimeKey().findAll();
             thisTurnSymbol = 'GLD';
-            if (dataList.length < 60) {
+            if (dataList.isEmpty) {
               continue;
             }
             // } else {
@@ -454,7 +454,7 @@ class TrendMatch {
             //     slvListCandledata.length <= dummyCandleLen) {
             dataList = await isar.slvDatas.where().sortByTimeKey().findAll();
             thisTurnSymbol = 'SLV';
-            if (dataList.length < 60) {
+            if (dataList.isEmpty) {
               continue;
             }
             // } else {
@@ -466,7 +466,7 @@ class TrendMatch {
             //     iwmListCandledata.length <= dummyCandleLen) {
             dataList = await isar.iwmDatas.where().sortByTimeKey().findAll();
             thisTurnSymbol = 'IWM';
-            if (dataList.length < 60) {
+            if (dataList.isEmpty) {
               continue;
             }
             // } else {
@@ -478,7 +478,7 @@ class TrendMatch {
             //     xlkListCandledata.length <= dummyCandleLen) {
             dataList = await isar.xlkDatas.where().sortByTimeKey().findAll();
             thisTurnSymbol = 'XLK';
-            if (dataList.length < 60) {
+            if (dataList.isEmpty) {
               continue;
             }
             // } else {
@@ -490,7 +490,7 @@ class TrendMatch {
             //     aaplListCandledata.length <= dummyCandleLen) {
             dataList = await isar.aaplDatas.where().sortByTimeKey().findAll();
             thisTurnSymbol = 'AAPL';
-            if (dataList.length < 60) {
+            if (dataList.isEmpty) {
               continue;
             }
             // } else {
@@ -502,7 +502,7 @@ class TrendMatch {
             //     baListCandledata.length <= dummyCandleLen) {
             dataList = await isar.baDatas.where().sortByTimeKey().findAll();
             thisTurnSymbol = 'BA';
-            if (dataList.length < 60) {
+            if (dataList.isEmpty) {
               continue;
             }
             // } else {
@@ -514,7 +514,7 @@ class TrendMatch {
             //     bacListCandledata.length <= dummyCandleLen) {
             dataList = await isar.bacDatas.where().sortByTimeKey().findAll();
             thisTurnSymbol = 'BAC';
-            if (dataList.length < 60) {
+            if (dataList.isEmpty) {
               continue;
             }
             // } else {
@@ -526,7 +526,7 @@ class TrendMatch {
             //     mcdListCandledata.length <= dummyCandleLen) {
             dataList = await isar.mcdDatas.where().sortByTimeKey().findAll();
             thisTurnSymbol = 'MCD';
-            if (dataList.length < 60) {
+            if (dataList.isEmpty) {
               continue;
             }
             // } else {
@@ -538,7 +538,7 @@ class TrendMatch {
             //     nvdaListCandledata.length <= dummyCandleLen) {
             dataList = await isar.nvdaDatas.where().sortByTimeKey().findAll();
             thisTurnSymbol = 'NVDA';
-            if (dataList.length < 60) {
+            if (dataList.isEmpty) {
               continue;
             }
             // } else {
@@ -550,7 +550,7 @@ class TrendMatch {
             //     msftListCandledata.length <= dummyCandleLen) {
             dataList = await isar.msftDatas.where().sortByTimeKey().findAll();
             thisTurnSymbol = 'MSFT';
-            if (dataList.length < 60) {
+            if (dataList.isEmpty) {
               continue;
             }
             // } else {
@@ -562,7 +562,7 @@ class TrendMatch {
             //     gskListCandledata.length <= dummyCandleLen) {
             dataList = await isar.gskDatas.where().sortByTimeKey().findAll();
             thisTurnSymbol = 'GSK';
-            if (dataList.length < 60) {
+            if (dataList.isEmpty) {
               continue;
             }
             // } else {
@@ -574,7 +574,7 @@ class TrendMatch {
             //     tslaListCandledata.length <= dummyCandleLen) {
             dataList = await isar.tslaDatas.where().sortByTimeKey().findAll();
             thisTurnSymbol = 'TSLA';
-            if (dataList.length < 60) {
+            if (dataList.isEmpty) {
               continue;
             }
             // } else {
@@ -586,7 +586,7 @@ class TrendMatch {
             //     amznListCandledata.length <= dummyCandleLen) {
             dataList = await isar.amznDatas.where().sortByTimeKey().findAll();
             thisTurnSymbol = 'AMZN';
-            if (dataList.length < 60) {
+            if (dataList.isEmpty) {
               continue;
             }
             // } else {
@@ -598,7 +598,7 @@ class TrendMatch {
           }
           i++;
         }
-        // if (hasData && listCandledata.length < 60) {
+        // if (hasData && listCandledata.isEmpty) {
         //   continue;
         // }
         List<Map<String, dynamic>> docList = [];
