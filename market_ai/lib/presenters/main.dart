@@ -1519,7 +1519,7 @@ class MainPresenter extends GetxController {
       return;
     }
 
-    logger.d('Backtesting started');
+    printInfo(info: 'Backtesting started');
 
     // Start backtest loading effect
     isButtonDisabled.value = true;
@@ -1536,7 +1536,7 @@ class MainPresenter extends GetxController {
     }
 
     candle = candle.sublist(initIndex);
-    logger.d('Candle data length: ${candle.length}');
+    printInfo(info: 'Candle data length: ${candle.length}');
 
     // Split the candle list of list
     List<List<CandleData>> splitCandleLists = [];
@@ -1548,8 +1548,7 @@ class MainPresenter extends GetxController {
       final sublist = candle.sublist(i, end);
       splitCandleLists.add(sublist);
     }
-    logger.d('Number of split candle list: ${splitCandleLists.length}');
-    logger.d('#######################################################');
+    printInfo(info: 'Number of split candle list: ${splitCandleLists.length}');
 
     // Show the remaining number of backtest data
     backtestDataLen.value = candle.length;
@@ -1568,9 +1567,8 @@ class MainPresenter extends GetxController {
       final sublist = splitCandleLists[randomIndex];
       final subLen = sublist.length;
 
-      logger.d('Current split candle list number: $randomIndex');
-      logger.d('Current split candle list length: $subLen');
-      logger.d('==============================================');
+      printInfo(info: 'Current split candle list number: $randomIndex');
+      printInfo(info: 'Current split candle list length: $subLen');
 
       for (int l = 0; l < subLen - selected + 1; l++) {
         // Show the remaining number of backtest data
@@ -1585,7 +1583,7 @@ class MainPresenter extends GetxController {
         List<List<double>> closePrices = [];
 
         logger.d(
-            'Current ID among the total in the split candle list: $id/$subLen');
+            'Hit/miss count: $hitCount/$missCount | Hit rate: $hitRate | Current ID among the total in the split candle list: $id/$subLen');
 
         // Check if the dateTime is within the first 30 minutes of trading
         int timestamp = sublist[l].timestamp;
@@ -1729,6 +1727,12 @@ class MainPresenter extends GetxController {
           }
         }
 
+        // Division by zero is mathematically undefined, but in programming,
+        // dividing by zero often results in NaN (Not a Number) for floating-point numbers.
+        // This way, skip when both lists are empty
+        if (upper.isEmpty && lower.isEmpty) {
+          continue;
+        }
         // Probability calculation and amount of matched trends
         double upperProb = upper.length / (upper.length + lower.length);
         double lowerProb = lower.length / (upper.length + lower.length);
@@ -1975,27 +1979,23 @@ class MainPresenter extends GetxController {
               ...innerList
             ]));
 
-        logger.d('Matched count: $matchedTrendCount');
-        logger.d('Prob.: $prob');
-        logger.d('Final return rate.: $finalReturnRate');
-        logger.d('Fund remaining: US\$$initialFund/US\$10000');
-        logger.d('Hit count: $hitCount');
-        logger.d('Miss count: $missCount');
-        logger.d('Hit rate: $hitRate');
-        logger.d('---------------------------------');
+        printInfo(info: 'Matched count: $matchedTrendCount');
+        printInfo(info: 'Prob.: $prob');
+        printInfo(info: 'Final return rate.: $finalReturnRate');
+        printInfo(info: 'Fund remaining: US\$$initialFund/US\$10000');
       }
 
       splitCandleLists.removeAt(randomIndex);
     }
 
-    logger.d('Backtesting ended');
-    logger.d('Export backtesting results CSV...');
+    printInfo(info: 'Backtesting ended');
+    printInfo(info: 'Export backtesting results CSV...');
 
     // Export CSV to device's local file directory
     String fileName = '$symbol + _backtest_results';
     exportCsv(listList, fileName);
 
-    logger.d('Exported backtesting results CSV');
+    printInfo(info: 'Exported backtesting results CSV');
 
     // Stop backtest loading effect
     isButtonDisabled.value = false;
