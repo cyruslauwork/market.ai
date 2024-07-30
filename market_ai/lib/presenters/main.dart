@@ -1471,6 +1471,8 @@ class MainPresenter extends GetxController {
     }
   }
 
+  // TODO: Check backtest(), unit test every matching criteria by printout the results
+  // TODO: unit test CSV exporting function
   backtest(String symbol, BuildContext context) {
     if (!alwaysShowMinuteData.value || !hasMinuteData.value) {
       showScaffoldMessenger(
