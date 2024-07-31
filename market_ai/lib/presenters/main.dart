@@ -1471,8 +1471,6 @@ class MainPresenter extends GetxController {
     }
   }
 
-  // TODO: Check backtest(), unit test every matching criteria by printout the results
-  // TODO: unit test CSV exporting function
   backtest(String symbol, BuildContext context) {
     if (!alwaysShowMinuteData.value || !hasMinuteData.value) {
       showScaffoldMessenger(
@@ -1537,7 +1535,7 @@ class MainPresenter extends GetxController {
       maLength = candle.last.trends.length;
     }
 
-    candle = candle.sublist(initIndex);
+    candle = candle.sublist(initIndex); // Remove trends that don't have all MAs
     printInfo(info: 'Candle data length: ${candle.length}');
 
     // Split the candle list of list
@@ -1562,7 +1560,6 @@ class MainPresenter extends GetxController {
     double hitRate = 0.0;
     double mdd = 0.0;
     double initialFund = 10000;
-    int selected = len;
 
     while (splitCandleLists.isNotEmpty) {
       final randomIndex = random.nextInt(splitCandleLists.length);
@@ -1572,7 +1569,7 @@ class MainPresenter extends GetxController {
       printInfo(info: 'Current split candle list number: $randomIndex');
       printInfo(info: 'Current split candle list length: $subLen');
 
-      for (int l = 0; l < subLen - selected + 1; l++) {
+      for (int l = 0; l < subLen - len; l++) {
         // Show the remaining number of backtest data
         backtestDataRan.value += 1;
 
@@ -1620,13 +1617,13 @@ class MainPresenter extends GetxController {
 
         // Selecting a trend
         double startingClosePrice = sublist[l].close!;
-        double lastClosePrice = sublist[l + len - 1].close!;
-        double actualLastClosePrice =
-            sublist[l + len - 1 + yFinMinuteDelay].close!;
+        double lastClosePrice = sublist[l + len].close!;
+        double actualLastClosePrice = sublist[l + len + yFinMinuteDelay].close!;
         List<double> selectedPeriodPercentDifferencesList = [];
         List<List<double>> selectedPeriodMaPercentDifferencesListList = [];
         List<double> selectedPeriodFirstMaAndPricePercentDifferencesList = [];
 
+        // TODO: Check backtest(), unit test every matching criteria by printout the results
         for (int i = 0; i < len; i++) {
           double newVal = sublist[l + i + 1].close!;
           double oriVal = sublist[l + i].close!;
@@ -1968,7 +1965,7 @@ class MainPresenter extends GetxController {
         closePrices.mapIndexed((i, innerList) => listList.add([
               id,
               datetime[i],
-              selected,
+              len,
               prob,
               expectedMeanReturnRate,
               finalReturnRate,
@@ -1978,6 +1975,7 @@ class MainPresenter extends GetxController {
               mdd,
               initialFund,
               commissionsAndFees,
+              yFinMinuteDelay,
               ...innerList
             ]));
 
@@ -1992,6 +1990,8 @@ class MainPresenter extends GetxController {
 
     printInfo(info: 'Backtesting ended');
     printInfo(info: 'Export backtesting results CSV...');
+
+    // TODO: unit test CSV exporting function
 
     // Export CSV to device's local file directory
     String fileName = '$symbol + _backtest_results';
