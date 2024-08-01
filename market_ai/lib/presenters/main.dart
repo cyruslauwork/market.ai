@@ -1569,7 +1569,7 @@ class MainPresenter extends GetxController {
       printInfo(info: 'Current split candle list number: $randomIndex');
       printInfo(info: 'Current split candle list length: $subLen');
 
-      for (int l = 0; l < subLen - len; l++) {
+      for (int l = 0; l < subLen - len + 1 - yFinMinuteDelay; l++) {
         // Show the remaining number of backtest data
         backtestDataRan.value += 1;
 
@@ -1617,14 +1617,14 @@ class MainPresenter extends GetxController {
 
         // Selecting a trend
         double startingClosePrice = sublist[l].close!;
-        double lastClosePrice = sublist[l + len].close!;
-        double actualLastClosePrice = sublist[l + len + yFinMinuteDelay].close!;
+        double lastClosePrice = sublist[l + len - 1].close!;
+        double actualLastClosePrice =
+            sublist[l + len - 1 + yFinMinuteDelay].close!;
         List<double> selectedPeriodPercentDifferencesList = [];
         List<List<double>> selectedPeriodMaPercentDifferencesListList = [];
         List<double> selectedPeriodFirstMaAndPricePercentDifferencesList = [];
 
-        // TODO: Check backtest(), unit test every matching criteria by printout the results
-        for (int i = 0; i < len; i++) {
+        for (int i = 0; i < len - 1; i++) {
           double newVal = sublist[l + i + 1].close!;
           double oriVal = sublist[l + i].close!;
           double percentDiff = (newVal - oriVal) / oriVal;
@@ -1646,6 +1646,9 @@ class MainPresenter extends GetxController {
               (sublist[l].trends[m]! - startingClosePrice) /
                   startingClosePrice);
         }
+
+        // TODO: Check backtest(), unit test every matching criteria by printout the results
+        // TODO: Ensure buy price is deducted by yFinMinuteDelay
 
         List<List<double>> upper = [];
         List<List<double>> lower = [];
