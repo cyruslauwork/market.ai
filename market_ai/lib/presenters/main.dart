@@ -1647,9 +1647,6 @@ class MainPresenter extends GetxController {
                   startingClosePrice);
         }
 
-        // TODO: Check backtest(), unit test every matching criteria by printout the results
-        // TODO: Ensure buy price is deducted by yFinMinuteDelay
-
         List<List<double>> upper = [];
         List<List<double>> lower = [];
         List<int> closePricesRowID = [];
@@ -1663,7 +1660,7 @@ class MainPresenter extends GetxController {
             m++) {
           List<double> comparePeriodPercentDifferencesList = [];
 
-          for (int i = 0; i < len; i++) {
+          for (int i = 0; i < len - 1; i++) {
             double percentDiff =
                 (candle[m + i + 1].close! - candle[m + i].close!) /
                     (candle[m + i].close!);
@@ -1682,7 +1679,7 @@ class MainPresenter extends GetxController {
             List<List<double>> comparePeriodMaPercentDifferencesListList = [];
             double compareFirstPrice = candle[m].close!;
 
-            for (int n = 0; n < len; n++) {
+            for (int n = 0; n < len - 1; n++) {
               List<double> comparePeriodMaPercentDifferencesList = [];
               for (int i = 0; i < maLength; i++) {
                 double newVal = candle[m + n + 1].trends[i]!;
@@ -1709,13 +1706,15 @@ class MainPresenter extends GetxController {
             if (isMaMatched) {
               // Store the adjusted close prices into different lists
               List<double> matchedAdjustedCloseList = [];
-              double lastActualDifference =
+              double lastDifference =
                   lastClosePrice / candle[m + len - 1].close!;
-              for (int i = 0; i < len; i++) {
+              for (int i = 0; i < subsequentLen; i++) {
                 double adjustedSubsequentClosePrice =
-                    candle[m + i + subsequentLen].close! * lastActualDifference;
+                    candle[m + len + 1 + i].close! * lastDifference;
                 matchedAdjustedCloseList.add(adjustedSubsequentClosePrice);
               }
+              // TODO: Check backtest(), unit test every matching criteria by printout the results
+              // TODO: Ensure buy price is deducted by yFinMinuteDelay
               if (matchedAdjustedCloseList.last >= lastClosePrice) {
                 closePrices.add(matchedAdjustedCloseList);
                 closePricesRowID.add(m);
