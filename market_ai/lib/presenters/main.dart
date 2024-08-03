@@ -1067,7 +1067,7 @@ class MainPresenter extends GetxController {
     if (count > 0) {
       return sum / count;
     } else {
-      return 0; // or any other appropriate value for an empty list
+      return 0.0; // or any other appropriate value for an empty list
     }
   }
 
@@ -1705,24 +1705,23 @@ class MainPresenter extends GetxController {
                     tolerance);
             if (isMaMatched) {
               // Store the adjusted close prices into different lists
-              List<double> matchedAdjustedCloseList = [];
+              List<double> matchedAdjustedSubsequentCloseList = [];
               double lastDifference =
                   lastClosePrice / candle[m + len - 1].close!;
               for (int i = 0; i < subsequentLen; i++) {
-                double adjustedSubsequentClosePrice =
+                double adjustedSubsequentClose =
                     candle[m + len + 1 + i].close! * lastDifference;
-                matchedAdjustedCloseList.add(adjustedSubsequentClosePrice);
+                matchedAdjustedSubsequentCloseList.add(adjustedSubsequentClose);
               }
-              // TODO: Check backtest(), unit test every matching criteria by printout the results
-              // TODO: Ensure buy price is deducted by yFinMinuteDelay
-              if (matchedAdjustedCloseList.last >= lastClosePrice) {
-                closePrices.add(matchedAdjustedCloseList);
+              if (matchedAdjustedSubsequentCloseList.last >= lastClosePrice) {
+                closePrices.add(matchedAdjustedSubsequentCloseList);
                 closePricesRowID.add(m);
-                upper.add(matchedAdjustedCloseList);
-              } else if (matchedAdjustedCloseList.last < lastClosePrice) {
-                closePrices.add(matchedAdjustedCloseList);
+                upper.add(matchedAdjustedSubsequentCloseList);
+              } else if (matchedAdjustedSubsequentCloseList.last <
+                  lastClosePrice) {
+                closePrices.add(matchedAdjustedSubsequentCloseList);
                 closePricesRowID.add(m);
-                lower.add(matchedAdjustedCloseList);
+                lower.add(matchedAdjustedSubsequentCloseList);
               }
             }
           }
@@ -1732,6 +1731,7 @@ class MainPresenter extends GetxController {
         // dividing by zero often results in NaN (Not a Number) for floating-point numbers.
         // This way, skip when both lists are empty
         if (upper.isEmpty && lower.isEmpty) {
+          missCount += 1;
           continue;
         }
         // Probability calculation and amount of matched trends
@@ -1773,7 +1773,7 @@ class MainPresenter extends GetxController {
         double thisMdd = 0.0;
         if (isLong) {
           double meanOfLastClosePrices = calculateMeanOfLastValues(upper);
-          if (meanOfLastClosePrices != 0.0 || meanOfLastClosePrices != 0) {
+          if (meanOfLastClosePrices != 0.0) {
             expectedMeanReturnRate =
                 (meanOfLastClosePrices - lastClosePrice) / lastClosePrice;
             if (expectedMeanReturnRate <= 0.001) {
@@ -1784,10 +1784,10 @@ class MainPresenter extends GetxController {
             missCount += 1;
             continue;
           }
-          double min = findMinOfLastValues(lower);
-          if (min != 0.0) {
+          double thisMin = findMinOfLastValues(lower);
+          if (thisMin != 0.0) {
             double minPercentageDifference =
-                (min - lastClosePrice) / lastClosePrice;
+                (thisMin - lastClosePrice) / lastClosePrice;
             mdd = max(mdd, minPercentageDifference.abs());
             thisMdd = minPercentageDifference.abs();
           } else {
@@ -1796,7 +1796,7 @@ class MainPresenter extends GetxController {
           }
         } else if (isShort) {
           double meanOfLastClosePrices = calculateMeanOfLastValues(lower);
-          if (meanOfLastClosePrices != 0.0 || meanOfLastClosePrices != 0) {
+          if (meanOfLastClosePrices != 0.0) {
             expectedMeanReturnRate =
                 (meanOfLastClosePrices - lastClosePrice) / lastClosePrice;
             if (expectedMeanReturnRate >= -0.001) {
@@ -1817,21 +1817,22 @@ class MainPresenter extends GetxController {
             missCount += 1;
             continue;
           }
-        } else {
-          missCount += 1;
-          continue;
         }
-
         hitCount += 1;
 
         // Pick up a trend randomly from upper/lower by overall probability
         int randomIndex = random.nextInt(closePrices.length);
         // Get the randomly selected trend from the combinedList
         List<double> randomTrend = closePrices[randomIndex];
+        // Envisaged that the entry price is always delayed, the delay time is denoted as yFinMinuteDelay,
+        // and the exit price is always on time
         double returnRate =
             ((randomTrend.last - actualLastClosePrice) / actualLastClosePrice);
         finalReturnRate = double.parse(returnRate.toStringAsFixed(4));
-        int contractVal = 5;
+        int contractVal =
+            5; // Micro E-mini Futures: Index points (0.25) contract value (5 USD)
+
+        // TODO: Check backtest(), unit test every matching criteria by printout the results
 
         double lastActualReturn = 0.0;
         bool goOrHitOpp = false;
@@ -1947,7 +1948,6 @@ class MainPresenter extends GetxController {
           // - Index points (0.25) contract value (5 USD)
           // - Commission fee
           // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
-          // Use actualLastClosePrice instead of lastClosePrice
           initialFund = initialFund +
               (((randomTrend.last - actualLastClosePrice) * 10) ~/
                   0.25 *
