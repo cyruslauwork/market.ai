@@ -1656,7 +1656,8 @@ class MainPresenter extends GetxController {
 
         // Look for similar trend(s)
         for (int m = initIndex;
-            m < candle.length - len - subsequentLen - 1;
+            m < candle.length - len - subsequentLen - 1 - yFinMinuteDelay;
+            // Minus yFinMinuteDelay for lastActualReturn calculation
             m++) {
           List<double> comparePeriodPercentDifferencesList = [];
 
@@ -1831,8 +1832,6 @@ class MainPresenter extends GetxController {
         finalReturnRate = double.parse(returnRate.toStringAsFixed(4));
         int contractVal =
             5; // Micro E-mini Futures: Index points (0.25) contract value (5 USD)
-
-        // TODO: Check backtest(), unit test every matching criteria by printout the results
 
         double lastActualReturn = 0.0;
         bool goOrHitOpp = false;
