@@ -1472,6 +1472,11 @@ class MainPresenter extends GetxController {
   }
 
   backtest(String symbol, BuildContext context) {
+    printInfo(info: 'Length: ${length.value}');
+    printInfo(info: 'Tolerance: ${tolerance.value}');
+    printInfo(info: 'MA matching: ${maMatchCriteria.value}');
+    printInfo(info: 'Strict matching: ${strictMatchCriteria.value}');
+
     if (!alwaysShowMinuteData.value || !hasMinuteData.value) {
       showScaffoldMessenger(
           context: context, localizedMsg: 'backtest_no_minute_data'.tr);
@@ -1499,11 +1504,12 @@ class MainPresenter extends GetxController {
       'Selected',
       'Probability',
       'Expected Mean Return Rate',
-      'Final Return Rate',
+      'Final Return Rate (random trend)',
       'Matched Trend Count',
       'Trend Go/Hit Opp.',
       'Hit Rate (after first 30 mins)',
       'MDD',
+      'Undelayed Fund Remaining (commns. and fees deducted)',
       'Fund Remaining (commns. and fees deducted)',
       'Commns. and Fees (2 contracts)',
       'yFin Minute Delay',
@@ -1555,11 +1561,12 @@ class MainPresenter extends GetxController {
 
     // Randomly pick a list to run backtest
     final random = Random();
-    final int tolerance = MainPresenter.to.tolerance.value;
+    final int tol = tolerance.value;
 
     double hitRate = 0.0;
     double mdd = 0.0;
     double initialFund = 10000;
+    double undelayedInitialFund = 10000;
 
     while (splitCandleLists.isNotEmpty) {
       final randomIndex = random.nextInt(splitCandleLists.length);
@@ -1577,9 +1584,7 @@ class MainPresenter extends GetxController {
         List<String> datetime = [];
         double prob = 0.0;
         double expectedMeanReturnRate = 0.0;
-        double finalReturnRate = 0.0;
         int matchedTrendCount = 0;
-        List<List<double>> closePrices = [];
 
         logger.d(
             'Hit/miss count: $hitCount/$missCount | Hit rate: $hitRate | Current ID among the total in the split candle list: $id/$subLen');
@@ -1614,6 +1619,7 @@ class MainPresenter extends GetxController {
           // Doesn't count as miss
           continue;
         }
+        printInfo(info: '✅ Outside first 30 mins');
 
         // Selecting a trend
         double startingClosePrice = sublist[l].close!;
@@ -1646,9 +1652,11 @@ class MainPresenter extends GetxController {
               (sublist[l].trends[m]! - startingClosePrice) /
                   startingClosePrice);
         }
+        printInfo(info: '✅ Selected a trend');
 
         List<List<double>> upper = [];
         List<List<double>> lower = [];
+        List<List<double>> closePrices = [];
         List<int> closePricesRowID = [];
         bool isLong = false;
         bool isShort = false;
@@ -1657,7 +1665,7 @@ class MainPresenter extends GetxController {
         // Look for similar trend(s)
         for (int m = initIndex;
             m < candle.length - len - subsequentLen - 1 - yFinMinuteDelay;
-            // Minus yFinMinuteDelay for lastActualReturn calculation
+            // Minus yFinMinuteDelay for actualReturn calculation
             m++) {
           List<double> comparePeriodPercentDifferencesList = [];
 
@@ -1672,9 +1680,11 @@ class MainPresenter extends GetxController {
               .areDifferencesLessThanOrEqualToCertainPercent(
                   selectedPeriodPercentDifferencesList,
                   comparePeriodPercentDifferencesList,
-                  tolerance); // Record data type in Dart is equivalent to Tuple in Java and Python
+                  tol); // Record data type in Dart is equivalent to Tuple in Java and Python
 
           if (comparisonResult.$1) {
+            printInfo(info: '===================================');
+            printInfo(info: '✅ Trend percentage changes matched');
             List<double> comparePeriodFirstMaAndPricePercentDifferencesList =
                 [];
             List<List<double>> comparePeriodMaPercentDifferencesListList = [];
@@ -1703,8 +1713,9 @@ class MainPresenter extends GetxController {
                     selectedPeriodMaPercentDifferencesListList,
                     comparePeriodFirstMaAndPricePercentDifferencesList,
                     comparePeriodMaPercentDifferencesListList,
-                    tolerance);
+                    tol);
             if (isMaMatched) {
+              printInfo(info: '✅ Trend MAs matched');
               // Store the adjusted close prices into different lists
               List<double> matchedAdjustedSubsequentCloseList = [];
               double lastDifference =
@@ -1724,7 +1735,12 @@ class MainPresenter extends GetxController {
                 closePricesRowID.add(m);
                 lower.add(matchedAdjustedSubsequentCloseList);
               }
+            } else {
+              printInfo(info: '❌ Trend MAs not matched');
             }
+          } else {
+            printInfo(info: '===================================');
+            printInfo(info: '❌ Trend percentage changes not matched');
           }
         }
 
@@ -1733,6 +1749,7 @@ class MainPresenter extends GetxController {
         // This way, skip when both lists are empty
         if (upper.isEmpty && lower.isEmpty) {
           missCount += 1;
+          printInfo(info: '❌ upper and lower are empty');
           continue;
         }
         // Probability calculation and amount of matched trends
@@ -1744,29 +1761,38 @@ class MainPresenter extends GetxController {
         if (upperProb.toInt() == 1) {
           if (upper.length < 4) {
             missCount += 1;
+            printInfo(info: '❌ upper.length < 4');
             continue;
           }
           isLong = true;
+          printInfo(info: '✅ Is long');
         } else if (upperProb > 0.7) {
           if (upper.length < 5) {
             missCount += 1;
+            printInfo(info: '❌ upper.length < 5');
             continue;
           }
           isLong = true;
+          printInfo(info: '✅ Is long');
         } else if (lowerProb.toInt() == 1) {
           if (lower.length < 4) {
             missCount += 1;
+            printInfo(info: '❌ lower.length < 4');
             continue;
           }
           isShort = true;
+          printInfo(info: '✅ Is short');
         } else if (lowerProb > 0.7) {
           if (lower.length < 5) {
             missCount += 1;
+            printInfo(info: '❌ lower.length < 5');
             continue;
           }
           isShort = true;
+          printInfo(info: '✅ Is short');
         } else {
           missCount += 1;
+          printInfo(info: '❌ No majority list');
           continue;
         }
 
@@ -1779,10 +1805,12 @@ class MainPresenter extends GetxController {
                 (meanOfLastClosePrices - lastClosePrice) / lastClosePrice;
             if (expectedMeanReturnRate <= 0.001) {
               missCount += 1;
+              printInfo(info: '❌ Mean return rate <= 0.001 in long');
               continue;
             }
           } else {
             missCount += 1;
+            printInfo(info: '❌ Mean return rate is 0.0 in long');
             continue;
           }
           double thisMin = findMinOfLastValues(lower);
@@ -1793,6 +1821,7 @@ class MainPresenter extends GetxController {
             thisMdd = minPercentageDifference.abs();
           } else {
             missCount += 1;
+            printInfo(info: '❌ thisMin is 0.0 in long');
             continue;
           }
         } else if (isShort) {
@@ -1802,10 +1831,12 @@ class MainPresenter extends GetxController {
                 (meanOfLastClosePrices - lastClosePrice) / lastClosePrice;
             if (expectedMeanReturnRate >= -0.001) {
               missCount += 1;
+              printInfo(info: '❌ Mean return rate >= -0.001 in short');
               continue;
             }
           } else {
             missCount += 1;
+            printInfo(info: '❌ Mean return rate is 0.0 in short');
             continue;
           }
           double thisMax = findMaxOfLastValues(upper);
@@ -1816,10 +1847,12 @@ class MainPresenter extends GetxController {
             thisMdd = maxPercentageDifference.abs();
           } else {
             missCount += 1;
+            printInfo(info: '❌ thisMax is 0.0 in short');
             continue;
           }
         }
         hitCount += 1;
+        printInfo(info: '✅ Minimum mean return rate has been passed');
 
         // Pick up a trend randomly from upper/lower by overall probability
         int randomIndex = random.nextInt(closePrices.length);
@@ -1827,13 +1860,19 @@ class MainPresenter extends GetxController {
         List<double> randomTrend = closePrices[randomIndex];
         // Envisaged that the entry price is always delayed, the delay time is denoted as yFinMinuteDelay,
         // and the exit price is always on time
-        double returnRate =
+        double actualReturnRate =
             ((randomTrend.last - actualLastClosePrice) / actualLastClosePrice);
-        finalReturnRate = double.parse(returnRate.toStringAsFixed(4));
+        double undelayedReturnRate =
+            ((randomTrend.last - lastClosePrice) / lastClosePrice);
+        double finalReturnRate =
+            double.parse(actualReturnRate.toStringAsFixed(4));
+        double expectedReturnRate =
+            double.parse(undelayedReturnRate.toStringAsFixed(4));
         int contractVal =
             5; // Micro E-mini Futures: Index points (0.25) contract value (5 USD)
 
-        double lastActualReturn = 0.0;
+        double actualReturn = 0.0;
+        double undelayedReturn = 0.0;
         bool goOrHitOpp = false;
         // Check the number of trend go to the opposite side
         int hitOppositeCeilingOrBottomCount = 0;
@@ -1843,14 +1882,15 @@ class MainPresenter extends GetxController {
                 (randomTrend[v] - lastClosePrice) / lastClosePrice;
             if (percentChange <= -thisMdd) {
               if (v >= randomTrend.length - yFinMinuteDelay) {
-                lastActualReturn =
+                actualReturn =
                     candle[closePricesRowID[randomIndex] + v + yFinMinuteDelay]
                             .close! -
                         actualLastClosePrice;
               } else {
-                lastActualReturn =
+                actualReturn =
                     randomTrend[v + yFinMinuteDelay] - actualLastClosePrice;
               }
+              undelayedReturn = randomTrend[v] - lastClosePrice;
               hitOppositeCeilingOrBottomCount++;
             }
           }
@@ -1860,42 +1900,52 @@ class MainPresenter extends GetxController {
                 (randomTrend[v] - lastClosePrice) / lastClosePrice;
             if (percentChange >= thisMdd) {
               if (v >= randomTrend.length - yFinMinuteDelay) {
-                lastActualReturn =
+                actualReturn =
                     candle[closePricesRowID[randomIndex] + v + yFinMinuteDelay]
                             .close! -
                         actualLastClosePrice;
               } else {
-                lastActualReturn =
+                actualReturn =
                     randomTrend[v + yFinMinuteDelay] - actualLastClosePrice;
-                hitOppositeCeilingOrBottomCount++;
               }
+              undelayedReturn = randomTrend[v] - lastClosePrice;
+              hitOppositeCeilingOrBottomCount++;
             }
           }
         }
-        if (hitOppositeCeilingOrBottomCount >= subLength.value ~/ 3) {
+        int oneThirdSubLength = subLength.value ~/ 3;
+        if (hitOppositeCeilingOrBottomCount >= oneThirdSubLength) {
           goOrHitOpp = true;
           // Get the failed trend last close price return and change the fund value
           // - Index points (0.25) contract value (5 USD)
           // - Commission fee
           // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
           initialFund = initialFund +
-              ((lastActualReturn * 10) ~/ 0.25 * contractVal) -
+              ((actualReturn * 10) ~/ 0.25 * contractVal) -
+              commissionsAndFees;
+          undelayedInitialFund = undelayedInitialFund +
+              ((undelayedReturn * 10) ~/ 0.25 * contractVal) -
               commissionsAndFees;
         }
+        printInfo(
+            info:
+                'hitOppositeCeilingOrBottomCount/oneThirdSubLength: $hitOppositeCeilingOrBottomCount/$oneThirdSubLength, goOrHitOpp: $goOrHitOpp');
+
         // Check if hit the opposite side ceiling or bottom
         int goOppositeCount = 0;
         if (isLong) {
           for (int v = 0; v < randomTrend.length; v++) {
             if (randomTrend[v] < lastClosePrice) {
               if (v >= randomTrend.length - yFinMinuteDelay) {
-                lastActualReturn =
+                actualReturn =
                     candle[closePricesRowID[randomIndex] + v + yFinMinuteDelay]
                             .close! -
                         actualLastClosePrice;
               } else {
-                lastActualReturn =
+                actualReturn =
                     randomTrend[v + yFinMinuteDelay] - actualLastClosePrice;
               }
+              undelayedReturn = randomTrend[v] - lastClosePrice;
               goOppositeCount++;
             }
           }
@@ -1903,14 +1953,15 @@ class MainPresenter extends GetxController {
           for (int v = 0; v < randomTrend.length; v++) {
             if (randomTrend[v] > lastClosePrice) {
               if (v >= randomTrend.length - yFinMinuteDelay) {
-                lastActualReturn =
+                actualReturn =
                     candle[closePricesRowID[randomIndex] + v + yFinMinuteDelay]
                             .close! -
                         actualLastClosePrice;
               } else {
-                lastActualReturn =
+                actualReturn =
                     randomTrend[v + yFinMinuteDelay] - actualLastClosePrice;
               }
+              undelayedReturn = randomTrend[v] - lastClosePrice;
               goOppositeCount++;
             }
           }
@@ -1923,9 +1974,15 @@ class MainPresenter extends GetxController {
           // - Commission fee
           // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
           initialFund = initialFund +
-              ((lastActualReturn * 10) ~/ 0.25 * contractVal) -
+              ((actualReturn * 10) ~/ 0.25 * contractVal) -
+              commissionsAndFees;
+          undelayedInitialFund = undelayedInitialFund +
+              ((undelayedReturn * 10) ~/ 0.25 * contractVal) -
               commissionsAndFees;
         }
+        printInfo(
+            info:
+                'goOppositeCount/halfSubLength: $goOppositeCount/$halfSubLength, goOrHitOpp: $goOrHitOpp');
 
         matchedTrendCount = closePrices.length;
 
@@ -1952,6 +2009,11 @@ class MainPresenter extends GetxController {
                   0.25 *
                   contractVal) -
               commissionsAndFees;
+          undelayedInitialFund = undelayedInitialFund +
+              (((randomTrend.last - lastClosePrice) * 10) ~/
+                  0.25 *
+                  contractVal) -
+              commissionsAndFees;
         }
 
         prob = isLong ? upperProb : lowerProb;
@@ -1961,6 +2023,8 @@ class MainPresenter extends GetxController {
             (hitCount / (hitCount + missCount)).toStringAsFixed(4));
         mdd = double.parse(mdd.toStringAsFixed(4));
         initialFund = double.parse(initialFund.toStringAsFixed(4));
+        undelayedInitialFund =
+            double.parse(undelayedInitialFund.toStringAsFixed(4));
 
         // Save results one by one into listList
         closePrices.mapIndexed((i, innerList) => listList.add([
@@ -1974,6 +2038,7 @@ class MainPresenter extends GetxController {
               goOrHitOpp,
               hitRate,
               mdd,
+              undelayedInitialFund,
               initialFund,
               commissionsAndFees,
               yFinMinuteDelay,
@@ -1982,17 +2047,20 @@ class MainPresenter extends GetxController {
 
         printInfo(info: 'Matched count: $matchedTrendCount');
         printInfo(info: 'Prob.: $prob');
-        printInfo(info: 'Final return rate.: $finalReturnRate');
+        printInfo(info: 'Undelayed return rate: $expectedReturnRate');
+        printInfo(
+            info:
+                'Undelayed fund remaining: US\$$undelayedInitialFund/US\$10000');
+        printInfo(info: 'Final return rate: $finalReturnRate');
         printInfo(info: 'Fund remaining: US\$$initialFund/US\$10000');
       }
 
-      splitCandleLists.removeAt(randomIndex);
+      // splitCandleLists.removeAt(randomIndex);
+      splitCandleLists = [];
     }
 
     printInfo(info: 'Backtesting ended');
     printInfo(info: 'Export backtesting results CSV...');
-
-    // TODO: unit test CSV exporting function
 
     // Export CSV to device's local file directory
     String fileName = '$symbol + _backtest_results';
