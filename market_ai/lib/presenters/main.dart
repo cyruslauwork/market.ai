@@ -1546,7 +1546,9 @@ class MainPresenter extends GetxController {
 
     // Split the candle list of list
     List<List<CandleData>> splitCandleLists = [];
-    final int sublistSize = (candle.length / 10).ceil();
+    // TODO: Revert debugging code to original code
+    int splits = 100; // Original: 10
+    final int sublistSize = (candle.length / splits).ceil();
 
     for (int i = 0; i < candle.length; i += sublistSize) {
       final end =
@@ -1619,7 +1621,7 @@ class MainPresenter extends GetxController {
           // Doesn't count as miss
           continue;
         }
-        printInfo(info: '✅ Outside first 30 mins');
+        // printInfo(info: '✅ Outside first 30 mins');
 
         // Selecting a trend
         double startingClosePrice = sublist[l].close!;
@@ -1652,7 +1654,7 @@ class MainPresenter extends GetxController {
               (sublist[l].trends[m]! - startingClosePrice) /
                   startingClosePrice);
         }
-        printInfo(info: '✅ Selected a trend');
+        // printInfo(info: '✅ Selected a trend');
 
         List<List<double>> upper = [];
         List<List<double>> lower = [];
@@ -1683,8 +1685,7 @@ class MainPresenter extends GetxController {
                   tol); // Record data type in Dart is equivalent to Tuple in Java and Python
 
           if (comparisonResult.$1) {
-            printInfo(info: '===================================');
-            printInfo(info: '✅ Trend percentage changes matched');
+            // printInfo(info: '✅ A trend percentage changes matched');
             List<double> comparePeriodFirstMaAndPricePercentDifferencesList =
                 [];
             List<List<double>> comparePeriodMaPercentDifferencesListList = [];
@@ -1715,7 +1716,7 @@ class MainPresenter extends GetxController {
                     comparePeriodMaPercentDifferencesListList,
                     tol);
             if (isMaMatched) {
-              printInfo(info: '✅ Trend MAs matched');
+              printInfo(info: '✅ A trend MAs matched');
               // Store the adjusted close prices into different lists
               List<double> matchedAdjustedSubsequentCloseList = [];
               double lastDifference =
@@ -1735,13 +1736,14 @@ class MainPresenter extends GetxController {
                 closePricesRowID.add(m);
                 lower.add(matchedAdjustedSubsequentCloseList);
               }
-            } else {
-              printInfo(info: '❌ Trend MAs not matched');
             }
-          } else {
-            printInfo(info: '===================================');
-            printInfo(info: '❌ Trend percentage changes not matched');
+            // else {
+            //   printInfo(info: '❌ A trend MAs not matched');
+            // }
           }
+          // else {
+          //   printInfo(info: '❌ A trend percentage changes not matched');
+          // }
         }
 
         // Division by zero is mathematically undefined, but in programming,
@@ -2055,6 +2057,7 @@ class MainPresenter extends GetxController {
         printInfo(info: 'Fund remaining: US\$$initialFund/US\$10000');
       }
 
+      // TODO: Revert debugging code to original code
       // splitCandleLists.removeAt(randomIndex);
       splitCandleLists = [];
     }
