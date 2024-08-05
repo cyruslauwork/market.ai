@@ -1492,6 +1492,7 @@ class MainPresenter extends GetxController {
     int yFinMinuteDelay = 1;
     int hitCount = 0;
     int missCount = 0;
+    int outsideTimeCount = 0;
 
     if (len <= 1) {
       throw ArgumentError('Selected period must greater than 1 time unit.');
@@ -1589,7 +1590,7 @@ class MainPresenter extends GetxController {
         int matchedTrendCount = 0;
 
         logger.d(
-            'Hit/miss count: $hitCount/$missCount | Hit rate: $hitRate | Current ID among the total in the split candle list: $id/$subLen');
+            'Hit/miss/outside count: $hitCount/$missCount/$outsideTimeCount | Hit rate: $hitRate | Current ID among the total in the split candle list: $id/$subLen');
 
         // Check if the dateTime is within the first 30 minutes of trading
         int timestamp = sublist[l].timestamp;
@@ -1609,7 +1610,7 @@ class MainPresenter extends GetxController {
               subtractedDateTime.isAfter(tradingStartTime) &&
                   subtractedDateTime.isBefore(tradingEndTimeUTC);
           if (isWithinFirst30Minutes) {
-            // Doesn't count as miss
+            outsideTimeCount++;
             continue;
           }
           String lastDatetime =
@@ -1618,7 +1619,7 @@ class MainPresenter extends GetxController {
               TimeService.to.isEasternDaylightTime(dateTime) ? 'EDT' : 'EST';
           datetime.add('$lastDatetime $timezone');
         } else {
-          // Doesn't count as miss
+          outsideTimeCount++;
           continue;
         }
         // printInfo(info: '✅ Outside first 30 mins');
@@ -1750,7 +1751,7 @@ class MainPresenter extends GetxController {
         // dividing by zero often results in NaN (Not a Number) for floating-point numbers.
         // This way, skip when both lists are empty
         if (upper.isEmpty && lower.isEmpty) {
-          missCount += 1;
+          missCount++;
           printInfo(info: '❌ upper and lower are empty');
           continue;
         }
@@ -1762,7 +1763,7 @@ class MainPresenter extends GetxController {
         lowerProb = double.parse(lowerProb.toStringAsFixed(4));
         if (upperProb.toInt() == 1) {
           if (upper.length < 4) {
-            missCount += 1;
+            missCount++;
             printInfo(info: '❌ upper.length < 4');
             continue;
           }
@@ -1770,7 +1771,7 @@ class MainPresenter extends GetxController {
           printInfo(info: '✅ Is long');
         } else if (upperProb > 0.7) {
           if (upper.length < 5) {
-            missCount += 1;
+            missCount++;
             printInfo(info: '❌ upper.length < 5');
             continue;
           }
@@ -1778,7 +1779,7 @@ class MainPresenter extends GetxController {
           printInfo(info: '✅ Is long');
         } else if (lowerProb.toInt() == 1) {
           if (lower.length < 4) {
-            missCount += 1;
+            missCount++;
             printInfo(info: '❌ lower.length < 4');
             continue;
           }
@@ -1786,14 +1787,14 @@ class MainPresenter extends GetxController {
           printInfo(info: '✅ Is short');
         } else if (lowerProb > 0.7) {
           if (lower.length < 5) {
-            missCount += 1;
+            missCount++;
             printInfo(info: '❌ lower.length < 5');
             continue;
           }
           isShort = true;
           printInfo(info: '✅ Is short');
         } else {
-          missCount += 1;
+          missCount++;
           printInfo(info: '❌ No majority list');
           continue;
         }
@@ -1806,12 +1807,12 @@ class MainPresenter extends GetxController {
             expectedMeanReturnRate =
                 (meanOfLastClosePrices - lastClosePrice) / lastClosePrice;
             if (expectedMeanReturnRate <= 0.001) {
-              missCount += 1;
+              missCount++;
               printInfo(info: '❌ Mean return rate <= 0.001 in long');
               continue;
             }
           } else {
-            missCount += 1;
+            missCount++;
             printInfo(info: '❌ Mean return rate is 0.0 in long');
             continue;
           }
@@ -1822,7 +1823,7 @@ class MainPresenter extends GetxController {
             mdd = max(mdd, minPercentageDifference.abs());
             thisMdd = minPercentageDifference.abs();
           } else {
-            missCount += 1;
+            missCount++;
             printInfo(info: '❌ thisMin is 0.0 in long');
             continue;
           }
@@ -1832,12 +1833,12 @@ class MainPresenter extends GetxController {
             expectedMeanReturnRate =
                 (meanOfLastClosePrices - lastClosePrice) / lastClosePrice;
             if (expectedMeanReturnRate >= -0.001) {
-              missCount += 1;
+              missCount++;
               printInfo(info: '❌ Mean return rate >= -0.001 in short');
               continue;
             }
           } else {
-            missCount += 1;
+            missCount++;
             printInfo(info: '❌ Mean return rate is 0.0 in short');
             continue;
           }
@@ -1848,12 +1849,12 @@ class MainPresenter extends GetxController {
             mdd = max(mdd, maxPercentageDifference.abs());
             thisMdd = maxPercentageDifference.abs();
           } else {
-            missCount += 1;
+            missCount++;
             printInfo(info: '❌ thisMax is 0.0 in short');
             continue;
           }
         }
-        hitCount += 1;
+        hitCount++;
         printInfo(info: '✅ Minimum mean return rate has been passed');
 
         // Pick up a trend randomly from upper/lower by overall probability
@@ -2061,6 +2062,9 @@ class MainPresenter extends GetxController {
       // splitCandleLists.removeAt(randomIndex);
       splitCandleLists = [];
     }
+
+    logger.d(
+        'Hit/miss/outside count: $hitCount/$missCount/$outsideTimeCount | Hit rate: $hitRate');
 
     printInfo(info: 'Backtesting ended');
     printInfo(info: 'Export backtesting results CSV...');
