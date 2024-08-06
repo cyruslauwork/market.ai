@@ -1493,6 +1493,13 @@ class MainPresenter extends GetxController {
     int hitCount = 0;
     int missCount = 0;
     int outsideTimeCount = 0;
+    int subsequentLen = subLength.value;
+    double probThreshold = 0.7;
+    double minMeanReturnRate = 0.001;
+    int minMatchCount = 5;
+    int minOneSidedMatchCount = 4;
+    int oneThirdSubLength = subsequentLen ~/ 3;
+    int halfSubLength = subsequentLen ~/ 2;
 
     if (len <= 1) {
       throw ArgumentError('Selected period must greater than 1 time unit.');
@@ -1514,7 +1521,7 @@ class MainPresenter extends GetxController {
       'Fund Remaining (commns. and fees deducted)',
       'Commns. and Fees (2 contracts)',
       'yFin Minute Delay',
-      ...List.generate(len, (index) => 'Close Price ${index + 1}'),
+      ...List.generate(subsequentLen, (index) => 'Close Price ${index + 1}'),
     ]);
 
     // Make sure data is from the expected financial instrument
@@ -1613,11 +1620,6 @@ class MainPresenter extends GetxController {
             outsideTimeCount++;
             continue;
           }
-          String lastDatetime =
-              DateFormat('yyyy-MM-dd HH:mm:ss').format(subtractedDateTime);
-          String timezone =
-              TimeService.to.isEasternDaylightTime(dateTime) ? 'EDT' : 'EST';
-          datetime.add('$lastDatetime $timezone');
         } else {
           outsideTimeCount++;
           continue;
@@ -1663,7 +1665,6 @@ class MainPresenter extends GetxController {
         List<int> closePricesRowID = [];
         bool isLong = false;
         bool isShort = false;
-        int subsequentLen = subLength.value;
 
         // Look for similar trend(s)
         for (int m = initIndex;
@@ -1762,15 +1763,15 @@ class MainPresenter extends GetxController {
         upperProb = double.parse(upperProb.toStringAsFixed(4));
         lowerProb = double.parse(lowerProb.toStringAsFixed(4));
         if (upperProb.toInt() == 1) {
-          if (upper.length < 4) {
+          if (upper.length < minOneSidedMatchCount) {
             missCount++;
             printInfo(info: '❌ upper.length < 4');
             continue;
           }
           isLong = true;
           printInfo(info: '✅ Is long');
-        } else if (upperProb > 0.7) {
-          if (upper.length < 5) {
+        } else if (upperProb >= probThreshold) {
+          if (upper.length < minMatchCount) {
             missCount++;
             printInfo(info: '❌ upper.length < 5');
             continue;
@@ -1778,15 +1779,15 @@ class MainPresenter extends GetxController {
           isLong = true;
           printInfo(info: '✅ Is long');
         } else if (lowerProb.toInt() == 1) {
-          if (lower.length < 4) {
+          if (lower.length < minOneSidedMatchCount) {
             missCount++;
             printInfo(info: '❌ lower.length < 4');
             continue;
           }
           isShort = true;
           printInfo(info: '✅ Is short');
-        } else if (lowerProb > 0.7) {
-          if (lower.length < 5) {
+        } else if (lowerProb >= probThreshold) {
+          if (lower.length < minMatchCount) {
             missCount++;
             printInfo(info: '❌ lower.length < 5');
             continue;
@@ -1806,7 +1807,7 @@ class MainPresenter extends GetxController {
           if (meanOfLastClosePrices != 0.0) {
             expectedMeanReturnRate =
                 (meanOfLastClosePrices - lastClosePrice) / lastClosePrice;
-            if (expectedMeanReturnRate <= 0.001) {
+            if (expectedMeanReturnRate <= minMeanReturnRate) {
               missCount++;
               printInfo(info: '❌ Mean return rate <= 0.001 in long');
               continue;
@@ -1832,7 +1833,7 @@ class MainPresenter extends GetxController {
           if (meanOfLastClosePrices != 0.0) {
             expectedMeanReturnRate =
                 (meanOfLastClosePrices - lastClosePrice) / lastClosePrice;
-            if (expectedMeanReturnRate >= -0.001) {
+            if (expectedMeanReturnRate >= -minMeanReturnRate) {
               missCount++;
               printInfo(info: '❌ Mean return rate >= -0.001 in short');
               continue;
@@ -1916,7 +1917,6 @@ class MainPresenter extends GetxController {
             }
           }
         }
-        int oneThirdSubLength = subLength.value ~/ 3;
         if (hitOppositeCeilingOrBottomCount >= oneThirdSubLength) {
           goOrHitOpp = true;
           // Get the failed trend last close price return and change the fund value
@@ -1969,7 +1969,6 @@ class MainPresenter extends GetxController {
             }
           }
         }
-        int halfSubLength = subLength.value ~/ 2;
         if (goOppositeCount >= halfSubLength) {
           goOrHitOpp = true;
           // Get the failed trend last close price return and change the fund value
@@ -2068,9 +2067,9 @@ class MainPresenter extends GetxController {
 
     printInfo(info: 'Backtesting ended');
     printInfo(info: 'Export backtesting results CSV...');
-
     // Export CSV to device's local file directory
-    String fileName = '$symbol + _backtest_results';
+    String fileName =
+        '${symbol}_tol${tol}_len${len}_subLen${subsequentLen}_probThreshold${probThreshold}_ma${maMatchCriteria.value}}_strict${strictMatchCriteria.value}_outsideFirst30mins_minMatchCount${minMatchCount}_minOneSidedMatchCount${minOneSidedMatchCount}_minReturnRate${minMeanReturnRate}_hitCeilingOrBottom${oneThirdSubLength}_goOppo${halfSubLength}_backtest_results';
     exportCsv(listList, fileName);
 
     printInfo(info: 'Exported backtesting results CSV');
