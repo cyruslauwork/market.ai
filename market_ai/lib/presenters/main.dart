@@ -1141,10 +1141,11 @@ class MainPresenter extends GetxController {
         Future.microtask(() {
           isFirstThirtyMins.value = true;
         });
+      } else {
+        Future.microtask(() {
+          isFirstThirtyMins.value = false;
+        });
       }
-      Future.microtask(() {
-        isFirstThirtyMins.value = false;
-      });
     } else {
       Future.microtask(() {
         instruction.value = 'Error: lockTrendDatetime == 0';
@@ -1244,12 +1245,11 @@ class MainPresenter extends GetxController {
           double minPercentageDifference =
               (min - startingClosePrice) / startingClosePrice;
           Future.microtask(() {
-            expectedMdd.value =
-                '-${(minPercentageDifference.abs() * 100).toStringAsFixed(4)}';
+            expectedMdd.value = '-${minPercentageDifference.abs()}';
           });
         } else {
           Future.microtask(() {
-            expectedMdd.value = '-${min.toStringAsFixed(4)}';
+            expectedMdd.value = '-$min';
           });
         }
       } else if (isShort.value) {
@@ -1276,12 +1276,11 @@ class MainPresenter extends GetxController {
           double maxPercentageDifference =
               (max - startingClosePrice) / startingClosePrice;
           Future.microtask(() {
-            expectedMdd.value =
-                '+${(maxPercentageDifference * 100).toStringAsFixed(4)}';
+            expectedMdd.value = '+$maxPercentageDifference';
           });
         } else {
           Future.microtask(() {
-            expectedMdd.value = '+${max.toStringAsFixed(4)}';
+            expectedMdd.value = '+$max';
           });
         }
       } else {
@@ -1319,23 +1318,20 @@ class MainPresenter extends GetxController {
               ((min - startingClosePrice) / startingClosePrice);
           if (maxPercentageDifference > minPercentageDifference) {
             Future.microtask(() {
-              expectedMdd.value =
-                  '±${(maxPercentageDifference * 100).abs().toStringAsFixed(4)}';
+              expectedMdd.value = '±${maxPercentageDifference.abs()}';
             });
           } else if (minPercentageDifference > maxPercentageDifference) {
             Future.microtask(() {
-              expectedMdd.value =
-                  '±${(minPercentageDifference * 100).abs().toStringAsFixed(4)}';
+              expectedMdd.value = '±${minPercentageDifference.abs()}';
             });
           } else {
             Future.microtask(() {
-              expectedMdd.value =
-                  '±${(maxPercentageDifference * 100).abs().toStringAsFixed(4)}';
+              expectedMdd.value = '±${maxPercentageDifference.abs()}';
             });
           }
         } else {
           Future.microtask(() {
-            expectedMdd.value = '±${max.toStringAsFixed(4)}';
+            expectedMdd.value = '±$max';
           });
         }
       }
@@ -1379,10 +1375,7 @@ class MainPresenter extends GetxController {
         }
       }
 
-      if (expectedMdd.value == '0' ||
-          expectedMdd.value == '0.0' ||
-          expectedMdd.value == '0.000' ||
-          expectedMdd.value == '') {
+      if (expectedMdd.value == '0.0') {
         Future.microtask(() {
           hitCeilingOrFloor.value = false;
         });
@@ -1391,21 +1384,21 @@ class MainPresenter extends GetxController {
         int hitOppositeCeilingOrBottomCount = 0;
         if (isLong.value) {
           for (double value in spots) {
-            value = ((value - startingClosePrice) / startingClosePrice) * 100;
+            value = ((value - startingClosePrice) / startingClosePrice);
             if (value <= -mdd) {
               hitOppositeCeilingOrBottomCount++;
             }
           }
         } else if (isShort.value) {
           for (double value in spots) {
-            value = ((value - startingClosePrice) / startingClosePrice) * 100;
+            value = ((value - startingClosePrice) / startingClosePrice);
             if (value >= mdd) {
               hitOppositeCeilingOrBottomCount++;
             }
           }
         } else {
           for (double value in spots) {
-            value = ((value - startingClosePrice) / startingClosePrice) * 100;
+            value = ((value - startingClosePrice) / startingClosePrice);
             if (value <= -mdd || value >= mdd) {
               hitOppositeCeilingOrBottomCount++;
             }
@@ -1555,7 +1548,7 @@ class MainPresenter extends GetxController {
     // Split the candle list of list
     List<List<CandleData>> splitCandleLists = [];
     // TODO: Revert debugging code to original code
-    int splits = 100; // Original: 10
+    int splits = 1000; // Original: 100
     final int sublistSize = (candle.length / splits).ceil();
 
     for (int i = 0; i < candle.length; i += sublistSize) {
@@ -1621,8 +1614,9 @@ class MainPresenter extends GetxController {
             continue;
           }
         } else {
-          outsideTimeCount++;
-          continue;
+          logger.d('Error: timestamp == 0');
+          splitCandleLists = [];
+          break;
         }
         // printInfo(info: '✅ Outside first 30 mins');
 
