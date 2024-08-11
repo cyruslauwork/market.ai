@@ -42,9 +42,6 @@ class SharedPreferencesConstant {
   static String cluster = 'cluster';
   static String lockTrendLastRow = 'lockTrendLastRow';
   static String lockTrendLastDatetime = 'lockTrendLastDatetime';
-  static String lockTrendSubTrendList = 'lockTrendSubTrendList';
-  static String hitCeilingOrFloor = 'hitCeilingOrFloor';
-  static String goOpposite = 'goOpposite';
   static String lowReturn = 'lowReturn';
   static String lowProb = 'lowProb';
   static String trendsLessThanFive = 'trendsLessThanFive';
@@ -52,7 +49,6 @@ class SharedPreferencesConstant {
   static String trendsNotOneSided = 'trendsNotOneSided';
   static String expectedReturn = 'expectedReturn';
   static String expectedMdd = 'expectedMdd';
-  static String startingClosePrice = 'startingClosePrice';
   static String isLong = 'isLong';
   static String isShort = 'isShort';
 }

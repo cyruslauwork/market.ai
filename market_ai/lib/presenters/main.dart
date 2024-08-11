@@ -610,9 +610,9 @@ class MainPresenter extends GetxController {
       (PrefsService.to.prefs.getBool(SharedPreferencesConstant.lockTrend) ??
               false)
           .obs;
-  RxBool isFirstThirtyMins = true.obs;
-  RxBool hitCeilingOrFloor = true.obs;
-  RxBool goOpposite = true.obs;
+  RxBool isFirstThirtyMins = false.obs;
+  RxBool hitCeilingOrFloor = false.obs;
+  RxBool goOpposite = false.obs;
   RxBool lowReturn =
       (PrefsService.to.prefs.getBool(SharedPreferencesConstant.lowReturn) ??
               true)
@@ -1115,6 +1115,18 @@ class MainPresenter extends GetxController {
     double startingClosePrice =
         MainPresenter.to.candleListList[lockTrendLastRow][4];
 
+    bool thisIsFirstThirtyMins = isFirstThirtyMins.value;
+    bool thisLowProb = lowProb.value;
+    bool thisLowReturn = lowReturn.value;
+    bool thisTrendsNotOneSided = trendsNotOneSided.value;
+    bool thisTrendsLessThanFive = trendsLessThanFive.value;
+    bool thisTrendsOneSidedButLessThanFour =
+        trendsOneSidedButLessThanFour.value;
+    bool thisHitCeilingOrFloor = hitCeilingOrFloor.value;
+    bool thisGoOpposite = goOpposite.value;
+    bool thisIsLong = isLong.value;
+    bool thisIsShort = isShort.value;
+
     if (lockTrendDatetime != 0) {
       DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
           lockTrendDatetime * 1000,
@@ -1138,10 +1150,12 @@ class MainPresenter extends GetxController {
           subtractedDateTime.isAfter(tradingStartTime) &&
               subtractedDateTime.isBefore(tradingEndTimeUTC);
       if (isWithinFirst30Minutes) {
+        thisIsFirstThirtyMins = true;
         Future.microtask(() {
           isFirstThirtyMins.value = true;
         });
       } else {
+        thisIsFirstThirtyMins = false;
         Future.microtask(() {
           isFirstThirtyMins.value = false;
         });
@@ -1155,10 +1169,12 @@ class MainPresenter extends GetxController {
 
     if (!isLockTrend.value) {
       if (lockTrendSubTrendList.length < 5) {
+        thisTrendsLessThanFive = true;
         Future.microtask(() {
           trendsLessThanFive.value = true;
         });
       } else {
+        thisTrendsLessThanFive = false;
         Future.microtask(() {
           trendsLessThanFive.value = false;
         });
@@ -1176,44 +1192,56 @@ class MainPresenter extends GetxController {
       double upperProb = upper.length / (upper.length + lower.length);
       double lowerProb = lower.length / (upper.length + lower.length);
       if (upperProb > 0.7) {
+        thisIsLong = true;
+        thisLowProb = false;
         Future.microtask(() {
           isLong.value = true;
           lowProb.value = false;
         });
         if (upperProb == 1.0) {
+          thisTrendsNotOneSided = false;
           Future.microtask(() {
             trendsNotOneSided.value = false;
           });
           if (upper.length < 4) {
+            thisTrendsOneSidedButLessThanFour = true;
             Future.microtask(() {
               trendsOneSidedButLessThanFour.value = true;
             });
           } else {
+            thisTrendsOneSidedButLessThanFour = false;
             Future.microtask(() {
               trendsOneSidedButLessThanFour.value = false;
             });
           }
         }
       } else if (lowerProb > 0.7) {
+        thisIsShort = true;
+        thisLowProb = false;
         Future.microtask(() {
           isShort.value = true;
           lowProb.value = false;
         });
         if (lowerProb == 1.0) {
+          thisTrendsNotOneSided = false;
           Future.microtask(() {
             trendsNotOneSided.value = false;
           });
           if (lower.length < 4) {
+            thisTrendsOneSidedButLessThanFour = true;
             Future.microtask(() {
               trendsOneSidedButLessThanFour.value = true;
             });
           } else {
+            thisTrendsOneSidedButLessThanFour = false;
             Future.microtask(() {
               trendsOneSidedButLessThanFour.value = false;
             });
           }
         }
       } else {
+        thisLowProb = true;
+        thisTrendsNotOneSided = true;
         Future.microtask(() {
           lowProb.value = true;
           trendsNotOneSided.value = true;
@@ -1227,15 +1255,18 @@ class MainPresenter extends GetxController {
           returnRate =
               (meanOfLastClosePrices - startingClosePrice) / startingClosePrice;
           if (returnRate >= 0.001) {
+            thisLowReturn = false;
             Future.microtask(() {
               lowReturn.value = false;
             });
           } else {
+            thisLowReturn = true;
             Future.microtask(() {
               lowReturn.value = true;
             });
           }
         } else {
+          thisLowReturn = true;
           Future.microtask(() {
             lowReturn.value = true;
           });
@@ -1258,15 +1289,18 @@ class MainPresenter extends GetxController {
           returnRate =
               (meanOfLastClosePrices - startingClosePrice) / startingClosePrice;
           if (returnRate <= -0.001) {
+            thisLowReturn = false;
             Future.microtask(() {
               lowReturn.value = false;
             });
           } else {
+            thisLowReturn = true;
             Future.microtask(() {
               lowReturn.value = true;
             });
           }
         } else {
+          thisLowReturn = true;
           Future.microtask(() {
             lowReturn.value = true;
           });
@@ -1290,19 +1324,23 @@ class MainPresenter extends GetxController {
           returnRate =
               (meanOfLastClosePrices - startingClosePrice) / startingClosePrice;
           if (returnRate >= 0.001) {
+            thisLowReturn = false;
             Future.microtask(() {
               lowReturn.value = false;
             });
           } else if (returnRate <= -0.001) {
+            thisLowReturn = false;
             Future.microtask(() {
               lowReturn.value = false;
             });
           } else {
+            thisLowReturn = true;
             Future.microtask(() {
               lowReturn.value = true;
             });
           }
         } else {
+          thisLowReturn = true;
           Future.microtask(() {
             lowReturn.value = true;
           });
@@ -1335,8 +1373,12 @@ class MainPresenter extends GetxController {
           });
         }
       }
+      thisHitCeilingOrFloor = false;
+      thisGoOpposite = false;
       Future.microtask(() {
         expectedReturn.value = returnRate.abs();
+        hitCeilingOrFloor.value = false;
+        goOpposite.value = false;
       });
 
       Future.microtask(() {
@@ -1373,9 +1415,15 @@ class MainPresenter extends GetxController {
             break;
           }
         }
+      } else {
+        Future.microtask(() {
+          instruction.value = 'Error: lockTrendLastRow == 0';
+        });
+        return;
       }
 
       if (expectedMdd.value == '0.0') {
+        thisHitCeilingOrFloor = false;
         Future.microtask(() {
           hitCeilingOrFloor.value = false;
         });
@@ -1405,10 +1453,12 @@ class MainPresenter extends GetxController {
           }
         }
         if (hitOppositeCeilingOrBottomCount >= subLength.value ~/ 3) {
+          thisHitCeilingOrFloor = true;
           Future.microtask(() {
             hitCeilingOrFloor.value = true;
           });
         } else {
+          thisHitCeilingOrFloor = false;
           Future.microtask(() {
             hitCeilingOrFloor.value = false;
           });
@@ -1431,28 +1481,36 @@ class MainPresenter extends GetxController {
       }
       int halfSubLength = subLength.value ~/ 2;
       if (goOppositeCount >= halfSubLength) {
+        thisGoOpposite = true;
         Future.microtask(() {
           goOpposite.value = true;
         });
       } else {
+        thisGoOpposite = false;
         Future.microtask(() {
           goOpposite.value = false;
         });
       }
     }
-    if ((!lowProb.value &&
-            !lowReturn.value &&
-            trendsNotOneSided.value &&
-            !trendsLessThanFive.value) ||
-        (!lowProb.value &&
-            !lowReturn.value &&
-            !trendsNotOneSided.value &&
-            !trendsOneSidedButLessThanFour.value)) {
-      if (isLong.value) {
+    if ((!thisIsFirstThirtyMins &&
+            !thisLowProb &&
+            !thisLowReturn &&
+            thisTrendsNotOneSided &&
+            !thisTrendsLessThanFive &&
+            !thisHitCeilingOrFloor &&
+            !thisGoOpposite) ||
+        (!thisIsFirstThirtyMins &&
+            !thisLowProb &&
+            !thisLowReturn &&
+            !thisTrendsNotOneSided &&
+            !thisTrendsOneSidedButLessThanFour &&
+            !thisHitCeilingOrFloor &&
+            !thisGoOpposite)) {
+      if (thisIsLong) {
         Future.microtask(() {
           instruction.value = 'long'.tr;
         });
-      } else if (isShort.value) {
+      } else if (thisIsShort) {
         Future.microtask(() {
           instruction.value = 'short'.tr;
         });
