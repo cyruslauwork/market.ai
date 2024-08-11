@@ -1380,17 +1380,9 @@ class TrendMatch {
     double subLen = MainPresenter.to.subLength.value.toDouble();
 
     for (double i = 0; i < selectedLength + subLen + 1; i++) {
-      if (i == selectedLength) {
+      if (i == selectedLength - 1) {
         flspotList.add(FlSpot(i, lastSelectedClosePrice));
         newLockTrendSubTrendList.add(lastSelectedClosePrice);
-      } else if (i == 0) {
-        double adjustedMatchedTrendClosePrice =
-            candleListList[matchRows[index] + i.toInt()]
-                    [4] // Close price of matched trend
-                *
-                lastActualDifference;
-
-        flspotList.add(FlSpot(i, adjustedMatchedTrendClosePrice));
       } else if (i == selectedLength + subLen) {
         double adjustedMatchedTrendClosePrice =
             candleListList[matchRows[index] + i.toInt()]
@@ -1407,7 +1399,7 @@ class TrendMatch {
                 lastActualDifference;
 
         flspotList.add(FlSpot(i, adjustedMatchedTrendClosePrice));
-        if (i > selectedLength) {
+        if (i >= selectedLength) {
           newLockTrendSubTrendList.add(adjustedMatchedTrendClosePrice);
         }
       }
