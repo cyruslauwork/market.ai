@@ -1071,14 +1071,15 @@ class MainPresenter extends GetxController {
     }
   }
 
-  double findMaxOfLastValues(List<List<double>> list) {
+  double findMaxOfValues(List<List<double>> list) {
     double max = double.negativeInfinity;
     if (list.isNotEmpty) {
       for (List<double> innerList in list) {
         if (innerList.isNotEmpty) {
-          double lastValue = innerList.last;
-          if (lastValue > max) {
-            max = lastValue;
+          for (double innerValue in innerList) {
+            if (innerValue > max) {
+              max = innerValue;
+            }
           }
         }
       }
@@ -1088,14 +1089,15 @@ class MainPresenter extends GetxController {
     return max;
   }
 
-  double findMinOfLastValues(List<List<double>> list) {
+  double findMinOfValues(List<List<double>> list) {
     double min = double.infinity;
     if (list.isNotEmpty) {
       for (List<double> innerList in list) {
         if (innerList.isNotEmpty) {
-          double lastValue = innerList.last;
-          if (lastValue < min) {
-            min = lastValue;
+          for (double innerValue in innerList) {
+            if (innerValue < min) {
+              min = innerValue;
+            }
           }
         }
       }
@@ -1271,7 +1273,7 @@ class MainPresenter extends GetxController {
             lowReturn.value = true;
           });
         }
-        double min = findMinOfLastValues(lower);
+        double min = findMinOfValues(lower);
         if (min != 0.0) {
           double minPercentageDifference =
               (min - startingClosePrice) / startingClosePrice;
@@ -1305,7 +1307,7 @@ class MainPresenter extends GetxController {
             lowReturn.value = true;
           });
         }
-        double max = findMaxOfLastValues(upper);
+        double max = findMaxOfValues(upper);
         if (max != 0.0) {
           double maxPercentageDifference =
               (max - startingClosePrice) / startingClosePrice;
@@ -1345,26 +1347,22 @@ class MainPresenter extends GetxController {
             lowReturn.value = true;
           });
         }
-        double maxPercentageDifference = 0;
-        double minPercentageDifference = 0;
-        double max = findMaxOfLastValues(upper);
-        double min = findMinOfLastValues(lower);
+        double maxPercentageDifferenceAbs = 0;
+        double minPercentageDifferenceAbs = 0;
+        double max = findMaxOfValues(upper);
+        double min = findMinOfValues(lower);
         if (max != 0.0 && min != 0.0) {
-          maxPercentageDifference =
-              ((max - startingClosePrice) / startingClosePrice);
-          minPercentageDifference =
-              ((min - startingClosePrice) / startingClosePrice);
-          if (maxPercentageDifference > minPercentageDifference) {
+          maxPercentageDifferenceAbs =
+              ((max - startingClosePrice) / startingClosePrice).abs();
+          minPercentageDifferenceAbs =
+              ((min - startingClosePrice) / startingClosePrice).abs();
+          if (maxPercentageDifferenceAbs > minPercentageDifferenceAbs) {
             Future.microtask(() {
-              expectedMdd.value = '±${maxPercentageDifference.abs()}';
+              expectedMdd.value = '±$maxPercentageDifferenceAbs';
             });
-          } else if (minPercentageDifference > maxPercentageDifference) {
+          } else if (minPercentageDifferenceAbs > maxPercentageDifferenceAbs) {
             Future.microtask(() {
-              expectedMdd.value = '±${minPercentageDifference.abs()}';
-            });
-          } else {
-            Future.microtask(() {
-              expectedMdd.value = '±${maxPercentageDifference.abs()}';
+              expectedMdd.value = '±$minPercentageDifferenceAbs';
             });
           }
         } else {
@@ -1814,35 +1812,35 @@ class MainPresenter extends GetxController {
         // Round to 3 decimal places
         upperProb = double.parse(upperProb.toStringAsFixed(4));
         lowerProb = double.parse(lowerProb.toStringAsFixed(4));
-        if (upperProb.toInt() == 1) {
-          if (upper.length < minOneSidedMatchCount) {
-            missCount++;
-            printInfo(info: '❌ upper.length < 4');
-            continue;
+        if (upperProb >= probThreshold) {
+          if (upperProb.toInt() == 1) {
+            if (upper.length < minOneSidedMatchCount) {
+              missCount++;
+              printInfo(info: '❌ upper.length < 4');
+              continue;
+            }
+          } else {
+            if (upper.length < minMatchCount) {
+              missCount++;
+              printInfo(info: '❌ upper.length < 5');
+              continue;
+            }
           }
           isLong = true;
           printInfo(info: '✅ Is long');
-        } else if (upperProb >= probThreshold) {
-          if (upper.length < minMatchCount) {
-            missCount++;
-            printInfo(info: '❌ upper.length < 5');
-            continue;
-          }
-          isLong = true;
-          printInfo(info: '✅ Is long');
-        } else if (lowerProb.toInt() == 1) {
-          if (lower.length < minOneSidedMatchCount) {
-            missCount++;
-            printInfo(info: '❌ lower.length < 4');
-            continue;
-          }
-          isShort = true;
-          printInfo(info: '✅ Is short');
         } else if (lowerProb >= probThreshold) {
-          if (lower.length < minMatchCount) {
-            missCount++;
-            printInfo(info: '❌ lower.length < 5');
-            continue;
+          if (lowerProb.toInt() == 1) {
+            if (lower.length < minOneSidedMatchCount) {
+              missCount++;
+              printInfo(info: '❌ lower.length < 4');
+              continue;
+            }
+          } else {
+            if (lower.length < minMatchCount) {
+              missCount++;
+              printInfo(info: '❌ lower.length < 5');
+              continue;
+            }
           }
           isShort = true;
           printInfo(info: '✅ Is short');
@@ -1869,12 +1867,13 @@ class MainPresenter extends GetxController {
             printInfo(info: '❌ Mean return rate is 0.0 in long');
             continue;
           }
-          double thisMin = findMinOfLastValues(lower);
+          double thisMin = findMinOfValues(lower);
           if (thisMin != 0.0) {
             double minPercentageDifference =
                 (thisMin - lastClosePrice) / lastClosePrice;
-            mdd = max(mdd, minPercentageDifference.abs());
-            thisMdd = minPercentageDifference.abs();
+            double minPercentageDifferenceAbs = minPercentageDifference.abs();
+            mdd = max(mdd, minPercentageDifferenceAbs);
+            thisMdd = minPercentageDifferenceAbs;
           } else {
             missCount++;
             printInfo(info: '❌ thisMin is 0.0 in long');
@@ -1895,12 +1894,13 @@ class MainPresenter extends GetxController {
             printInfo(info: '❌ Mean return rate is 0.0 in short');
             continue;
           }
-          double thisMax = findMaxOfLastValues(upper);
+          double thisMax = findMaxOfValues(upper);
           if (thisMax != 0.0) {
             double maxPercentageDifference =
                 (thisMax - lastClosePrice) / lastClosePrice;
-            mdd = max(mdd, maxPercentageDifference.abs());
-            thisMdd = maxPercentageDifference.abs();
+            double maxPercentageDifferenceAbs = maxPercentageDifference.abs();
+            mdd = max(mdd, maxPercentageDifferenceAbs);
+            thisMdd = maxPercentageDifferenceAbs;
           } else {
             missCount++;
             printInfo(info: '❌ thisMax is 0.0 in short');
