@@ -117,16 +117,14 @@ def https(request):
                     if update_status == 1:
                         print(f'Another update is already in progress. Please try again later.')
                         return
-                    is_updating_doc_ref = update_collection_ref.document(is_updating)
-                    is_updating_doc_ref.update({is_updating: 1})
-                    print(f'value {update_status} in is_updating document in {symbol}_update collection retrieved')
-                    if update_status is None:
-                        print(f'{is_updating} is not set in the document')
-                        update_status = 1
+                    elif update_status is None:
+                        print(f'{is_updating} is not set in the document. Setting...')
+                        is_updating_doc_ref.set({is_updating: 1})
+                    else:
+                        print(f'value {update_status} in is_updating document in {symbol}_update collection retrieved. Updating...')
+                        is_updating_doc_ref.update({is_updating: 1})
                 else:
-                    print(f'Document does not exist')
-                    update_status = 1
-                    is_updating_doc_ref = update_collection_ref.document(is_updating)
+                    print(f'Document does not exist. Creating...')
                     is_updating_doc_ref.set({is_updating: 1})
                 # Add to queue to check for duplicates later
                 update_queue = {}
@@ -420,7 +418,7 @@ def https(request):
                 #     return jsonify(json_data)
                 if last_time_key is None:
                     print({'error': 'last_time_key cannot be None'})
-                    return jsonify({'error': 'last_time_key cannot be None'})
+                    return jsonify({'error': f'last_time_key cannot be None. It is suggested to reset is_updating document to 0 and clear temp/{symbol}_update_queue in {symbol}_update collection'})
                 if last_time_key > timestamp:
                     print(f'Retrieving all documents in {symbol}_last_fifteen_days collection under {symbol}_update collection that have values greater than {timestamp}')
                     docs = new_month_collection_ref.where('time_key', '>', timestamp).order_by('time_key').stream(retry=Retry())
