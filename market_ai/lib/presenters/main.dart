@@ -1244,9 +1244,13 @@ class MainPresenter extends GetxController {
       } else {
         thisLowProb = true;
         thisTrendsNotOneSided = true;
+        thisIsLong = true;
+        thisIsShort = true;
         Future.microtask(() {
           lowProb.value = true;
           trendsNotOneSided.value = true;
+          isLong.value = true;
+          isShort.value = true;
         });
       }
 

@@ -54,7 +54,7 @@ class TrendMatchView extends StatelessWidget {
                       style: const TextTheme().sp7.tertiarythemeTextColor.w700,
                     ),
                     Text(
-                      '${'expected_mdd'.tr} ${MainPresenter.to.expectedMdd.value.substring(0, 1)}${double.parse(MainPresenter.to.expectedMdd.value.substring(1)).toStringAsFixed(4)}%',
+                      '${'expected_mdd'.tr} ${MainPresenter.to.expectedMdd.value.substring(0, 1)}${(double.parse(MainPresenter.to.expectedMdd.value.substring(1)) * 100).toStringAsFixed(4)}%',
                       style: const TextTheme().sp7.tertiarythemeTextColor.w700,
                     ),
                     Text(
