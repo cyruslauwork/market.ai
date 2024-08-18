@@ -201,25 +201,34 @@ def https(request):
                     doc = last_time_key_doc_ref.get()
                     if doc.exists:
                         last_time_key = doc.get(field_name)
-                        print(f'value {last_time_key} in last_time_key document in {symbol}_update collection retrieved')
                         if last_time_key is None:
                             print(f'{field_name} is not set in the document')
                             docs = collection_ref.order_by('time_key', direction=firestore.Query.DESCENDING).limit(1).stream(retry=Retry())
                             for doc in docs:
                                 last_time_key = doc.get('time_key')
+                            if last_time_key is None:
+                                print(f'Last document time_key not found in the {symbol} collection')
+                                doc_ref = update_collection_ref.document(is_updating)
+                                doc_ref.update({is_updating: 0})
+                                return
                             last_time_key_doc_ref = update_collection_ref.document(field_name)
                             last_time_key_doc_ref.update({field_name: last_time_key})
+                            print(f'Updated value {last_time_key} in last_time_key document in {symbol}_update collection')
+                        else:
+                            print(f'value {last_time_key} in last_time_key document in {symbol}_update collection retrieved')
                     else:
                         print(f'Document does not exist')
                         docs = collection_ref.order_by('time_key', direction=firestore.Query.DESCENDING).limit(1).stream(retry=Retry())
                         for doc in docs:
                             last_time_key = doc.get('time_key')
-                            last_time_key_doc_ref = update_collection_ref.document(field_name)
+                        if last_time_key is None:
+                            print(f'Last document time_key not found in the {symbol} collection')
+                            doc_ref = update_collection_ref.document(is_updating)
+                            doc_ref.update({is_updating: 0})
+                            return
+                        last_time_key_doc_ref = update_collection_ref.document(field_name)
                         last_time_key_doc_ref.set({field_name: last_time_key})
-                    if last_time_key is None:
-                        last_time_key_doc_ref = update_collection_ref.document(is_updating)
-                        last_time_key_doc_ref.update({is_updating: 0})
-                        return
+                        print(f'Added value {last_time_key} in last_time_key document in {symbol}_update collection')
                     print(f'Filtering time_key from new document(s) that have not value greater than last_time_key {last_time_key}')
                     last_time_key = int(last_time_key)
                     new_documents = [] # Initialize an empty list
@@ -262,20 +271,20 @@ def https(request):
                         else:
                             print('This is not the first document in the queue. Exiting...')
                             return
-                        # Update last_time_key document
-                        new_last_time_key = max(doc['time_key'] for doc in new_documents)
-                        print(f'Updating last_time_key document in {symbol}_update collection with value {new_last_time_key}')
-                        doc_ref = update_collection_ref.document(field_name)
-                        doc_ref.update({field_name: new_last_time_key})
-                        # Insert new documents into 'collection_ref' and 'new_month_collection_ref' Firestore collections
-                        print(f'Inserting new document(s)')
-                        add_documents_in_batches(collection_ref, new_documents)
-                        add_documents_in_batches(new_month_collection_ref, new_documents)
                         # Delete documents older than 15 days
                         print(f'Deleting documents older than 15 days from {symbol} collection')
                         fifteen_days_ago = datetime.fromtimestamp(last_time_key) - timedelta(days=15)
                         fifteen_days_ago_timestamp = fifteen_days_ago.timestamp()
                         delete_fifteen_days_ago_documents_in_batches(new_month_collection_ref, fifteen_days_ago_timestamp)
+                        # Insert new documents into 'collection_ref' and 'new_month_collection_ref' Firestore collections
+                        print(f'Inserting new document(s)')
+                        add_documents_in_batches(collection_ref, new_documents)
+                        add_documents_in_batches(new_month_collection_ref, new_documents)
+                        # Update last_time_key document
+                        last_time_key = max(doc['time_key'] for doc in new_documents)
+                        print(f'Updating last_time_key document in {symbol}_update collection with value {last_time_key}')
+                        doc_ref = update_collection_ref.document(field_name)
+                        doc_ref.update({field_name: last_time_key})
                         # Reset queue and update status
                         docs = update_queue_collection_ref.stream(retry=Retry())
                         for doc in docs:
@@ -283,8 +292,8 @@ def https(request):
                         doc_ref = update_collection_ref.document(is_updating)
                         doc_ref.set({is_updating: 0})
                         # Create/update Cloud Storage
-                        if timestamp == -1:
-                            server_end_json_data = {'content': new_documents}
+                        if timestamp == -1 or timestamp == 0: # Request from server (-1) or client with no data (0)
+                            backend_json_data = {'content': []}
                             if bucket.exists():
                                 if blob.exists():
                                     json_file = download_blob_with_retry(blob)
@@ -298,10 +307,10 @@ def https(request):
                                     print(f'Retrieving all documents in {symbol} collection')
                                     docs = collection_ref.order_by('time_key').stream(retry=Retry())
                                     docs = [doc.to_dict() for doc in docs]
-                                    server_end_json_data['content'] = []
-                                server_end_json_data['content'].extend(docs)
+                                    new_documents = []
+                                backend_json_data['content'] = docs + new_documents
                                 # Convert the result to JSON format
-                                json_str = json.dumps(server_end_json_data)
+                                json_str = json.dumps(backend_json_data)
                                 try:
                                     upload_blob_with_retry(blob, json_str)
                                     print('Object uploaded successfully')
@@ -321,11 +330,10 @@ def https(request):
                                 docs_list = [doc.to_dict() for doc in docs]
                                 print(f'Retrieved required document(s) in {symbol} collection')
                                 print(f'Preparing to return JSON')
-                                server_end_json_data['content'] = []
-                                server_end_json_data['content'].extend(docs_list)
+                                backend_json_data['content'] = docs_list
                                 print('Uploading JSON to GCS')
                                 # Convert the result to JSON format
-                                json_str = json.dumps(server_end_json_data)
+                                json_str = json.dumps(backend_json_data)
                                 try:
                                     upload_blob_with_retry(blob, json_str)
                                     print('Blob uploaded successfully')
@@ -421,12 +429,12 @@ def https(request):
                     return jsonify({'error': f'last_time_key cannot be None. It is suggested to reset is_updating document to 0 and clear temp/{symbol}_update_queue in {symbol}_update collection'})
                 if last_time_key > timestamp:
                     print(f'Retrieving all documents in {symbol}_last_fifteen_days collection under {symbol}_update collection that have values greater than {timestamp}')
-                    docs = new_month_collection_ref.where('time_key', '>', timestamp).order_by('time_key').stream(retry=Retry())
+                    docs = new_month_collection_ref.where('time_key', '>', timestamp).order_by('time_key', direction=firestore.Query.DESCENDING).stream(retry=Retry())
                     docs_list = [doc.to_dict() for doc in docs]
                     print(f'Retrieved required document(s) in {symbol}_last_fifteen_days collection')
                     timestamp_datetime = datetime.fromtimestamp(timestamp)
-                    for doc_data in docs_list:
-                        time_key = doc_data.get('time_key')
+                    for doc in docs_list[:1]: # To loop over only the first item (largest timestamp)
+                        time_key = doc.get('time_key')
                         time_key_datetime = datetime.fromtimestamp(time_key)
                         if time_key_datetime > timestamp_datetime + timedelta(days=15):
                             print('Outdated user data detected, please reinstall the app. Returning message')
