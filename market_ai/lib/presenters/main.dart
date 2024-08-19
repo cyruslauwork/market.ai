@@ -1722,7 +1722,7 @@ class MainPresenter extends GetxController {
 
         // Look for similar trend(s)
         for (int m = initIndex;
-            m < candle.length - len - subsequentLen - 1 - yFinMinuteDelay;
+            m < candle.length - len - subsequentLen + 1 - yFinMinuteDelay;
             // Minus yFinMinuteDelay for actualReturn calculation
             m++) {
           List<double> comparePeriodPercentDifferencesList = [];
@@ -1779,7 +1779,7 @@ class MainPresenter extends GetxController {
                   lastClosePrice / candle[m + len - 1].close!;
               for (int i = 0; i < subsequentLen; i++) {
                 double adjustedSubsequentClose =
-                    candle[m + len + 1 + i].close! * lastDifference;
+                    candle[m + len + i].close! * lastDifference;
                 matchedAdjustedSubsequentCloseList.add(adjustedSubsequentClose);
               }
               if (matchedAdjustedSubsequentCloseList.last >= lastClosePrice) {
