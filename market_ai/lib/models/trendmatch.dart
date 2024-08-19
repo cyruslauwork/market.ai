@@ -52,6 +52,7 @@ class TrendMatch {
     int trueCount = 0;
     int falseCount = 0;
     int len = MainPresenter.to.length.value;
+    int subLen = MainPresenter.to.subLength.value;
 
     if (len <= 1) {
       throw ArgumentError('Selected period must greater than 1 time unit.');
@@ -723,7 +724,9 @@ class TrendMatch {
         }
       }
 
-      for (int l = (isMaMatch ? maxMa() : 0); l < dataLength - len; l++) {
+      for (int l = (isMaMatch ? maxMa() : 0);
+          l < dataLength - len - subLen;
+          l++) {
         for (int i = 0; i < len - 1; i++) {
           double percentDiff = (listCandledata[l + i + 1].close! -
                   listCandledata[l + i].close!) /

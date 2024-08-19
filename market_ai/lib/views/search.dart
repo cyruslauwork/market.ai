@@ -188,9 +188,9 @@ class _SearchViewState extends State<SearchView> {
                         ),
                         child: Slider(
                           value: _currentTolerance,
-                          max: 200,
+                          max: 100,
                           min: 5,
-                          divisions: 39,
+                          divisions: 19,
                           label: '${_currentTolerance.round().toString()}%',
                           onChanged: (double value) {
                             setState(() {
@@ -208,19 +208,19 @@ class _SearchViewState extends State<SearchView> {
                           style: const TextTheme().sp4,
                         ),
                         Text(
+                          '25%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
                           '50%',
                           style: const TextTheme().sp4,
                         ),
                         Text(
+                          '75%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
                           '100%',
-                          style: const TextTheme().sp4,
-                        ),
-                        Text(
-                          '150%',
-                          style: const TextTheme().sp4,
-                        ),
-                        Text(
-                          '200%',
                           style: const TextTheme().sp4,
                         ),
                       ],
@@ -249,9 +249,9 @@ class _SearchViewState extends State<SearchView> {
                         ),
                         child: Slider(
                           value: _currentLength.toDouble(),
-                          max: 20,
+                          max: 10,
                           min: 2,
-                          divisions: 18,
+                          divisions: 8,
                           label: _currentLength.round().toString(),
                           onChanged: (double value) {
                             setState(() {
@@ -269,7 +269,7 @@ class _SearchViewState extends State<SearchView> {
                           style: const TextTheme().sp4,
                         ),
                         Text(
-                          '20_timeunits'.tr,
+                          '10_timeunits'.tr,
                           style: const TextTheme().sp4,
                         ),
                       ],
