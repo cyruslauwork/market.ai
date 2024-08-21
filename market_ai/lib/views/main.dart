@@ -1706,6 +1706,15 @@ class _MainViewState extends State<MainView> {
                             ),
                             Row(
                               children: [
+                                IconButton(
+                                  onPressed: () =>
+                                      MainPresenter.to.refreshIndicator(),
+                                  icon: const Icon(
+                                    Icons.refresh_outlined,
+                                  ),
+                                  color: ThemeColor.primary.value,
+                                  iconSize: 10.h,
+                                ),
                                 MainPresenter.to
                                     .showMinuteDataToggleBtn(context: context),
                                 MainPresenter.to
