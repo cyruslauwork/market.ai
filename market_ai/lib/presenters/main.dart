@@ -1050,7 +1050,7 @@ class MainPresenter extends GetxController {
     }
   }
 
-  double calculateMeanOfLastValues(List<List<double>> list) {
+  double findMedianOfLastValues(List<List<double>> list) {
     List<double> lastValues = [];
     if (list.isNotEmpty) {
       int middle = list.length ~/ 2;
@@ -1060,10 +1060,10 @@ class MainPresenter extends GetxController {
         }
       }
       lastValues.sort();
-      if (list.length <= 2 ){
-median = lastValues.first;
+      if (list.length <= 2) {
+        return lastValues.first;
       } else {
-median = lastValues[middle];
+        return lastValues[middle];
       }
     } else {
       return 0.0;
@@ -1255,10 +1255,10 @@ median = lastValues[middle];
 
       double returnRate = 0.0;
       if (isLong.value) {
-        double meanOfLastClosePrices = calculateMeanOfLastValues(upper);
-        if (meanOfLastClosePrices != 0.0 || meanOfLastClosePrices != 0) {
+        double medianOfLastCloses = findMedianOfLastValues(upper);
+        if (medianOfLastCloses != 0.0 || medianOfLastCloses != 0) {
           returnRate =
-              (meanOfLastClosePrices - startingClosePrice) / startingClosePrice;
+              (medianOfLastCloses - startingClosePrice) / startingClosePrice;
           if (returnRate >= 0.001) {
             thisLowReturn = false;
             Future.microtask(() {
@@ -1289,10 +1289,10 @@ median = lastValues[middle];
           });
         }
       } else if (isShort.value) {
-        double meanOfLastClosePrices = calculateMeanOfLastValues(lower);
-        if (meanOfLastClosePrices != 0.0 || meanOfLastClosePrices != 0) {
+        double medianOfLastCloses = findMedianOfLastValues(lower);
+        if (medianOfLastCloses != 0.0 || medianOfLastCloses != 0) {
           returnRate =
-              (meanOfLastClosePrices - startingClosePrice) / startingClosePrice;
+              (medianOfLastCloses - startingClosePrice) / startingClosePrice;
           if (returnRate <= -0.001) {
             thisLowReturn = false;
             Future.microtask(() {
@@ -1323,11 +1323,11 @@ median = lastValues[middle];
           });
         }
       } else {
-        double meanOfLastClosePrices =
-            calculateMeanOfLastValues(lockTrendSubTrendList);
-        if (meanOfLastClosePrices != 0.0 || meanOfLastClosePrices != 0) {
+        double medianOfLastCloses =
+            findMedianOfLastValues(lockTrendSubTrendList);
+        if (medianOfLastCloses != 0.0 || medianOfLastCloses != 0) {
           returnRate =
-              (meanOfLastClosePrices - startingClosePrice) / startingClosePrice;
+              (medianOfLastCloses - startingClosePrice) / startingClosePrice;
           if (returnRate >= 0.001) {
             thisLowReturn = false;
             Future.microtask(() {
@@ -1547,7 +1547,7 @@ median = lastValues[middle];
     int outsideTimeCount = 0;
     int subsequentLen = subLength.value;
     double probThreshold = 0.7;
-    double minMeanReturnRate = 0.001;
+    double minMedianReturnRate = 0.001;
     int minMatchCount = 5;
     int minOneSidedMatchCount = 4;
     int oneThirdSubLength = subsequentLen ~/ 3;
@@ -1563,7 +1563,7 @@ median = lastValues[middle];
       'Datetime',
       'Selected',
       'Probability',
-      'Expected Mean Return Rate',
+      'Expected Median Return Rate',
       'Final Return Rate (random trend)',
       'Matched Trend Count',
       'Trend Go/Hit Opp.',
@@ -1645,7 +1645,7 @@ median = lastValues[middle];
         int id = l;
         List<String> datetime = [];
         double prob = 0.0;
-        double expectedMeanReturnRate = 0.0;
+        double expectedMedianReturnRate = 0.0;
         int matchedTrendCount = 0;
 
         logger.d(
@@ -1853,21 +1853,21 @@ median = lastValues[middle];
           continue;
         }
 
-        // Mean return rate
+        // Return rate median
         double thisMdd = 0.0;
         if (isLong) {
-          double meanOfLastClosePrices = calculateMeanOfLastValues(upper);
-          if (meanOfLastClosePrices != 0.0) {
-            expectedMeanReturnRate =
-                (meanOfLastClosePrices - lastClosePrice) / lastClosePrice;
-            if (expectedMeanReturnRate <= minMeanReturnRate) {
+          double medianOfLastCloses = findMedianOfLastValues(upper);
+          if (medianOfLastCloses != 0.0) {
+            expectedMedianReturnRate =
+                (medianOfLastCloses - lastClosePrice) / lastClosePrice;
+            if (expectedMedianReturnRate <= minMedianReturnRate) {
               missCount++;
-              printInfo(info: '❌ Mean return rate <= 0.001 in long');
+              printInfo(info: '❌ Median return rate <= 0.001 in long');
               continue;
             }
           } else {
             missCount++;
-            printInfo(info: '❌ Mean return rate is 0.0 in long');
+            printInfo(info: '❌ Median return rate is 0.0 in long');
             continue;
           }
           double thisMin = findMinOfValues(lower);
@@ -1883,18 +1883,18 @@ median = lastValues[middle];
             continue;
           }
         } else if (isShort) {
-          double meanOfLastClosePrices = calculateMeanOfLastValues(lower);
-          if (meanOfLastClosePrices != 0.0) {
-            expectedMeanReturnRate =
-                (meanOfLastClosePrices - lastClosePrice) / lastClosePrice;
-            if (expectedMeanReturnRate >= -minMeanReturnRate) {
+          double medianOfLastCloses = findMedianOfLastValues(lower);
+          if (medianOfLastCloses != 0.0) {
+            expectedMedianReturnRate =
+                (medianOfLastCloses - lastClosePrice) / lastClosePrice;
+            if (expectedMedianReturnRate >= -minMedianReturnRate) {
               missCount++;
-              printInfo(info: '❌ Mean return rate >= -0.001 in short');
+              printInfo(info: '❌ Median return rate >= -0.001 in short');
               continue;
             }
           } else {
             missCount++;
-            printInfo(info: '❌ Mean return rate is 0.0 in short');
+            printInfo(info: '❌ Median return rate is 0.0 in short');
             continue;
           }
           double thisMax = findMaxOfValues(upper);
@@ -1911,7 +1911,7 @@ median = lastValues[middle];
           }
         }
         hitCount++;
-        printInfo(info: '✅ Minimum mean return rate has been passed');
+        printInfo(info: '✅ Minimum median return rate has been passed');
 
         // Pick up a trend randomly from upper/lower by overall probability
         int randomIndex = random.nextInt(closePrices.length);
@@ -2074,8 +2074,8 @@ median = lastValues[middle];
         }
 
         prob = isLong ? upperProb : lowerProb;
-        expectedMeanReturnRate =
-            double.parse(expectedMeanReturnRate.toStringAsFixed(4));
+        expectedMedianReturnRate =
+            double.parse(expectedMedianReturnRate.toStringAsFixed(4));
         hitRate = double.parse(
             (hitCount / (hitCount + missCount)).toStringAsFixed(4));
         mdd = double.parse(mdd.toStringAsFixed(4));
@@ -2089,7 +2089,7 @@ median = lastValues[middle];
               datetime[i],
               len,
               prob,
-              expectedMeanReturnRate,
+              expectedMedianReturnRate,
               finalReturnRate,
               matchedTrendCount,
               goOrHitOpp,
@@ -2124,7 +2124,7 @@ median = lastValues[middle];
     printInfo(info: 'Export backtesting results CSV...');
     // Export CSV to device's local file directory
     String fileName =
-        '${symbol}_tol${tol}_len${len}_subLen${subsequentLen}_probThreshold${probThreshold}_ma${maMatchCriteria.value}}_strict${strictMatchCriteria.value}_outsideFirst30mins_minMatchCount${minMatchCount}_minOneSidedMatchCount${minOneSidedMatchCount}_minReturnRate${minMeanReturnRate}_hitCeilingOrBottom${oneThirdSubLength}_goOppo${halfSubLength}_backtest_results';
+        '${symbol}_tol${tol}_len${len}_subLen${subsequentLen}_probThreshold${probThreshold}_ma${maMatchCriteria.value}}_strict${strictMatchCriteria.value}_outsideFirst30mins_minMatchCount${minMatchCount}_minOneSidedMatchCount${minOneSidedMatchCount}_minReturnRate${minMedianReturnRate}_hitCeilingOrBottom${oneThirdSubLength}_goOppo${halfSubLength}_backtest_results';
     exportCsv(listList, fileName);
 
     printInfo(info: 'Exported backtesting results CSV');
