@@ -50,7 +50,7 @@ class TrendMatchView extends StatelessWidget {
                       style: const TextTheme().sp5.w700,
                     ),
                     Text(
-                      '${'expected_return_mean'.tr} +${(MainPresenter.to.expectedReturn.value * 100).toStringAsFixed(4)}%',
+                      '${'expected_return_median'.tr} +${(MainPresenter.to.expectedReturn.value * 100).toStringAsFixed(4)}%',
                       style: const TextTheme().sp7.tertiarythemeTextColor.w700,
                     ),
                     Text(

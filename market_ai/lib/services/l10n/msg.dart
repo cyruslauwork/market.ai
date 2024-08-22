@@ -158,7 +158,7 @@ class Msg extends Translations {
           'close_pos_or_wait_n_see': 'Close Position/ Wait-and-see',
           'prediction': 'Prediction',
           'lock_trend_alert': 'Unlock trend for new search',
-          'expected_return_mean': 'Expected Return (Mean):',
+          'expected_return_median': 'Expected Return (Median):',
           'expected_mdd': 'Expected MDD:',
           'trends_not_enough':
               'The number of subsequent trends must be equal to or greater than 4.',
@@ -305,7 +305,7 @@ class Msg extends Translations {
           'close_pos_or_wait_n_see': '平倉/觀望',
           'prediction': '預測',
           'lock_trend_alert': '進行搜尋前請解鎖走勢',
-          'expected_return_mean': '預期回報率 (平均)',
+          'expected_return_median': '預期回報率 (中位數)',
           'expected_mdd': '預期最大回撤:',
           'trends_less_than_five': '❌ 走勢 < 5',
           'trends_more_than_four': '✅︎ 走勢 ≥ 5',

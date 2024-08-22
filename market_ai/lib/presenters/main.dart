@@ -1051,23 +1051,22 @@ class MainPresenter extends GetxController {
   }
 
   double calculateMeanOfLastValues(List<List<double>> list) {
-    double sum = 0;
-    int count = 0;
+    List<double> lastValues = [];
     if (list.isNotEmpty) {
+      int middle = list.length ~/ 2;
       for (List<double> innerList in list) {
         if (innerList.isNotEmpty) {
-          double lastValue = innerList.last;
-          sum += lastValue;
-          count++;
+          lastValues.add(innerList.last);
         }
+      }
+      lastValues.sort();
+      if (list.length <= 2 ){
+median = lastValues.first;
+      } else {
+median = lastValues[middle];
       }
     } else {
       return 0.0;
-    }
-    if (count > 0) {
-      return sum / count;
-    } else {
-      return 0.0; // or any other appropriate value for an empty list
     }
   }
 
