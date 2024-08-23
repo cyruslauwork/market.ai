@@ -1619,7 +1619,7 @@ class MainPresenter extends GetxController {
     printInfo(info: 'Number of split candle list: ${splitCandleLists.length}');
 
     // Show the remaining number of backtest data
-    backtestDataLen.value = candle.length;
+    // backtestDataLen.value = candle.length;
 
     // Randomly pick a list to run backtest
     final random = Random();

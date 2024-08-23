@@ -321,16 +321,16 @@ class MainView extends StatefulWidget {
               ),
             ),
             const Divider(),
-            Obx(() {
-              if (MainPresenter.to.backtestDataLen.value != 0) {
-                return Text(
-                  '${MainPresenter.to.backtestDataRan.value}/${MainPresenter.to.backtestDataLen.value}',
-                  style: const TextTheme().sp5.w700,
-                );
-              } else {
-                return const SizedBox.shrink();
-              }
-            }),
+            // Obx(() {
+            //   if (MainPresenter.to.backtestDataLen.value != 0) {
+            //     return Text(
+            //       '${MainPresenter.to.backtestDataRan.value}/${MainPresenter.to.backtestDataLen.value}',
+            //       style: const TextTheme().sp5.w700,
+            //     );
+            //   } else {
+            //     return const SizedBox.shrink();
+            //   }
+            // }),
             Obx(() {
               if (MainPresenter.to.hasSpyMinuteData.value) {
                 return Padding(
