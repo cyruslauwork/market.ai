@@ -34,6 +34,7 @@ class MainView extends StatefulWidget {
 
   Widget devModeViewOne(BuildContext context) {
     String jumpServerUrl = MainPresenter.to.jumpServerUrl.value;
+    double probThreshold = MainPresenter.to.probThreshold.value;
     return Column(children: [
       Column(children: [
         Text(
@@ -319,6 +320,53 @@ class MainView extends StatefulWidget {
                   ),
                 ],
               ),
+            ),
+            const Divider(),
+            Obx(
+              () => Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'backtesting_thousandths_data'.tr,
+                      style: const TextTheme().sp5.w700,
+                    ),
+                  ),
+                  Switch(
+                    value: MainPresenter.to.alwaysThousandthsData.value,
+                    activeColor: Colors.red,
+                    onChanged: (bool value) =>
+                        MainPresenter.to.alwaysThousandthsData(value),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'backtesting_prob'.tr,
+                    style: const TextTheme().sp5.w700,
+                  ),
+                ),
+                Expanded(
+                  child: TextField(
+                    onChanged: (String value) {
+                      MainPresenter.to.probThreshold.value =
+                          double.parse(value);
+                      PrefsService.to.prefs.setDouble(
+                          SharedPreferencesConstant.probThreshold,
+                          double.parse(value));
+                    },
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      labelText: probThreshold.toString(),
+                    ),
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                  ),
+                ),
+              ],
             ),
             const Divider(),
             // Obx(() {

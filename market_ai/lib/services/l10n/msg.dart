@@ -182,6 +182,9 @@ class Msg extends Translations {
           'search_symbol_before_backtest':
               'Search the same financial instrument before backtesting',
           'backtesting_disturbance_detected': 'Button disable when backtesting',
+          'backtesting_thousandths_data':
+              'Always use thousandths of the data size',
+          'backtesting_prob': 'Backtesting Probability Threshold',
         },
         'zh_HK': {
           'app_name': '市場慧眼📈',
@@ -331,6 +334,8 @@ class Msg extends Translations {
           'btn_backtest_amzn_minute': '回測 AMZN 1 分鐘數據並匯出 CSV',
           'search_symbol_before_backtest': '在回測之前搜尋相同的金融工具',
           'backtesting_disturbance_detected': '在回測時禁用此按鈕',
+          'backtesting_thousandths_data': '始終使用千分之一數據量',
+          'backtesting_prob': '回測機率閾值',
         },
       };
 }

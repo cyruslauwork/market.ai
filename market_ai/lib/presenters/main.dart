@@ -681,6 +681,14 @@ class MainPresenter extends GetxController {
   RxString isBacktesting = ''.obs;
   RxInt backtestDataLen = 0.obs;
   RxInt backtestDataRan = 0.obs;
+  RxBool alwaysThousandthsData = (PrefsService.to.prefs
+              .getBool(SharedPreferencesConstant.alwaysThousandthsData) ??
+          false)
+      .obs;
+  RxDouble probThreshold = (PrefsService.to.prefs
+              .getDouble(SharedPreferencesConstant.probThreshold) ??
+          0.7)
+      .obs;
 
   // A 2nd initialization will be triggered when starting the app
   @override
@@ -1546,7 +1554,7 @@ class MainPresenter extends GetxController {
     int missCount = 0;
     int outsideTimeCount = 0;
     int subsequentLen = subLength.value;
-    double probThreshold = 0.7;
+    double thisProbThreshold = probThreshold.value;
     double minMedianReturnRate = 0.001;
     int minMatchCount = 5;
     int minOneSidedMatchCount = 4;
@@ -1609,8 +1617,7 @@ class MainPresenter extends GetxController {
 
     // Split the candle list of list
     List<List<CandleData>> splitCandleLists = [];
-    // TODO: Revert debugging code to original code
-    int splits = 1000; // Original: 100
+    int splits = 1000;
     final int sublistSize = (candle.length / splits).ceil();
 
     for (int i = 0; i < candle.length; i += sublistSize) {
@@ -1619,7 +1626,7 @@ class MainPresenter extends GetxController {
       final sublist = candle.sublist(i, end);
       splitCandleLists.add(sublist);
     }
-    printInfo(info: 'Number of split candle list: ${splitCandleLists.length}');
+    printInfo(info: 'Split candle list length: ${splitCandleLists.length}');
 
     // Show the remaining number of backtest data
     // backtestDataLen.value = candle.length;
@@ -1639,12 +1646,12 @@ class MainPresenter extends GetxController {
       final sublist = splitCandleLists[randomIndex];
       final subLen = sublist.length;
 
-      printInfo(info: 'Current split candle list number: $randomIndex');
+      printInfo(info: 'Current split candle list no.: $randomIndex');
       printInfo(info: 'Current split candle list length: $subLen');
 
       for (int l = 0; l < subLen - len + 1 - yFinMinuteDelay; l++) {
         // Show the remaining number of backtest data
-        backtestDataRan.value += 1;
+        // backtestDataRan.value += 1;
 
         int id = l;
         List<String> datetime = [];
@@ -1819,7 +1826,7 @@ class MainPresenter extends GetxController {
         // Round to 3 decimal places
         upperProb = double.parse(upperProb.toStringAsFixed(4));
         lowerProb = double.parse(lowerProb.toStringAsFixed(4));
-        if (upperProb >= probThreshold) {
+        if (upperProb >= thisProbThreshold) {
           if (upperProb.toInt() == 1) {
             if (upper.length < minOneSidedMatchCount) {
               missCount++;
@@ -1835,7 +1842,7 @@ class MainPresenter extends GetxController {
           }
           isLong = true;
           printInfo(info: '✅ Is long: ${upper.length}/${lower.length}');
-        } else if (lowerProb >= probThreshold) {
+        } else if (lowerProb >= thisProbThreshold) {
           if (lowerProb.toInt() == 1) {
             if (lower.length < minOneSidedMatchCount) {
               missCount++;
@@ -2207,16 +2214,19 @@ class MainPresenter extends GetxController {
         printInfo(info: 'Fund remaining: US\$$roundedInitialFund/US\$10000');
       }
 
-      // TODO: Revert debugging code to original code
-      // splitCandleLists.removeAt(randomIndex);
-      splitCandleLists = [];
+      if (!alwaysThousandthsData.value) {
+        splitCandleLists.removeAt(randomIndex);
+      } else {
+        splitCandleLists = [];
+      }
     }
 
     printInfo(info: 'Backtesting ended');
     printInfo(info: 'Export backtesting results CSV...');
+    int randomID = 100000 + random.nextInt(900000);
     // Export CSV to device's local file directory
     String fileName =
-        '${symbol}_tol${tol}_len${len}_subLen${subsequentLen}_probThreshold${probThreshold}_ma${maMatchCriteria.value}}_strict${strictMatchCriteria.value}_outsideFirst30mins_minMatchCount${minMatchCount}_minOneSidedMatchCount${minOneSidedMatchCount}_minReturnRate${minMedianReturnRate}_hitCeilingOrBottom${oneThirdSubLength}_goOppo${halfSubLength}_backtest_results';
+        '${randomID}_${symbol}_tol${tol}_len${len}_subLen${subsequentLen}_probThreshold${thisProbThreshold}_ma${maMatchCriteria.value}}_strict${strictMatchCriteria.value}_outsideFirst30mins_minMatchCount${minMatchCount}_minOneSidedMatchCount${minOneSidedMatchCount}_minReturnRate${minMedianReturnRate}_hitCeilingOrBottom${oneThirdSubLength}_goOppo${halfSubLength}_backtest_results';
     exportCsv(listList, fileName);
 
     printInfo(info: 'Exported backtesting results CSV');
@@ -2226,8 +2236,8 @@ class MainPresenter extends GetxController {
     isBacktesting.value = '';
 
     // Reset the remaining number of backtest data
-    backtestDataLen.value = 0;
-    backtestDataRan.value = 0;
+    // backtestDataLen.value = 0;
+    // backtestDataRan.value = 0;
   }
 
   /* Route */
@@ -2645,6 +2655,12 @@ class MainPresenter extends GetxController {
     PrefsService.to.prefs
         .setBool(SharedPreferencesConstant.alwaysMaMatchCriteria, value);
     maMatchCriteria.value = value;
+  }
+
+  alwaysThousandthsDataToggle(bool value) {
+    alwaysThousandthsData.value = value;
+    PrefsService.to.prefs
+        .setBool(SharedPreferencesConstant.alwaysThousandthsData, value);
   }
 
   alwaysShowMinuteDataToggle(bool value, BuildContext context) {

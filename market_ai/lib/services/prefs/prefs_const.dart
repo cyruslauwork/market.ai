@@ -51,4 +51,7 @@ class SharedPreferencesConstant {
   static String expectedMdd = 'expectedMdd';
   static String isLong = 'isLong';
   static String isShort = 'isShort';
+
+  static String alwaysThousandthsData = 'alwaysThousandthsData';
+  static String probThreshold = 'probThreshold';
 }
