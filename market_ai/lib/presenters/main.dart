@@ -1558,8 +1558,6 @@ class MainPresenter extends GetxController {
     double minMedianReturnRate = 0.001;
     int minMatchCount = 5;
     int minOneSidedMatchCount = 4;
-    int oneThirdSubLength = subsequentLen ~/ 3;
-    int halfSubLength = subsequentLen ~/ 2;
 
     if (len <= 1) {
       throw ArgumentError('Selected period must greater than 1 time unit.');
@@ -1658,6 +1656,8 @@ class MainPresenter extends GetxController {
         double prob = 0.0;
         double medianReturnRate = 0.0;
         int matchedTrendCount = 0;
+        int oneThirdSubLength = 0;
+        int halfSubLength = 0;
 
         logger.d(
             '[Last time] Hit/miss/outside count: $hitCount/$missCount/$outsideTimeCount | Hit rate: $roundedHitRate | Current ID among the total in the split candle list: $id/$subLen');
@@ -1944,6 +1944,7 @@ class MainPresenter extends GetxController {
             5; // Micro E-mini Futures: Index points (0.25) contract value (5 USD)
         int diffFromEtfAndFuture =
             10; // The difference in value scale between ETF and Future
+        matchedTrendCount = subClosePrices.length;
 
         double goOrHitOppActualReturn = 0.0;
         double goOrHitOppActualReturnRate = 0.0;
@@ -1952,6 +1953,7 @@ class MainPresenter extends GetxController {
         bool goOrHitOpp = false;
         // Check the number of trend go to the opposite side
         int hitOppositeCeilingOrBottomCount = 0;
+        oneThirdSubLength = matchedTrendCount ~/ 3;
         if (isLong) {
           for (int v = 0; v < randomTrend.length; v++) {
             double percentChange =
@@ -2047,6 +2049,7 @@ class MainPresenter extends GetxController {
 
         // Check if hit the opposite side ceiling or bottom
         int goOppositeCount = 0;
+        halfSubLength = matchedTrendCount ~/ 2;
         if (!goOrHitOpp) {
           if (isLong) {
             for (int v = 0; v < randomTrend.length; v++) {
@@ -2138,8 +2141,6 @@ class MainPresenter extends GetxController {
             info:
                 'goOppositeCount/halfSubLength: $goOppositeCount/$halfSubLength, goOrHitOpp: $goOrHitOpp');
 
-        matchedTrendCount = subClosePrices.length;
-
         subClosePricesRowID.mapIndexed((index, element) {
           DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
               candle[element].timestamp * 1000,
@@ -2226,7 +2227,7 @@ class MainPresenter extends GetxController {
     int randomID = 100000 + random.nextInt(900000);
     // Export CSV to device's local file directory
     String fileName =
-        '${randomID}_${symbol}_tol${tol}_len${len}_subLen${subsequentLen}_probThreshold${thisProbThreshold}_ma${maMatchCriteria.value}}_strict${strictMatchCriteria.value}_outsideFirst30mins_minMatchCount${minMatchCount}_minOneSidedMatchCount${minOneSidedMatchCount}_minReturnRate${minMedianReturnRate}_hitCeilingOrBottom${oneThirdSubLength}_goOppo${halfSubLength}_backtest_results';
+        '${randomID}_${symbol}_tol${tol}_len${len}_subLen${subsequentLen}_probThreshold${thisProbThreshold}_ma${maMatchCriteria.value}}_strict${strictMatchCriteria.value}_outsideFirst30mins_minMatchCount${minMatchCount}_minOneSidedMatchCount${minOneSidedMatchCount}_minReturnRate${minMedianReturnRate}_hitCeilingOrBottom-OneThirdSubLength_goOppo-HalfSubLength_backtest_results';
     exportCsv(listList, fileName);
 
     printInfo(info: 'Exported backtesting results CSV');
