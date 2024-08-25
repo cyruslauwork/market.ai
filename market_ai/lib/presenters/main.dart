@@ -1568,6 +1568,7 @@ class MainPresenter extends GetxController {
       'Expected Actual Return Rate (random trend)',
       'Matched Trend Count',
       'Trend Go/Hit Opp.',
+      'Trend Go/Hit Opp. Undelayed Return Rate',
       'Trend Go/Hit Opp. Actual Return Rate',
       'Hit Rate (after first 30 mins)',
       'MDD (all the time)',
@@ -1934,9 +1935,13 @@ class MainPresenter extends GetxController {
             double.parse(undelayedReturnRate.toStringAsFixed(4));
         int contractVal =
             5; // Micro E-mini Futures: Index points (0.25) contract value (5 USD)
+        int diffFromEtfAndFuture =
+            10; // The difference in value scale between ETF and Future
 
+        double goOrHitOppActualReturn = 0.0;
         double goOrHitOppActualReturnRate = 0.0;
-        double undelayedReturn = 0.0;
+        double goOrHitOppUndelayedReturn = 0.0;
+        double goOrHitOppUndelayedReturnRate = 0.0;
         bool goOrHitOpp = false;
         // Check the number of trend go to the opposite side
         int hitOppositeCeilingOrBottomCount = 0;
@@ -1945,30 +1950,40 @@ class MainPresenter extends GetxController {
             double percentChange =
                 (randomTrend[v] - lastClosePrice) / lastClosePrice;
             if (percentChange <= -thisMdd) {
-              if (v >= randomTrend.length - yFinMinuteDelay) {
-                goOrHitOppActualReturnRate = candle[
-                            subClosePricesRowID[randomIndex] +
-                                v +
-                                yFinMinuteDelay]
-                        .close! -
-                    actualLastClosePrice;
-              } else {
-                goOrHitOppActualReturnRate =
-                    randomTrend[v + yFinMinuteDelay] - actualLastClosePrice;
-              }
-              undelayedReturn = randomTrend[v] - lastClosePrice;
               hitOppositeCeilingOrBottomCount++;
               if (hitOppositeCeilingOrBottomCount >= oneThirdSubLength) {
                 goOrHitOpp = true;
+                if (v >= randomTrend.length - yFinMinuteDelay) {
+                  double newVal = candle[subClosePricesRowID[randomIndex] +
+                          v +
+                          yFinMinuteDelay]
+                      .close!;
+                  goOrHitOppActualReturn = newVal - actualLastClosePrice;
+                  goOrHitOppActualReturnRate =
+                      (newVal - actualLastClosePrice) / actualLastClosePrice;
+                } else {
+                  double newVal = randomTrend[v + yFinMinuteDelay];
+                  goOrHitOppActualReturn = newVal - actualLastClosePrice;
+                  goOrHitOppActualReturnRate =
+                      (newVal - actualLastClosePrice) / actualLastClosePrice;
+                }
+                double newVal = randomTrend[v];
+                goOrHitOppUndelayedReturn = newVal - lastClosePrice;
+                goOrHitOppUndelayedReturnRate =
+                    (newVal - lastClosePrice) / lastClosePrice;
                 // Get the failed trend last close price return and change the fund value
                 // - Index points (0.25) contract value (5 USD)
                 // - Commission fee
                 // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
                 initialFund = initialFund +
-                    ((goOrHitOppActualReturnRate * 10) ~/ 0.25 * contractVal) -
+                    ((goOrHitOppActualReturn * diffFromEtfAndFuture) ~/
+                        0.25 *
+                        contractVal) -
                     commissionsAndFees;
                 undelayedInitialFund = undelayedInitialFund +
-                    ((undelayedReturn * 10) ~/ 0.25 * contractVal) -
+                    ((goOrHitOppUndelayedReturn * diffFromEtfAndFuture) ~/
+                        0.25 *
+                        contractVal) -
                     commissionsAndFees;
                 break;
               }
@@ -1979,30 +1994,40 @@ class MainPresenter extends GetxController {
             double percentChange =
                 (randomTrend[v] - lastClosePrice) / lastClosePrice;
             if (percentChange >= thisMdd) {
-              if (v >= randomTrend.length - yFinMinuteDelay) {
-                goOrHitOppActualReturnRate = candle[
-                            subClosePricesRowID[randomIndex] +
-                                v +
-                                yFinMinuteDelay]
-                        .close! -
-                    actualLastClosePrice;
-              } else {
-                goOrHitOppActualReturnRate =
-                    randomTrend[v + yFinMinuteDelay] - actualLastClosePrice;
-              }
-              undelayedReturn = randomTrend[v] - lastClosePrice;
               hitOppositeCeilingOrBottomCount++;
               if (hitOppositeCeilingOrBottomCount >= oneThirdSubLength) {
                 goOrHitOpp = true;
+                if (v >= randomTrend.length - yFinMinuteDelay) {
+                  double newVal = candle[subClosePricesRowID[randomIndex] +
+                          v +
+                          yFinMinuteDelay]
+                      .close!;
+                  goOrHitOppActualReturn = newVal - actualLastClosePrice;
+                  goOrHitOppActualReturnRate =
+                      (newVal - actualLastClosePrice) / actualLastClosePrice;
+                } else {
+                  double newVal = randomTrend[v + yFinMinuteDelay];
+                  goOrHitOppActualReturn = newVal - actualLastClosePrice;
+                  goOrHitOppActualReturnRate =
+                      (newVal - actualLastClosePrice) / actualLastClosePrice;
+                }
+                double newVal = randomTrend[v];
+                goOrHitOppUndelayedReturn = newVal - lastClosePrice;
+                goOrHitOppUndelayedReturnRate =
+                    (newVal - lastClosePrice) / lastClosePrice;
                 // Get the failed trend last close price return and change the fund value
                 // - Index points (0.25) contract value (5 USD)
                 // - Commission fee
                 // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
                 initialFund = initialFund +
-                    ((goOrHitOppActualReturnRate * 10) ~/ 0.25 * contractVal) -
+                    ((goOrHitOppActualReturn * diffFromEtfAndFuture) ~/
+                        0.25 *
+                        contractVal) -
                     commissionsAndFees;
                 undelayedInitialFund = undelayedInitialFund +
-                    ((undelayedReturn * 10) ~/ 0.25 * contractVal) -
+                    ((goOrHitOppUndelayedReturn * diffFromEtfAndFuture) ~/
+                        0.25 *
+                        contractVal) -
                     commissionsAndFees;
                 break;
               }
@@ -2015,67 +2040,89 @@ class MainPresenter extends GetxController {
 
         // Check if hit the opposite side ceiling or bottom
         int goOppositeCount = 0;
-        if (isLong) {
-          for (int v = 0; v < randomTrend.length; v++) {
-            if (randomTrend[v] < lastClosePrice) {
-              if (v >= randomTrend.length - yFinMinuteDelay) {
-                goOrHitOppActualReturnRate = candle[
-                            subClosePricesRowID[randomIndex] +
-                                v +
-                                yFinMinuteDelay]
-                        .close! -
-                    actualLastClosePrice;
-              } else {
-                goOrHitOppActualReturnRate =
-                    randomTrend[v + yFinMinuteDelay] - actualLastClosePrice;
-              }
-              undelayedReturn = randomTrend[v] - lastClosePrice;
-              goOppositeCount++;
-              if (goOppositeCount >= halfSubLength) {
-                goOrHitOpp = true;
-                // Get the failed trend last close price return and change the fund value
-                // - Index points (0.25) contract value (5 USD)
-                // - Commission fee
-                // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
-                initialFund = initialFund +
-                    ((goOrHitOppActualReturnRate * 10) ~/ 0.25 * contractVal) -
-                    commissionsAndFees;
-                undelayedInitialFund = undelayedInitialFund +
-                    ((undelayedReturn * 10) ~/ 0.25 * contractVal) -
-                    commissionsAndFees;
-                break;
+        if (!goOrHitOpp) {
+          if (isLong) {
+            for (int v = 0; v < randomTrend.length; v++) {
+              if (randomTrend[v] < lastClosePrice) {
+                goOppositeCount++;
+                if (goOppositeCount >= halfSubLength) {
+                  goOrHitOpp = true;
+                  if (v >= randomTrend.length - yFinMinuteDelay) {
+                    double newVal = candle[subClosePricesRowID[randomIndex] +
+                            v +
+                            yFinMinuteDelay]
+                        .close!;
+                    goOrHitOppActualReturn = newVal - actualLastClosePrice;
+                    goOrHitOppActualReturnRate =
+                        (newVal - actualLastClosePrice) / actualLastClosePrice;
+                  } else {
+                    double newVal = randomTrend[v + yFinMinuteDelay];
+                    goOrHitOppActualReturn = newVal - actualLastClosePrice;
+                    goOrHitOppActualReturnRate =
+                        (newVal - actualLastClosePrice) / actualLastClosePrice;
+                  }
+                  double newVal = randomTrend[v];
+                  goOrHitOppUndelayedReturn = newVal - lastClosePrice;
+                  goOrHitOppUndelayedReturnRate =
+                      (newVal - lastClosePrice) / lastClosePrice;
+                  // Get the failed trend last close price return and change the fund value
+                  // - Index points (0.25) contract value (5 USD)
+                  // - Commission fee
+                  // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
+                  initialFund = initialFund +
+                      ((goOrHitOppActualReturn * diffFromEtfAndFuture) ~/
+                          0.25 *
+                          contractVal) -
+                      commissionsAndFees;
+                  undelayedInitialFund = undelayedInitialFund +
+                      ((goOrHitOppUndelayedReturn * diffFromEtfAndFuture) ~/
+                          0.25 *
+                          contractVal) -
+                      commissionsAndFees;
+                  break;
+                }
               }
             }
-          }
-        } else if (isShort) {
-          for (int v = 0; v < randomTrend.length; v++) {
-            if (randomTrend[v] > lastClosePrice) {
-              if (v >= randomTrend.length - yFinMinuteDelay) {
-                goOrHitOppActualReturnRate = candle[
-                            subClosePricesRowID[randomIndex] +
-                                v +
-                                yFinMinuteDelay]
-                        .close! -
-                    actualLastClosePrice;
-              } else {
-                goOrHitOppActualReturnRate =
-                    randomTrend[v + yFinMinuteDelay] - actualLastClosePrice;
-              }
-              undelayedReturn = randomTrend[v] - lastClosePrice;
-              goOppositeCount++;
-              if (goOppositeCount >= halfSubLength) {
-                goOrHitOpp = true;
-                // Get the failed trend last close price return and change the fund value
-                // - Index points (0.25) contract value (5 USD)
-                // - Commission fee
-                // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
-                initialFund = initialFund +
-                    ((goOrHitOppActualReturnRate * 10) ~/ 0.25 * contractVal) -
-                    commissionsAndFees;
-                undelayedInitialFund = undelayedInitialFund +
-                    ((undelayedReturn * 10) ~/ 0.25 * contractVal) -
-                    commissionsAndFees;
-                break;
+          } else if (isShort) {
+            for (int v = 0; v < randomTrend.length; v++) {
+              if (randomTrend[v] > lastClosePrice) {
+                goOppositeCount++;
+                if (goOppositeCount >= halfSubLength) {
+                  goOrHitOpp = true;
+                  if (v >= randomTrend.length - yFinMinuteDelay) {
+                    double newVal = candle[subClosePricesRowID[randomIndex] +
+                            v +
+                            yFinMinuteDelay]
+                        .close!;
+                    goOrHitOppActualReturn = newVal - actualLastClosePrice;
+                    goOrHitOppActualReturnRate =
+                        (newVal - actualLastClosePrice) / actualLastClosePrice;
+                  } else {
+                    double newVal = randomTrend[v + yFinMinuteDelay];
+                    goOrHitOppActualReturn = newVal - actualLastClosePrice;
+                    goOrHitOppActualReturnRate =
+                        (newVal - actualLastClosePrice) / actualLastClosePrice;
+                  }
+                  double newVal = randomTrend[v];
+                  goOrHitOppUndelayedReturn = newVal - lastClosePrice;
+                  goOrHitOppUndelayedReturnRate =
+                      (newVal - lastClosePrice) / lastClosePrice;
+                  // Get the failed trend last close price return and change the fund value
+                  // - Index points (0.25) contract value (5 USD)
+                  // - Commission fee
+                  // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
+                  initialFund = initialFund +
+                      ((goOrHitOppActualReturn * diffFromEtfAndFuture) ~/
+                          0.25 *
+                          contractVal) -
+                      commissionsAndFees;
+                  undelayedInitialFund = undelayedInitialFund +
+                      ((goOrHitOppUndelayedReturn * diffFromEtfAndFuture) ~/
+                          0.25 *
+                          contractVal) -
+                      commissionsAndFees;
+                  break;
+                }
               }
             }
           }
@@ -2105,12 +2152,13 @@ class MainPresenter extends GetxController {
           // - Commission fee
           // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
           initialFund = initialFund +
-              (((randomTrend.last - actualLastClosePrice) * 10) ~/
+              (((randomTrend.last - actualLastClosePrice) *
+                      diffFromEtfAndFuture) ~/
                   0.25 *
                   contractVal) -
               commissionsAndFees;
           undelayedInitialFund = undelayedInitialFund +
-              (((randomTrend.last - lastClosePrice) * 10) ~/
+              (((randomTrend.last - lastClosePrice) * diffFromEtfAndFuture) ~/
                   0.25 *
                   contractVal) -
               commissionsAndFees;
@@ -2138,6 +2186,7 @@ class MainPresenter extends GetxController {
               roundedActualReturnRate,
               matchedTrendCount,
               goOrHitOpp,
+              goOrHitOppUndelayedReturnRate,
               goOrHitOppActualReturnRate,
               roundedHitRate,
               roundedMdd,
