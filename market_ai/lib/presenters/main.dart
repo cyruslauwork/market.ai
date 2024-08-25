@@ -2227,7 +2227,7 @@ class MainPresenter extends GetxController {
     int randomID = 100000 + random.nextInt(900000);
     // Export CSV to device's local file directory
     String fileName =
-        '${randomID}_${symbol}_tol${tol}_len${len}_subLen${subsequentLen}_probThreshold${thisProbThreshold}_ma${maMatchCriteria.value}}_strict${strictMatchCriteria.value}_outsideFirst30mins_minMatchCount${minMatchCount}_minOneSidedMatchCount${minOneSidedMatchCount}_minReturnRate${minMedianReturnRate}_hitCeilingOrBottom-OneThirdSubLength_goOppo-HalfSubLength_backtest_results';
+        '${randomID}_${symbol}_tol${tol}_len${len}_subLen${subsequentLen}_probThreshold${thisProbThreshold}_ma${maMatchCriteria.value}_strict${strictMatchCriteria.value}_outsideFirst30mins_minMatchCount${minMatchCount}_minOneSidedMatchCount${minOneSidedMatchCount}_minReturnRate${minMedianReturnRate}_hitCeilingOrBottom-OneThirdSubLength_goOppo-HalfSubLength_backtest_results';
     exportCsv(listList, fileName);
 
     printInfo(info: 'Exported backtesting results CSV');
