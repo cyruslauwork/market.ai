@@ -335,7 +335,7 @@ class MainView extends StatefulWidget {
                     value: MainPresenter.to.alwaysThousandthsData.value,
                     activeColor: Colors.red,
                     onChanged: (bool value) =>
-                        MainPresenter.to.alwaysThousandthsData(value),
+                        MainPresenter.to.alwaysThousandthsDataToggle(value),
                   ),
                 ],
               ),
