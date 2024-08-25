@@ -1563,12 +1563,14 @@ class MainPresenter extends GetxController {
       'Datetime',
       'Selected',
       'Probability',
-      'Expected Median Return Rate',
-      'Final Return Rate (random trend)',
+      'Median Return Rate',
+      'Expected Undelayed Return Rate (random trend)',
+      'Expected Actual Return Rate (random trend)',
       'Matched Trend Count',
       'Trend Go/Hit Opp.',
+      'Trend Go/Hit Opp. Actual Return Rate',
       'Hit Rate (after first 30 mins)',
-      'MDD',
+      'MDD (all the time)',
       'Undelayed Fund Remaining (commns. and fees deducted)',
       'Fund Remaining (commns. and fees deducted)',
       'Commns. and Fees (2 contracts)',
@@ -1626,6 +1628,7 @@ class MainPresenter extends GetxController {
     final int tol = tolerance.value;
 
     double hitRate = 0.0;
+    double roundedHitRate = 0.0;
     double mdd = 0.0;
     double initialFund = 10000;
     double undelayedInitialFund = 10000;
@@ -1645,11 +1648,11 @@ class MainPresenter extends GetxController {
         int id = l;
         List<String> datetime = [];
         double prob = 0.0;
-        double expectedMedianReturnRate = 0.0;
+        double medianReturnRate = 0.0;
         int matchedTrendCount = 0;
 
         logger.d(
-            'Hit/miss/outside count: $hitCount/$missCount/$outsideTimeCount | Hit rate: $hitRate | Current ID among the total in the split candle list: $id/$subLen');
+            '[Last time] Hit/miss/outside count: $hitCount/$missCount/$outsideTimeCount | Hit rate: $roundedHitRate | Current ID among the total in the split candle list: $id/$subLen');
 
         // Check if the dateTime is within the first 30 minutes of trading
         int timestamp = sublist[l].timestamp;
@@ -1858,9 +1861,9 @@ class MainPresenter extends GetxController {
         if (isLong) {
           double medianOfLastCloses = findMedianOfLastValues(upper);
           if (medianOfLastCloses != 0.0) {
-            expectedMedianReturnRate =
+            medianReturnRate =
                 (medianOfLastCloses - lastClosePrice) / lastClosePrice;
-            if (expectedMedianReturnRate <= minMedianReturnRate) {
+            if (medianReturnRate <= minMedianReturnRate) {
               missCount++;
               printInfo(info: '❌ Median return rate <= 0.001 in long');
               continue;
@@ -1885,9 +1888,9 @@ class MainPresenter extends GetxController {
         } else if (isShort) {
           double medianOfLastCloses = findMedianOfLastValues(lower);
           if (medianOfLastCloses != 0.0) {
-            expectedMedianReturnRate =
+            medianReturnRate =
                 (medianOfLastCloses - lastClosePrice) / lastClosePrice;
-            if (expectedMedianReturnRate >= -minMedianReturnRate) {
+            if (medianReturnRate >= -minMedianReturnRate) {
               missCount++;
               printInfo(info: '❌ Median return rate >= -0.001 in short');
               continue;
@@ -1913,7 +1916,7 @@ class MainPresenter extends GetxController {
         hitCount++;
         printInfo(
             info:
-                '✅ Minimum median return rate has been passed: $expectedMedianReturnRate');
+                '✅ Minimum median return rate has been passed: $medianReturnRate');
 
         // Pick up a trend randomly from upper/lower by overall probability
         int randomIndex = random.nextInt(subClosePrices.length);
@@ -1925,14 +1928,14 @@ class MainPresenter extends GetxController {
             ((randomTrend.last - actualLastClosePrice) / actualLastClosePrice);
         double undelayedReturnRate =
             ((randomTrend.last - lastClosePrice) / lastClosePrice);
-        double finalReturnRate =
+        double roundedActualReturnRate =
             double.parse(actualReturnRate.toStringAsFixed(4));
-        double expectedReturnRate =
+        double roundedUndelayedReturnRate =
             double.parse(undelayedReturnRate.toStringAsFixed(4));
         int contractVal =
             5; // Micro E-mini Futures: Index points (0.25) contract value (5 USD)
 
-        double actualReturn = 0.0;
+        double goOrHitOppActualReturnRate = 0.0;
         double undelayedReturn = 0.0;
         bool goOrHitOpp = false;
         // Check the number of trend go to the opposite side
@@ -1943,13 +1946,14 @@ class MainPresenter extends GetxController {
                 (randomTrend[v] - lastClosePrice) / lastClosePrice;
             if (percentChange <= -thisMdd) {
               if (v >= randomTrend.length - yFinMinuteDelay) {
-                actualReturn = candle[subClosePricesRowID[randomIndex] +
-                            v +
-                            yFinMinuteDelay]
+                goOrHitOppActualReturnRate = candle[
+                            subClosePricesRowID[randomIndex] +
+                                v +
+                                yFinMinuteDelay]
                         .close! -
                     actualLastClosePrice;
               } else {
-                actualReturn =
+                goOrHitOppActualReturnRate =
                     randomTrend[v + yFinMinuteDelay] - actualLastClosePrice;
               }
               undelayedReturn = randomTrend[v] - lastClosePrice;
@@ -1961,7 +1965,7 @@ class MainPresenter extends GetxController {
                 // - Commission fee
                 // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
                 initialFund = initialFund +
-                    ((actualReturn * 10) ~/ 0.25 * contractVal) -
+                    ((goOrHitOppActualReturnRate * 10) ~/ 0.25 * contractVal) -
                     commissionsAndFees;
                 undelayedInitialFund = undelayedInitialFund +
                     ((undelayedReturn * 10) ~/ 0.25 * contractVal) -
@@ -1976,13 +1980,14 @@ class MainPresenter extends GetxController {
                 (randomTrend[v] - lastClosePrice) / lastClosePrice;
             if (percentChange >= thisMdd) {
               if (v >= randomTrend.length - yFinMinuteDelay) {
-                actualReturn = candle[subClosePricesRowID[randomIndex] +
-                            v +
-                            yFinMinuteDelay]
+                goOrHitOppActualReturnRate = candle[
+                            subClosePricesRowID[randomIndex] +
+                                v +
+                                yFinMinuteDelay]
                         .close! -
                     actualLastClosePrice;
               } else {
-                actualReturn =
+                goOrHitOppActualReturnRate =
                     randomTrend[v + yFinMinuteDelay] - actualLastClosePrice;
               }
               undelayedReturn = randomTrend[v] - lastClosePrice;
@@ -1994,7 +1999,7 @@ class MainPresenter extends GetxController {
                 // - Commission fee
                 // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
                 initialFund = initialFund +
-                    ((actualReturn * 10) ~/ 0.25 * contractVal) -
+                    ((goOrHitOppActualReturnRate * 10) ~/ 0.25 * contractVal) -
                     commissionsAndFees;
                 undelayedInitialFund = undelayedInitialFund +
                     ((undelayedReturn * 10) ~/ 0.25 * contractVal) -
@@ -2014,13 +2019,14 @@ class MainPresenter extends GetxController {
           for (int v = 0; v < randomTrend.length; v++) {
             if (randomTrend[v] < lastClosePrice) {
               if (v >= randomTrend.length - yFinMinuteDelay) {
-                actualReturn = candle[subClosePricesRowID[randomIndex] +
-                            v +
-                            yFinMinuteDelay]
+                goOrHitOppActualReturnRate = candle[
+                            subClosePricesRowID[randomIndex] +
+                                v +
+                                yFinMinuteDelay]
                         .close! -
                     actualLastClosePrice;
               } else {
-                actualReturn =
+                goOrHitOppActualReturnRate =
                     randomTrend[v + yFinMinuteDelay] - actualLastClosePrice;
               }
               undelayedReturn = randomTrend[v] - lastClosePrice;
@@ -2032,7 +2038,7 @@ class MainPresenter extends GetxController {
                 // - Commission fee
                 // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
                 initialFund = initialFund +
-                    ((actualReturn * 10) ~/ 0.25 * contractVal) -
+                    ((goOrHitOppActualReturnRate * 10) ~/ 0.25 * contractVal) -
                     commissionsAndFees;
                 undelayedInitialFund = undelayedInitialFund +
                     ((undelayedReturn * 10) ~/ 0.25 * contractVal) -
@@ -2045,13 +2051,14 @@ class MainPresenter extends GetxController {
           for (int v = 0; v < randomTrend.length; v++) {
             if (randomTrend[v] > lastClosePrice) {
               if (v >= randomTrend.length - yFinMinuteDelay) {
-                actualReturn = candle[subClosePricesRowID[randomIndex] +
-                            v +
-                            yFinMinuteDelay]
+                goOrHitOppActualReturnRate = candle[
+                            subClosePricesRowID[randomIndex] +
+                                v +
+                                yFinMinuteDelay]
                         .close! -
                     actualLastClosePrice;
               } else {
-                actualReturn =
+                goOrHitOppActualReturnRate =
                     randomTrend[v + yFinMinuteDelay] - actualLastClosePrice;
               }
               undelayedReturn = randomTrend[v] - lastClosePrice;
@@ -2063,7 +2070,7 @@ class MainPresenter extends GetxController {
                 // - Commission fee
                 // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
                 initialFund = initialFund +
-                    ((actualReturn * 10) ~/ 0.25 * contractVal) -
+                    ((goOrHitOppActualReturnRate * 10) ~/ 0.25 * contractVal) -
                     commissionsAndFees;
                 undelayedInitialFund = undelayedInitialFund +
                     ((undelayedReturn * 10) ~/ 0.25 * contractVal) -
@@ -2109,14 +2116,15 @@ class MainPresenter extends GetxController {
               commissionsAndFees;
         }
 
-        prob = isLong ? upperProb : lowerProb;
-        expectedMedianReturnRate =
-            double.parse(expectedMedianReturnRate.toStringAsFixed(4));
-        hitRate = double.parse(
-            (hitCount / (hitCount + missCount)).toStringAsFixed(4));
-        mdd = double.parse(mdd.toStringAsFixed(4));
-        initialFund = double.parse(initialFund.toStringAsFixed(4));
-        undelayedInitialFund =
+        prob =
+            double.parse((isLong ? upperProb : lowerProb).toStringAsFixed(4));
+        medianReturnRate = double.parse(medianReturnRate.toStringAsFixed(4));
+        hitRate = hitCount / (hitCount + missCount);
+        roundedHitRate = double.parse(hitRate.toStringAsFixed(4));
+        double roundedMdd = double.parse(mdd.toStringAsFixed(4));
+        double roundedInitialFund =
+            double.parse(initialFund.toStringAsFixed(4));
+        double roundedUndelayedInitialFund =
             double.parse(undelayedInitialFund.toStringAsFixed(4));
 
         // Save results one by one into listList
@@ -2125,14 +2133,16 @@ class MainPresenter extends GetxController {
               datetime[i],
               len,
               prob,
-              expectedMedianReturnRate,
-              finalReturnRate,
+              medianReturnRate,
+              roundedUndelayedReturnRate,
+              roundedActualReturnRate,
               matchedTrendCount,
               goOrHitOpp,
-              hitRate,
-              mdd,
-              undelayedInitialFund,
-              initialFund,
+              goOrHitOppActualReturnRate,
+              roundedHitRate,
+              roundedMdd,
+              roundedUndelayedInitialFund,
+              roundedInitialFund,
               commissionsAndFees,
               yFinMinuteDelay,
               ...innerList
@@ -2140,21 +2150,18 @@ class MainPresenter extends GetxController {
 
         printInfo(info: 'Matched count: $matchedTrendCount');
         printInfo(info: 'Prob.: $prob');
-        printInfo(info: 'Undelayed return rate: $expectedReturnRate');
+        printInfo(info: 'Undelayed return rate: $roundedUndelayedReturnRate');
         printInfo(
             info:
-                'Undelayed fund remaining: US\$$undelayedInitialFund/US\$10000');
-        printInfo(info: 'Final return rate: $finalReturnRate');
-        printInfo(info: 'Fund remaining: US\$$initialFund/US\$10000');
+                'Undelayed fund remaining: US\$$roundedUndelayedInitialFund/US\$10000');
+        printInfo(info: 'Final return rate: $roundedActualReturnRate');
+        printInfo(info: 'Fund remaining: US\$$roundedInitialFund/US\$10000');
       }
 
       // TODO: Revert debugging code to original code
       // splitCandleLists.removeAt(randomIndex);
       splitCandleLists = [];
     }
-
-    logger.d(
-        'Hit/miss/outside count: $hitCount/$missCount/$outsideTimeCount | Hit rate: $hitRate');
 
     printInfo(info: 'Backtesting ended');
     printInfo(info: 'Export backtesting results CSV...');
