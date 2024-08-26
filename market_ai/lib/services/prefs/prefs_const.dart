@@ -54,4 +54,5 @@ class SharedPreferencesConstant {
 
   static String alwaysThousandthsData = 'alwaysThousandthsData';
   static String probThreshold = 'probThreshold';
+  static String minReturnRateThreshold = 'minReturnRateThreshold';
 }

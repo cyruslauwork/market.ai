@@ -185,6 +185,8 @@ class Msg extends Translations {
           'backtesting_thousandths_data':
               'Always use thousandths of the data size',
           'backtesting_prob': 'Backtesting Probability Threshold',
+          'backtesting_min_return_rate':
+              'Backtesting Min. Return Rate Threshold',
         },
         'zh_HK': {
           'app_name': '市場慧眼📈',
@@ -336,6 +338,7 @@ class Msg extends Translations {
           'backtesting_disturbance_detected': '在回測時禁用此按鈕',
           'backtesting_thousandths_data': '始終使用千分之一數據量',
           'backtesting_prob': '回測機率閾值',
+          'backtesting_min_return_rate': '回測最低回報率閾值',
         },
       };
 }

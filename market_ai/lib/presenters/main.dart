@@ -689,6 +689,10 @@ class MainPresenter extends GetxController {
               .getDouble(SharedPreferencesConstant.probThreshold) ??
           0.7)
       .obs;
+  RxDouble minReturnRateThreshold = (PrefsService.to.prefs
+              .getDouble(SharedPreferencesConstant.minReturnRateThreshold) ??
+          0.00075)
+      .obs;
 
   // A 2nd initialization will be triggered when starting the app
   @override
@@ -1123,6 +1127,7 @@ class MainPresenter extends GetxController {
         .getInt(SharedPreferencesConstant.lockTrendLastRow)!;
     double startingClosePrice =
         MainPresenter.to.candleListList[lockTrendLastRow][4];
+    double thisMinReturnRateThreshold = minReturnRateThreshold.value;
 
     bool thisIsFirstThirtyMins = isFirstThirtyMins.value;
     bool thisLowProb = lowProb.value;
@@ -1200,7 +1205,7 @@ class MainPresenter extends GetxController {
       }
       double upperProb = upper.length / (upper.length + lower.length);
       double lowerProb = lower.length / (upper.length + lower.length);
-      if (upperProb > 0.7) {
+      if (upperProb > probThreshold.value) {
         thisIsLong = true;
         thisLowProb = false;
         Future.microtask(() {
@@ -1223,8 +1228,13 @@ class MainPresenter extends GetxController {
               trendsOneSidedButLessThanFour.value = false;
             });
           }
+        } else {
+          thisTrendsNotOneSided = true;
+          Future.microtask(() {
+            trendsNotOneSided.value = true;
+          });
         }
-      } else if (lowerProb > 0.7) {
+      } else if (lowerProb > probThreshold.value) {
         thisIsShort = true;
         thisLowProb = false;
         Future.microtask(() {
@@ -1247,6 +1257,11 @@ class MainPresenter extends GetxController {
               trendsOneSidedButLessThanFour.value = false;
             });
           }
+        } else {
+          thisTrendsNotOneSided = true;
+          Future.microtask(() {
+            trendsNotOneSided.value = true;
+          });
         }
       } else {
         thisLowProb = true;
@@ -1267,7 +1282,7 @@ class MainPresenter extends GetxController {
         if (medianOfLastCloses != 0.0 || medianOfLastCloses != 0) {
           returnRate =
               (medianOfLastCloses - startingClosePrice) / startingClosePrice;
-          if (returnRate >= 0.001) {
+          if (returnRate >= thisMinReturnRateThreshold) {
             thisLowReturn = false;
             Future.microtask(() {
               lowReturn.value = false;
@@ -1301,7 +1316,7 @@ class MainPresenter extends GetxController {
         if (medianOfLastCloses != 0.0 || medianOfLastCloses != 0) {
           returnRate =
               (medianOfLastCloses - startingClosePrice) / startingClosePrice;
-          if (returnRate <= -0.001) {
+          if (returnRate <= -thisMinReturnRateThreshold) {
             thisLowReturn = false;
             Future.microtask(() {
               lowReturn.value = false;
@@ -1336,12 +1351,12 @@ class MainPresenter extends GetxController {
         if (medianOfLastCloses != 0.0 || medianOfLastCloses != 0) {
           returnRate =
               (medianOfLastCloses - startingClosePrice) / startingClosePrice;
-          if (returnRate >= 0.001) {
+          if (returnRate >= thisMinReturnRateThreshold) {
             thisLowReturn = false;
             Future.microtask(() {
               lowReturn.value = false;
             });
-          } else if (returnRate <= -0.001) {
+          } else if (returnRate <= -thisMinReturnRateThreshold) {
             thisLowReturn = false;
             Future.microtask(() {
               lowReturn.value = false;
@@ -1531,7 +1546,7 @@ class MainPresenter extends GetxController {
     }
   }
 
-  backtest(String symbol, BuildContext context) {
+  Future<void> backtest(String symbol, BuildContext context) async {
     printInfo(info: 'Length: ${length.value}');
     printInfo(info: 'Tolerance: ${tolerance.value}');
     printInfo(info: 'MA matching: ${maMatchCriteria.value}');
@@ -1555,7 +1570,7 @@ class MainPresenter extends GetxController {
     int outsideTimeCount = 0;
     int subsequentLen = subLength.value;
     double thisProbThreshold = probThreshold.value;
-    double minMedianReturnRate = 0.001;
+    double minMedianReturnRate = minReturnRateThreshold.value;
     int minMatchCount = 5;
     int minOneSidedMatchCount = 4;
 
@@ -1605,7 +1620,7 @@ class MainPresenter extends GetxController {
 
     // Assume it must be an MA trend matching
     if (!hasMa) {
-      Candle().computeTrendLines();
+      await Candle().computeTrendLines();
       hasMa = candle.last.trends.isNotEmpty;
       maLength = candle.last.trends.length;
     }
@@ -1649,7 +1664,7 @@ class MainPresenter extends GetxController {
 
       for (int l = 0; l < subLen - len + 1 - yFinMinuteDelay; l++) {
         // Show the remaining number of backtest data
-        // backtestDataRan.value += 1;
+        backtestDataRan.value += 1;
 
         int id = l;
         List<String> datetime = [];
@@ -1873,7 +1888,8 @@ class MainPresenter extends GetxController {
                 (medianOfLastCloses - lastClosePrice) / lastClosePrice;
             if (medianReturnRate <= minMedianReturnRate) {
               missCount++;
-              printInfo(info: '❌ Median return rate <= 0.001 in long');
+              printInfo(
+                  info: '❌ Median return rate <= $minMedianReturnRate in long');
               continue;
             }
           } else {
@@ -1900,7 +1916,9 @@ class MainPresenter extends GetxController {
                 (medianOfLastCloses - lastClosePrice) / lastClosePrice;
             if (medianReturnRate >= -minMedianReturnRate) {
               missCount++;
-              printInfo(info: '❌ Median return rate >= -0.001 in short');
+              printInfo(
+                  info:
+                      '❌ Median return rate >= -$minMedianReturnRate in short');
               continue;
             }
           } else {
@@ -2237,8 +2255,8 @@ class MainPresenter extends GetxController {
     isBacktesting.value = '';
 
     // Reset the remaining number of backtest data
-    // backtestDataLen.value = 0;
-    // backtestDataRan.value = 0;
+    backtestDataLen.value = 0;
+    backtestDataRan.value = 0;
   }
 
   /* Route */
@@ -2675,7 +2693,7 @@ class MainPresenter extends GetxController {
         showScaffoldMessenger(
             context: context, localizedMsg: 'show_one_minute');
       } else {
-        legends.value = '🟠MA5 🔴MA20 🟢MA60 🔵MA120 🟣MA240';
+        legends.value = '🟠SMA5 🔴SMA20 🟢SMA60 🔵SMA120 🟣SMA240';
         showScaffoldMessenger(context: context, localizedMsg: 'show_one_day');
       }
       futureListCandledata.value = init();

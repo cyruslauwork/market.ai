@@ -35,6 +35,8 @@ class MainView extends StatefulWidget {
   Widget devModeViewOne(BuildContext context) {
     String jumpServerUrl = MainPresenter.to.jumpServerUrl.value;
     double probThreshold = MainPresenter.to.probThreshold.value;
+    double minReturnRateThreshold =
+        MainPresenter.to.minReturnRateThreshold.value;
     return Column(children: [
       Column(children: [
         Text(
@@ -369,16 +371,44 @@ class MainView extends StatefulWidget {
               ],
             ),
             const Divider(),
-            // Obx(() {
-            //   if (MainPresenter.to.backtestDataLen.value != 0) {
-            //     return Text(
-            //       '${MainPresenter.to.backtestDataRan.value}/${MainPresenter.to.backtestDataLen.value}',
-            //       style: const TextTheme().sp5.w700,
-            //     );
-            //   } else {
-            //     return const SizedBox.shrink();
-            //   }
-            // }),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'backtesting_min_return_rate'.tr,
+                    style: const TextTheme().sp5.w700,
+                  ),
+                ),
+                Expanded(
+                  child: TextField(
+                    onChanged: (String value) {
+                      MainPresenter.to.minReturnRateThreshold.value =
+                          double.parse(value);
+                      PrefsService.to.prefs.setDouble(
+                          SharedPreferencesConstant.minReturnRateThreshold,
+                          double.parse(value));
+                    },
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      labelText: minReturnRateThreshold.toString(),
+                    ),
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                  ),
+                ),
+              ],
+            ),
+            const Divider(),
+            Obx(() {
+              if (MainPresenter.to.backtestDataLen.value != 0) {
+                return Text(
+                  '${MainPresenter.to.backtestDataRan.value}/${MainPresenter.to.backtestDataLen.value}',
+                  style: const TextTheme().sp5.w700,
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            }),
             Obx(() {
               if (MainPresenter.to.hasSpyMinuteData.value) {
                 return Padding(

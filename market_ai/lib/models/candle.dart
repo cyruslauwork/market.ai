@@ -905,33 +905,33 @@ Date,Open,High,Low,Close,Adj Close,Volume
 
     if (MainPresenter.to.hasMinuteData.value &&
         MainPresenter.to.alwaysShowMinuteData.value) {
-      final wma5 = computeEMA(listCandledata, 5);
-      final wma10 = computeEMA(listCandledata, 10);
-      final wma15 = computeEMA(listCandledata, 15);
-      final wma20 = computeEMA(listCandledata, 20);
+      final ema5 = computeEMA(listCandledata, 5);
+      final ema10 = computeEMA(listCandledata, 10);
+      final ema15 = computeEMA(listCandledata, 15);
+      final ema20 = computeEMA(listCandledata, 20);
 
       for (int i = 0; i < listCandledata.length; i++) {
         listCandledata[i].trends = [
-          wma5[i],
-          wma10[i],
-          wma15[i],
-          wma20[i],
+          ema5[i],
+          ema10[i],
+          ema15[i],
+          ema20[i],
         ];
       }
     } else {
-      final ma5 = computeSMA(listCandledata, 5);
-      final ma20 = computeSMA(listCandledata, 20);
-      final ma60 = computeSMA(listCandledata, 60);
-      final ma120 = computeSMA(listCandledata, 120);
-      final ma240 = computeSMA(listCandledata, 240);
+      final sma5 = computeSMA(listCandledata, 5);
+      final sma20 = computeSMA(listCandledata, 20);
+      final sma60 = computeSMA(listCandledata, 60);
+      final sma120 = computeSMA(listCandledata, 120);
+      final sma240 = computeSMA(listCandledata, 240);
 
       for (int i = 0; i < listCandledata.length; i++) {
         listCandledata[i].trends = [
-          ma5[i],
-          ma20[i],
-          ma60[i],
-          ma120[i],
-          ma240[i],
+          sma5[i],
+          sma20[i],
+          sma60[i],
+          sma120[i],
+          sma240[i],
         ];
       }
     }
