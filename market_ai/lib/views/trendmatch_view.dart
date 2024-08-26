@@ -78,14 +78,14 @@ class TrendMatchView extends StatelessWidget {
                           )),
                     (MainPresenter.to.lowReturn.value
                         ? Text(
-                            'low_return_rate'.tr,
+                            '${'low_return_rate'.tr + (MainPresenter.to.minReturnRateThreshold.value * 100).toStringAsFixed(3)}%',
                             style: const TextTheme()
                                 .sp5
                                 .tertiarythemeTextColor
                                 .w700,
                           )
                         : Text(
-                            'profitable_return_rate'.tr,
+                            '${'profitable_return_rate'.tr + (MainPresenter.to.minReturnRateThreshold.value * 100).toStringAsFixed(3)}%',
                             style: const TextTheme()
                                 .sp5
                                 .tertiarythemeTextColor

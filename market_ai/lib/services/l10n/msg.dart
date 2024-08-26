@@ -142,9 +142,9 @@ class Msg extends Translations {
           'go_opposite': '❌ Half of the prices go in the opposite direction',
           'not_go_opposite':
               '✅︎ No half of the prices go in the opposite direction',
-          'low_return_rate': '❌ Return rate is lower than 0.1%',
+          'low_return_rate': '❌ Return rate is lower than ',
           'profitable_return_rate':
-              '✅︎ Return rate is higher than or equal to 0.1%',
+              '✅︎ Return rate is higher than or equal to ',
           'low_probability': '❌ Probability is lower than 70%',
           'high_probability': '✅︎ Probability is higher than or equal to 70%',
           'trends_less_than_five': '❌ Trends < 5',
@@ -299,8 +299,8 @@ class Msg extends Translations {
           'not_hit_ceiling_or_floor': '✅︎ 沒有三分之一收市價觸及對面的上限/下限',
           'go_opposite': '❌ 半數收市價走相反方向',
           'not_go_opposite': '✅︎ 沒有半數收市價走相反方向',
-          'low_return_rate': '❌ 回報率低於 0.1%',
-          'profitable_return_rate': '✅︎ 回報率高於或等於 0.1%',
+          'low_return_rate': '❌ 回報率低於 ',
+          'profitable_return_rate': '✅︎ 回報率高於或等於 ',
           'low_probability': '❌ 機率低過 70%',
           'high_probability': '✅︎ 機率高於或等於 70%',
           'instruction': '指示',
