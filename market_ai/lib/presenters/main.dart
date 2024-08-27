@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:collection/collection.dart';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'dart:math';
-import 'dart:isolate';
 
 import 'package:get/get.dart';
 import 'package:interactive_chart/interactive_chart.dart';
@@ -1547,9 +1546,7 @@ class MainPresenter extends GetxController {
     }
   }
 
-  Future<void> backtest(String symbol, BuildContext context) async {
-    await compute(doLongRunningTask(symbol, context), null);
-    static void doLongRunningTask(dynamic _, String symbol, BuildContext context) {
+  backtest(String symbol, BuildContext context) {
     printInfo(info: 'Length: ${length.value}');
     printInfo(info: 'Tolerance: ${tolerance.value}');
     printInfo(info: 'MA matching: ${maMatchCriteria.value}');
@@ -1623,7 +1620,7 @@ class MainPresenter extends GetxController {
 
     // Assume it must be an MA trend matching
     if (!hasMa) {
-      await Candle().computeTrendLines();
+      Candle().computeTrendLines();
       hasMa = candle.last.trends.isNotEmpty;
       maLength = candle.last.trends.length;
     }
@@ -2260,7 +2257,6 @@ class MainPresenter extends GetxController {
     // Reset the remaining number of backtest data
     backtestDataLen.value = 0;
     backtestDataRan.value = 0;
-    }
   }
 
   /* Route */

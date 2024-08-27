@@ -93,14 +93,14 @@ class TrendMatchView extends StatelessWidget {
                           )),
                     (MainPresenter.to.lowProb.value
                         ? Text(
-                            'low_probability'.tr,
+                            '${'low_probability'.tr + (MainPresenter.to.probThreshold.value * 100).toStringAsFixed(0)}%',
                             style: const TextTheme()
                                 .sp5
                                 .tertiarythemeTextColor
                                 .w700,
                           )
                         : Text(
-                            'high_probability'.tr,
+                            '${'high_probability'.tr + (MainPresenter.to.probThreshold.value * 100).toStringAsFixed(0)}%',
                             style: const TextTheme()
                                 .sp5
                                 .tertiarythemeTextColor
