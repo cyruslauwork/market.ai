@@ -5,6 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'dart:math';
+import 'dart:isolate';
 
 import 'package:get/get.dart';
 import 'package:interactive_chart/interactive_chart.dart';
@@ -1547,6 +1548,8 @@ class MainPresenter extends GetxController {
   }
 
   Future<void> backtest(String symbol, BuildContext context) async {
+    await compute(doLongRunningTask(symbol, context), null);
+    static void doLongRunningTask(dynamic _, String symbol, BuildContext context) {
     printInfo(info: 'Length: ${length.value}');
     printInfo(info: 'Tolerance: ${tolerance.value}');
     printInfo(info: 'MA matching: ${maMatchCriteria.value}');
@@ -2257,6 +2260,7 @@ class MainPresenter extends GetxController {
     // Reset the remaining number of backtest data
     backtestDataLen.value = 0;
     backtestDataRan.value = 0;
+    }
   }
 
   /* Route */
