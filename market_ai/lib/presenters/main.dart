@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:collection/collection.dart';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -2170,7 +2169,7 @@ class MainPresenter extends GetxController {
               info:
                   'goOppositeCount/halfSubLength: $goOppositeCount/$halfSubLength, goOrHitOpp: $goOrHitOpp');
 
-          subClosePricesRowID.mapIndexed((index, element) {
+          for (var element in subClosePricesRowID) {
             DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
                 candle[element].timestamp * 1000,
                 isUtc: true);
@@ -2180,8 +2179,8 @@ class MainPresenter extends GetxController {
                 DateFormat('yyyy-MM-dd HH:mm:ss').format(subtractedDateTime);
             String timezone =
                 TimeService.to.isEasternDaylightTime(dateTime) ? 'EDT' : 'EST';
-            return datetime.add('$lastDatetime $timezone');
-          });
+            datetime.add('$lastDatetime $timezone');
+          }
 
           if (!goOrHitOpp) {
             // Fund value changes due to the return of transaction
@@ -2213,26 +2212,30 @@ class MainPresenter extends GetxController {
               double.parse(undelayedInitialFund.toStringAsFixed(4));
 
           // Save results one by one into listList
-          subClosePrices.mapIndexed((i, innerList) => listList.add([
-                id,
-                datetime[i],
-                len,
-                prob,
-                medianReturnRate,
-                roundedUndelayedReturnRate,
-                roundedActualReturnRate,
-                matchedTrendCount,
-                goOrHitOpp,
-                goOrHitOppUndelayedReturnRate,
-                goOrHitOppActualReturnRate,
-                roundedHitRate,
-                roundedMdd,
-                roundedUndelayedInitialFund,
-                roundedInitialFund,
-                commissionsAndFees,
-                yFinMinuteDelay,
-                ...innerList
-              ]));
+          subClosePrices.asMap().entries.forEach((entry) {
+            listList.add([
+              id,
+              datetime[entry.key],
+              len,
+              prob,
+              medianReturnRate,
+              roundedUndelayedReturnRate,
+              roundedActualReturnRate,
+              matchedTrendCount,
+              goOrHitOpp,
+              goOrHitOppUndelayedReturnRate,
+              goOrHitOppActualReturnRate,
+              roundedHitRate,
+              roundedMdd,
+              roundedUndelayedInitialFund,
+              roundedInitialFund,
+              commissionsAndFees,
+              yFinMinuteDelay,
+              ...entry.value
+            ]);
+          });
+
+          logger.d(listList);
 
           printInfo(info: 'Matched count: $matchedTrendCount');
           printInfo(info: 'Prob.: $prob');
