@@ -56,7 +56,7 @@ class _ChatViewState extends State<ChatView> {
     PrefsService.to.prefs.setStringList(
         SharedPreferencesConstant.messages, MainPresenter.to.messages);
 
-    MainPresenter.to.isWaitingForReplyNotifier.value =
+    MainPresenter.to.waitingForReplyNotifier.value =
         true; // Set the flag to true when the SymbolAndName sends a message
     if (MainPresenter.to.firstQuestion.value) {
       MainPresenter.to.firstQuestion.value = false;
@@ -100,7 +100,7 @@ class _ChatViewState extends State<ChatView> {
         );
       });
     }
-    MainPresenter.to.isWaitingForReplyNotifier.value =
+    MainPresenter.to.waitingForReplyNotifier.value =
         false; // Set the flag to false after the non-sender replies
   }
 
@@ -117,7 +117,7 @@ class _ChatViewState extends State<ChatView> {
         option = 'question2_trimmed'.tr;
       }
 
-      MainPresenter.to.isWaitingForReplyNotifier.value =
+      MainPresenter.to.waitingForReplyNotifier.value =
           true; // Set the flag to true when the SymbolAndName sends a message
       if (MainPresenter.to.firstQuestion.value) {
         MainPresenter.to.firstQuestion.value = false;
@@ -158,7 +158,7 @@ class _ChatViewState extends State<ChatView> {
           );
         });
       }
-      MainPresenter.to.isWaitingForReplyNotifier.value =
+      MainPresenter.to.waitingForReplyNotifier.value =
           false; // Set the flag to false after the non-sender replies
     } else {
       Get.snackbar(

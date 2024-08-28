@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:collection/collection.dart';
@@ -541,7 +542,7 @@ class MainPresenter extends GetxController {
   RxBool isWaitingForReply = false.obs;
   RxInt aiResponseTime = 0.obs;
   RxBool firstQuestion = true.obs;
-  ValueNotifier<bool> isWaitingForReplyNotifier = ValueNotifier<bool>(false);
+  ValueNotifier<bool> waitingForReplyNotifier = ValueNotifier<bool>(false);
   bool isWaitingForReplyNotifierAdded = false;
 
   /* Trend match */
@@ -793,7 +794,7 @@ class MainPresenter extends GetxController {
     }
 
     if (!isWaitingForReplyNotifierAdded) {
-      isWaitingForReplyNotifier.addListener(isWaitingForReplyListener);
+      waitingForReplyNotifier.addListener(waitingForReplyListener);
       isWaitingForReplyNotifierAdded = true;
     }
   }
@@ -911,8 +912,8 @@ class MainPresenter extends GetxController {
     }
   }
 
-  void isWaitingForReplyListener() {
-    if (isWaitingForReplyNotifier.value) {
+  void waitingForReplyListener() {
+    if (waitingForReplyNotifier.value) {
       isWaitingForReply.value = true;
     } else {
       isWaitingForReply.value = false;
@@ -1118,7 +1119,7 @@ class MainPresenter extends GetxController {
     return min;
   }
 
-  checkLockTrend() {
+  void checkLockTrend() {
     int lockTrendDatetime = PrefsService.to.prefs
         .getInt(SharedPreferencesConstant.lockTrendLastDatetime)!;
     List<List<double>> upper = [];
@@ -1546,7 +1547,7 @@ class MainPresenter extends GetxController {
     }
   }
 
-  backtest(String symbol, BuildContext context) {
+  voidbacktest(String symbol, BuildContext context) {
     printInfo(info: 'Length: ${length.value}');
     printInfo(info: 'Tolerance: ${tolerance.value}');
     printInfo(info: 'MA matching: ${maMatchCriteria.value}');
@@ -2460,24 +2461,24 @@ class MainPresenter extends GetxController {
     return Obx(
       () => Row(
         children: [
-          (alwaysShowMinuteData.value
-              ? Padding(
-                  padding: EdgeInsets.only(right: 3.w),
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      color: AppColor.imageDefaultBgColor,
-                    ),
-                    child: Image.asset(
-                      'images/futubull.png',
-                      height: (Platform.isWindows ||
-                              Platform.isLinux ||
-                              Platform.isMacOS
-                          ? 8.h
-                          : 6.h), // Adjust the height as needed
-                    ),
-                  ),
-                )
-              : const SizedBox.shrink()),
+          if (alwaysShowMinuteData.value) ...[
+            Padding(
+              padding: EdgeInsets.only(right: 3.w),
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: AppColor.imageDefaultBgColor,
+                ),
+                child: Image.asset(
+                  'images/futubull.png',
+                  height: (Platform.isWindows ||
+                          Platform.isLinux ||
+                          Platform.isMacOS
+                      ? 8.h
+                      : 6.h), // Adjust the height as needed
+                ),
+              ),
+            )
+          ],
           Padding(
             padding: EdgeInsets.only(right: 3.w),
             child: Container(

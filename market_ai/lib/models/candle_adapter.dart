@@ -45,27 +45,22 @@ class CandleAdapter {
     if (!MainPresenter.to.isLockTrend.value) {
       PrefsService.to.prefs.setInt(SharedPreferencesConstant.lockTrendLastRow,
           MainPresenter.to.candleListList.length - 1);
-      PrefsService.to.prefs.setInt(
-          SharedPreferencesConstant.lockTrendLastDatetime,
-          MainPresenter.to.candleListList.last[0].toInt());
+      if (param.$2 == SrcFileType.json) {
+        PrefsService.to.prefs.setInt(
+            SharedPreferencesConstant.lockTrendLastDatetime,
+            MainPresenter.to.candleListList.last[0].toInt());
+      } else if (param.$2 == SrcFileType.csv) {
+        PrefsService.to.prefs.setInt(
+            SharedPreferencesConstant.lockTrendLastDatetime,
+            TimeService().convertToUnixTimestamp(
+                MainPresenter.to.candleListList.last[0]));
+      } else {
+        throw ArgumentError('Failed to convert list to candles.');
+      }
     }
 
     MainPresenter.to.lastDatetime.value = MainPresenter.to.getLastDatetime();
-    if (param.$2 == SrcFileType.csv) {
-      listCandledata = listList
-          .map((row) => CandleData(
-                timestamp: TimeService().convertToUnixTimestamp(row[0]) * 1000,
-                open: row[1].toDouble(),
-                high: row[2].toDouble(),
-                low: row[3].toDouble(),
-                close: row[4].toDouble(),
-                volume: row[6].toDouble(),
-              ))
-          .toList();
-      MainPresenter.to.listCandledata.value = listCandledata;
-      MainPresenter.to.hasCandleData.value = true;
-      return listCandledata;
-    } else if (param.$2 == SrcFileType.json) {
+    if (param.$2 == SrcFileType.json) {
       listCandledata = listList
           .map((row) => CandleData(
                 timestamp: row[0].toInt() * 1000,
@@ -86,6 +81,20 @@ class CandleAdapter {
       // final file = File(filePath);
       // await file.create(recursive: true);
       // await file.writeAsString(jsonString);
+      MainPresenter.to.hasCandleData.value = true;
+      return listCandledata;
+    } else if (param.$2 == SrcFileType.csv) {
+      listCandledata = listList
+          .map((row) => CandleData(
+                timestamp: TimeService().convertToUnixTimestamp(row[0]) * 1000,
+                open: row[1].toDouble(),
+                high: row[2].toDouble(),
+                low: row[3].toDouble(),
+                close: row[4].toDouble(),
+                volume: row[6].toDouble(),
+              ))
+          .toList();
+      MainPresenter.to.listCandledata.value = listCandledata;
       MainPresenter.to.hasCandleData.value = true;
       return listCandledata;
     } else {
