@@ -217,6 +217,12 @@ class TrendMatchView extends StatelessWidget {
                             localizedMsg: 'trends_not_enough'.tr);
                         return;
                       }
+                      if (!MainPresenter.to.hasSubsequentAnalytics.value) {
+                        MainPresenter.to.showScaffoldMessenger(
+                            context: context,
+                            localizedMsg: 'wait_for_chart'.tr);
+                        return;
+                      }
                       PrefsService.to.prefs
                           .setBool(SharedPreferencesConstant.lockTrend, true);
                       MainPresenter.to.isLockTrend.value = true;

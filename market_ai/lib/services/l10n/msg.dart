@@ -187,6 +187,8 @@ class Msg extends Translations {
           'backtesting_prob': 'Backtesting Probability Threshold',
           'backtesting_min_return_rate':
               'Backtesting Min. Return Rate Threshold',
+          'subsequent_time_unit': 'Subseq.',
+          'wait_for_chart': 'Please wait for the chart to load',
         },
         'zh_HK': {
           'app_name': '市場慧眼📈',
@@ -339,6 +341,8 @@ class Msg extends Translations {
           'backtesting_thousandths_data': '始終使用千分之一數據量',
           'backtesting_prob': '回測機率閾值',
           'backtesting_min_return_rate': '回測最低回報率閾值',
+          'subsequent_time_unit': '後續走勢',
+          'wait_for_chart': '請等待圖表載入完成',
         },
       };
 }

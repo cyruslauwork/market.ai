@@ -58,7 +58,7 @@ class MainView extends StatefulWidget {
                   Text('max_ma'.tr, style: const TextTheme().sp4)
                 ]),
                 Column(children: [
-                  Text('tm_rows'.tr, style: const TextTheme().sp4)
+                  Text('subsequent_time_unit'.tr, style: const TextTheme().sp4)
                 ]),
               ]),
               TableRow(children: [
@@ -79,12 +79,7 @@ class MainView extends StatefulWidget {
                       style: const TextTheme().sp4)
                 ]),
                 Column(children: [
-                  Text(
-                      (MainPresenter.to.trendMatchOutput[3] -
-                              MainPresenter.to.maxMa.value -
-                              MainPresenter.to.trendMatchOutput[4] -
-                              MainPresenter.to.subLength.value)
-                          .toString(),
+                  Text(MainPresenter.to.subLength.toString(),
                       style: const TextTheme().sp4)
                 ]),
               ]),
@@ -98,14 +93,26 @@ class MainView extends StatefulWidget {
                 color: AppColor.blackColor, style: BorderStyle.solid, width: 2),
             children: [
               TableRow(children: [
+                Column(children: [
+                  Text('tm_rows'.tr, style: const TextTheme().sp4)
+                ]),
                 Column(
                     children: [Text('exe'.tr, style: const TextTheme().sp4)]),
                 Column(
                     children: [Text('true'.tr, style: const TextTheme().sp4)]),
                 Column(
-                    children: [Text('false'.tr, style: const TextTheme().sp4)])
+                    children: [Text('false'.tr, style: const TextTheme().sp4)]),
               ]),
               TableRow(children: [
+                Column(children: [
+                  Text(
+                      (MainPresenter.to.trendMatchOutput[3] -
+                              MainPresenter.to.maxMa.value -
+                              MainPresenter.to.trendMatchOutput[4] -
+                              MainPresenter.to.subLength.value)
+                          .toString(),
+                      style: const TextTheme().sp4)
+                ]),
                 Column(children: [
                   Text(MainPresenter.to.trendMatchOutput[2].toString(),
                       style: const TextTheme().sp4)
@@ -399,16 +406,12 @@ class MainView extends StatefulWidget {
               ],
             ),
             const Divider(),
-            Obx(() {
-              if (MainPresenter.to.backtestDataLen.value != 0) {
-                return Text(
-                  '${MainPresenter.to.backtestDataRan.value}/${MainPresenter.to.backtestDataLen.value}',
-                  style: const TextTheme().sp5.w700,
-                );
-              } else {
-                return const SizedBox.shrink();
-              }
-            }),
+            Obx(() => (MainPresenter.to.backtestDataLen.value != 0
+                ? Text(
+                    '${MainPresenter.to.backtestDataRan.value}/${MainPresenter.to.backtestDataLen.value}',
+                    style: const TextTheme().sp5.w700,
+                  )
+                : const SizedBox.shrink())),
             Obx(() {
               if (MainPresenter.to.hasSpyMinuteData.value) {
                 return Padding(
@@ -442,7 +445,7 @@ class MainView extends StatefulWidget {
                                 localizedMsg:
                                     'backtesting_disturbance_detected'.tr)
                             : () => MainPresenter.to.backtest('SPY', context),
-                        icon: MainPresenter.to.isBacktesting.value == 'SPY'
+                        icon: MainPresenter.to.backtestingSymbol.value == 'SPY'
                             ? SizedBox(
                                 width: 10.w,
                                 height: 10.h,
@@ -500,7 +503,7 @@ class MainView extends StatefulWidget {
                                 localizedMsg:
                                     'backtesting_disturbance_detected'.tr)
                             : () => MainPresenter.to.backtest('QQQ', context),
-                        icon: MainPresenter.to.isBacktesting.value == 'QQQ'
+                        icon: MainPresenter.to.backtestingSymbol.value == 'QQQ'
                             ? SizedBox(
                                 width: 10.w,
                                 height: 10.h,
@@ -558,7 +561,7 @@ class MainView extends StatefulWidget {
                                 localizedMsg:
                                     'backtesting_disturbance_detected'.tr)
                             : () => MainPresenter.to.backtest('USO', context),
-                        icon: MainPresenter.to.isBacktesting.value == 'USO'
+                        icon: MainPresenter.to.backtestingSymbol.value == 'USO'
                             ? SizedBox(
                                 width: 10.w,
                                 height: 10.h,
@@ -616,7 +619,7 @@ class MainView extends StatefulWidget {
                                 localizedMsg:
                                     'backtesting_disturbance_detected'.tr)
                             : () => MainPresenter.to.backtest('GLD', context),
-                        icon: MainPresenter.to.isBacktesting.value == 'GLD'
+                        icon: MainPresenter.to.backtestingSymbol.value == 'GLD'
                             ? SizedBox(
                                 width: 10.w,
                                 height: 10.h,
@@ -674,7 +677,7 @@ class MainView extends StatefulWidget {
                                 localizedMsg:
                                     'backtesting_disturbance_detected'.tr)
                             : () => MainPresenter.to.backtest('SLV', context),
-                        icon: MainPresenter.to.isBacktesting.value == 'SLV'
+                        icon: MainPresenter.to.backtestingSymbol.value == 'SLV'
                             ? SizedBox(
                                 width: 10.w,
                                 height: 10.h,
@@ -732,7 +735,7 @@ class MainView extends StatefulWidget {
                                 localizedMsg:
                                     'backtesting_disturbance_detected'.tr)
                             : () => MainPresenter.to.backtest('IWM', context),
-                        icon: MainPresenter.to.isBacktesting.value == 'IWM'
+                        icon: MainPresenter.to.backtestingSymbol.value == 'IWM'
                             ? SizedBox(
                                 width: 10.w,
                                 height: 10.h,
@@ -790,7 +793,7 @@ class MainView extends StatefulWidget {
                                 localizedMsg:
                                     'backtesting_disturbance_detected'.tr)
                             : () => MainPresenter.to.backtest('XLK', context),
-                        icon: MainPresenter.to.isBacktesting.value == 'XLK'
+                        icon: MainPresenter.to.backtestingSymbol.value == 'XLK'
                             ? SizedBox(
                                 width: 10.w,
                                 height: 10.h,
@@ -849,7 +852,7 @@ class MainView extends StatefulWidget {
                                 localizedMsg:
                                     'backtesting_disturbance_detected'.tr)
                             : () => MainPresenter.to.backtest('AAPL', context),
-                        icon: MainPresenter.to.isBacktesting.value == 'AAPL'
+                        icon: MainPresenter.to.backtestingSymbol.value == 'AAPL'
                             ? SizedBox(
                                 width: 10.w,
                                 height: 10.h,
@@ -907,7 +910,7 @@ class MainView extends StatefulWidget {
                                 localizedMsg:
                                     'backtesting_disturbance_detected'.tr)
                             : () => MainPresenter.to.backtest('BA', context),
-                        icon: MainPresenter.to.isBacktesting.value == 'BA'
+                        icon: MainPresenter.to.backtestingSymbol.value == 'BA'
                             ? SizedBox(
                                 width: 10.w,
                                 height: 10.h,
@@ -965,7 +968,7 @@ class MainView extends StatefulWidget {
                                 localizedMsg:
                                     'backtesting_disturbance_detected'.tr)
                             : () => MainPresenter.to.backtest('BAC', context),
-                        icon: MainPresenter.to.isBacktesting.value == 'BAC'
+                        icon: MainPresenter.to.backtestingSymbol.value == 'BAC'
                             ? SizedBox(
                                 width: 10.w,
                                 height: 10.h,
@@ -1023,7 +1026,7 @@ class MainView extends StatefulWidget {
                                 localizedMsg:
                                     'backtesting_disturbance_detected'.tr)
                             : () => MainPresenter.to.backtest('MCD', context),
-                        icon: MainPresenter.to.isBacktesting.value == 'MCD'
+                        icon: MainPresenter.to.backtestingSymbol.value == 'MCD'
                             ? SizedBox(
                                 width: 10.w,
                                 height: 10.h,
@@ -1082,7 +1085,7 @@ class MainView extends StatefulWidget {
                                 localizedMsg:
                                     'backtesting_disturbance_detected'.tr)
                             : () => MainPresenter.to.backtest('NVDA', context),
-                        icon: MainPresenter.to.isBacktesting.value == 'NVDA'
+                        icon: MainPresenter.to.backtestingSymbol.value == 'NVDA'
                             ? SizedBox(
                                 width: 10.w,
                                 height: 10.h,
@@ -1141,7 +1144,7 @@ class MainView extends StatefulWidget {
                                 localizedMsg:
                                     'backtesting_disturbance_detected'.tr)
                             : () => MainPresenter.to.backtest('MSFT', context),
-                        icon: MainPresenter.to.isBacktesting.value == 'MSFT'
+                        icon: MainPresenter.to.backtestingSymbol.value == 'MSFT'
                             ? SizedBox(
                                 width: 10.w,
                                 height: 10.h,
@@ -1199,7 +1202,7 @@ class MainView extends StatefulWidget {
                                 localizedMsg:
                                     'backtesting_disturbance_detected'.tr)
                             : () => MainPresenter.to.backtest('GSK', context),
-                        icon: MainPresenter.to.isBacktesting.value == 'GSK'
+                        icon: MainPresenter.to.backtestingSymbol.value == 'GSK'
                             ? SizedBox(
                                 width: 10.w,
                                 height: 10.h,
@@ -1258,7 +1261,7 @@ class MainView extends StatefulWidget {
                                 localizedMsg:
                                     'backtesting_disturbance_detected'.tr)
                             : () => MainPresenter.to.backtest('TSLA', context),
-                        icon: MainPresenter.to.isBacktesting.value == 'TSLA'
+                        icon: MainPresenter.to.backtestingSymbol.value == 'TSLA'
                             ? SizedBox(
                                 width: 10.w,
                                 height: 10.h,
@@ -1317,7 +1320,7 @@ class MainView extends StatefulWidget {
                                 localizedMsg:
                                     'backtesting_disturbance_detected'.tr)
                             : () => MainPresenter.to.backtest('AMZN', context),
-                        icon: MainPresenter.to.isBacktesting.value == 'AMZN'
+                        icon: MainPresenter.to.backtestingSymbol.value == 'AMZN'
                             ? SizedBox(
                                 width: 10.w,
                                 height: 10.h,

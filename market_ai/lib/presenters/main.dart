@@ -679,7 +679,7 @@ class MainPresenter extends GetxController {
 
   // Backtest
   RxBool isButtonDisabled = false.obs;
-  RxString isBacktesting = ''.obs;
+  RxString backtestingSymbol = ''.obs;
   RxInt backtestDataLen = 0.obs;
   RxInt backtestDataRan = 0.obs;
   RxBool alwaysThousandthsData = (PrefsService.to.prefs
@@ -1548,533 +1548,444 @@ class MainPresenter extends GetxController {
   }
 
   void backtest(String symbol, BuildContext context) {
-    printInfo(info: 'Length: ${length.value}');
-    printInfo(info: 'Tolerance: ${tolerance.value}');
-    printInfo(info: 'MA matching: ${maMatchCriteria.value}');
-    printInfo(info: 'Strict matching: ${strictMatchCriteria.value}');
+    scheduleMicrotask(() async {
+      printInfo(info: 'Length: ${length.value}');
+      printInfo(info: 'Tolerance: ${tolerance.value}');
+      printInfo(info: 'MA matching: ${maMatchCriteria.value}');
+      printInfo(info: 'Strict matching: ${strictMatchCriteria.value}');
 
-    if (!alwaysShowMinuteData.value || !hasMinuteData.value) {
-      showScaffoldMessenger(
-          context: context, localizedMsg: 'backtest_no_minute_data'.tr);
-      return;
-    }
+      if (!alwaysShowMinuteData.value || !hasMinuteData.value) {
+        showScaffoldMessenger(
+            context: context, localizedMsg: 'backtest_no_minute_data'.tr);
+        return;
+      }
 
-    List<List<dynamic>> listList = [];
-    List<CandleData> candle = [];
+      List<List<dynamic>> listList = [];
+      List<CandleData> candle = [];
 
-    int initIndex = 20; // Assume that the backtest must be minute data
-    int len = length.value;
-    double commissionsAndFees = (0.25 * 2) + (0.021 * 2);
-    int yFinMinuteDelay = 1;
-    int hitCount = 0;
-    int missCount = 0;
-    int outsideTimeCount = 0;
-    int subsequentLen = subLength.value;
-    double thisProbThreshold = probThreshold.value;
-    double minMedianReturnRate = minReturnRateThreshold.value;
-    int minMatchCount = 5;
-    int minOneSidedMatchCount = 4;
+      int initIndex = 20; // Assume that the backtest must be minute data
+      int len = length.value;
+      double commissionsAndFees = (0.25 * 2) + (0.021 * 2);
+      int yFinMinuteDelay = 1;
+      int hitCount = 0;
+      int missCount = 0;
+      int outsideTimeCount = 0;
+      int subsequentLen = subLength.value;
+      double thisProbThreshold = probThreshold.value;
+      double minMedianReturnRate = minReturnRateThreshold.value;
+      int minMatchCount = 5;
+      int minOneSidedMatchCount = 4;
 
-    if (len <= 1) {
-      throw ArgumentError('Selected period must greater than 1 time unit.');
-    }
+      if (len <= 1) {
+        throw ArgumentError('Selected period must greater than 1 time unit.');
+      }
 
-    // CSV headers
-    listList.add([
-      'ID',
-      'Datetime',
-      'Selected',
-      'Probability',
-      'Median Return Rate',
-      'Expected Undelayed Return Rate (random trend)',
-      'Expected Actual Return Rate (random trend)',
-      'Matched Trend Count',
-      'Trend Go/Hit Opp.',
-      'Trend Go/Hit Opp. Undelayed Return Rate',
-      'Trend Go/Hit Opp. Actual Return Rate',
-      'Hit Rate (after first 30 mins)',
-      'MDD (all the time)',
-      'Undelayed Fund Remaining (commns. and fees deducted)',
-      'Fund Remaining (commns. and fees deducted)',
-      'Commns. and Fees (2 contracts)',
-      'yFin Minute Delay',
-      ...List.generate(subsequentLen, (index) => 'Close Price ${index + 1}'),
-    ]);
+      // CSV headers
+      listList.add([
+        'ID',
+        'Datetime',
+        'Selected',
+        'Probability',
+        'Median Return Rate',
+        'Expected Undelayed Return Rate (random trend)',
+        'Expected Actual Return Rate (random trend)',
+        'Matched Trend Count',
+        'Trend Go/Hit Opp.',
+        'Trend Go/Hit Opp. Undelayed Return Rate',
+        'Trend Go/Hit Opp. Actual Return Rate',
+        'Hit Rate (after first 30 mins)',
+        'MDD (all the time)',
+        'Undelayed Fund Remaining (commns. and fees deducted)',
+        'Fund Remaining (commns. and fees deducted)',
+        'Commns. and Fees (2 contracts)',
+        'yFin Minute Delay',
+        ...List.generate(subsequentLen, (index) => 'Close Price ${index + 1}'),
+      ]);
 
-    // Make sure data is from the expected financial instrument
-    if (symbol == financialInstrumentSymbol.value) {
-      candle = listCandledata;
-    } else {
-      showScaffoldMessenger(
-          context: context, localizedMsg: 'search_symbol_before_backtest'.tr);
-      return;
-    }
+      // Make sure data is from the expected financial instrument
+      if (symbol == financialInstrumentSymbol.value) {
+        candle = listCandledata;
+      } else {
+        showScaffoldMessenger(
+            context: context, localizedMsg: 'search_symbol_before_backtest'.tr);
+        return;
+      }
 
-    printInfo(info: 'Backtesting started');
+      printInfo(info: 'Backtesting started');
 
-    // Start backtest loading effect
-    isButtonDisabled.value = true;
-    isBacktesting.value = symbol;
+      // Start backtest loading effect
+      isButtonDisabled.value = true;
+      backtestingSymbol.value = symbol;
 
-    bool hasMa = candle.last.trends.isNotEmpty;
-    int maLength = candle.last.trends.length;
+      bool hasMa = candle.last.trends.isNotEmpty;
+      int maLength = candle.last.trends.length;
 
-    // Assume it must be an MA trend matching
-    if (!hasMa) {
-      Candle().computeTrendLines();
-      hasMa = candle.last.trends.isNotEmpty;
-      maLength = candle.last.trends.length;
-    }
+      // Assume it must be an MA trend matching
+      if (!hasMa) {
+        await Candle().computeTrendLines();
+        hasMa = candle.last.trends.isNotEmpty;
+        maLength = candle.last.trends.length;
+      }
 
-    candle = candle.sublist(initIndex); // Remove trends that don't have all MAs
-    printInfo(info: 'Candle data length: ${candle.length}');
+      candle =
+          candle.sublist(initIndex); // Remove trends that don't have all MAs
+      printInfo(info: 'Candle data length: ${candle.length}');
 
-    // Split the candle list of list
-    List<List<CandleData>> splitCandleLists = [];
-    int splits = 1000;
-    final int sublistSize = (candle.length / splits).ceil();
+      // Split the candle list of list
+      List<List<CandleData>> splitCandleLists = [];
+      int splits = 1000;
+      final int sublistSize = (candle.length / splits).ceil();
 
-    for (int i = 0; i < candle.length; i += sublistSize) {
-      final end =
-          (i + sublistSize < candle.length) ? i + sublistSize : candle.length;
-      final sublist = candle.sublist(i, end);
-      splitCandleLists.add(sublist);
-    }
-    printInfo(info: 'Split candle list length: ${splitCandleLists.length}');
+      for (int i = 0; i < candle.length; i += sublistSize) {
+        final end =
+            (i + sublistSize < candle.length) ? i + sublistSize : candle.length;
+        final sublist = candle.sublist(i, end);
+        splitCandleLists.add(sublist);
+      }
+      printInfo(info: 'Split candle list length: ${splitCandleLists.length}');
 
-    // Show the remaining number of backtest data
-    // backtestDataLen.value = candle.length;
+      // Show the remaining number of backtest data
+      backtestDataLen.value = candle.length;
 
-    // Randomly pick a list to run backtest
-    final random = Random();
-    final int tol = tolerance.value;
+      // Randomly pick a list to run backtest
+      final random = Random();
+      final int tol = tolerance.value;
 
-    double hitRate = 0.0;
-    double roundedHitRate = 0.0;
-    double mdd = 0.0;
-    double initialFund = 10000;
-    double undelayedInitialFund = 10000;
+      double hitRate = 0.0;
+      double roundedHitRate = 0.0;
+      double mdd = 0.0;
+      double initialFund = 10000;
+      double undelayedInitialFund = 10000;
 
-    while (splitCandleLists.isNotEmpty) {
-      final randomIndex = random.nextInt(splitCandleLists.length);
-      final sublist = splitCandleLists[randomIndex];
-      final subLen = sublist.length;
+      while (splitCandleLists.isNotEmpty) {
+        final randomIndex = random.nextInt(splitCandleLists.length);
+        final sublist = splitCandleLists[randomIndex];
+        final subLen = sublist.length;
 
-      printInfo(info: 'Current split candle list no.: $randomIndex');
-      printInfo(info: 'Current split candle list length: $subLen');
+        printInfo(info: 'Current split candle list no.: $randomIndex');
+        printInfo(info: 'Current split candle list length: $subLen');
 
-      for (int l = 0; l < subLen - len + 1 - yFinMinuteDelay; l++) {
-        // Show the remaining number of backtest data
-        backtestDataRan.value += 1;
+        for (int l = 0; l < subLen - len + 1 - yFinMinuteDelay; l++) {
+          await Future.delayed(const Duration(milliseconds: 0));
 
-        int id = l;
-        List<String> datetime = [];
-        double prob = 0.0;
-        double medianReturnRate = 0.0;
-        int matchedTrendCount = 0;
-        int oneThirdSubLength = 0;
-        int halfSubLength = 0;
+          // Show the remaining number of backtest data
+          backtestDataRan.value += 1;
 
-        logger.d(
-            '[Last time] Hit/miss/outside count: $hitCount/$missCount/$outsideTimeCount | Hit rate: $roundedHitRate | Current ID among the total in the split candle list: $id/$subLen');
+          int id = l;
+          List<String> datetime = [];
+          double prob = 0.0;
+          double medianReturnRate = 0.0;
+          int matchedTrendCount = 0;
+          int oneThirdSubLength = 0;
+          int halfSubLength = 0;
 
-        // Check if the dateTime is within the first 30 minutes of trading
-        int timestamp = sublist[l].timestamp;
-        if (timestamp != 0) {
-          DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
-              timestamp * 1000,
-              isUtc: true);
-          DateTime subtractedDateTime =
-              TimeService.to.subtractHoursBasedOnTimezone(dateTime);
-          // Define trading start time
-          DateTime tradingStartTime = DateTime.utc(subtractedDateTime.year,
-              subtractedDateTime.month, subtractedDateTime.day, 9, 30);
+          logger.d(
+              '[Last time] Hit/miss/outside count: $hitCount/$missCount/$outsideTimeCount | Hit rate: $roundedHitRate | Current ID among the total in the split candle list: $id/$subLen');
+
           // Check if the dateTime is within the first 30 minutes of trading
-          DateTime tradingEndTimeUTC =
-              tradingStartTime.add(const Duration(minutes: 30));
-          bool isWithinFirst30Minutes =
-              subtractedDateTime.isAfter(tradingStartTime) &&
-                  subtractedDateTime.isBefore(tradingEndTimeUTC);
-          if (isWithinFirst30Minutes) {
-            outsideTimeCount++;
-            continue;
+          int timestamp = sublist[l].timestamp;
+          if (timestamp != 0) {
+            DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
+                timestamp * 1000,
+                isUtc: true);
+            DateTime subtractedDateTime =
+                TimeService.to.subtractHoursBasedOnTimezone(dateTime);
+            // Define trading start time
+            DateTime tradingStartTime = DateTime.utc(subtractedDateTime.year,
+                subtractedDateTime.month, subtractedDateTime.day, 9, 30);
+            // Check if the dateTime is within the first 30 minutes of trading
+            DateTime tradingEndTimeUTC =
+                tradingStartTime.add(const Duration(minutes: 30));
+            bool isWithinFirst30Minutes =
+                subtractedDateTime.isAfter(tradingStartTime) &&
+                    subtractedDateTime.isBefore(tradingEndTimeUTC);
+            if (isWithinFirst30Minutes) {
+              outsideTimeCount++;
+              continue;
+            }
+          } else {
+            logger.d('Error: timestamp == 0');
+            splitCandleLists = [];
+            break;
           }
-        } else {
-          logger.d('Error: timestamp == 0');
-          splitCandleLists = [];
-          break;
-        }
-        // printInfo(info: '✅ Outside first 30 mins');
+          // printInfo(info: '✅ Outside first 30 mins');
 
-        // Selecting a trend
-        double startingClosePrice = sublist[l].close!;
-        double lastClosePrice = sublist[l + len - 1].close!;
-        double actualLastClosePrice =
-            sublist[l + len - 1 + yFinMinuteDelay].close!;
-        List<double> selectedPeriodPercentDifferencesList = [];
-        List<List<double>> selectedPeriodMaPercentDifferencesListList = [];
-        List<double> selectedPeriodFirstMaAndPricePercentDifferencesList = [];
-
-        for (int i = 0; i < len - 1; i++) {
-          double newVal = sublist[l + i + 1].close!;
-          double oriVal = sublist[l + i].close!;
-          double percentDiff = (newVal - oriVal) / oriVal;
-
-          selectedPeriodPercentDifferencesList.add(percentDiff);
-
-          List<double> selectedPeriodMaPercentDifferencesList = [];
-          for (int n = 0; n < maLength; n++) {
-            double newVal = sublist[l + i + 1].trends[n]!;
-            double oriVal = sublist[l + i].trends[n]!;
-            double maPercentDiff = (newVal - oriVal) / oriVal;
-            selectedPeriodMaPercentDifferencesList.add(maPercentDiff);
-          }
-          selectedPeriodMaPercentDifferencesListList
-              .add(selectedPeriodMaPercentDifferencesList);
-        }
-        for (int m = 0; m < maLength; m++) {
-          selectedPeriodFirstMaAndPricePercentDifferencesList.add(
-              (sublist[l].trends[m]! - startingClosePrice) /
-                  startingClosePrice);
-        }
-        // printInfo(info: '✅ Selected a trend');
-
-        List<List<double>> upper = [];
-        List<List<double>> lower = [];
-        List<List<double>> subClosePrices = [];
-        List<int> subClosePricesRowID = [];
-        bool isLong = false;
-        bool isShort = false;
-
-        // Look for similar trend(s)
-        for (int m = initIndex;
-            m < candle.length - len - subsequentLen + 1 - yFinMinuteDelay;
-            // Minus yFinMinuteDelay for actualReturn calculation
-            m++) {
-          List<double> comparePeriodPercentDifferencesList = [];
+          // Selecting a trend
+          double startingClosePrice = sublist[l].close!;
+          double lastClosePrice = sublist[l + len - 1].close!;
+          double actualLastClosePrice =
+              sublist[l + len - 1 + yFinMinuteDelay].close!;
+          List<double> selectedPeriodPercentDifferencesList = [];
+          List<List<double>> selectedPeriodMaPercentDifferencesListList = [];
+          List<double> selectedPeriodFirstMaAndPricePercentDifferencesList = [];
 
           for (int i = 0; i < len - 1; i++) {
-            double percentDiff =
-                (candle[m + i + 1].close! - candle[m + i].close!) /
-                    (candle[m + i].close!);
-            comparePeriodPercentDifferencesList.add(percentDiff);
+            double newVal = sublist[l + i + 1].close!;
+            double oriVal = sublist[l + i].close!;
+            double percentDiff = (newVal - oriVal) / oriVal;
+
+            selectedPeriodPercentDifferencesList.add(percentDiff);
+
+            List<double> selectedPeriodMaPercentDifferencesList = [];
+            for (int n = 0; n < maLength; n++) {
+              double newVal = sublist[l + i + 1].trends[n]!;
+              double oriVal = sublist[l + i].trends[n]!;
+              double maPercentDiff = (newVal - oriVal) / oriVal;
+              selectedPeriodMaPercentDifferencesList.add(maPercentDiff);
+            }
+            selectedPeriodMaPercentDifferencesListList
+                .add(selectedPeriodMaPercentDifferencesList);
           }
+          for (int m = 0; m < maLength; m++) {
+            selectedPeriodFirstMaAndPricePercentDifferencesList.add(
+                (sublist[l].trends[m]! - startingClosePrice) /
+                    startingClosePrice);
+          }
+          // printInfo(info: '✅ Selected a trend');
 
-          (bool, List<double>) comparisonResult = TrendMatch()
-              .areDifferencesLessThanOrEqualToCertainPercent(
-                  selectedPeriodPercentDifferencesList,
-                  comparePeriodPercentDifferencesList,
-                  tol); // Record data type in Dart is equivalent to Tuple in Java and Python
+          List<List<double>> upper = [];
+          List<List<double>> lower = [];
+          List<List<double>> subClosePrices = [];
+          List<int> subClosePricesRowID = [];
+          bool isLong = false;
+          bool isShort = false;
 
-          if (comparisonResult.$1) {
-            // printInfo(info: '✅ A trend percentage changes matched');
-            List<double> comparePeriodFirstMaAndPricePercentDifferencesList =
-                [];
-            List<List<double>> comparePeriodMaPercentDifferencesListList = [];
-            double compareFirstPrice = candle[m].close!;
+          // Look for similar trend(s)
+          for (int m = initIndex;
+              m < candle.length - len - subsequentLen + 1 - yFinMinuteDelay;
+              // Minus yFinMinuteDelay for actualReturn calculation
+              m++) {
+            List<double> comparePeriodPercentDifferencesList = [];
 
-            for (int n = 0; n < len - 1; n++) {
-              List<double> comparePeriodMaPercentDifferencesList = [];
+            for (int i = 0; i < len - 1; i++) {
+              double percentDiff =
+                  (candle[m + i + 1].close! - candle[m + i].close!) /
+                      (candle[m + i].close!);
+              comparePeriodPercentDifferencesList.add(percentDiff);
+            }
+
+            (bool, List<double>) comparisonResult = TrendMatch()
+                .areDifferencesLessThanOrEqualToCertainPercent(
+                    selectedPeriodPercentDifferencesList,
+                    comparePeriodPercentDifferencesList,
+                    tol); // Record data type in Dart is equivalent to Tuple in Java and Python
+
+            if (comparisonResult.$1) {
+              // printInfo(info: '✅ A trend percentage changes matched');
+              List<double> comparePeriodFirstMaAndPricePercentDifferencesList =
+                  [];
+              List<List<double>> comparePeriodMaPercentDifferencesListList = [];
+              double compareFirstPrice = candle[m].close!;
+
+              for (int n = 0; n < len - 1; n++) {
+                List<double> comparePeriodMaPercentDifferencesList = [];
+                for (int i = 0; i < maLength; i++) {
+                  double newVal = candle[m + n + 1].trends[i]!;
+                  double oriVal = candle[m + n].trends[i]!;
+                  double maPercentDiff = (newVal - oriVal) / oriVal;
+                  comparePeriodMaPercentDifferencesList.add(maPercentDiff);
+                }
+                comparePeriodMaPercentDifferencesListList
+                    .add(comparePeriodMaPercentDifferencesList);
+              }
               for (int i = 0; i < maLength; i++) {
-                double newVal = candle[m + n + 1].trends[i]!;
-                double oriVal = candle[m + n].trends[i]!;
-                double maPercentDiff = (newVal - oriVal) / oriVal;
-                comparePeriodMaPercentDifferencesList.add(maPercentDiff);
+                comparePeriodFirstMaAndPricePercentDifferencesList.add(
+                    (candle[m].trends[i]! - compareFirstPrice) /
+                        compareFirstPrice);
               }
-              comparePeriodMaPercentDifferencesListList
-                  .add(comparePeriodMaPercentDifferencesList);
-            }
-            for (int i = 0; i < maLength; i++) {
-              comparePeriodFirstMaAndPricePercentDifferencesList.add(
-                  (candle[m].trends[i]! - compareFirstPrice) /
-                      compareFirstPrice);
-            }
 
-            bool isMaMatched = TrendMatch()
-                .maDifferencesLessThanOrEqualToCertainPercent(
-                    selectedPeriodFirstMaAndPricePercentDifferencesList,
-                    selectedPeriodMaPercentDifferencesListList,
-                    comparePeriodFirstMaAndPricePercentDifferencesList,
-                    comparePeriodMaPercentDifferencesListList,
-                    tol);
-            if (isMaMatched) {
-              printInfo(info: '✅ A trend MAs matched');
-              // Store the adjusted close prices into different lists
-              List<double> matchedAdjustedSubsequentCloseList = [];
-              double lastDifference =
-                  lastClosePrice / candle[m + len - 1].close!;
-              for (int i = 0; i < subsequentLen; i++) {
-                double adjustedSubsequentClose =
-                    candle[m + len + i].close! * lastDifference;
-                matchedAdjustedSubsequentCloseList.add(adjustedSubsequentClose);
+              bool isMaMatched = TrendMatch()
+                  .maDifferencesLessThanOrEqualToCertainPercent(
+                      selectedPeriodFirstMaAndPricePercentDifferencesList,
+                      selectedPeriodMaPercentDifferencesListList,
+                      comparePeriodFirstMaAndPricePercentDifferencesList,
+                      comparePeriodMaPercentDifferencesListList,
+                      tol);
+              if (isMaMatched) {
+                printInfo(info: '✅ A trend MAs matched');
+                // Store the adjusted close prices into different lists
+                List<double> matchedAdjustedSubsequentCloseList = [];
+                double lastDifference =
+                    lastClosePrice / candle[m + len - 1].close!;
+                for (int i = 0; i < subsequentLen; i++) {
+                  double adjustedSubsequentClose =
+                      candle[m + len + i].close! * lastDifference;
+                  matchedAdjustedSubsequentCloseList
+                      .add(adjustedSubsequentClose);
+                }
+                if (matchedAdjustedSubsequentCloseList.last >= lastClosePrice) {
+                  subClosePrices.add(matchedAdjustedSubsequentCloseList);
+                  subClosePricesRowID.add(m);
+                  upper.add(matchedAdjustedSubsequentCloseList);
+                } else if (matchedAdjustedSubsequentCloseList.last <
+                    lastClosePrice) {
+                  subClosePrices.add(matchedAdjustedSubsequentCloseList);
+                  subClosePricesRowID.add(m);
+                  lower.add(matchedAdjustedSubsequentCloseList);
+                }
               }
-              if (matchedAdjustedSubsequentCloseList.last >= lastClosePrice) {
-                subClosePrices.add(matchedAdjustedSubsequentCloseList);
-                subClosePricesRowID.add(m);
-                upper.add(matchedAdjustedSubsequentCloseList);
-              } else if (matchedAdjustedSubsequentCloseList.last <
-                  lastClosePrice) {
-                subClosePrices.add(matchedAdjustedSubsequentCloseList);
-                subClosePricesRowID.add(m);
-                lower.add(matchedAdjustedSubsequentCloseList);
-              }
+              // else {
+              //   printInfo(info: '❌ A trend MAs not matched');
+              // }
             }
             // else {
-            //   printInfo(info: '❌ A trend MAs not matched');
+            //   printInfo(info: '❌ A trend percentage changes not matched');
             // }
           }
-          // else {
-          //   printInfo(info: '❌ A trend percentage changes not matched');
-          // }
-        }
 
-        // Division by zero is mathematically undefined, but in programming,
-        // dividing by zero often results in NaN (Not a Number) for floating-point numbers.
-        // This way, skip when both lists are empty
-        if (upper.isEmpty && lower.isEmpty) {
-          missCount++;
-          printInfo(info: '❌ upper and lower are empty');
-          continue;
-        }
-        // Probability calculation and amount of matched trends
-        double upperProb = upper.length / (upper.length + lower.length);
-        double lowerProb = lower.length / (upper.length + lower.length);
-        // Round to 3 decimal places
-        upperProb = double.parse(upperProb.toStringAsFixed(4));
-        lowerProb = double.parse(lowerProb.toStringAsFixed(4));
-        if (upperProb >= thisProbThreshold) {
-          if (upperProb.toInt() == 1) {
-            if (upper.length < minOneSidedMatchCount) {
-              missCount++;
-              printInfo(info: '❌ upper.length < 4');
-              continue;
-            }
-          } else {
-            if (upper.length < minMatchCount) {
-              missCount++;
-              printInfo(info: '❌ upper.length < 5');
-              continue;
-            }
-          }
-          isLong = true;
-          printInfo(info: '✅ Is long: ${upper.length}/${lower.length}');
-        } else if (lowerProb >= thisProbThreshold) {
-          if (lowerProb.toInt() == 1) {
-            if (lower.length < minOneSidedMatchCount) {
-              missCount++;
-              printInfo(info: '❌ lower.length < 4');
-              continue;
-            }
-          } else {
-            if (lower.length < minMatchCount) {
-              missCount++;
-              printInfo(info: '❌ lower.length < 5');
-              continue;
-            }
-          }
-          isShort = true;
-          printInfo(info: '✅ Is short: ${upper.length}/${lower.length}');
-        } else {
-          missCount++;
-          printInfo(info: '❌ No majority list');
-          continue;
-        }
-
-        // Return rate median
-        double thisMdd = 0.0;
-        if (isLong) {
-          double medianOfLastCloses = findMedianOfLastValues(upper);
-          if (medianOfLastCloses != 0.0) {
-            medianReturnRate =
-                (medianOfLastCloses - lastClosePrice) / lastClosePrice;
-            if (medianReturnRate <= minMedianReturnRate) {
-              missCount++;
-              printInfo(
-                  info: '❌ Median return rate <= $minMedianReturnRate in long');
-              continue;
-            }
-          } else {
+          // Division by zero is mathematically undefined, but in programming,
+          // dividing by zero often results in NaN (Not a Number) for floating-point numbers.
+          // This way, skip when both lists are empty
+          if (upper.isEmpty && lower.isEmpty) {
             missCount++;
-            printInfo(info: '❌ Median return rate is 0.0 in long');
+            printInfo(info: '❌ upper and lower are empty');
             continue;
           }
-          double thisMin = findMinOfValues(lower);
-          if (thisMin != 0.0) {
-            double minPercentageDifference =
-                (thisMin - lastClosePrice) / lastClosePrice;
-            double minPercentageDifferenceAbs = minPercentageDifference.abs();
-            mdd = max(mdd, minPercentageDifferenceAbs);
-            thisMdd = minPercentageDifferenceAbs;
-          } else {
-            missCount++;
-            printInfo(info: '❌ thisMin is 0.0 in long');
-            continue;
-          }
-        } else if (isShort) {
-          double medianOfLastCloses = findMedianOfLastValues(lower);
-          if (medianOfLastCloses != 0.0) {
-            medianReturnRate =
-                (medianOfLastCloses - lastClosePrice) / lastClosePrice;
-            if (medianReturnRate >= -minMedianReturnRate) {
-              missCount++;
-              printInfo(
-                  info:
-                      '❌ Median return rate >= -$minMedianReturnRate in short');
-              continue;
-            }
-          } else {
-            missCount++;
-            printInfo(info: '❌ Median return rate is 0.0 in short');
-            continue;
-          }
-          double thisMax = findMaxOfValues(upper);
-          if (thisMax != 0.0) {
-            double maxPercentageDifference =
-                (thisMax - lastClosePrice) / lastClosePrice;
-            double maxPercentageDifferenceAbs = maxPercentageDifference.abs();
-            mdd = max(mdd, maxPercentageDifferenceAbs);
-            thisMdd = maxPercentageDifferenceAbs;
-          } else {
-            missCount++;
-            printInfo(info: '❌ thisMax is 0.0 in short');
-            continue;
-          }
-        }
-        hitCount++;
-        printInfo(
-            info:
-                '✅ Minimum median return rate has been passed: $medianReturnRate');
-
-        // Pick up a trend randomly from upper/lower by overall probability
-        int randomIndex = random.nextInt(subClosePrices.length);
-        // Get the randomly selected trend from the combinedList
-        List<double> randomTrend = subClosePrices[randomIndex];
-        // Envisaged that the entry price is always delayed, the delay time is denoted as yFinMinuteDelay,
-        // and the exit price is always on time
-        double actualReturnRate =
-            ((randomTrend.last - actualLastClosePrice) / actualLastClosePrice);
-        double undelayedReturnRate =
-            ((randomTrend.last - lastClosePrice) / lastClosePrice);
-        double roundedActualReturnRate =
-            double.parse(actualReturnRate.toStringAsFixed(4));
-        double roundedUndelayedReturnRate =
-            double.parse(undelayedReturnRate.toStringAsFixed(4));
-        int contractVal =
-            5; // Micro E-mini Futures: Index points (0.25) contract value (5 USD)
-        int diffFromEtfAndFuture =
-            10; // The difference in value scale between ETF and Future
-        matchedTrendCount = subClosePrices.length;
-
-        double goOrHitOppActualReturn = 0.0;
-        double goOrHitOppActualReturnRate = 0.0;
-        double goOrHitOppUndelayedReturn = 0.0;
-        double goOrHitOppUndelayedReturnRate = 0.0;
-        bool goOrHitOpp = false;
-        // Check the number of trend go to the opposite side
-        int hitOppositeCeilingOrBottomCount = 0;
-        oneThirdSubLength = matchedTrendCount ~/ 3;
-        if (isLong) {
-          for (int v = 0; v < randomTrend.length; v++) {
-            double percentChange =
-                (randomTrend[v] - lastClosePrice) / lastClosePrice;
-            if (percentChange <= -thisMdd) {
-              hitOppositeCeilingOrBottomCount++;
-              if (hitOppositeCeilingOrBottomCount >= oneThirdSubLength) {
-                goOrHitOpp = true;
-                if (v >= randomTrend.length - yFinMinuteDelay) {
-                  double newVal = candle[subClosePricesRowID[randomIndex] +
-                          v +
-                          yFinMinuteDelay]
-                      .close!;
-                  goOrHitOppActualReturn = newVal - actualLastClosePrice;
-                  goOrHitOppActualReturnRate =
-                      (newVal - actualLastClosePrice) / actualLastClosePrice;
-                } else {
-                  double newVal = randomTrend[v + yFinMinuteDelay];
-                  goOrHitOppActualReturn = newVal - actualLastClosePrice;
-                  goOrHitOppActualReturnRate =
-                      (newVal - actualLastClosePrice) / actualLastClosePrice;
-                }
-                double newVal = randomTrend[v];
-                goOrHitOppUndelayedReturn = newVal - lastClosePrice;
-                goOrHitOppUndelayedReturnRate =
-                    (newVal - lastClosePrice) / lastClosePrice;
-                // Get the failed trend last close price return and change the fund value
-                // - Index points (0.25) contract value (5 USD)
-                // - Commission fee
-                // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
-                initialFund = initialFund +
-                    ((goOrHitOppActualReturn * diffFromEtfAndFuture) ~/
-                        0.25 *
-                        contractVal) -
-                    commissionsAndFees;
-                undelayedInitialFund = undelayedInitialFund +
-                    ((goOrHitOppUndelayedReturn * diffFromEtfAndFuture) ~/
-                        0.25 *
-                        contractVal) -
-                    commissionsAndFees;
-                break;
+          // Probability calculation and amount of matched trends
+          double upperProb = upper.length / (upper.length + lower.length);
+          double lowerProb = lower.length / (upper.length + lower.length);
+          // Round to 3 decimal places
+          upperProb = double.parse(upperProb.toStringAsFixed(4));
+          lowerProb = double.parse(lowerProb.toStringAsFixed(4));
+          if (upperProb >= thisProbThreshold) {
+            if (upperProb.toInt() == 1) {
+              if (upper.length < minOneSidedMatchCount) {
+                missCount++;
+                printInfo(info: '❌ upper.length < 4');
+                continue;
+              }
+            } else {
+              if (upper.length < minMatchCount) {
+                missCount++;
+                printInfo(info: '❌ upper.length < 5');
+                continue;
               }
             }
-          }
-        } else if (isShort) {
-          for (int v = 0; v < randomTrend.length; v++) {
-            double percentChange =
-                (randomTrend[v] - lastClosePrice) / lastClosePrice;
-            if (percentChange >= thisMdd) {
-              hitOppositeCeilingOrBottomCount++;
-              if (hitOppositeCeilingOrBottomCount >= oneThirdSubLength) {
-                goOrHitOpp = true;
-                if (v >= randomTrend.length - yFinMinuteDelay) {
-                  double newVal = candle[subClosePricesRowID[randomIndex] +
-                          v +
-                          yFinMinuteDelay]
-                      .close!;
-                  goOrHitOppActualReturn = newVal - actualLastClosePrice;
-                  goOrHitOppActualReturnRate =
-                      (newVal - actualLastClosePrice) / actualLastClosePrice;
-                } else {
-                  double newVal = randomTrend[v + yFinMinuteDelay];
-                  goOrHitOppActualReturn = newVal - actualLastClosePrice;
-                  goOrHitOppActualReturnRate =
-                      (newVal - actualLastClosePrice) / actualLastClosePrice;
-                }
-                double newVal = randomTrend[v];
-                goOrHitOppUndelayedReturn = newVal - lastClosePrice;
-                goOrHitOppUndelayedReturnRate =
-                    (newVal - lastClosePrice) / lastClosePrice;
-                // Get the failed trend last close price return and change the fund value
-                // - Index points (0.25) contract value (5 USD)
-                // - Commission fee
-                // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
-                initialFund = initialFund +
-                    ((goOrHitOppActualReturn * diffFromEtfAndFuture) ~/
-                        0.25 *
-                        contractVal) -
-                    commissionsAndFees;
-                undelayedInitialFund = undelayedInitialFund +
-                    ((goOrHitOppUndelayedReturn * diffFromEtfAndFuture) ~/
-                        0.25 *
-                        contractVal) -
-                    commissionsAndFees;
-                break;
+            isLong = true;
+            printInfo(info: '✅ Is long: ${upper.length}/${lower.length}');
+          } else if (lowerProb >= thisProbThreshold) {
+            if (lowerProb.toInt() == 1) {
+              if (lower.length < minOneSidedMatchCount) {
+                missCount++;
+                printInfo(info: '❌ lower.length < 4');
+                continue;
+              }
+            } else {
+              if (lower.length < minMatchCount) {
+                missCount++;
+                printInfo(info: '❌ lower.length < 5');
+                continue;
               }
             }
+            isShort = true;
+            printInfo(info: '✅ Is short: ${upper.length}/${lower.length}');
+          } else {
+            missCount++;
+            printInfo(info: '❌ No majority list');
+            continue;
           }
-        }
-        printInfo(
-            info:
-                'hitOppositeCeilingOrBottomCount/oneThirdSubLength: $hitOppositeCeilingOrBottomCount/$oneThirdSubLength, goOrHitOpp: $goOrHitOpp');
 
-        // Check if hit the opposite side ceiling or bottom
-        int goOppositeCount = 0;
-        halfSubLength = matchedTrendCount ~/ 2;
-        if (!goOrHitOpp) {
+          // Return rate median
+          double thisMdd = 0.0;
+          if (isLong) {
+            double medianOfLastCloses = findMedianOfLastValues(upper);
+            if (medianOfLastCloses != 0.0) {
+              medianReturnRate =
+                  (medianOfLastCloses - lastClosePrice) / lastClosePrice;
+              if (medianReturnRate <= minMedianReturnRate) {
+                missCount++;
+                printInfo(
+                    info:
+                        '❌ Median return rate <= $minMedianReturnRate in long');
+                continue;
+              }
+            } else {
+              missCount++;
+              printInfo(info: '❌ Median return rate is 0.0 in long');
+              continue;
+            }
+            double thisMin = findMinOfValues(lower);
+            if (thisMin != 0.0) {
+              double minPercentageDifference =
+                  (thisMin - lastClosePrice) / lastClosePrice;
+              double minPercentageDifferenceAbs = minPercentageDifference.abs();
+              mdd = max(mdd, minPercentageDifferenceAbs);
+              thisMdd = minPercentageDifferenceAbs;
+            } else {
+              missCount++;
+              printInfo(info: '❌ thisMin is 0.0 in long');
+              continue;
+            }
+          } else if (isShort) {
+            double medianOfLastCloses = findMedianOfLastValues(lower);
+            if (medianOfLastCloses != 0.0) {
+              medianReturnRate =
+                  (medianOfLastCloses - lastClosePrice) / lastClosePrice;
+              if (medianReturnRate >= -minMedianReturnRate) {
+                missCount++;
+                printInfo(
+                    info:
+                        '❌ Median return rate >= -$minMedianReturnRate in short');
+                continue;
+              }
+            } else {
+              missCount++;
+              printInfo(info: '❌ Median return rate is 0.0 in short');
+              continue;
+            }
+            double thisMax = findMaxOfValues(upper);
+            if (thisMax != 0.0) {
+              double maxPercentageDifference =
+                  (thisMax - lastClosePrice) / lastClosePrice;
+              double maxPercentageDifferenceAbs = maxPercentageDifference.abs();
+              mdd = max(mdd, maxPercentageDifferenceAbs);
+              thisMdd = maxPercentageDifferenceAbs;
+            } else {
+              missCount++;
+              printInfo(info: '❌ thisMax is 0.0 in short');
+              continue;
+            }
+          }
+          hitCount++;
+          printInfo(
+              info:
+                  '✅ Minimum median return rate has been passed: $medianReturnRate');
+
+          // Pick up a trend randomly from upper/lower by overall probability
+          int randomIndex = random.nextInt(subClosePrices.length);
+          // Get the randomly selected trend from the combinedList
+          List<double> randomTrend = subClosePrices[randomIndex];
+          // Envisaged that the entry price is always delayed, the delay time is denoted as yFinMinuteDelay,
+          // and the exit price is always on time
+          double actualReturnRate = ((randomTrend.last - actualLastClosePrice) /
+              actualLastClosePrice);
+          double undelayedReturnRate =
+              ((randomTrend.last - lastClosePrice) / lastClosePrice);
+          double roundedActualReturnRate =
+              double.parse(actualReturnRate.toStringAsFixed(4));
+          double roundedUndelayedReturnRate =
+              double.parse(undelayedReturnRate.toStringAsFixed(4));
+          int contractVal =
+              5; // Micro E-mini Futures: Index points (0.25) contract value (5 USD)
+          int diffFromEtfAndFuture =
+              10; // The difference in value scale between ETF and Future
+          matchedTrendCount = subClosePrices.length;
+
+          double goOrHitOppActualReturn = 0.0;
+          double goOrHitOppActualReturnRate = 0.0;
+          double goOrHitOppUndelayedReturn = 0.0;
+          double goOrHitOppUndelayedReturnRate = 0.0;
+          bool goOrHitOpp = false;
+          // Check the number of trend go to the opposite side
+          int hitOppositeCeilingOrBottomCount = 0;
+          oneThirdSubLength = matchedTrendCount ~/ 3;
           if (isLong) {
             for (int v = 0; v < randomTrend.length; v++) {
-              if (randomTrend[v] < lastClosePrice) {
-                goOppositeCount++;
-                if (goOppositeCount >= halfSubLength) {
+              double percentChange =
+                  (randomTrend[v] - lastClosePrice) / lastClosePrice;
+              if (percentChange <= -thisMdd) {
+                hitOppositeCeilingOrBottomCount++;
+                if (hitOppositeCeilingOrBottomCount >= oneThirdSubLength) {
                   goOrHitOpp = true;
                   if (v >= randomTrend.length - yFinMinuteDelay) {
                     double newVal = candle[subClosePricesRowID[randomIndex] +
@@ -2114,9 +2025,11 @@ class MainPresenter extends GetxController {
             }
           } else if (isShort) {
             for (int v = 0; v < randomTrend.length; v++) {
-              if (randomTrend[v] > lastClosePrice) {
-                goOppositeCount++;
-                if (goOppositeCount >= halfSubLength) {
+              double percentChange =
+                  (randomTrend[v] - lastClosePrice) / lastClosePrice;
+              if (percentChange >= thisMdd) {
+                hitOppositeCeilingOrBottomCount++;
+                if (hitOppositeCeilingOrBottomCount >= oneThirdSubLength) {
                   goOrHitOpp = true;
                   if (v >= randomTrend.length - yFinMinuteDelay) {
                     double newVal = candle[subClosePricesRowID[randomIndex] +
@@ -2155,109 +2068,207 @@ class MainPresenter extends GetxController {
               }
             }
           }
+          printInfo(
+              info:
+                  'hitOppositeCeilingOrBottomCount/oneThirdSubLength: $hitOppositeCeilingOrBottomCount/$oneThirdSubLength, goOrHitOpp: $goOrHitOpp');
+
+          // Check if hit the opposite side ceiling or bottom
+          int goOppositeCount = 0;
+          halfSubLength = matchedTrendCount ~/ 2;
+          if (!goOrHitOpp) {
+            if (isLong) {
+              for (int v = 0; v < randomTrend.length; v++) {
+                if (randomTrend[v] < lastClosePrice) {
+                  goOppositeCount++;
+                  if (goOppositeCount >= halfSubLength) {
+                    goOrHitOpp = true;
+                    if (v >= randomTrend.length - yFinMinuteDelay) {
+                      double newVal = candle[subClosePricesRowID[randomIndex] +
+                              v +
+                              yFinMinuteDelay]
+                          .close!;
+                      goOrHitOppActualReturn = newVal - actualLastClosePrice;
+                      goOrHitOppActualReturnRate =
+                          (newVal - actualLastClosePrice) /
+                              actualLastClosePrice;
+                    } else {
+                      double newVal = randomTrend[v + yFinMinuteDelay];
+                      goOrHitOppActualReturn = newVal - actualLastClosePrice;
+                      goOrHitOppActualReturnRate =
+                          (newVal - actualLastClosePrice) /
+                              actualLastClosePrice;
+                    }
+                    double newVal = randomTrend[v];
+                    goOrHitOppUndelayedReturn = newVal - lastClosePrice;
+                    goOrHitOppUndelayedReturnRate =
+                        (newVal - lastClosePrice) / lastClosePrice;
+                    // Get the failed trend last close price return and change the fund value
+                    // - Index points (0.25) contract value (5 USD)
+                    // - Commission fee
+                    // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
+                    initialFund = initialFund +
+                        ((goOrHitOppActualReturn * diffFromEtfAndFuture) ~/
+                            0.25 *
+                            contractVal) -
+                        commissionsAndFees;
+                    undelayedInitialFund = undelayedInitialFund +
+                        ((goOrHitOppUndelayedReturn * diffFromEtfAndFuture) ~/
+                            0.25 *
+                            contractVal) -
+                        commissionsAndFees;
+                    break;
+                  }
+                }
+              }
+            } else if (isShort) {
+              for (int v = 0; v < randomTrend.length; v++) {
+                if (randomTrend[v] > lastClosePrice) {
+                  goOppositeCount++;
+                  if (goOppositeCount >= halfSubLength) {
+                    goOrHitOpp = true;
+                    if (v >= randomTrend.length - yFinMinuteDelay) {
+                      double newVal = candle[subClosePricesRowID[randomIndex] +
+                              v +
+                              yFinMinuteDelay]
+                          .close!;
+                      goOrHitOppActualReturn = newVal - actualLastClosePrice;
+                      goOrHitOppActualReturnRate =
+                          (newVal - actualLastClosePrice) /
+                              actualLastClosePrice;
+                    } else {
+                      double newVal = randomTrend[v + yFinMinuteDelay];
+                      goOrHitOppActualReturn = newVal - actualLastClosePrice;
+                      goOrHitOppActualReturnRate =
+                          (newVal - actualLastClosePrice) /
+                              actualLastClosePrice;
+                    }
+                    double newVal = randomTrend[v];
+                    goOrHitOppUndelayedReturn = newVal - lastClosePrice;
+                    goOrHitOppUndelayedReturnRate =
+                        (newVal - lastClosePrice) / lastClosePrice;
+                    // Get the failed trend last close price return and change the fund value
+                    // - Index points (0.25) contract value (5 USD)
+                    // - Commission fee
+                    // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
+                    initialFund = initialFund +
+                        ((goOrHitOppActualReturn * diffFromEtfAndFuture) ~/
+                            0.25 *
+                            contractVal) -
+                        commissionsAndFees;
+                    undelayedInitialFund = undelayedInitialFund +
+                        ((goOrHitOppUndelayedReturn * diffFromEtfAndFuture) ~/
+                            0.25 *
+                            contractVal) -
+                        commissionsAndFees;
+                    break;
+                  }
+                }
+              }
+            }
+          }
+          printInfo(
+              info:
+                  'goOppositeCount/halfSubLength: $goOppositeCount/$halfSubLength, goOrHitOpp: $goOrHitOpp');
+
+          subClosePricesRowID.mapIndexed((index, element) {
+            DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
+                candle[element].timestamp * 1000,
+                isUtc: true);
+            DateTime subtractedDateTime =
+                TimeService.to.subtractHoursBasedOnTimezone(dateTime);
+            String lastDatetime =
+                DateFormat('yyyy-MM-dd HH:mm:ss').format(subtractedDateTime);
+            String timezone =
+                TimeService.to.isEasternDaylightTime(dateTime) ? 'EDT' : 'EST';
+            return datetime.add('$lastDatetime $timezone');
+          });
+
+          if (!goOrHitOpp) {
+            // Fund value changes due to the return of transaction
+            // - Index points (0.25) contract value (5 USD)
+            // - Commission fee
+            // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
+            initialFund = initialFund +
+                (((randomTrend.last - actualLastClosePrice) *
+                        diffFromEtfAndFuture) ~/
+                    0.25 *
+                    contractVal) -
+                commissionsAndFees;
+            undelayedInitialFund = undelayedInitialFund +
+                (((randomTrend.last - lastClosePrice) * diffFromEtfAndFuture) ~/
+                    0.25 *
+                    contractVal) -
+                commissionsAndFees;
+          }
+
+          prob =
+              double.parse((isLong ? upperProb : lowerProb).toStringAsFixed(4));
+          medianReturnRate = double.parse(medianReturnRate.toStringAsFixed(4));
+          hitRate = hitCount / (hitCount + missCount);
+          roundedHitRate = double.parse(hitRate.toStringAsFixed(4));
+          double roundedMdd = double.parse(mdd.toStringAsFixed(4));
+          double roundedInitialFund =
+              double.parse(initialFund.toStringAsFixed(4));
+          double roundedUndelayedInitialFund =
+              double.parse(undelayedInitialFund.toStringAsFixed(4));
+
+          // Save results one by one into listList
+          subClosePrices.mapIndexed((i, innerList) => listList.add([
+                id,
+                datetime[i],
+                len,
+                prob,
+                medianReturnRate,
+                roundedUndelayedReturnRate,
+                roundedActualReturnRate,
+                matchedTrendCount,
+                goOrHitOpp,
+                goOrHitOppUndelayedReturnRate,
+                goOrHitOppActualReturnRate,
+                roundedHitRate,
+                roundedMdd,
+                roundedUndelayedInitialFund,
+                roundedInitialFund,
+                commissionsAndFees,
+                yFinMinuteDelay,
+                ...innerList
+              ]));
+
+          printInfo(info: 'Matched count: $matchedTrendCount');
+          printInfo(info: 'Prob.: $prob');
+          printInfo(info: 'Undelayed return rate: $roundedUndelayedReturnRate');
+          printInfo(
+              info:
+                  'Undelayed fund remaining: US\$$roundedUndelayedInitialFund/US\$10000');
+          printInfo(info: 'Final return rate: $roundedActualReturnRate');
+          printInfo(info: 'Fund remaining: US\$$roundedInitialFund/US\$10000');
         }
-        printInfo(
-            info:
-                'goOppositeCount/halfSubLength: $goOppositeCount/$halfSubLength, goOrHitOpp: $goOrHitOpp');
 
-        subClosePricesRowID.mapIndexed((index, element) {
-          DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
-              candle[element].timestamp * 1000,
-              isUtc: true);
-          DateTime subtractedDateTime =
-              TimeService.to.subtractHoursBasedOnTimezone(dateTime);
-          String lastDatetime =
-              DateFormat('yyyy-MM-dd HH:mm:ss').format(subtractedDateTime);
-          String timezone =
-              TimeService.to.isEasternDaylightTime(dateTime) ? 'EDT' : 'EST';
-          return datetime.add('$lastDatetime $timezone');
-        });
-
-        if (!goOrHitOpp) {
-          // Fund value changes due to the return of transaction
-          // - Index points (0.25) contract value (5 USD)
-          // - Commission fee
-          // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
-          initialFund = initialFund +
-              (((randomTrend.last - actualLastClosePrice) *
-                      diffFromEtfAndFuture) ~/
-                  0.25 *
-                  contractVal) -
-              commissionsAndFees;
-          undelayedInitialFund = undelayedInitialFund +
-              (((randomTrend.last - lastClosePrice) * diffFromEtfAndFuture) ~/
-                  0.25 *
-                  contractVal) -
-              commissionsAndFees;
+        if (!alwaysThousandthsData.value) {
+          splitCandleLists.removeAt(randomIndex);
+        } else {
+          splitCandleLists = [];
         }
-
-        prob =
-            double.parse((isLong ? upperProb : lowerProb).toStringAsFixed(4));
-        medianReturnRate = double.parse(medianReturnRate.toStringAsFixed(4));
-        hitRate = hitCount / (hitCount + missCount);
-        roundedHitRate = double.parse(hitRate.toStringAsFixed(4));
-        double roundedMdd = double.parse(mdd.toStringAsFixed(4));
-        double roundedInitialFund =
-            double.parse(initialFund.toStringAsFixed(4));
-        double roundedUndelayedInitialFund =
-            double.parse(undelayedInitialFund.toStringAsFixed(4));
-
-        // Save results one by one into listList
-        subClosePrices.mapIndexed((i, innerList) => listList.add([
-              id,
-              datetime[i],
-              len,
-              prob,
-              medianReturnRate,
-              roundedUndelayedReturnRate,
-              roundedActualReturnRate,
-              matchedTrendCount,
-              goOrHitOpp,
-              goOrHitOppUndelayedReturnRate,
-              goOrHitOppActualReturnRate,
-              roundedHitRate,
-              roundedMdd,
-              roundedUndelayedInitialFund,
-              roundedInitialFund,
-              commissionsAndFees,
-              yFinMinuteDelay,
-              ...innerList
-            ]));
-
-        printInfo(info: 'Matched count: $matchedTrendCount');
-        printInfo(info: 'Prob.: $prob');
-        printInfo(info: 'Undelayed return rate: $roundedUndelayedReturnRate');
-        printInfo(
-            info:
-                'Undelayed fund remaining: US\$$roundedUndelayedInitialFund/US\$10000');
-        printInfo(info: 'Final return rate: $roundedActualReturnRate');
-        printInfo(info: 'Fund remaining: US\$$roundedInitialFund/US\$10000');
       }
 
-      if (!alwaysThousandthsData.value) {
-        splitCandleLists.removeAt(randomIndex);
-      } else {
-        splitCandleLists = [];
-      }
-    }
+      printInfo(info: 'Backtesting ended');
+      printInfo(info: 'Export backtesting results CSV...');
+      int randomID = 100000 + random.nextInt(900000);
+      // Export CSV to device's local file directory
+      String fileName =
+          '${randomID}_${symbol}_tol${tol}_len${len}_subLen${subsequentLen}_probThreshold${thisProbThreshold}_ma${maMatchCriteria.value}_strict${strictMatchCriteria.value}_outsideFirst30mins_minMatchCount${minMatchCount}_minOneSidedMatchCount${minOneSidedMatchCount}_minReturnRate${minMedianReturnRate}_hitCeilingOrBottom-OneThirdSubLength_goOppo-HalfSubLength_backtest_results';
+      exportCsv(listList, fileName);
 
-    printInfo(info: 'Backtesting ended');
-    printInfo(info: 'Export backtesting results CSV...');
-    int randomID = 100000 + random.nextInt(900000);
-    // Export CSV to device's local file directory
-    String fileName =
-        '${randomID}_${symbol}_tol${tol}_len${len}_subLen${subsequentLen}_probThreshold${thisProbThreshold}_ma${maMatchCriteria.value}_strict${strictMatchCriteria.value}_outsideFirst30mins_minMatchCount${minMatchCount}_minOneSidedMatchCount${minOneSidedMatchCount}_minReturnRate${minMedianReturnRate}_hitCeilingOrBottom-OneThirdSubLength_goOppo-HalfSubLength_backtest_results';
-    exportCsv(listList, fileName);
+      printInfo(info: 'Exported backtesting results CSV');
 
-    printInfo(info: 'Exported backtesting results CSV');
+      // Stop backtest loading effect
+      isButtonDisabled.value = false;
+      backtestingSymbol.value = '';
 
-    // Stop backtest loading effect
-    isButtonDisabled.value = false;
-    isBacktesting.value = '';
-
-    // Reset the remaining number of backtest data
-    backtestDataLen.value = 0;
-    backtestDataRan.value = 0;
+      // Reset the remaining number of backtest data
+      backtestDataLen.value = 0;
+      backtestDataRan.value = 0;
+    });
   }
 
   /* Route */
