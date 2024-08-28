@@ -1547,7 +1547,7 @@ class MainPresenter extends GetxController {
     }
   }
 
-  voidbacktest(String symbol, BuildContext context) {
+  void backtest(String symbol, BuildContext context) {
     printInfo(info: 'Length: ${length.value}');
     printInfo(info: 'Tolerance: ${tolerance.value}');
     printInfo(info: 'MA matching: ${maMatchCriteria.value}');
