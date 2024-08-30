@@ -136,9 +136,7 @@ class TrendMatchView extends StatelessWidget {
                           'not_hit_ceiling_or_floor'.tr,
                           style:
                               const TextTheme().sp5.tertiarythemeTextColor.w700,
-                        ))
-                ],
-                if (MainPresenter.to.isLockTrend.value) ...[
+                        )),
                   (MainPresenter.to.goOpposite.value
                       ? Text(
                           'go_opposite'.tr,
@@ -149,7 +147,18 @@ class TrendMatchView extends StatelessWidget {
                           'not_go_opposite'.tr,
                           style:
                               const TextTheme().sp5.tertiarythemeTextColor.w700,
-                        ))
+                        )),
+                  (MainPresenter.to.over.value
+                      ? Text(
+                          'over'.tr,
+                          style:
+                              const TextTheme().sp5.tertiarythemeTextColor.w700,
+                        )
+                      : Text(
+                          'not_over'.tr,
+                          style:
+                              const TextTheme().sp5.tertiarythemeTextColor.w700,
+                        )),
                 ],
                 SizedBox(
                   height: 5.h,

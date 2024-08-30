@@ -477,7 +477,7 @@ class MainPresenter extends GetxController {
   RxBool hasMinuteData = false.obs;
   late Rx<String> lastDatetime = 'Loading last datetime...'.obs;
   RxBool hasCandleData = false.obs;
-  late RxString legends = (MainPresenter.to.alwaysShowMinuteData.value
+  late RxString legends = (alwaysShowMinuteData.value
           ? '🟠EMA5 🔴EMA10 🟢EMA15 🔵EMA20'
           : '🟠MA5 🔴MA20 🟢MA60 🔵MA120 🟣MA240')
       .obs;
@@ -654,6 +654,7 @@ class MainPresenter extends GetxController {
   RxList<List<double>> lockTrendSubTrendList = [
     [0.0]
   ].obs;
+  RxBool over = false.obs;
 
   /* Subsequent analytics */
   RxInt lastClosePriceAndSubsequentTrendsExeTime = 0.obs;
@@ -932,9 +933,8 @@ class MainPresenter extends GetxController {
       showAnalyticsNotifier.value = true;
     }
     if (apiKey.value == '' && alwaysShowMinuteData.value) {
-      MainPresenter.to.marketDataProviderMsg.value =
-          'No API key to access Firestore with';
-      MainPresenter.to.isMarketDataProviderErr.value = true;
+      marketDataProviderMsg.value = 'No API key to access Firestore with';
+      isMarketDataProviderErr.value = true;
     } else {
       // listCandledata.value = dummyCandle;
       await Candle().init();
@@ -955,7 +955,7 @@ class MainPresenter extends GetxController {
           SubsequentAnalytics().init();
         }
       } else {
-        MainPresenter.to.checkLockTrend();
+        checkLockTrend();
       }
     }
     checkMinuteData();
@@ -1125,8 +1125,7 @@ class MainPresenter extends GetxController {
     List<List<double>> lower = [];
     int lockTrendLastRow = PrefsService.to.prefs
         .getInt(SharedPreferencesConstant.lockTrendLastRow)!;
-    double startingClosePrice =
-        MainPresenter.to.candleListList[lockTrendLastRow][4];
+    double startingClosePrice = candleListList[lockTrendLastRow][4];
     double thisMinReturnRateThreshold = minReturnRateThreshold.value;
 
     bool thisIsFirstThirtyMins = isFirstThirtyMins.value;
@@ -1140,6 +1139,7 @@ class MainPresenter extends GetxController {
     bool thisGoOpposite = goOpposite.value;
     bool thisIsLong = isLong.value;
     bool thisIsShort = isShort.value;
+    bool thisOver = over.value;
 
     if (lockTrendDatetime != 0) {
       DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
@@ -1399,10 +1399,12 @@ class MainPresenter extends GetxController {
       }
       thisHitCeilingOrFloor = false;
       thisGoOpposite = false;
+      thisOver = false;
       Future.microtask(() {
         expectedReturn.value = returnRate.abs();
         hitCeilingOrFloor.value = false;
         goOpposite.value = false;
+        over.value = false;
       });
 
       Future.microtask(() {
@@ -1431,10 +1433,10 @@ class MainPresenter extends GetxController {
     } else {
       List<double> spots = [];
       if (lockTrendLastRow != 0) {
-        int lastRow = MainPresenter.to.candleListList.length - 1;
-        for (int i = 0; i < MainPresenter.to.subLength.value + 1; i++) {
+        int lastRow = candleListList.length - 1;
+        for (int i = 0; i < subLength.value + 1; i++) {
           if ((lockTrendLastRow + i) <= lastRow) {
-            spots.add(MainPresenter.to.candleListList[lockTrendLastRow + i][4]);
+            spots.add(candleListList[lockTrendLastRow + i][4]);
           } else {
             break;
           }
@@ -1515,6 +1517,20 @@ class MainPresenter extends GetxController {
           goOpposite.value = false;
         });
       }
+
+      // Check if the lock-in trend is over
+      const int yFinMinuteDelay = 1;
+      if (spots.length >= subLength.value - yFinMinuteDelay) {
+        thisOver = true;
+        Future.microtask(() {
+          over.value = true;
+        });
+      } else {
+        thisOver = false;
+        Future.microtask(() {
+          over.value = false;
+        });
+      }
     }
     if ((!thisIsFirstThirtyMins &&
             !thisLowProb &&
@@ -1522,14 +1538,16 @@ class MainPresenter extends GetxController {
             thisTrendsNotOneSided &&
             !thisTrendsLessThanFive &&
             !thisHitCeilingOrFloor &&
-            !thisGoOpposite) ||
+            !thisGoOpposite &&
+            !thisOver) ||
         (!thisIsFirstThirtyMins &&
             !thisLowProb &&
             !thisLowReturn &&
             !thisTrendsNotOneSided &&
             !thisTrendsOneSidedButLessThanFour &&
             !thisHitCeilingOrFloor &&
-            !thisGoOpposite)) {
+            !thisGoOpposite &&
+            !thisOver)) {
       if (thisIsLong) {
         Future.microtask(() {
           instruction.value = 'long'.tr;
@@ -2902,8 +2920,8 @@ class MainPresenter extends GetxController {
         IconButton(
           icon: const Icon(Icons.search),
           onPressed: () {
-            if (!MainPresenter.to.isLockTrend.value) {
-              MainPresenter.to.route(RouteName.searchView.path);
+            if (!isLockTrend.value) {
+              route(RouteName.searchView.path);
             } else {
               showScaffoldMessenger(
                   context: context, localizedMsg: 'lock_trend_alert'.tr);
@@ -2913,7 +2931,7 @@ class MainPresenter extends GetxController {
         IconButton(
           icon: const Icon(Icons.contact_support),
           onPressed: () {
-            MainPresenter.to.route(RouteName.chatView.path);
+            route(RouteName.chatView.path);
           },
         ),
       ];
@@ -2942,7 +2960,7 @@ class MainPresenter extends GetxController {
           padding: EdgeInsets.symmetric(horizontal: 2.w),
           child: ElevatedButton.icon(
             onPressed: () {
-              MainPresenter.to.showAnalyticsNotifier.value = true;
+              showAnalyticsNotifier.value = true;
             },
             icon: Icon(
               Icons.analytics_outlined,
@@ -3382,7 +3400,7 @@ class MainPresenter extends GetxController {
                     apiKeyErr.value = '';
                     PrefsService.to.prefs
                         .setString(SharedPreferencesConstant.apiKeyErr, '');
-                    if (!MainPresenter.to.isLockTrend.value) {
+                    if (!isLockTrend.value) {
                       TrendMatch().init();
                       SubsequentAnalytics().init();
                     }
@@ -3434,7 +3452,7 @@ class MainPresenter extends GetxController {
             alwaysShowMinuteDataToggle(!alwaysShowMinuteData.value, context),
         icon: Obx(
           () => Icon(
-            MainPresenter.to.dataGranularity.value,
+            dataGranularity.value,
           ),
         ),
         color: ThemeColor.primary.value,
@@ -3456,7 +3474,7 @@ class MainPresenter extends GetxController {
                 alwaysUseCrossDataToggle(!alwaysUseCrossData.value, context),
         icon: Obx(
           () => Icon(
-            MainPresenter.to.crossData.value,
+            crossData.value,
           ),
         ),
         color: ThemeColor.primary.value,
@@ -3480,8 +3498,8 @@ class MainPresenter extends GetxController {
   }
 
   String getLastDatetime() {
-    if (MainPresenter.to.candleListList.isNotEmpty) {
-      var lastDatetime = MainPresenter.to.candleListList.last[0];
+    if (candleListList.isNotEmpty) {
+      var lastDatetime = candleListList.last[0];
       // print(lastDatetime);
       try {
         if (alwaysShowMinuteData.value && hasMinuteData.value) {
@@ -3507,8 +3525,8 @@ class MainPresenter extends GetxController {
   }
 
   String showCandleListListLastItem({required int i}) {
-    if (MainPresenter.to.candleListList.isNotEmpty) {
-      return MainPresenter.to.candleListList.last[i].toString();
+    if (candleListList.isNotEmpty) {
+      return candleListList.last[i].toString();
     } else {
       return 'Loading';
     }
@@ -3520,7 +3538,7 @@ class MainPresenter extends GetxController {
       return Obx(
         () => SizedBox(
           width: 393.w,
-          height: MainPresenter.to.candleChartHeight.value,
+          height: candleChartHeight.value,
           child: InteractiveChart(
             candles: (snapshot.data!.length > 1000
                 ? snapshot.data!
@@ -3582,7 +3600,7 @@ class MainPresenter extends GetxController {
   }
 
   Widget showMatchesExceededMsg() {
-    if (MainPresenter.to.matchRows.length > 500) {
+    if (matchRows.length > 500) {
       return Text('more_than_500_matches'.tr, style: const TextTheme().sp5);
     } else {
       return const SizedBox.shrink();

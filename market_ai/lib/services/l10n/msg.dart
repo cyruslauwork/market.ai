@@ -189,6 +189,8 @@ class Msg extends Translations {
               'Backtesting Min. Return Rate Threshold',
           'subsequent_time_unit': 'Subseq.',
           'wait_for_chart': 'Please wait for the chart to load',
+          'over': '❌ Lock-in trend is over',
+          'not_over': '✅︎ Lock-in trend is not over yet',
         },
         'zh_HK': {
           'app_name': '市場慧眼📈',
@@ -343,6 +345,8 @@ class Msg extends Translations {
           'backtesting_min_return_rate': '回測最低回報率閾值',
           'subsequent_time_unit': '後續走勢',
           'wait_for_chart': '請等待圖表載入完成',
+          'over': '❌ 鎖定的走勢已完結',
+          'not_over': '✅︎ 鎖定的走勢未完結',
         },
       };
 }
