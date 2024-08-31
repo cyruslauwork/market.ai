@@ -16,7 +16,7 @@ class SearchView extends StatefulWidget {
     _instance ??= SearchView._(key: key);
     return _instance!;
   }
-  const SearchView._({Key? key}) : super(key: key);
+  const SearchView._({super.key});
 
   @override
   State<SearchView> createState() => _SearchViewState();

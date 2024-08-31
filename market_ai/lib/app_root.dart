@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
-import 'package:wakelock/wakelock.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:window_size/window_size.dart';
 
 import 'package:market_ai/services/services.dart';
@@ -71,7 +71,7 @@ class _AppRootWidgetState extends State<AppRoot> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     // The following line will enable the Android and iOS wakelock.
-    Wakelock.enable();
+    WakelockPlus.enable();
 
     if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
       final defaultHeight = ScreenUtils.defaultSize.height;

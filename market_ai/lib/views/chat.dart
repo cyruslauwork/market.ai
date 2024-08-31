@@ -20,7 +20,7 @@ class ChatView extends StatefulWidget {
     _instance ??= ChatView._(key: key);
     return _instance!;
   }
-  const ChatView._({Key? key}) : super(key: key);
+  const ChatView._({super.key});
 
   @override
   State<ChatView> createState() => _ChatViewState();

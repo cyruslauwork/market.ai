@@ -8,11 +8,10 @@ class SimpleLineChart extends StatelessWidget {
   final LineChartData lineChartData;
   final bool normalized;
 
-  SimpleLineChart({Key? key, LineChartData? lineChartData, bool? normalized})
+  SimpleLineChart({super.key, LineChartData? lineChartData, bool? normalized})
       : lineChartData = lineChartData ??
             TrendMatch().getDefaultSimpleLineChartData(normalized ?? false),
-        normalized = normalized ?? false,
-        super(key: key);
+        normalized = normalized ?? false;
 
   @override
   Widget build(BuildContext context) {

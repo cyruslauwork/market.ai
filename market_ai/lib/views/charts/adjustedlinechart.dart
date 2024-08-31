@@ -14,10 +14,9 @@ class AdjustedLineChart extends StatelessWidget {
   final isCluster = false;
 
   AdjustedLineChart(
-      {Key? key, LineChartData? lineChartData, required bool isCluster})
+      {super.key, LineChartData? lineChartData, required bool isCluster})
       : lineChartData = lineChartData ??
-            TrendMatch().getDefaultAdjustedLineChartData(isCluster: isCluster),
-        super(key: key);
+            TrendMatch().getDefaultAdjustedLineChartData(isCluster: isCluster);
 
   @override
   Widget build(BuildContext context) {
