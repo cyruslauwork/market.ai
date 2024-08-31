@@ -35,7 +35,7 @@ class TrendMatchView extends StatelessWidget {
               children: [
                 Text(
                   MainPresenter.to.lockTrendDatetimeString.value,
-                  style: const TextTheme().sp7.tertiarythemeTextColor.w700,
+                  style: MainPresenter.to.lockTrendTextStyle.value,
                 ),
                 Text(
                   'instruction'.tr,
@@ -43,7 +43,7 @@ class TrendMatchView extends StatelessWidget {
                 ),
                 Text(
                   MainPresenter.to.instruction.value,
-                  style: const TextTheme().sp10.tertiarythemeTextColor.w700,
+                  style: MainPresenter.to.instructionTextStyle.value,
                 ),
                 Text(
                   'prediction'.tr,
@@ -51,11 +51,11 @@ class TrendMatchView extends StatelessWidget {
                 ),
                 Text(
                   '${'expected_return_median'.tr} +${(MainPresenter.to.expectedReturn.value * 100).toStringAsFixed(4)}%',
-                  style: const TextTheme().sp7.tertiarythemeTextColor.w700,
+                  style: MainPresenter.to.lockTrendTextStyle.value,
                 ),
                 Text(
                   '${'expected_mdd'.tr} ${MainPresenter.to.expectedMdd.value.substring(0, 1)}${(double.parse(MainPresenter.to.expectedMdd.value.substring(1)) * 100).toStringAsFixed(4)}%',
-                  style: const TextTheme().sp7.tertiarythemeTextColor.w700,
+                  style: MainPresenter.to.lockTrendTextStyle.value,
                 ),
                 Text(
                   'considerations'.tr,
@@ -64,100 +64,76 @@ class TrendMatchView extends StatelessWidget {
                 (MainPresenter.to.isFirstThirtyMins.value
                     ? Text(
                         'is_first_thirty_mins'.tr,
-                        style:
-                            const TextTheme().sp5.tertiarythemeTextColor.w700,
+                        style: MainPresenter.to.lockTrendTextStyle.value,
                       )
                     : Text(
                         'is_not_first_thirty_mins'.tr,
-                        style:
-                            const TextTheme().sp5.tertiarythemeTextColor.w700,
+                        style: MainPresenter.to.lockTrendTextStyle.value,
                       )),
                 (MainPresenter.to.lowReturn.value
                     ? Text(
                         '${'low_return_rate'.tr + (MainPresenter.to.minReturnRateThreshold.value * 100).toStringAsFixed(3)}%',
-                        style:
-                            const TextTheme().sp5.tertiarythemeTextColor.w700,
+                        style: MainPresenter.to.lockTrendTextStyle.value,
                       )
                     : Text(
                         '${'profitable_return_rate'.tr + (MainPresenter.to.minReturnRateThreshold.value * 100).toStringAsFixed(3)}%',
-                        style:
-                            const TextTheme().sp5.tertiarythemeTextColor.w700,
+                        style: MainPresenter.to.lockTrendTextStyle.value,
                       )),
                 (MainPresenter.to.lowProb.value
                     ? Text(
                         '${'low_probability'.tr + (MainPresenter.to.probThreshold.value * 100).toStringAsFixed(0)}%',
-                        style:
-                            const TextTheme().sp5.tertiarythemeTextColor.w700,
+                        style: MainPresenter.to.lockTrendTextStyle.value,
                       )
                     : Text(
                         '${'high_probability'.tr + (MainPresenter.to.probThreshold.value * 100).toStringAsFixed(0)}%',
-                        style:
-                            const TextTheme().sp5.tertiarythemeTextColor.w700,
+                        style: MainPresenter.to.lockTrendTextStyle.value,
                       )),
                 (MainPresenter.to.trendsNotOneSided.value
                     ? (MainPresenter.to.trendsLessThanFive.value
                         ? Text(
                             'trends_less_than_five'.tr,
-                            style: const TextTheme()
-                                .sp5
-                                .tertiarythemeTextColor
-                                .w700,
+                            style: MainPresenter.to.lockTrendTextStyle.value,
                           )
                         : Text(
                             'trends_more_than_four'.tr,
-                            style: const TextTheme()
-                                .sp5
-                                .tertiarythemeTextColor
-                                .w700,
+                            style: MainPresenter.to.lockTrendTextStyle.value,
                           ))
                     : (MainPresenter.to.trendsOneSidedButLessThanFour.value
                         ? Text(
                             'trends_one_sided_but_less_than_four'.tr,
-                            style: const TextTheme()
-                                .sp5
-                                .tertiarythemeTextColor
-                                .w700,
+                            style: MainPresenter.to.lockTrendTextStyle.value,
                           )
                         : Text(
                             'trends_one_sided_but_more_than_three'.tr,
-                            style: const TextTheme()
-                                .sp5
-                                .tertiarythemeTextColor
-                                .w700,
+                            style: MainPresenter.to.lockTrendTextStyle.value,
                           ))),
                 if (MainPresenter.to.isLockTrend.value) ...[
                   (MainPresenter.to.hitCeilingOrFloor.value
                       ? Text(
                           'hit_ceiling_or_floor'.tr,
-                          style:
-                              const TextTheme().sp5.tertiarythemeTextColor.w700,
+                          style: MainPresenter.to.lockTrendTextStyle.value,
                         )
                       : Text(
                           'not_hit_ceiling_or_floor'.tr,
-                          style:
-                              const TextTheme().sp5.tertiarythemeTextColor.w700,
+                          style: MainPresenter.to.lockTrendTextStyle.value,
                         )),
                   (MainPresenter.to.goOpposite.value
                       ? Text(
                           'go_opposite'.tr,
-                          style:
-                              const TextTheme().sp5.tertiarythemeTextColor.w700,
+                          style: MainPresenter.to.lockTrendTextStyle.value,
                         )
                       : Text(
                           'not_go_opposite'.tr,
-                          style:
-                              const TextTheme().sp5.tertiarythemeTextColor.w700,
+                          style: MainPresenter.to.lockTrendTextStyle.value,
                         )),
                   (MainPresenter.to.over.value
                       ? Text(
                           'over'.tr,
-                          style:
-                              const TextTheme().sp5.tertiarythemeTextColor.w700,
+                          style: MainPresenter.to.lockTrendTextStyle.value,
                         )
                       : Text(
                           'not_over'.tr,
-                          style:
-                              const TextTheme().sp5.tertiarythemeTextColor.w700,
+                          style: MainPresenter.to.lockTrendTextStyle.value,
                         )),
                 ],
                 SizedBox(

@@ -648,6 +648,12 @@ class MainPresenter extends GetxController {
       (PrefsService.to.prefs.getBool(SharedPreferencesConstant.isShort) ??
               false)
           .obs;
+  Rx<TextStyle> instructionTextStyle =
+      const TextTheme().sp10.tertiarythemeTextColor.w700.obs;
+  late Rx<TextStyle> lockTrendTextStyle = (darkMode.value
+          ? const TextTheme().sp4.whiteColor.w700
+          : const TextTheme().sp4.blackColor.w700)
+      .obs;
   RxList clusters = [].obs;
   RxBool hasCluster = false.obs;
   RxString lockTrendDatetimeString = ''.obs;
@@ -1551,15 +1557,19 @@ class MainPresenter extends GetxController {
       if (thisIsLong) {
         Future.microtask(() {
           instruction.value = 'long'.tr;
+          instructionTextStyle.value = const TextTheme().sp10.greenColor.w700;
         });
       } else if (thisIsShort) {
         Future.microtask(() {
           instruction.value = 'short'.tr;
+          instructionTextStyle.value = const TextTheme().sp10.redColor.w700;
         });
       }
     } else {
       Future.microtask(() {
         instruction.value = 'close_pos_or_wait_n_see'.tr;
+        instructionTextStyle.value =
+            const TextTheme().sp10.tertiarythemeTextColor.w700;
       });
     }
   }
@@ -3212,8 +3222,10 @@ class MainPresenter extends GetxController {
     darkMode.toggle();
     if (darkMode.value) {
       AppColor.primaryTextColor = Colors.white;
+      lockTrendTextStyle.value = const TextTheme().sp4.whiteColor.w700;
     } else {
       AppColor.primaryTextColor = Colors.black;
+      lockTrendTextStyle.value = const TextTheme().sp4.blackColor.w700;
     }
     PrefsService.to.prefs
         .setBool(SharedPreferencesConstant.darkMode, darkMode.value);

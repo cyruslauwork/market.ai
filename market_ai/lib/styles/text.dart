@@ -57,4 +57,7 @@ extension CustomTextStyle on TextStyle {
   TextStyle get tertiarythemeTextColor =>
       copyWith(color: ThemeColor.tertiary.value);
   TextStyle get whiteColor => copyWith(color: AppColor.whiteColor);
+  TextStyle get blackColor => copyWith(color: AppColor.blackColor);
+  TextStyle get redColor => copyWith(color: AppColor.errorColor);
+  TextStyle get greenColor => copyWith(color: AppColor.greenColor);
 }

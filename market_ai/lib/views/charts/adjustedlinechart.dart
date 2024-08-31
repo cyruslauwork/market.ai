@@ -27,12 +27,14 @@ class AdjustedLineChart extends StatelessWidget {
     return SingleChildScrollView(
       physics: const NeverScrollableScrollPhysics(),
       scrollDirection: Axis.horizontal,
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColor.whiteColor.withOpacity(0.5), // Set 50% transparency
-        ),
-        child: Obx(
-          () => Row(
+      child: Obx(
+        () => Container(
+          decoration: BoxDecoration(
+            color: (MainPresenter.to.darkMode.value
+                ? AppColor.whiteColor.withOpacity(0.5)
+                : AppColor.blackColor.withOpacity(0.1)), // Set 50% transparency
+          ),
+          child: Row(
             children: [
               SizedBox(
                 width: MainPresenter.to.tmChartWidth.value,

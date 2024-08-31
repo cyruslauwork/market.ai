@@ -17,6 +17,7 @@ class AppColor {
   static const imageDefaultBgColor = Color(0xffffffff);
   // static const transparentColor = Colors.transparent;
   // static const borderColor = Color(0xff000000);
+  static const greenColor = Colors.green;
 }
 
 enum ThemeColor { primary, secondary, tertiary }
