@@ -1901,12 +1901,12 @@ class MainPresenter extends GetxController {
                 }
                 if (matchedAdjustedSubsequentCloseList.last >= lastClosePrice) {
                   subClosePrices.add(matchedAdjustedSubsequentCloseList);
-                  subClosePricesRowID.add(m);
+                  subClosePricesRowID.add(m + len);
                   upper.add(matchedAdjustedSubsequentCloseList);
                 } else if (matchedAdjustedSubsequentCloseList.last <
                     lastClosePrice) {
                   subClosePrices.add(matchedAdjustedSubsequentCloseList);
-                  subClosePricesRowID.add(m);
+                  subClosePricesRowID.add(m + len);
                   lower.add(matchedAdjustedSubsequentCloseList);
                 }
               }
@@ -2091,27 +2091,25 @@ class MainPresenter extends GetxController {
           // Check the number of trend go to the opposite side
           int goOppositeCount = 0;
           int goOppoHitID = -1;
-          if (!interrupt) {
-            if (isLong) {
-              for (int v = 0; v < randomTrend.length; v++) {
-                if (randomTrend[v] < lastClosePrice) {
-                  goOppositeCount++;
-                  if (goOppositeCount >= halfSubLength) {
-                    interrupt = true;
-                    goOppoHitID = v;
-                    break;
-                  }
+          if (isLong) {
+            for (int v = 0; v < randomTrend.length; v++) {
+              if (randomTrend[v] < lastClosePrice) {
+                goOppositeCount++;
+                if (goOppositeCount >= halfSubLength) {
+                  interrupt = true;
+                  goOppoHitID = v;
+                  break;
                 }
               }
-            } else if (isShort) {
-              for (int v = 0; v < randomTrend.length; v++) {
-                if (randomTrend[v] > lastClosePrice) {
-                  goOppositeCount++;
-                  if (goOppositeCount >= halfSubLength) {
-                    interrupt = true;
-                    goOppoHitID = v;
-                    break;
-                  }
+            }
+          } else if (isShort) {
+            for (int v = 0; v < randomTrend.length; v++) {
+              if (randomTrend[v] > lastClosePrice) {
+                goOppositeCount++;
+                if (goOppositeCount >= halfSubLength) {
+                  interrupt = true;
+                  goOppoHitID = v;
+                  break;
                 }
               }
             }
@@ -2158,7 +2156,7 @@ class MainPresenter extends GetxController {
 
           for (var element in subClosePricesRowID) {
             DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
-                candle[element].timestamp * 1000,
+                candle[element].timestamp,
                 isUtc: true);
             DateTime subtractedDateTime =
                 TimeService.to.subtractHoursBasedOnTimezone(dateTime);
@@ -2444,12 +2442,12 @@ class MainPresenter extends GetxController {
                   if (matchedAdjustedSubsequentCloseList.last >=
                       lastClosePrice) {
                     subClosePrices.add(matchedAdjustedSubsequentCloseList);
-                    subClosePricesRowID.add(m);
+                    subClosePricesRowID.add(m + len);
                     upper.add(matchedAdjustedSubsequentCloseList);
                   } else if (matchedAdjustedSubsequentCloseList.last <
                       lastClosePrice) {
                     subClosePrices.add(matchedAdjustedSubsequentCloseList);
-                    subClosePricesRowID.add(m);
+                    subClosePricesRowID.add(m + len);
                     lower.add(matchedAdjustedSubsequentCloseList);
                   }
                 }
@@ -2641,27 +2639,25 @@ class MainPresenter extends GetxController {
             // Check the number of trend go to the opposite side
             int goOppositeCount = 0;
             int goOppoHitID = -1;
-            if (!interrupt) {
-              if (isLong) {
-                for (int v = 0; v < randomTrend.length; v++) {
-                  if (randomTrend[v] < lastClosePrice) {
-                    goOppositeCount++;
-                    if (goOppositeCount >= halfSubLength) {
-                      interrupt = true;
-                      goOppoHitID = v;
-                      break;
-                    }
+            if (isLong) {
+              for (int v = 0; v < randomTrend.length; v++) {
+                if (randomTrend[v] < lastClosePrice) {
+                  goOppositeCount++;
+                  if (goOppositeCount >= halfSubLength) {
+                    interrupt = true;
+                    goOppoHitID = v;
+                    break;
                   }
                 }
-              } else if (isShort) {
-                for (int v = 0; v < randomTrend.length; v++) {
-                  if (randomTrend[v] > lastClosePrice) {
-                    goOppositeCount++;
-                    if (goOppositeCount >= halfSubLength) {
-                      interrupt = true;
-                      goOppoHitID = v;
-                      break;
-                    }
+              }
+            } else if (isShort) {
+              for (int v = 0; v < randomTrend.length; v++) {
+                if (randomTrend[v] > lastClosePrice) {
+                  goOppositeCount++;
+                  if (goOppositeCount >= halfSubLength) {
+                    interrupt = true;
+                    goOppoHitID = v;
+                    break;
                   }
                 }
               }
@@ -2708,7 +2704,7 @@ class MainPresenter extends GetxController {
 
             for (var element in subClosePricesRowID) {
               DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
-                  candle[element].timestamp * 1000,
+                  candle[element].timestamp,
                   isUtc: true);
               DateTime subtractedDateTime =
                   TimeService.to.subtractHoursBasedOnTimezone(dateTime);
