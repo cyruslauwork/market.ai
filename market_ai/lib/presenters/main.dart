@@ -1653,7 +1653,7 @@ class MainPresenter extends GetxController {
       int yFinMinuteDelay = 1;
       int hitCount = 0;
       int missCount = 0;
-      int outsideTimeCount = 0;
+      // int outsideTimeCount = 0;
       int subsequentLen = subLength.value;
       double thisProbThreshold = probThreshold.value;
       double minMedianReturnRate = minReturnRateThreshold.value;
@@ -1786,7 +1786,7 @@ class MainPresenter extends GetxController {
                 subtractedDateTime.isAfter(tradingStartTime) &&
                     subtractedDateTime.isBefore(tradingEndTimeUTC);
             if (isWithinFirst30Minutes) {
-              outsideTimeCount++;
+              // outsideTimeCount++;
               continue;
             }
           } else {
@@ -2330,7 +2330,7 @@ class MainPresenter extends GetxController {
                   subtractedDateTime.isAfter(tradingStartTime) &&
                       subtractedDateTime.isBefore(tradingEndTimeUTC);
               if (isWithinFirst30Minutes) {
-                outsideTimeCount++;
+                // outsideTimeCount++;
                 continue;
               }
             } else {
