@@ -136,18 +136,15 @@ class TrendMatchView extends StatelessWidget {
                           style: MainPresenter.to.lockTrendTextStyle.value,
                         )),
                   if (MainPresenter.to.closePosWhenReachedMedian.value) ...[
-                    if (MainPresenter.to.isLong.value ||
-                        MainPresenter.to.isShort.value) ...[
-                      (MainPresenter.to.reachedMedian.value
-                          ? Text(
-                              'reaching_median'.tr,
-                              style: MainPresenter.to.lockTrendTextStyle.value,
-                            )
-                          : Text(
-                              'not_reaching_median'.tr,
-                              style: MainPresenter.to.lockTrendTextStyle.value,
-                            )),
-                    ],
+                    (MainPresenter.to.reachedMedian.value
+                        ? Text(
+                            'reaching_median'.tr,
+                            style: MainPresenter.to.lockTrendTextStyle.value,
+                          )
+                        : Text(
+                            'not_reaching_median'.tr,
+                            style: MainPresenter.to.lockTrendTextStyle.value,
+                          )),
                   ],
                 ],
                 SizedBox(

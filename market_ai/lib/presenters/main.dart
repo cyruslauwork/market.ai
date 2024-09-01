@@ -3336,6 +3336,7 @@ class MainPresenter extends GetxController {
     closePosWhenReachedMedian.value = value;
     PrefsService.to.prefs
         .setBool(SharedPreferencesConstant.closePosWhenReachedMedian, value);
+    checkLockTrend();
   }
 
   showApiKeyInput() {
