@@ -50,7 +50,7 @@ class TrendMatchView extends StatelessWidget {
                   style: const TextTheme().sp5.w700,
                 ),
                 Text(
-                  '${'expected_return_median'.tr} +${(MainPresenter.to.expectedReturn.value * 100).toStringAsFixed(4)}%',
+                  '${'expected_return_median'.tr} +${(MainPresenter.to.returnRate.value * 100).toStringAsFixed(4)}%',
                   style: MainPresenter.to.lockTrendTextStyle.value,
                 ),
                 Text(
@@ -135,6 +135,20 @@ class TrendMatchView extends StatelessWidget {
                           'not_over'.tr,
                           style: MainPresenter.to.lockTrendTextStyle.value,
                         )),
+                  if (MainPresenter.to.closePosWhenReachedMedian.value) ...[
+                    if (MainPresenter.to.isLong.value ||
+                        MainPresenter.to.isShort.value) ...[
+                      (MainPresenter.to.reachedMedian.value
+                          ? Text(
+                              'reaching_median'.tr,
+                              style: MainPresenter.to.lockTrendTextStyle.value,
+                            )
+                          : Text(
+                              'not_reaching_median'.tr,
+                              style: MainPresenter.to.lockTrendTextStyle.value,
+                            )),
+                    ],
+                  ],
                 ],
                 SizedBox(
                   height: 5.h,

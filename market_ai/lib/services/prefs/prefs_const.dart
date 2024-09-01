@@ -47,7 +47,7 @@ class SharedPreferencesConstant {
   static String trendsLessThanFive = 'trendsLessThanFive';
   static String trendsOneSidedButLessThanFour = 'trendsOneSidedButLessThanFour';
   static String trendsNotOneSided = 'trendsNotOneSided';
-  static String expectedReturn = 'expectedReturn';
+  static String returnRate = 'returnRate';
   static String expectedMdd = 'expectedMdd';
   static String isLong = 'isLong';
   static String isShort = 'isShort';
@@ -55,4 +55,5 @@ class SharedPreferencesConstant {
   static String alwaysThousandthsData = 'alwaysThousandthsData';
   static String probThreshold = 'probThreshold';
   static String minReturnRateThreshold = 'minReturnRateThreshold';
+  static String closePosWhenReachedMedian = 'closePosWhenReachedMedian';
 }

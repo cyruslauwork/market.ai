@@ -406,6 +406,25 @@ class MainView extends StatefulWidget {
               ],
             ),
             const Divider(),
+            Obx(
+              () => Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'close_pos_when_reached_median'.tr,
+                      style: const TextTheme().sp5.w700,
+                    ),
+                  ),
+                  Switch(
+                    value: MainPresenter.to.closePosWhenReachedMedian.value,
+                    activeColor: Colors.red,
+                    onChanged: (bool value) =>
+                        MainPresenter.to.closePosWhenReachedMedianToggle(value),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(),
             Obx(() => (MainPresenter.to.backtestDataLen.value != 0
                 ? Text(
                     '${MainPresenter.to.backtestDataRan.value}/${MainPresenter.to.backtestDataLen.value}',
