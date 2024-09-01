@@ -1633,10 +1633,10 @@ class MainPresenter extends GetxController {
 
   void backtest(String symbol, BuildContext context) {
     scheduleMicrotask(() async {
-      printInfo(info: 'Length: ${length.value}');
-      printInfo(info: 'Tolerance: ${tolerance.value}');
-      printInfo(info: 'MA matching: ${maMatchCriteria.value}');
-      printInfo(info: 'Strict matching: ${strictMatchCriteria.value}');
+      // printInfo(info: 'Length: ${length.value}');
+      // printInfo(info: 'Tolerance: ${tolerance.value}');
+      // printInfo(info: 'MA matching: ${maMatchCriteria.value}');
+      // printInfo(info: 'Strict matching: ${strictMatchCriteria.value}');
 
       if (!alwaysShowMinuteData.value || !hasMinuteData.value) {
         showScaffoldMessenger(
@@ -1674,9 +1674,9 @@ class MainPresenter extends GetxController {
         'Expected Undelayed Return Rate (random trend)',
         'Expected Actual Return Rate (random trend)',
         'Matched Trend Count',
-        'Trend Go/Hit Opp.',
-        'Trend Go/Hit Opp. Undelayed Return Rate',
-        'Trend Go/Hit Opp. Actual Return Rate',
+        'Interrupted Trend',
+        'Interrupted Trend Undelayed Return Rate',
+        'Interrupted Trend Actual Return Rate',
         'Hit Rate (after first 30 mins)',
         'MDD (all the time)',
         'Undelayed Fund Remaining (commns. and fees deducted)',
@@ -1695,7 +1695,7 @@ class MainPresenter extends GetxController {
         return;
       }
 
-      printInfo(info: 'Backtesting started');
+      // printInfo(info: 'Backtesting started');
 
       // Start backtest loading effect
       isButtonDisabled.value = true;
@@ -1713,7 +1713,7 @@ class MainPresenter extends GetxController {
 
       candle =
           candle.sublist(initIndex); // Remove trends that don't have all MAs
-      printInfo(info: 'Candle data length: ${candle.length}');
+      // printInfo(info: 'Candle data length: ${candle.length}');
 
       // Split the candle list of list
       List<List<CandleData>> splitCandleLists = [];
@@ -1728,7 +1728,7 @@ class MainPresenter extends GetxController {
         splitCandleLists.add(sublist);
         splitCandleListsLastRows.add(end - 1);
       }
-      printInfo(info: 'Split candle list length: ${splitCandleLists.length}');
+      // printInfo(info: 'Split candle list length: ${splitCandleLists.length}');
 
       // Show the remaining number of backtest data
       backtestDataLen.value = candle.length;
@@ -1748,8 +1748,8 @@ class MainPresenter extends GetxController {
         final sublist = splitCandleLists[randomIndex];
         final subLen = sublist.length;
 
-        printInfo(info: 'Current split candle list no.: $randomIndex');
-        printInfo(info: 'Current split candle list length: $subLen');
+        // printInfo(info: 'Current split candle list no.: $randomIndex');
+        // printInfo(info: 'Current split candle list length: $subLen');
 
         for (int l = 0; l < subLen - len + 1 - yFinMinuteDelay; l++) {
           await Future.delayed(const Duration(milliseconds: 0));
@@ -1765,8 +1765,8 @@ class MainPresenter extends GetxController {
           int oneThirdSubLength;
           int halfSubLength;
 
-          logger.d(
-              '[Last time] Hit/miss/outside count: $hitCount/$missCount/$outsideTimeCount | Hit rate: $roundedHitRate | Current ID among the total in the split candle list: ${id + 1}/$subLen');
+          // logger.d(
+          //     '[Last time] Hit/miss/outside count: $hitCount/$missCount/$outsideTimeCount | Hit rate: $roundedHitRate | Current ID among the total in the split candle list: ${id + 1}/$subLen');
 
           // Check if the dateTime is within the first 30 minutes of trading
           int timestamp = sublist[l].timestamp;
@@ -1790,7 +1790,7 @@ class MainPresenter extends GetxController {
               continue;
             }
           } else {
-            logger.d('Error: timestamp == 0');
+            // logger.d('Error: timestamp == 0');
             splitCandleLists = [];
             break;
           }
@@ -1888,7 +1888,7 @@ class MainPresenter extends GetxController {
                       comparePeriodMaPercentDifferencesListList,
                       tol);
               if (isMaMatched) {
-                printInfo(info: '✅ A trend MAs matched');
+                // printInfo(info: '✅ A trend MAs matched');
                 // Store the adjusted close prices into different lists
                 List<double> matchedAdjustedSubsequentCloseList = [];
                 double lastDifference =
@@ -1924,7 +1924,7 @@ class MainPresenter extends GetxController {
           // This way, skip when both lists are empty
           if (upper.isEmpty && lower.isEmpty) {
             missCount++;
-            printInfo(info: '❌ upper and lower are empty');
+            // printInfo(info: '❌ upper and lower are empty');
             continue;
           }
           // Probability calculation and amount of matched trends
@@ -1937,37 +1937,37 @@ class MainPresenter extends GetxController {
             if (upperProb.toInt() == 1) {
               if (upper.length < minOneSidedMatchCount) {
                 missCount++;
-                printInfo(info: '❌ upper.length < 4');
+                // printInfo(info: '❌ upper.length < 4');
                 continue;
               }
             } else {
               if (upper.length < minMatchCount) {
                 missCount++;
-                printInfo(info: '❌ upper.length < 5');
+                // printInfo(info: '❌ upper.length < 5');
                 continue;
               }
             }
             isLong = true;
-            printInfo(info: '✅ Is long: ${upper.length}/${lower.length}');
+            // printInfo(info: '✅ Is long: ${upper.length}/${lower.length}');
           } else if (lowerProb >= thisProbThreshold) {
             if (lowerProb.toInt() == 1) {
               if (lower.length < minOneSidedMatchCount) {
                 missCount++;
-                printInfo(info: '❌ lower.length < 4');
+                // printInfo(info: '❌ lower.length < 4');
                 continue;
               }
             } else {
               if (lower.length < minMatchCount) {
                 missCount++;
-                printInfo(info: '❌ lower.length < 5');
+                // printInfo(info: '❌ lower.length < 5');
                 continue;
               }
             }
             isShort = true;
-            printInfo(info: '✅ Is short: ${upper.length}/${lower.length}');
+            // printInfo(info: '✅ Is short: ${upper.length}/${lower.length}');
           } else {
             missCount++;
-            printInfo(info: '❌ No majority list');
+            // printInfo(info: '❌ No majority list');
             continue;
           }
 
@@ -1980,14 +1980,14 @@ class MainPresenter extends GetxController {
                   (medianOfLastCloses - lastClosePrice) / lastClosePrice;
               if (medianReturnRate <= minMedianReturnRate) {
                 missCount++;
-                printInfo(
-                    info:
-                        '❌ Median return rate <= $minMedianReturnRate in long');
+                // printInfo(
+                //     info:
+                //         '❌ Median return rate <= $minMedianReturnRate in long');
                 continue;
               }
             } else {
               missCount++;
-              printInfo(info: '❌ Median return rate is 0.0 in long');
+              // printInfo(info: '❌ Median return rate is 0.0 in long');
               continue;
             }
             double thisMin = findMinOfValues(lower);
@@ -2007,14 +2007,14 @@ class MainPresenter extends GetxController {
                   (medianOfLastCloses - lastClosePrice) / lastClosePrice;
               if (medianReturnRate >= -minMedianReturnRate) {
                 missCount++;
-                printInfo(
-                    info:
-                        '❌ Median return rate >= -$minMedianReturnRate in short');
+                // printInfo(
+                //     info:
+                //         '❌ Median return rate >= -$minMedianReturnRate in short');
                 continue;
               }
             } else {
               missCount++;
-              printInfo(info: '❌ Median return rate is 0.0 in short');
+              // printInfo(info: '❌ Median return rate is 0.0 in short');
               continue;
             }
             double thisMax = findMaxOfValues(upper);
@@ -2029,9 +2029,9 @@ class MainPresenter extends GetxController {
             }
           }
           hitCount++;
-          printInfo(
-              info:
-                  '✅ Minimum median return rate has been passed: $medianReturnRate');
+          // printInfo(
+          //     info:
+          //         '✅ Minimum median return rate has been passed: $medianReturnRate');
 
           // Pick up a trend randomly from upper/lower by overall probability
           int randomIndex = random.nextInt(subClosePrices.length);
@@ -2084,9 +2084,9 @@ class MainPresenter extends GetxController {
               }
             }
           }
-          printInfo(
-              info:
-                  'medianHitID: $medianHitID, medianReturnRate: $medianReturnRate, interrupt: $interrupt');
+          // printInfo(
+          //     info:
+          //         'medianHitID: $medianHitID, medianReturnRate: $medianReturnRate, interrupt: $interrupt');
 
           // Check the number of trend go to the opposite side
           int goOppositeCount = 0;
@@ -2117,9 +2117,9 @@ class MainPresenter extends GetxController {
               }
             }
           }
-          printInfo(
-              info:
-                  'goOppoHitID: $goOppoHitID, goOppositeCount/halfSubLength: $goOppositeCount/$halfSubLength, interrupt: $interrupt');
+          // printInfo(
+          //     info:
+          //         'goOppoHitID: $goOppoHitID, goOppositeCount/halfSubLength: $goOppositeCount/$halfSubLength, interrupt: $interrupt');
 
           // Check if hit the opposite side ceiling or bottom
           int hitOppositeCeilingOrBottomCount = 0;
@@ -2154,9 +2154,9 @@ class MainPresenter extends GetxController {
               }
             }
           }
-          printInfo(
-              info:
-                  'hitOppoBottomOrCeilingHitID: $hitOppoBottomOrCeilingHitID, hitOppositeCeilingOrBottomCount/oneThirdSubLength: $hitOppositeCeilingOrBottomCount/$oneThirdSubLength, interrupt: $interrupt');
+          // printInfo(
+          //     info:
+          //         'hitOppoBottomOrCeilingHitID: $hitOppoBottomOrCeilingHitID, hitOppositeCeilingOrBottomCount/oneThirdSubLength: $hitOppositeCeilingOrBottomCount/$oneThirdSubLength, interrupt: $interrupt');
 
           for (var element in subClosePricesRowID) {
             DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
@@ -2274,16 +2274,16 @@ class MainPresenter extends GetxController {
             ]);
           });
 
-          logger.d(listList);
+          // logger.d(listList);
 
-          printInfo(info: 'Matched count: $matchedTrendCount');
-          printInfo(info: 'Prob.: $prob');
-          printInfo(info: 'Undelayed return rate: $roundedUndelayedReturnRate');
-          printInfo(
-              info:
-                  'Undelayed fund remaining: US\$$roundedUndelayedInitialFund/US\$10000');
-          printInfo(info: 'Final return rate: $roundedActualReturnRate');
-          printInfo(info: 'Fund remaining: US\$$roundedInitialFund/US\$10000');
+          // printInfo(info: 'Matched count: $matchedTrendCount');
+          // printInfo(info: 'Prob.: $prob');
+          // printInfo(info: 'Undelayed return rate: $roundedUndelayedReturnRate');
+          // printInfo(
+          //     info:
+          //         'Undelayed fund remaining: US\$$roundedUndelayedInitialFund/US\$10000');
+          // printInfo(info: 'Final return rate: $roundedActualReturnRate');
+          // printInfo(info: 'Fund remaining: US\$$roundedInitialFund/US\$10000');
         }
 
         // Check if the sublist can be looped through the last row or not
@@ -2309,8 +2309,8 @@ class MainPresenter extends GetxController {
             int oneThirdSubLength;
             int halfSubLength;
 
-            logger.d(
-                '[Last time] Hit/miss/outside count: $hitCount/$missCount/$outsideTimeCount | Hit rate: $roundedHitRate | Current ID among the total in the split candle list: ${id + 1}/$subLen');
+            // logger.d(
+            //     '[Last time] Hit/miss/outside count: $hitCount/$missCount/$outsideTimeCount | Hit rate: $roundedHitRate | Current ID among the total in the split candle list: ${id + 1}/$subLen');
 
             // Check if the dateTime is within the first 30 minutes of trading
             int timestamp = sublist[l].timestamp;
@@ -2334,7 +2334,7 @@ class MainPresenter extends GetxController {
                 continue;
               }
             } else {
-              logger.d('Error: timestamp == 0');
+              // logger.d('Error: timestamp == 0');
               splitCandleLists = [];
               break;
             }
@@ -2434,7 +2434,7 @@ class MainPresenter extends GetxController {
                         comparePeriodMaPercentDifferencesListList,
                         tol);
                 if (isMaMatched) {
-                  printInfo(info: '✅ A trend MAs matched');
+                  // printInfo(info: '✅ A trend MAs matched');
                   // Store the adjusted close prices into different lists
                   List<double> matchedAdjustedSubsequentCloseList = [];
                   double lastDifference =
@@ -2471,7 +2471,7 @@ class MainPresenter extends GetxController {
             // This way, skip when both lists are empty
             if (upper.isEmpty && lower.isEmpty) {
               missCount++;
-              printInfo(info: '❌ upper and lower are empty');
+              // printInfo(info: '❌ upper and lower are empty');
               continue;
             }
             // Probability calculation and amount of matched trends
@@ -2484,37 +2484,37 @@ class MainPresenter extends GetxController {
               if (upperProb.toInt() == 1) {
                 if (upper.length < minOneSidedMatchCount) {
                   missCount++;
-                  printInfo(info: '❌ upper.length < 4');
+                  // printInfo(info: '❌ upper.length < 4');
                   continue;
                 }
               } else {
                 if (upper.length < minMatchCount) {
                   missCount++;
-                  printInfo(info: '❌ upper.length < 5');
+                  // printInfo(info: '❌ upper.length < 5');
                   continue;
                 }
               }
               isLong = true;
-              printInfo(info: '✅ Is long: ${upper.length}/${lower.length}');
+              // printInfo(info: '✅ Is long: ${upper.length}/${lower.length}');
             } else if (lowerProb >= thisProbThreshold) {
               if (lowerProb.toInt() == 1) {
                 if (lower.length < minOneSidedMatchCount) {
                   missCount++;
-                  printInfo(info: '❌ lower.length < 4');
+                  // printInfo(info: '❌ lower.length < 4');
                   continue;
                 }
               } else {
                 if (lower.length < minMatchCount) {
                   missCount++;
-                  printInfo(info: '❌ lower.length < 5');
+                  // printInfo(info: '❌ lower.length < 5');
                   continue;
                 }
               }
               isShort = true;
-              printInfo(info: '✅ Is short: ${upper.length}/${lower.length}');
+              // printInfo(info: '✅ Is short: ${upper.length}/${lower.length}');
             } else {
               missCount++;
-              printInfo(info: '❌ No majority list');
+              // printInfo(info: '❌ No majority list');
               continue;
             }
 
@@ -2527,14 +2527,14 @@ class MainPresenter extends GetxController {
                     (medianOfLastCloses - lastClosePrice) / lastClosePrice;
                 if (medianReturnRate <= minMedianReturnRate) {
                   missCount++;
-                  printInfo(
-                      info:
-                          '❌ Median return rate <= $minMedianReturnRate in long');
+                  // printInfo(
+                  //     info:
+                  //         '❌ Median return rate <= $minMedianReturnRate in long');
                   continue;
                 }
               } else {
                 missCount++;
-                printInfo(info: '❌ Median return rate is 0.0 in long');
+                // printInfo(info: '❌ Median return rate is 0.0 in long');
                 continue;
               }
               double thisMin = findMinOfValues(lower);
@@ -2547,7 +2547,7 @@ class MainPresenter extends GetxController {
                 thisMdd = minPercentageDifferenceAbs;
               } else {
                 missCount++;
-                printInfo(info: '❌ thisMin is 0.0 in long');
+                // printInfo(info: '❌ thisMin is 0.0 in long');
                 continue;
               }
             } else if (isShort) {
@@ -2557,14 +2557,14 @@ class MainPresenter extends GetxController {
                     (medianOfLastCloses - lastClosePrice) / lastClosePrice;
                 if (medianReturnRate >= -minMedianReturnRate) {
                   missCount++;
-                  printInfo(
-                      info:
-                          '❌ Median return rate >= -$minMedianReturnRate in short');
+                  // printInfo(
+                  //     info:
+                  //         '❌ Median return rate >= -$minMedianReturnRate in short');
                   continue;
                 }
               } else {
                 missCount++;
-                printInfo(info: '❌ Median return rate is 0.0 in short');
+                // printInfo(info: '❌ Median return rate is 0.0 in short');
                 continue;
               }
               double thisMax = findMaxOfValues(upper);
@@ -2577,14 +2577,14 @@ class MainPresenter extends GetxController {
                 thisMdd = maxPercentageDifferenceAbs;
               } else {
                 missCount++;
-                printInfo(info: '❌ thisMax is 0.0 in short');
+                // printInfo(info: '❌ thisMax is 0.0 in short');
                 continue;
               }
             }
             hitCount++;
-            printInfo(
-                info:
-                    '✅ Minimum median return rate has been passed: $medianReturnRate');
+            // printInfo(
+            //     info:
+            //         '✅ Minimum median return rate has been passed: $medianReturnRate');
 
             // Pick up a trend randomly from upper/lower by overall probability
             int randomIndex = random.nextInt(subClosePrices.length);
@@ -2638,9 +2638,9 @@ class MainPresenter extends GetxController {
                 }
               }
             }
-            printInfo(
-                info:
-                    'medianHitID: $medianHitID, medianReturnRate: $medianReturnRate, interrupt: $interrupt');
+            // printInfo(
+            //     info:
+            //         'medianHitID: $medianHitID, medianReturnRate: $medianReturnRate, interrupt: $interrupt');
 
             // Check the number of trend go to the opposite side
             int goOppositeCount = 0;
@@ -2671,9 +2671,9 @@ class MainPresenter extends GetxController {
                 }
               }
             }
-            printInfo(
-                info:
-                    'goOppoHitID: $goOppoHitID, goOppositeCount/halfSubLength: $goOppositeCount/$halfSubLength, interrupt: $interrupt');
+            // printInfo(
+            //     info:
+            //         'goOppoHitID: $goOppoHitID, goOppositeCount/halfSubLength: $goOppositeCount/$halfSubLength, interrupt: $interrupt');
 
             // Check if hit the opposite side ceiling or bottom
             int hitOppositeCeilingOrBottomCount = 0;
@@ -2708,9 +2708,9 @@ class MainPresenter extends GetxController {
                 }
               }
             }
-            printInfo(
-                info:
-                    'hitOppoBottomOrCeilingHitID: $hitOppoBottomOrCeilingHitID, hitOppositeCeilingOrBottomCount/oneThirdSubLength: $hitOppositeCeilingOrBottomCount/$oneThirdSubLength, interrupt: $interrupt');
+            // printInfo(
+            //     info:
+            //         'hitOppoBottomOrCeilingHitID: $hitOppoBottomOrCeilingHitID, hitOppositeCeilingOrBottomCount/oneThirdSubLength: $hitOppositeCeilingOrBottomCount/$oneThirdSubLength, interrupt: $interrupt');
 
             for (var element in subClosePricesRowID) {
               DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
@@ -2831,18 +2831,18 @@ class MainPresenter extends GetxController {
               ]);
             });
 
-            logger.d(listList);
+            // logger.d(listList);
 
-            printInfo(info: 'Matched count: $matchedTrendCount');
-            printInfo(info: 'Prob.: $prob');
-            printInfo(
-                info: 'Undelayed return rate: $roundedUndelayedReturnRate');
-            printInfo(
-                info:
-                    'Undelayed fund remaining: US\$$roundedUndelayedInitialFund/US\$10000');
-            printInfo(info: 'Final return rate: $roundedActualReturnRate');
-            printInfo(
-                info: 'Fund remaining: US\$$roundedInitialFund/US\$10000');
+            // printInfo(info: 'Matched count: $matchedTrendCount');
+            // printInfo(info: 'Prob.: $prob');
+            // printInfo(
+            //     info: 'Undelayed return rate: $roundedUndelayedReturnRate');
+            // printInfo(
+            //     info:
+            //         'Undelayed fund remaining: US\$$roundedUndelayedInitialFund/US\$10000');
+            // printInfo(info: 'Final return rate: $roundedActualReturnRate');
+            // printInfo(
+            //     info: 'Fund remaining: US\$$roundedInitialFund/US\$10000');
           }
         }
 
@@ -2853,15 +2853,15 @@ class MainPresenter extends GetxController {
         }
       }
 
-      printInfo(info: 'Backtesting ended');
-      printInfo(info: 'Export backtesting results CSV...');
+      // printInfo(info: 'Backtesting ended');
+      // printInfo(info: 'Export backtesting results CSV...');
       int randomID = 100000 + random.nextInt(900000);
       // Export CSV to device's local file directory
       String fileName =
-          '${randomID}_${symbol}_tol${tol}_len${len}_subLen${subsequentLen}_probThreshold${thisProbThreshold}_ma${maMatchCriteria.value}_strict${strictMatchCriteria.value}_outsideFirst30mins_minMatchCount${minMatchCount}_minOneSidedMatchCount${minOneSidedMatchCount}_minReturnRate${minMedianReturnRate}_hitCeilingOrBottom-OneThirdSubLength_goOppo-HalfSubLength_backtest_results';
+          '${randomID}_${symbol}_tol${tol}_len${len}_subLen${subsequentLen}_probThreshold${thisProbThreshold}_ma${maMatchCriteria.value}_strict${strictMatchCriteria.value}_outsideFirst30mins_minMatchCount${minMatchCount}_minOneSidedMatchCount${minOneSidedMatchCount}_minReturnRate${minMedianReturnRate}_reachedMedian${closePosWhenReachedMedian.value}_hitCeilingOrBottom-OneThirdSubLength_goOppo-HalfSubLength_backtest_results';
       exportCsv(listList, fileName);
 
-      printInfo(info: 'Exported backtesting results CSV');
+      // printInfo(info: 'Exported backtesting results CSV');
 
       // Stop backtest loading effect
       isButtonDisabled.value = false;
