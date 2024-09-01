@@ -1766,7 +1766,7 @@ class MainPresenter extends GetxController {
           int matchedTrendCount;
 
           // logger.d(
-          //     '[Last time] Hit/miss/outside count: $hitCount/$missCount/$outsideTimeCount | Hit rate: $roundedHitRate | Current ID among the total in the split candle list: ${id}/$subLen');
+          //     '[Last time] Hit/miss/outside count: $hitCount/$missCount/$outsideTimeCount | Hit rate: $roundedHitRate | Current ID among the total in the split candle list: $id/$subLen');
 
           // Check if the dateTime is within the first 30 minutes of trading
           int timestamp = sublist[l].timestamp;
