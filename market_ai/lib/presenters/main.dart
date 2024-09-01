@@ -1742,6 +1742,8 @@ class MainPresenter extends GetxController {
       double mdd = 0.0;
       double initialFund = 10000;
       double undelayedInitialFund = 10000;
+      int oneThirdSubLength = subsequentLen ~/ 3;
+      int halfSubLength = subsequentLen ~/ 2;
 
       while (splitCandleLists.isNotEmpty) {
         final randomIndex = random.nextInt(splitCandleLists.length);
@@ -1762,8 +1764,6 @@ class MainPresenter extends GetxController {
           double prob;
           double medianReturnRate = 0.0;
           int matchedTrendCount;
-          int oneThirdSubLength;
-          int halfSubLength;
 
           // logger.d(
           //     '[Last time] Hit/miss/outside count: $hitCount/$missCount/$outsideTimeCount | Hit rate: $roundedHitRate | Current ID among the total in the split candle list: ${id}/$subLen');
@@ -2090,7 +2090,6 @@ class MainPresenter extends GetxController {
 
           // Check the number of trend go to the opposite side
           int goOppositeCount = 0;
-          halfSubLength = matchedTrendCount ~/ 2;
           int goOppoHitID = -1;
           if (!interrupt) {
             if (isLong) {
@@ -2123,7 +2122,6 @@ class MainPresenter extends GetxController {
 
           // Check if hit the opposite side ceiling or bottom
           int hitOppositeCeilingOrBottomCount = 0;
-          oneThirdSubLength = matchedTrendCount ~/ 3;
           int hitOppoBottomOrCeilingHitID = -1;
           if (thisMdd != 0.0) {
             if (isLong) {
@@ -2306,8 +2304,6 @@ class MainPresenter extends GetxController {
             double prob;
             double medianReturnRate = 0.0;
             int matchedTrendCount;
-            int oneThirdSubLength;
-            int halfSubLength;
 
             // logger.d(
             //     '[Last time] Hit/miss/outside count: $hitCount/$missCount/$outsideTimeCount | Hit rate: $roundedHitRate | Current ID among the total in the split candle list: ${id + 1}/$subLen');
@@ -2644,7 +2640,6 @@ class MainPresenter extends GetxController {
 
             // Check the number of trend go to the opposite side
             int goOppositeCount = 0;
-            halfSubLength = matchedTrendCount ~/ 2;
             int goOppoHitID = -1;
             if (!interrupt) {
               if (isLong) {
@@ -2677,7 +2672,6 @@ class MainPresenter extends GetxController {
 
             // Check if hit the opposite side ceiling or bottom
             int hitOppositeCeilingOrBottomCount = 0;
-            oneThirdSubLength = matchedTrendCount ~/ 3;
             int hitOppoBottomOrCeilingHitID = -1;
             if (thisMdd != 0.0) {
               if (isLong) {
