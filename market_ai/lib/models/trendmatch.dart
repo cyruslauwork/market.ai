@@ -81,7 +81,8 @@ class TrendMatch {
     MainPresenter.to.matchActualDifferencesListList.value = [];
     MainPresenter.to.matchActualPricesListList.value = [];
 
-    int tolerance = MainPresenter.to.tolerance.value;
+    int priceTolerance = MainPresenter.to.priceTolerance.value;
+    int maTolerance = MainPresenter.to.maTolerance.value;
 
     bool hasMa = listCandledata.last.trends.isNotEmpty;
     bool isMaMatch = MainPresenter.to.maMatchCriteria.value;
@@ -746,7 +747,7 @@ class TrendMatch {
         ) comparisonResult = areDifferencesLessThanOrEqualToCertainPercent(
             selectedPeriodPercentDifferencesList,
             comparePeriodPercentDifferencesList,
-            tolerance); // Record data type in Dart is equivalent to Tuple in Java and Python
+            priceTolerance); // Record data type in Dart is equivalent to Tuple in Java and Python
 
         if (comparisonResult.$1) {
           if (isMaMatch) {
@@ -777,7 +778,7 @@ class TrendMatch {
                 selectedPeriodMaPercentDifferencesListList,
                 comparePeriodFirstMaAndPricePercentDifferencesList,
                 comparePeriodMaPercentDifferencesListList,
-                tolerance);
+                maTolerance);
             if (isMaMatched) {
               trueCount += 1;
               if (alwaysUseCrossData) {
@@ -868,15 +869,15 @@ class TrendMatch {
   }
 
   (bool, List<double>) areDifferencesLessThanOrEqualToCertainPercent(
-      List<double> selList, List<double> comList, int tolerance) {
+      List<double> selList, List<double> comList, int priceTolerance) {
     if (selList.length != comList.length) {
       // logger.d('${selList.length} != ${comList.length}');
       throw ArgumentError('Both lists must have the same length.');
     }
 
     if (MainPresenter.to.strictMatchCriteria.value) {
-      int positiveTolerance = tolerance;
-      int negativeTolerance = -tolerance;
+      int positiveTolerance = priceTolerance;
+      int negativeTolerance = -priceTolerance;
       for (int i = 0; i < selList.length; i++) {
         double difference = comList[i] - selList[i];
         double percentDiff;
@@ -900,20 +901,20 @@ class TrendMatch {
           if (percentDiff > positiveTolerance) {
             return (false, []); // Difference is larger than certain %
           }
-          if (positiveTolerance == tolerance) {
+          if (positiveTolerance == priceTolerance) {
             positiveTolerance -= percentDiff.toInt();
           } else {
-            positiveTolerance = tolerance;
+            positiveTolerance = priceTolerance;
           }
         } else {
           // Negative percentDiff
           if (percentDiff < negativeTolerance) {
             return (false, []); // Difference is less than certain -%
           }
-          if (negativeTolerance == -tolerance) {
+          if (negativeTolerance == -priceTolerance) {
             negativeTolerance -= percentDiff.toInt();
           } else {
-            negativeTolerance = -tolerance;
+            negativeTolerance = -priceTolerance;
           }
         }
       }
@@ -936,7 +937,7 @@ class TrendMatch {
           percentDiff = (difference / selList[i]) * 100;
         }
 
-        if (percentDiff.abs() > tolerance) {
+        if (percentDiff.abs() > priceTolerance) {
           return (false, []); // Difference is larger than certain %
         }
       }
@@ -950,7 +951,7 @@ class TrendMatch {
       List<List<double>> selList,
       List<double> comFirstList,
       List<List<double>> comList,
-      int tolerance) {
+      int maTolerance) {
     if (selList.length != comList.length) {
       // logger.d('${selList.length} != ${comList.length}');
       throw ArgumentError('Both lists must have the same length.');
@@ -960,8 +961,8 @@ class TrendMatch {
     int maLength = MainPresenter.to.listCandledata.last.trends.length;
 
     if (MainPresenter.to.strictMatchCriteria.value) {
-      int positiveTolerance = tolerance;
-      int negativeTolerance = -tolerance;
+      int positiveTolerance = maTolerance;
+      int negativeTolerance = -maTolerance;
 
       for (int i = 0; i < length; i++) {
         double difference = comFirstList[i] - selFirstList[i];
@@ -983,26 +984,26 @@ class TrendMatch {
           if (percentDiff > positiveTolerance) {
             return false; // Difference is larger than certain %
           }
-          if (positiveTolerance == tolerance) {
+          if (positiveTolerance == maTolerance) {
             positiveTolerance -= percentDiff.toInt();
           } else {
-            positiveTolerance = tolerance;
+            positiveTolerance = maTolerance;
           }
         } else {
           // Negative percentDiff
           if (percentDiff < negativeTolerance) {
             return false; // Difference is less than certain -%
           }
-          if (negativeTolerance == -tolerance) {
+          if (negativeTolerance == -maTolerance) {
             negativeTolerance -= percentDiff.toInt();
           } else {
-            negativeTolerance = -tolerance;
+            negativeTolerance = -maTolerance;
           }
         }
       }
 
-      positiveTolerance = tolerance;
-      negativeTolerance = -tolerance;
+      positiveTolerance = maTolerance;
+      negativeTolerance = -maTolerance;
       for (int i = 0; i < comList.length; i++) {
         for (int l = 0; l < maLength; l++) {
           double difference = comList[i][l] - selList[i][l];
@@ -1024,20 +1025,20 @@ class TrendMatch {
             if (percentDiff > positiveTolerance) {
               return false; // Difference is larger than certain %
             }
-            if (positiveTolerance == tolerance) {
+            if (positiveTolerance == maTolerance) {
               positiveTolerance -= percentDiff.toInt();
             } else {
-              positiveTolerance = tolerance;
+              positiveTolerance = maTolerance;
             }
           } else {
             // Negative percentDiff
             if (percentDiff < negativeTolerance) {
               return false; // Difference is less than certain -%
             }
-            if (negativeTolerance == -tolerance) {
+            if (negativeTolerance == -maTolerance) {
               negativeTolerance -= percentDiff.toInt();
             } else {
-              negativeTolerance = -tolerance;
+              negativeTolerance = -maTolerance;
             }
           }
         }
@@ -1058,7 +1059,7 @@ class TrendMatch {
           percentDiff = (difference / selFirstList[i]) * 100;
         }
 
-        if (percentDiff.abs() > tolerance) {
+        if (percentDiff.abs() > maTolerance) {
           return false; // Difference is larger than certain %
         }
       }
@@ -1079,7 +1080,7 @@ class TrendMatch {
             percentDiff = (difference / selList[i][l]) * 100;
           }
 
-          if (percentDiff.abs() > tolerance) {
+          if (percentDiff.abs() > maTolerance) {
             return false; // Difference is larger than certain %
           }
         }

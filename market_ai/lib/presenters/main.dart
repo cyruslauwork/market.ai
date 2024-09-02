@@ -551,8 +551,13 @@ class MainPresenter extends GetxController {
   /* Trend match */
   RxInt length =
       (PrefsService.to.prefs.getInt(SharedPreferencesConstant.length) ?? 4).obs;
-  RxInt tolerance =
-      (PrefsService.to.prefs.getInt(SharedPreferencesConstant.tolerance) ?? 40)
+  RxInt priceTolerance =
+      (PrefsService.to.prefs.getInt(SharedPreferencesConstant.priceTolerance) ??
+              40)
+          .obs;
+  RxInt maTolerance =
+      (PrefsService.to.prefs.getInt(SharedPreferencesConstant.maTolerance) ??
+              40)
           .obs;
   RxList<double> selectedPeriodPercentDifferencesList = [0.0].obs;
   RxList<double> selectedPeriodActualDifferencesList = [0.0].obs;
@@ -716,7 +721,8 @@ class MainPresenter extends GetxController {
       //     SharedPreferencesConstant.financialInstrumentName,
       //     'Invesco QQQ Trust, Series 1');
       // PrefsService.to.prefs.setInt(SharedPreferencesConstant.range, 5);
-      // PrefsService.to.prefs.setInt(SharedPreferencesConstant.tolerance, 100);
+      // PrefsService.to.prefs.setInt(SharedPreferencesConstant.priceTolerance, 40);
+      // PrefsService.to.prefs.setInt(SharedPreferencesConstant.maTolerance, 40);
       // PrefsService.to.prefs
       //     .setStringList(SharedPreferencesConstant.watchlist, []);
       // PrefsService.to.prefs
@@ -1634,8 +1640,9 @@ class MainPresenter extends GetxController {
   void backtest(String symbol, BuildContext context) {
     scheduleMicrotask(() async {
       // printInfo(info: 'Length: ${length.value}');
-      // printInfo(info: 'Tolerance: ${tolerance.value}');
-      // printInfo(info: 'MA matching: ${maMatchCriteria.value}');
+      // printInfo(info: 'Price Tolerance: ${priceTolerance.value}');
+      // printInfo(info: 'MA Tolerance: ${maTolerance.value}');
+      // printInfo(info: 'MA matching: True');
       // printInfo(info: 'Strict matching: ${strictMatchCriteria.value}');
 
       if (!alwaysShowMinuteData.value || !hasMinuteData.value) {
@@ -1735,7 +1742,8 @@ class MainPresenter extends GetxController {
 
       // Randomly pick a list to run backtest
       final random = Random();
-      final int tol = tolerance.value;
+      final int priceTol = priceTolerance.value;
+      final int maTol = maTolerance.value;
 
       double hitRate = 0.0;
       double roundedHitRate = 0.0;
@@ -1855,7 +1863,7 @@ class MainPresenter extends GetxController {
                 .areDifferencesLessThanOrEqualToCertainPercent(
                     selectedPeriodPercentDifferencesList,
                     comparePeriodPercentDifferencesList,
-                    tol); // Record data type in Dart is equivalent to Tuple in Java and Python
+                    priceTol); // Record data type in Dart is equivalent to Tuple in Java and Python
 
             if (comparisonResult.$1) {
               // printInfo(info: '✅ A trend percentage changes matched');
@@ -1887,7 +1895,7 @@ class MainPresenter extends GetxController {
                       selectedPeriodMaPercentDifferencesListList,
                       comparePeriodFirstMaAndPricePercentDifferencesList,
                       comparePeriodMaPercentDifferencesListList,
-                      tol);
+                      maTol);
               if (isMaMatched) {
                 // printInfo(info: '✅ A trend MAs matched');
                 // Store the adjusted close prices into different lists
@@ -2395,7 +2403,7 @@ class MainPresenter extends GetxController {
                   .areDifferencesLessThanOrEqualToCertainPercent(
                       selectedPeriodPercentDifferencesList,
                       comparePeriodPercentDifferencesList,
-                      tol); // Record data type in Dart is equivalent to Tuple in Java and Python
+                      priceTol); // Record data type in Dart is equivalent to Tuple in Java and Python
 
               if (comparisonResult.$1) {
                 // printInfo(info: '✅ A trend percentage changes matched');
@@ -2428,7 +2436,7 @@ class MainPresenter extends GetxController {
                         selectedPeriodMaPercentDifferencesListList,
                         comparePeriodFirstMaAndPricePercentDifferencesList,
                         comparePeriodMaPercentDifferencesListList,
-                        tol);
+                        maTol);
                 if (isMaMatched) {
                   // printInfo(info: '✅ A trend MAs matched');
                   // Store the adjusted close prices into different lists
@@ -2850,7 +2858,7 @@ class MainPresenter extends GetxController {
       int randomID = 100000 + random.nextInt(900000);
       // Export CSV to device's local file directory
       String fileName =
-          '${randomID}_${symbol}_tol${tol}_len${len}_subLen${subsequentLen}_probThreshold${thisProbThreshold}_ma${maMatchCriteria.value}_strict${strictMatchCriteria.value}_outsideFirst30mins_minMatchCount${minMatchCount}_minOneSidedMatchCount${minOneSidedMatchCount}_minReturnRate${minMedianReturnRate}_reachedMedian${closePosWhenReachedMedian.value}_hitCeilingOrBottom-OneThirdSubLength_goOppo-HalfSubLength_backtest_results';
+          '${randomID}_${symbol}_priceTol${priceTol}_maTol${maTol}_len${len}_subLen${subsequentLen}_probThreshold${thisProbThreshold}_maTrue_strict${strictMatchCriteria.value}_outsideFirst30mins_minMatchCount${minMatchCount}_minOneSidedMatchCount${minOneSidedMatchCount}_minReturnRate${minMedianReturnRate}_reachedMedian${closePosWhenReachedMedian.value}_hitCeilingOrBottom-OneThirdSubLength_goOppo-HalfSubLength_backtest_results';
       exportCsv(listList, fileName);
 
       // printInfo(info: 'Exported backtesting results CSV');

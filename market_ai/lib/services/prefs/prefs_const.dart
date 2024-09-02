@@ -11,7 +11,8 @@ class SharedPreferencesConstant {
   static String financialInstrumentSymbol = 'financialInstrumentSymbol';
   static String financialInstrumentName = 'financialInstrumentName';
   static String length = 'length';
-  static String tolerance = 'tolerance';
+  static String priceTolerance = 'priceTolerance';
+  static String maTolerance = 'maTolerance';
   static String darkMode = 'darkMode';
   static String isEn = 'isEn';
   static String alwaysShowAnalytics = 'alwaysShowAnalytics';

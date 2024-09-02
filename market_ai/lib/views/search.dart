@@ -23,8 +23,13 @@ class SearchView extends StatefulWidget {
 }
 
 class _SearchViewState extends State<SearchView> {
-  double _currentTolerance =
-      (PrefsService.to.prefs.getInt(SharedPreferencesConstant.tolerance) ?? 40)
+  double _currentPriceTolerance =
+      (PrefsService.to.prefs.getInt(SharedPreferencesConstant.priceTolerance) ??
+              40)
+          .toDouble();
+  double _currentMaTolerance =
+      (PrefsService.to.prefs.getInt(SharedPreferencesConstant.maTolerance) ??
+              40)
           .toDouble();
   int _currentLength =
       PrefsService.to.prefs.getInt(SharedPreferencesConstant.length) ?? 4;
@@ -42,7 +47,8 @@ class _SearchViewState extends State<SearchView> {
 
   void _resetForm() {
     setState(() {
-      _currentTolerance = 40;
+      _currentPriceTolerance = 40;
+      _currentMaTolerance = 40;
       _currentLength = 5;
       _textEditingController.clear();
       _currentSubLength = 5;
@@ -77,10 +83,14 @@ class _SearchViewState extends State<SearchView> {
         PrefsService.to.prefs
             .setInt(SharedPreferencesConstant.length, newLength);
         MainPresenter.to.length.value = newLength;
-        int newTolerance = _currentTolerance.toInt();
+        int newPriceTolerance = _currentPriceTolerance.toInt();
+        PrefsService.to.prefs.setInt(
+            SharedPreferencesConstant.priceTolerance, newPriceTolerance);
+        MainPresenter.to.priceTolerance.value = newPriceTolerance;
+        int newMaTolerance = _currentMaTolerance.toInt();
         PrefsService.to.prefs
-            .setInt(SharedPreferencesConstant.tolerance, newTolerance);
-        MainPresenter.to.tolerance.value = newTolerance;
+            .setInt(SharedPreferencesConstant.maTolerance, newMaTolerance);
+        MainPresenter.to.maTolerance.value = newMaTolerance;
         int newSubLength = _currentSubLength;
         PrefsService.to.prefs
             .setInt(SharedPreferencesConstant.subLength, newSubLength);
@@ -105,10 +115,14 @@ class _SearchViewState extends State<SearchView> {
           PrefsService.to.prefs
               .setInt(SharedPreferencesConstant.length, newLength);
           MainPresenter.to.length.value = newLength;
-          int newTolerance = _currentTolerance.toInt();
+          int newPriceTolerance = _currentPriceTolerance.toInt();
+          PrefsService.to.prefs.setInt(
+              SharedPreferencesConstant.priceTolerance, newPriceTolerance);
+          MainPresenter.to.priceTolerance.value = newPriceTolerance;
+          int newMaTolerance = _currentMaTolerance.toInt();
           PrefsService.to.prefs
-              .setInt(SharedPreferencesConstant.tolerance, newTolerance);
-          MainPresenter.to.tolerance.value = newTolerance;
+              .setInt(SharedPreferencesConstant.maTolerance, newMaTolerance);
+          MainPresenter.to.maTolerance.value = newMaTolerance;
           int newSubLength = _currentSubLength;
           PrefsService.to.prefs
               .setInt(SharedPreferencesConstant.subLength, newSubLength);
@@ -177,7 +191,7 @@ class _SearchViewState extends State<SearchView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'tolerance'.tr,
+                      'price_tolerance'.tr,
                       style: const TextTheme().sp5.primaryTextColor,
                     ),
                     Padding(
@@ -187,14 +201,76 @@ class _SearchViewState extends State<SearchView> {
                           overlayShape: SliderComponentShape.noOverlay,
                         ),
                         child: Slider(
-                          value: _currentTolerance,
+                          value: _currentPriceTolerance,
                           max: 100,
                           min: 5,
                           divisions: 19,
-                          label: '${_currentTolerance.round().toString()}%',
+                          label:
+                              '${_currentPriceTolerance.round().toString()}%',
                           onChanged: (double value) {
                             setState(() {
-                              _currentTolerance = value;
+                              _currentPriceTolerance = value;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '5%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '25%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '50%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '75%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '100%',
+                          style: const TextTheme().sp4,
+                        ),
+                      ],
+                    ),
+                    Text(
+                      'recommended_tolerance'.tr,
+                      style: const TextTheme().sp4.greyColor,
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 6.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'ma_tolerance'.tr,
+                      style: const TextTheme().sp5.primaryTextColor,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 6.w),
+                      child: SliderTheme(
+                        data: SliderTheme.of(context).copyWith(
+                          overlayShape: SliderComponentShape.noOverlay,
+                        ),
+                        child: Slider(
+                          value: _currentMaTolerance,
+                          max: 100,
+                          min: 5,
+                          divisions: 19,
+                          label: '${_currentMaTolerance.round().toString()}%',
+                          onChanged: (double value) {
+                            setState(() {
+                              _currentMaTolerance = value;
                             });
                           },
                         ),
