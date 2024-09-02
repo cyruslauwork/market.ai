@@ -1835,6 +1835,7 @@ class MainPresenter extends GetxController {
           List<int> subClosePricesRowID = [];
           bool isLong = false;
           bool isShort = false;
+          double lastDifference = 0;
 
           // Look for similar trend(s)
           for (int m = initIndex;
@@ -1891,8 +1892,7 @@ class MainPresenter extends GetxController {
                 // printInfo(info: '✅ A trend MAs matched');
                 // Store the adjusted close prices into different lists
                 List<double> matchedAdjustedSubsequentCloseList = [];
-                double lastDifference =
-                    lastClosePrice / candle[m + len - 1].close!;
+                lastDifference = lastClosePrice / candle[m + len - 1].close!;
                 for (int i = 0; i < subsequentLen; i++) {
                   double adjustedSubsequentClose =
                       candle[m + len + i].close! * lastDifference;
@@ -2202,9 +2202,10 @@ class MainPresenter extends GetxController {
 
             if (firstHitID >= randomTrend.length - yFinMinuteDelay) {
               double newVal = candle[subClosePricesRowID[randomIndex] +
-                      firstHitID +
-                      yFinMinuteDelay]
-                  .close!;
+                          firstHitID +
+                          yFinMinuteDelay]
+                      .close! *
+                  lastDifference;
               interruptActualReturn = newVal - actualLastClosePrice;
               interruptActualReturnRate =
                   (newVal - actualLastClosePrice) / actualLastClosePrice;
@@ -2374,6 +2375,7 @@ class MainPresenter extends GetxController {
             List<int> subClosePricesRowID = [];
             bool isLong = false;
             bool isShort = false;
+            double lastDifference = 0;
 
             // Look for similar trend(s)
             for (int m = initIndex;
@@ -2431,8 +2433,7 @@ class MainPresenter extends GetxController {
                   // printInfo(info: '✅ A trend MAs matched');
                   // Store the adjusted close prices into different lists
                   List<double> matchedAdjustedSubsequentCloseList = [];
-                  double lastDifference =
-                      lastClosePrice / candle[m + len - 1].close!;
+                  lastDifference = lastClosePrice / candle[m + len - 1].close!;
                   for (int i = 0; i < subsequentLen; i++) {
                     double adjustedSubsequentClose =
                         candle[m + len + i].close! * lastDifference;
@@ -2752,9 +2753,10 @@ class MainPresenter extends GetxController {
 
               if (firstHitID >= randomTrend.length - yFinMinuteDelay) {
                 double newVal = candle[subClosePricesRowID[randomIndex] +
-                        firstHitID +
-                        yFinMinuteDelay]
-                    .close!;
+                            firstHitID +
+                            yFinMinuteDelay]
+                        .close! *
+                    lastDifference;
                 interruptActualReturn = newVal - actualLastClosePrice;
                 interruptActualReturnRate =
                     (newVal - actualLastClosePrice) / actualLastClosePrice;

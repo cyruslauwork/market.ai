@@ -42,7 +42,7 @@ class _SearchViewState extends State<SearchView> {
 
   void _resetForm() {
     setState(() {
-      _currentTolerance = 100;
+      _currentTolerance = 40;
       _currentLength = 5;
       _textEditingController.clear();
       _currentSubLength = 5;
