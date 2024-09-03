@@ -1391,6 +1391,7 @@ class MainPresenter extends GetxController {
             });
           }
         } else {
+          thisReturnRate = 0.0;
           thisLowReturn = true;
           Future.microtask(() {
             lowReturn.value = true;
