@@ -83,6 +83,7 @@ class TrendMatch {
 
     int priceTolerance = MainPresenter.to.priceTolerance.value;
     int maTolerance = MainPresenter.to.maTolerance.value;
+    int firstMaTolerance = MainPresenter.to.firstMaTolerance.value;
 
     bool hasMa = listCandledata.last.trends.isNotEmpty;
     bool isMaMatch = MainPresenter.to.maMatchCriteria.value;
@@ -778,7 +779,8 @@ class TrendMatch {
                 selectedPeriodMaPercentDifferencesListList,
                 comparePeriodFirstMaAndPricePercentDifferencesList,
                 comparePeriodMaPercentDifferencesListList,
-                maTolerance);
+                maTolerance,
+                firstMaTolerance);
             if (isMaMatched) {
               trueCount += 1;
               if (alwaysUseCrossData) {
@@ -951,7 +953,8 @@ class TrendMatch {
       List<List<double>> selList,
       List<double> comFirstList,
       List<List<double>> comList,
-      int maTolerance) {
+      int maTolerance,
+      int firstMaTolerance) {
     if (selList.length != comList.length) {
       // logger.d('${selList.length} != ${comList.length}');
       throw ArgumentError('Both lists must have the same length.');
@@ -961,8 +964,8 @@ class TrendMatch {
     int maLength = MainPresenter.to.listCandledata.last.trends.length;
 
     if (MainPresenter.to.strictMatchCriteria.value) {
-      int positiveTolerance = maTolerance;
-      int negativeTolerance = -maTolerance;
+      int positiveTolerance = firstMaTolerance;
+      int negativeTolerance = -firstMaTolerance;
 
       for (int i = 0; i < length; i++) {
         double difference = comFirstList[i] - selFirstList[i];
@@ -984,20 +987,20 @@ class TrendMatch {
           if (percentDiff > positiveTolerance) {
             return false; // Difference is larger than certain %
           }
-          if (positiveTolerance == maTolerance) {
+          if (positiveTolerance == firstMaTolerance) {
             positiveTolerance -= percentDiff.toInt();
           } else {
-            positiveTolerance = maTolerance;
+            positiveTolerance = firstMaTolerance;
           }
         } else {
           // Negative percentDiff
           if (percentDiff < negativeTolerance) {
             return false; // Difference is less than certain -%
           }
-          if (negativeTolerance == -maTolerance) {
+          if (negativeTolerance == -firstMaTolerance) {
             negativeTolerance -= percentDiff.toInt();
           } else {
-            negativeTolerance = -maTolerance;
+            negativeTolerance = -firstMaTolerance;
           }
         }
       }
@@ -1059,7 +1062,7 @@ class TrendMatch {
           percentDiff = (difference / selFirstList[i]) * 100;
         }
 
-        if (percentDiff.abs() > maTolerance) {
+        if (percentDiff.abs() > firstMaTolerance) {
           return false; // Difference is larger than certain %
         }
       }

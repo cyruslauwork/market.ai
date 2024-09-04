@@ -555,6 +555,10 @@ class MainPresenter extends GetxController {
       (PrefsService.to.prefs.getInt(SharedPreferencesConstant.priceTolerance) ??
               40)
           .obs;
+  RxInt firstMaTolerance = (PrefsService.to.prefs
+              .getInt(SharedPreferencesConstant.firstMaTolerance) ??
+          40)
+      .obs;
   RxInt maTolerance =
       (PrefsService.to.prefs.getInt(SharedPreferencesConstant.maTolerance) ??
               40)
@@ -722,6 +726,7 @@ class MainPresenter extends GetxController {
       //     'Invesco QQQ Trust, Series 1');
       // PrefsService.to.prefs.setInt(SharedPreferencesConstant.range, 5);
       // PrefsService.to.prefs.setInt(SharedPreferencesConstant.priceTolerance, 40);
+      // PrefsService.to.prefs.setInt(SharedPreferencesConstant.firstMaTolerance, 40);
       // PrefsService.to.prefs.setInt(SharedPreferencesConstant.maTolerance, 40);
       // PrefsService.to.prefs
       //     .setStringList(SharedPreferencesConstant.watchlist, []);
@@ -1642,6 +1647,7 @@ class MainPresenter extends GetxController {
     scheduleMicrotask(() async {
       // printInfo(info: 'Length: ${length.value}');
       // printInfo(info: 'Price Tolerance: ${priceTolerance.value}');
+      // printInfo(info: 'First MA Tolerance: ${firstMaTolerance.value}');
       // printInfo(info: 'MA Tolerance: ${maTolerance.value}');
       // printInfo(info: 'MA matching: True');
       // printInfo(info: 'Strict matching: ${strictMatchCriteria.value}');
@@ -1744,6 +1750,7 @@ class MainPresenter extends GetxController {
       // Randomly pick a list to run backtest
       final random = Random();
       final int priceTol = priceTolerance.value;
+      final int firstMaTol = firstMaTolerance.value;
       final int maTol = maTolerance.value;
 
       double hitRate = 0.0;
@@ -1896,7 +1903,8 @@ class MainPresenter extends GetxController {
                       selectedPeriodMaPercentDifferencesListList,
                       comparePeriodFirstMaAndPricePercentDifferencesList,
                       comparePeriodMaPercentDifferencesListList,
-                      maTol);
+                      maTol,
+                      firstMaTol);
               if (isMaMatched) {
                 // printInfo(info: '✅ A trend MAs matched');
                 // Store the adjusted close prices into different lists
@@ -2437,7 +2445,8 @@ class MainPresenter extends GetxController {
                         selectedPeriodMaPercentDifferencesListList,
                         comparePeriodFirstMaAndPricePercentDifferencesList,
                         comparePeriodMaPercentDifferencesListList,
-                        maTol);
+                        maTol,
+                        firstMaTol);
                 if (isMaMatched) {
                   // printInfo(info: '✅ A trend MAs matched');
                   // Store the adjusted close prices into different lists
@@ -2859,7 +2868,7 @@ class MainPresenter extends GetxController {
       int randomID = 100000 + random.nextInt(900000);
       // Export CSV to device's local file directory
       String fileName =
-          '${randomID}_${symbol}_priceTol${priceTol}_maTol${maTol}_len${len}_subLen${subsequentLen}_probThreshold${thisProbThreshold}_maTrue_strict${strictMatchCriteria.value}_outsideFirst30mins_minMatchCount${minMatchCount}_minOneSidedMatchCount${minOneSidedMatchCount}_minReturnRate${minMedianReturnRate}_reachedMedian${closePosWhenReachedMedian.value}_hitCeilingOrBottom-OneThirdSubLength_goOppo-HalfSubLength_backtest_results';
+          '${randomID}_${symbol}_priceTol${priceTol}_firstMaTol${firstMaTol}_maTol${maTol}_len${len}_subLen${subsequentLen}_probThreshold${thisProbThreshold}_maTrue_strict${strictMatchCriteria.value}_outsideFirst30mins_minMatchCount${minMatchCount}_minOneSidedMatchCount${minOneSidedMatchCount}_minReturnRate${minMedianReturnRate}_reachedMedian${closePosWhenReachedMedian.value}_hitCeilingOrBottom-OneThirdSubLength_goOppo-HalfSubLength_backtest_results';
       exportCsv(listList, fileName);
 
       // printInfo(info: 'Exported backtesting results CSV');
