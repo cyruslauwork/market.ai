@@ -81,6 +81,7 @@ class TrendMatch {
     MainPresenter.to.matchActualDifferencesListList.value = [];
     MainPresenter.to.matchActualPricesListList.value = [];
 
+    int candleTolerance = MainPresenter.to.candleTolerance.value;
     int priceTolerance = MainPresenter.to.priceTolerance.value;
     int maTolerance = MainPresenter.to.maTolerance.value;
     int firstMaTolerance = MainPresenter.to.firstMaTolerance.value;
@@ -1390,14 +1391,6 @@ class TrendMatch {
       if (i == selectedLength) {
         flspotList.add(FlSpot(i, lastSelectedClosePrice));
         newLockTrendSubTrendList.add(lastSelectedClosePrice);
-      } else if (i == selectedLength + subLen) {
-        double adjustedMatchedTrendClosePrice =
-            candleListList[matchRows[index] + i.toInt()]
-                    [4] // Close price of matched trend
-                *
-                lastActualDifference;
-
-        flspotList.add(FlSpot(i, adjustedMatchedTrendClosePrice));
       } else {
         double adjustedMatchedTrendClosePrice =
             candleListList[matchRows[index] + i.toInt()]

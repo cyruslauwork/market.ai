@@ -23,6 +23,10 @@ class SearchView extends StatefulWidget {
 }
 
 class _SearchViewState extends State<SearchView> {
+  double _currentCandleTolerance = (PrefsService.to.prefs
+              .getInt(SharedPreferencesConstant.candleTolerance) ??
+          40)
+      .toDouble();
   double _currentPriceTolerance =
       (PrefsService.to.prefs.getInt(SharedPreferencesConstant.priceTolerance) ??
               40)
@@ -51,6 +55,7 @@ class _SearchViewState extends State<SearchView> {
 
   void _resetForm() {
     setState(() {
+      _currentCandleTolerance = 40;
       _currentPriceTolerance = 40;
       _currentFirstMaTolerance = 40;
       _currentMaTolerance = 40;
@@ -88,6 +93,10 @@ class _SearchViewState extends State<SearchView> {
         PrefsService.to.prefs
             .setInt(SharedPreferencesConstant.length, newLength);
         MainPresenter.to.length.value = newLength;
+        int newCandleTolerance = _currentCandleTolerance.toInt();
+        PrefsService.to.prefs.setInt(
+            SharedPreferencesConstant.candleTolerance, newCandleTolerance);
+        MainPresenter.to.candleTolerance.value = newCandleTolerance;
         int newPriceTolerance = _currentPriceTolerance.toInt();
         PrefsService.to.prefs.setInt(
             SharedPreferencesConstant.priceTolerance, newPriceTolerance);
@@ -124,6 +133,10 @@ class _SearchViewState extends State<SearchView> {
           PrefsService.to.prefs
               .setInt(SharedPreferencesConstant.length, newLength);
           MainPresenter.to.length.value = newLength;
+          int newCandleTolerance = _currentCandleTolerance.toInt();
+          PrefsService.to.prefs.setInt(
+              SharedPreferencesConstant.candleTolerance, newCandleTolerance);
+          MainPresenter.to.candleTolerance.value = newCandleTolerance;
           int newPriceTolerance = _currentPriceTolerance.toInt();
           PrefsService.to.prefs.setInt(
               SharedPreferencesConstant.priceTolerance, newPriceTolerance);
@@ -198,6 +211,68 @@ class _SearchViewState extends State<SearchView> {
           scrollDirection: Axis.vertical,
           child: Column(
             children: <Widget>[
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 6.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'candle_tolerance'.tr,
+                      style: const TextTheme().sp5.primaryTextColor,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 6.w),
+                      child: SliderTheme(
+                        data: SliderTheme.of(context).copyWith(
+                          overlayShape: SliderComponentShape.noOverlay,
+                        ),
+                        child: Slider(
+                          value: _currentCandleTolerance,
+                          max: 100,
+                          min: 5,
+                          divisions: 19,
+                          label:
+                              '${_currentCandleTolerance.round().toString()}%',
+                          onChanged: (double value) {
+                            setState(() {
+                              _currentCandleTolerance = value;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '5%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '25%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '50%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '75%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '100%',
+                          style: const TextTheme().sp4,
+                        ),
+                      ],
+                    ),
+                    Text(
+                      'recommended_tolerance'.tr,
+                      style: const TextTheme().sp4.greyColor,
+                    ),
+                  ],
+                ),
+              ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 6.w),
                 child: Column(

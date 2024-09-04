@@ -11,6 +11,7 @@ class SharedPreferencesConstant {
   static String financialInstrumentSymbol = 'financialInstrumentSymbol';
   static String financialInstrumentName = 'financialInstrumentName';
   static String length = 'length';
+  static String candleTolerance = 'candleTolerance';
   static String priceTolerance = 'priceTolerance';
   static String firstMaTolerance = 'firstMaTolerance';
   static String maTolerance = 'maTolerance';
@@ -30,6 +31,8 @@ class SharedPreferencesConstant {
   static String alwaysMaMatchCriteria = 'alwaysMaMatchCriteria';
   static String alwaysUseCrossData = 'alwaysUseCrossData';
   static String lockTrend = 'lockTrend';
+  static String closePosWhenReachedMedian = 'closePosWhenReachedMedian';
+  static String probThreshold = 'probThreshold';
 
   static String img1 = 'img1';
   static String img2 = 'img2';
@@ -49,13 +52,12 @@ class SharedPreferencesConstant {
   static String trendsLessThanFive = 'trendsLessThanFive';
   static String trendsOneSidedButLessThanFour = 'trendsOneSidedButLessThanFour';
   static String trendsNotOneSided = 'trendsNotOneSided';
+  static String expectedProb = 'expectedProb';
   static String returnRate = 'returnRate';
   static String expectedMdd = 'expectedMdd';
   static String isLong = 'isLong';
   static String isShort = 'isShort';
 
   static String alwaysThousandthsData = 'alwaysThousandthsData';
-  static String probThreshold = 'probThreshold';
   static String minReturnRateThreshold = 'minReturnRateThreshold';
-  static String closePosWhenReachedMedian = 'closePosWhenReachedMedian';
 }

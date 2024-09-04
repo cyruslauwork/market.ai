@@ -50,7 +50,11 @@ class TrendMatchView extends StatelessWidget {
                   style: const TextTheme().sp5.w700,
                 ),
                 Text(
-                  '${'expected_return_median'.tr} +${(MainPresenter.to.returnRate.value * 100).toStringAsFixed(4)}%',
+                  '${'expected_prob'.tr} +${(MainPresenter.to.expectedProb.value * 100).toStringAsFixed(1)}%',
+                  style: MainPresenter.to.lockTrendTextStyle.value,
+                ),
+                Text(
+                  '${'expected_return_median'.tr} +${(MainPresenter.to.returnRate.value * 100).toStringAsFixed(3)}%',
                   style: MainPresenter.to.lockTrendTextStyle.value,
                 ),
                 Text(
@@ -278,7 +282,7 @@ class TrendMatchView extends StatelessWidget {
                 message:
                     '1) We adjusted last prices to be the same as the last selected price and apply to previous prices. \n2) adjusted first prices to be the same as the last selected price and apply to subsequent prices.',
                 child: Text(
-                  '${'recent'.tr}${MainPresenter.to.length.toString()}${'tm_title1'.tr}${MainPresenter.to.priceTolerance.toString()}${'tm_title2'.tr}${MainPresenter.to.firstMaTolerance.toString()}${'tm_title3'.tr}${MainPresenter.to.maTolerance.toString()}${'tm_title4'.tr}',
+                  '${'recent'.tr}${MainPresenter.to.length.toString()}${'tm_title1'.tr}${MainPresenter.to.candleTolerance.toString()}${'tm_title2'.tr}${MainPresenter.to.priceTolerance.toString()}${'tm_title3'.tr}${MainPresenter.to.firstMaTolerance.toString()}${'tm_title4'.tr}${MainPresenter.to.maTolerance.toString()}${'tm_title5'.tr}',
                   style: const TextTheme().sp5.w700,
                 ),
               ),
