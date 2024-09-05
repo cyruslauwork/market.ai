@@ -228,9 +228,9 @@ class _SearchViewState extends State<SearchView> {
                         ),
                         child: Slider(
                           value: _currentCandleTolerance,
-                          max: 100,
+                          max: 200,
                           min: 5,
-                          divisions: 19,
+                          divisions: 39,
                           label:
                               '${_currentCandleTolerance.round().toString()}%',
                           onChanged: (double value) {
@@ -249,19 +249,19 @@ class _SearchViewState extends State<SearchView> {
                           style: const TextTheme().sp4,
                         ),
                         Text(
-                          '25%',
-                          style: const TextTheme().sp4,
-                        ),
-                        Text(
                           '50%',
                           style: const TextTheme().sp4,
                         ),
                         Text(
-                          '75%',
+                          '100%',
                           style: const TextTheme().sp4,
                         ),
                         Text(
-                          '100%',
+                          '150%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '200%',
                           style: const TextTheme().sp4,
                         ),
                       ],

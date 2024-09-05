@@ -1775,10 +1775,10 @@ class MainPresenter extends GetxController {
 
       // Randomly pick a list to run backtest
       final random = Random();
-      final int candleTol = candleTolerance.value;
-      final int priceTol = priceTolerance.value;
-      final int firstMaTol = firstMaTolerance.value;
-      final int maTol = maTolerance.value;
+      final double candleTol = candleTolerance.value / 100;
+      final double priceTol = priceTolerance.value / 100;
+      final double firstMaTol = firstMaTolerance.value / 100;
+      final double maTol = maTolerance.value / 100;
 
       double hitRate = 0.0;
       double roundedHitRate = 0.0;
@@ -2895,7 +2895,7 @@ class MainPresenter extends GetxController {
       int randomID = 100000 + random.nextInt(900000);
       // Export CSV to device's local file directory
       String fileName =
-          '${randomID}_${symbol}_priceTol${priceTol}_firstMaTol${firstMaTol}_maTol${maTol}_len${len}_subLen${subsequentLen}_probThreshold${thisProbThreshold}_maTrue_strict${strictMatchCriteria.value}_outsideFirst30mins_minMatchCount${minMatchCount}_minOneSidedMatchCount${minOneSidedMatchCount}_minReturnRate${minMedianReturnRate}_reachedMedian${closePosWhenReachedMedian.value}_hitCeilingOrBottom-OneThirdSubLength_goOppo-HalfSubLength_backtest_results';
+          '${randomID}_${symbol}_priceTol${priceTolerance.value}_firstMaTol${firstMaTolerance.value}_maTol${maTolerance.value}_len${len}_subLen${subsequentLen}_probThreshold${thisProbThreshold}_maTrue_strict${strictMatchCriteria.value}_outsideFirst30mins_minMatchCount${minMatchCount}_minOneSidedMatchCount${minOneSidedMatchCount}_minReturnRate${minMedianReturnRate}_reachedMedian${closePosWhenReachedMedian.value}_hitCeilingOrBottom-OneThirdSubLength_goOppo-HalfSubLength_backtest_results';
       exportCsv(listList, fileName);
 
       // printInfo(info: 'Exported backtesting results CSV');
