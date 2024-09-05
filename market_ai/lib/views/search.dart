@@ -230,9 +230,8 @@ class _SearchViewState extends State<SearchView> {
                           value: _currentCandleTolerance,
                           max: 200,
                           min: 5,
-                          divisions: 39,
-                          label:
-                              '${_currentCandleTolerance.round().toString()}%',
+                          divisions: 195,
+                          label: '${_currentCandleTolerance.round()}%',
                           onChanged: (double value) {
                             setState(() {
                               _currentCandleTolerance = value;
@@ -293,8 +292,7 @@ class _SearchViewState extends State<SearchView> {
                           max: 100,
                           min: 5,
                           divisions: 19,
-                          label:
-                              '${_currentPriceTolerance.round().toString()}%',
+                          label: '${_currentPriceTolerance.round()}%',
                           onChanged: (double value) {
                             setState(() {
                               _currentPriceTolerance = value;
@@ -355,8 +353,7 @@ class _SearchViewState extends State<SearchView> {
                           max: 100,
                           min: 5,
                           divisions: 19,
-                          label:
-                              '${_currentFirstMaTolerance.round().toString()}%',
+                          label: '${_currentFirstMaTolerance.round()}%',
                           onChanged: (double value) {
                             setState(() {
                               _currentFirstMaTolerance = value;
@@ -417,7 +414,7 @@ class _SearchViewState extends State<SearchView> {
                           max: 100,
                           min: 5,
                           divisions: 19,
-                          label: '${_currentMaTolerance.round().toString()}%',
+                          label: '${_currentMaTolerance.round()}%',
                           onChanged: (double value) {
                             setState(() {
                               _currentMaTolerance = value;

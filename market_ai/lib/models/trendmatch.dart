@@ -30,28 +30,27 @@ class TrendMatch {
     int totalDataLength = dataLength;
 
     List<double> selectedPeriodPercentDifferencesList = [];
-    List<double> selectedPeriodActualDifferencesList =
-        []; // For unnecessary chart
-    List<double> selectedPeriodActualPricesList = []; // For unnecessary chart
+    // List<double> selectedPeriodActualDifferencesList =
+    //     []; // For unnecessary chart
+    // List<double> selectedPeriodActualPricesList = []; // For unnecessary chart
 
     List<double> comparePeriodPercentDifferencesList = [];
-    List<double> comparePeriodActualDifferencesList =
-        []; // For unnecessary chart
-    List<double> comparePeriodActualPricesList = []; // For unnecessary chart
+    // List<double> comparePeriodActualDifferencesList =
+    //     []; // For unnecessary chart
+    // List<double> comparePeriodActualPricesList = []; // For unnecessary chart
 
     // For unnecessary charts
+    // List<List<double>> comparePeriodPercentDifferencesListList = [];
+    // List<List<double>> comparePeriodActualDifferencesListList = [];
+    // List<List<double>> comparePeriodActualPricesListList = [];
 
-    List<List<double>> comparePeriodPercentDifferencesListList = [];
-    List<List<double>> comparePeriodActualDifferencesListList = [];
-    List<List<double>> comparePeriodActualPricesListList = [];
+    // // List<double> matchPercentDifferencesList = [];
+    // List<double> matchActualDifferencesList = [];
+    // List<double> matchActualPricesList = [];
 
-    // List<double> matchPercentDifferencesList = [];
-    List<double> matchActualDifferencesList = [];
-    List<double> matchActualPricesList = [];
-
-    List<List<double>> matchPercentDifferencesListList = [];
-    List<List<double>> matchActualDifferencesListList = [];
-    List<List<double>> matchActualPricesListList = [];
+    // List<List<double>> matchPercentDifferencesListList = [];
+    // List<List<double>> matchActualDifferencesListList = [];
+    // List<List<double>> matchActualPricesListList = [];
 
     // Counts & lengths
 
@@ -102,6 +101,8 @@ class TrendMatch {
     // For candle matching
     List<List<double>>
         selectedPeriodOpenHighLowTheirDiffInRelationToCloseListList = [];
+
+    // Selected period
     if (isMaMatch) {
       if (!hasMa) {
         await Candle().computeTrendLines();
@@ -117,13 +118,26 @@ class TrendMatch {
         double percentDiff = (newVal - oriVal) / oriVal;
 
         selectedPeriodPercentDifferencesList.add(percentDiff);
-        selectedPeriodActualDifferencesList.add(newVal - oriVal);
+        // selectedPeriodActualDifferencesList.add(newVal - oriVal);
 
         // Candle
         List<double> selectedPeriodOpenHighLowTheirDiffInRelationToCloseList =
             [];
-        //     double openAndClosePercentDiff = / newVal
-        // selectedPeriodOpenHighLowTheirDiffInRelationToCloseList.add();
+        double close = newVal;
+        double openAndClosePercentDiff =
+            (listCandledata[dataLength - (i - 1)].open! - close) / close;
+        selectedPeriodOpenHighLowTheirDiffInRelationToCloseList
+            .add(openAndClosePercentDiff);
+        double highAndClosePercentDiff =
+            (listCandledata[dataLength - (i - 1)].high! - close) / close;
+        selectedPeriodOpenHighLowTheirDiffInRelationToCloseList
+            .add(highAndClosePercentDiff);
+        double lowAndClosePercentDiff =
+            (listCandledata[dataLength - (i - 1)].low! - close) / close;
+        selectedPeriodOpenHighLowTheirDiffInRelationToCloseList
+            .add(lowAndClosePercentDiff);
+        selectedPeriodOpenHighLowTheirDiffInRelationToCloseListList
+            .add(selectedPeriodOpenHighLowTheirDiffInRelationToCloseList);
 
         // MA
         List<double> selectedPeriodMaPercentDifferencesList = [];
@@ -150,19 +164,38 @@ class TrendMatch {
         double percentDiff = (newVal - oriVal) / oriVal;
 
         selectedPeriodPercentDifferencesList.add(percentDiff);
-        selectedPeriodActualDifferencesList.add(newVal - oriVal);
+        // selectedPeriodActualDifferencesList.add(newVal - oriVal);
+
+        // Candle
+        List<double> selectedPeriodOpenHighLowTheirDiffInRelationToCloseList =
+            [];
+        double close = newVal;
+        double openAndClosePercentDiff =
+            (listCandledata[dataLength - (i - 1)].open! - close) / close;
+        selectedPeriodOpenHighLowTheirDiffInRelationToCloseList
+            .add(openAndClosePercentDiff);
+        double highAndClosePercentDiff =
+            (listCandledata[dataLength - (i - 1)].high! - close) / close;
+        selectedPeriodOpenHighLowTheirDiffInRelationToCloseList
+            .add(highAndClosePercentDiff);
+        double lowAndClosePercentDiff =
+            (listCandledata[dataLength - (i - 1)].low! - close) / close;
+        selectedPeriodOpenHighLowTheirDiffInRelationToCloseList
+            .add(lowAndClosePercentDiff);
+        selectedPeriodOpenHighLowTheirDiffInRelationToCloseListList
+            .add(selectedPeriodOpenHighLowTheirDiffInRelationToCloseList);
       }
     }
 
-    for (int i = len; i > 0; i--) {
-      selectedPeriodActualPricesList.add(listCandledata[dataLength - i].close!);
-    }
+    // for (int i = len; i > 0; i--) {
+    //   selectedPeriodActualPricesList.add(listCandledata[dataLength - i].close!);
+    // }
     MainPresenter.to.selectedPeriodPercentDifferencesList.value =
         selectedPeriodPercentDifferencesList;
-    MainPresenter.to.selectedPeriodActualDifferencesList.value =
-        selectedPeriodActualDifferencesList;
-    MainPresenter.to.selectedPeriodActualPricesList.value =
-        selectedPeriodActualPricesList;
+    // MainPresenter.to.selectedPeriodActualDifferencesList.value =
+    //     selectedPeriodActualDifferencesList;
+    // MainPresenter.to.selectedPeriodActualPricesList.value =
+    //     selectedPeriodActualPricesList;
 
     int maxMa() {
       if (MainPresenter.to.hasMinuteData.value &&
@@ -753,12 +786,12 @@ class TrendMatch {
                   listCandledata[l + i].close!) /
               (listCandledata[l + i].close!);
           comparePeriodPercentDifferencesList.add(percentDiff);
-          comparePeriodActualDifferencesList.add(
-              listCandledata[l + i + 1].close! - listCandledata[l + i].close!);
+          // comparePeriodActualDifferencesList.add(
+          //     listCandledata[l + i + 1].close! - listCandledata[l + i].close!);
         }
-        for (int i = 0; i < len; i++) {
-          comparePeriodActualPricesList.add(listCandledata[l + i].close!);
-        }
+        // for (int i = 0; i < len; i++) {
+        //   comparePeriodActualPricesList.add(listCandledata[l + i].close!);
+        // }
         // print(selectedPeriodPercentDifferencesList.length);
         // print(comparePeriodPercentDifferencesList.length);
         (
@@ -807,17 +840,17 @@ class TrendMatch {
               } else {
                 MainPresenter.to.matchRows.add(l);
               }
-              matchPercentDifferencesListList.add(comparisonResult.$2);
-              for (int i = 0; i < comparisonResult.$2.length; i++) {
-                double actual = listCandledata[l + i + 1].close! -
-                    listCandledata[l + i].close!;
-                matchActualDifferencesList.add(actual);
-              }
-              for (int i = 0; i < comparisonResult.$2.length + 1; i++) {
-                matchActualPricesList.add(listCandledata[l + i].close!);
-              }
-              matchActualDifferencesListList.add(matchActualDifferencesList);
-              matchActualPricesListList.add(matchActualPricesList);
+              // matchPercentDifferencesListList.add(comparisonResult.$2);
+              // for (int i = 0; i < comparisonResult.$2.length; i++) {
+              //   double actual = listCandledata[l + i + 1].close! -
+              //       listCandledata[l + i].close!;
+              //   matchActualDifferencesList.add(actual);
+              // }
+              // for (int i = 0; i < comparisonResult.$2.length + 1; i++) {
+              //   matchActualPricesList.add(listCandledata[l + i].close!);
+              // }
+              // matchActualDifferencesListList.add(matchActualDifferencesList);
+              // matchActualPricesListList.add(matchActualPricesList);
             } else {
               falseCount += 1;
             }
@@ -828,49 +861,49 @@ class TrendMatch {
             } else {
               MainPresenter.to.matchRows.add(l);
             }
-            matchPercentDifferencesListList.add(comparisonResult.$2);
-            for (int i = 0; i < comparisonResult.$2.length; i++) {
-              double actual = listCandledata[l + i + 1].close! -
-                  listCandledata[l + i].close!;
-              matchActualDifferencesList.add(actual);
-            }
-            for (int i = 0; i < comparisonResult.$2.length + 1; i++) {
-              matchActualPricesList.add(listCandledata[l + i].close!);
-            }
-            matchActualDifferencesListList.add(matchActualDifferencesList);
-            matchActualPricesListList.add(matchActualPricesList);
+            // matchPercentDifferencesListList.add(comparisonResult.$2);
+            // for (int i = 0; i < comparisonResult.$2.length; i++) {
+            //   double actual = listCandledata[l + i + 1].close! -
+            //       listCandledata[l + i].close!;
+            //   matchActualDifferencesList.add(actual);
+            // }
+            // for (int i = 0; i < comparisonResult.$2.length + 1; i++) {
+            //   matchActualPricesList.add(listCandledata[l + i].close!);
+            // }
+            // matchActualDifferencesListList.add(matchActualDifferencesList);
+            // matchActualPricesListList.add(matchActualPricesList);
           }
         } else {
           falseCount += 1;
         }
 
-        comparePeriodPercentDifferencesListList
-            .add(comparePeriodPercentDifferencesList);
-        comparePeriodActualDifferencesListList
-            .add(comparePeriodActualDifferencesList);
-        comparePeriodActualPricesListList.add(comparePeriodActualPricesList);
+        // comparePeriodPercentDifferencesListList
+        //     .add(comparePeriodPercentDifferencesList);
+        // comparePeriodActualDifferencesListList
+        //     .add(comparePeriodActualDifferencesList);
+        // comparePeriodActualPricesListList.add(comparePeriodActualPricesList);
         comparePeriodPercentDifferencesList = [];
-        comparePeriodActualDifferencesList = [];
-        comparePeriodActualPricesList = [];
+        // comparePeriodActualDifferencesList = [];
+        // comparePeriodActualPricesList = [];
 
-        matchActualDifferencesList = [];
-        matchActualPricesList = [];
+        // matchActualDifferencesList = [];
+        // matchActualPricesList = [];
       }
     }
 
-    MainPresenter.to.comparePeriodPercentDifferencesListList.value =
-        comparePeriodPercentDifferencesListList;
-    MainPresenter.to.comparePeriodActualDifferencesListList.value =
-        comparePeriodActualDifferencesListList;
-    MainPresenter.to.comparePeriodActualPricesListList.value =
-        comparePeriodActualPricesListList;
+    // MainPresenter.to.comparePeriodPercentDifferencesListList.value =
+    //     comparePeriodPercentDifferencesListList;
+    // MainPresenter.to.comparePeriodActualDifferencesListList.value =
+    //     comparePeriodActualDifferencesListList;
+    // MainPresenter.to.comparePeriodActualPricesListList.value =
+    //     comparePeriodActualPricesListList;
 
-    MainPresenter.to.matchPercentDifferencesListList.value =
-        matchPercentDifferencesListList;
-    MainPresenter.to.matchActualDifferencesListList.value =
-        matchActualDifferencesListList;
-    MainPresenter.to.matchActualPricesListList.value =
-        matchActualPricesListList;
+    // MainPresenter.to.matchPercentDifferencesListList.value =
+    //     matchPercentDifferencesListList;
+    // MainPresenter.to.matchActualDifferencesListList.value =
+    //     matchActualDifferencesListList;
+    // MainPresenter.to.matchActualPricesListList.value =
+    //     matchActualPricesListList;
 
     DateTime endTime = DateTime.now(); // Record the end time
     // Calculate the time difference
@@ -1123,9 +1156,7 @@ class TrendMatch {
         List<double> closePrices = [];
 
         for (int l = 0; l < matchRows!.length; l++) {
-          for (int i = 0;
-              i < MainPresenter.to.selectedPeriodPercentDifferencesList.length;
-              i++) {
+          for (int i = 0; i < (MainPresenter.to.length.value - 1); i++) {
             closePrices.add(candleListList![
                 // The CSV/JSON data
                 matchRows[l] + i // Loop all closing prices in the matched trend
@@ -1136,11 +1167,7 @@ class TrendMatch {
         final lower = closePrices.reduce(min);
         final upper = closePrices.reduce(max);
 
-        for (double i = 0;
-            i <
-                MainPresenter.to.selectedPeriodPercentDifferencesList.length +
-                    1;
-            i++) {
+        for (double i = 0; i < MainPresenter.to.length.value; i++) {
           double closePrice = candleListList![
                   // The CSV/JSON data
                   matchRows[index] // Get the matched trend row from this index
@@ -1161,9 +1188,7 @@ class TrendMatch {
         List<double> closePrices = [];
 
         for (int l = 0; l < MainPresenter.to.matchRows.length; l++) {
-          for (int i = 0;
-              i < MainPresenter.to.selectedPeriodPercentDifferencesList.length;
-              i++) {
+          for (int i = 0; i < (MainPresenter.to.length.value - 1); i++) {
             closePrices.add(MainPresenter.to.candleListList[// The CSV/JSON data
                 MainPresenter.to.matchRows[l] +
                     i // Loop all closing prices in the matched trend
@@ -1174,11 +1199,7 @@ class TrendMatch {
         final lower = closePrices.reduce(min);
         final upper = closePrices.reduce(max);
 
-        for (double i = 0;
-            i <
-                MainPresenter.to.selectedPeriodPercentDifferencesList.length +
-                    1;
-            i++) {
+        for (double i = 0; i < MainPresenter.to.length.value; i++) {
           double closePrice = MainPresenter.to.candleListList[
                   // The CSV/JSON data
                   MainPresenter.to.matchRows[
@@ -1200,11 +1221,7 @@ class TrendMatch {
     } else {
       if (MainPresenter.to.alwaysUseCrossData.value ||
           MainPresenter.to.isLockTrend.value) {
-        for (double i = 0;
-            i <
-                MainPresenter.to.selectedPeriodPercentDifferencesList.length +
-                    1;
-            i++) {
+        for (double i = 0; i < MainPresenter.to.length.value; i++) {
           flsportList.add(FlSpot(
               i, // Equal to selectedPeriodCount, starting from 0
               candleListList![// The CSV/JSON data
@@ -1216,11 +1233,7 @@ class TrendMatch {
               ));
         }
       } else {
-        for (double i = 0;
-            i <
-                MainPresenter.to.selectedPeriodPercentDifferencesList.length +
-                    1;
-            i++) {
+        for (double i = 0; i < MainPresenter.to.length.value; i++) {
           flsportList.add(FlSpot(
               i, // Equal to selectedPeriodCount, starting from 0
               MainPresenter.to.candleListList[// The CSV/JSON data
@@ -1395,8 +1408,7 @@ class TrendMatch {
     matchRows ??= MainPresenter.to.matchRows;
     candleListList ??= MainPresenter.to.candleListList;
 
-    double selectedLength =
-        MainPresenter.to.selectedPeriodPercentDifferencesList.length.toDouble();
+    double selectedLength = (MainPresenter.to.length.value - 1).toDouble();
 
     double lastSelectedClosePrice = MainPresenter.to.candleListList.last[4];
 
@@ -1432,13 +1444,11 @@ class TrendMatch {
 
     List<List<dynamic>> candleListList = MainPresenter.to.candleListList;
 
-    for (int i = 0;
-        i < MainPresenter.to.selectedPeriodPercentDifferencesList.length + 1;
-        i++) {
+    for (int i = 0; i < MainPresenter.to.length.value; i++) {
       flspotList.add(FlSpot(
           i.toDouble(),
           candleListList[MainPresenter.to.candleListList.length -
-              MainPresenter.to.selectedPeriodPercentDifferencesList.length +
+              (MainPresenter.to.length.value - 1) +
               i -
               1][4]));
     }

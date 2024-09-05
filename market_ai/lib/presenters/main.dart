@@ -1582,7 +1582,7 @@ class MainPresenter extends GetxController {
 
       // Check if the lock-in trend is over
       const int yFinMinuteDelay = 1;
-      if (spots.length >= subLength.value - yFinMinuteDelay) {
+      if (spots.length - 1 >= subLength.value - yFinMinuteDelay) {
         thisOver = true;
         Future.microtask(() {
           over.value = true;

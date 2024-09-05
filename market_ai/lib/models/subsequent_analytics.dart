@@ -143,8 +143,7 @@ class SubsequentAnalytics {
         if (outerBreak) {
           break;
         }
-        int selectedLength =
-            MainPresenter.to.selectedPeriodPercentDifferencesList.length;
+        int selectedLength = (MainPresenter.to.length.value - 1);
         // Selected trend
         for (int i = 0; i < selectedLength; i++) {
           double value =
@@ -186,8 +185,7 @@ class SubsequentAnalytics {
         lastClosePriceAndSubsequentTrends
             .add(getMatchedTrendLastClosePriceAndSubsequentTrend(i));
       }
-      int selectedLength =
-          MainPresenter.to.selectedPeriodPercentDifferencesList.length;
+      int selectedLength = (MainPresenter.to.length.value - 1);
       // Selected trend
       for (int i = 0; i < selectedLength; i++) {
         double value =
@@ -290,8 +288,7 @@ class SubsequentAnalytics {
   List<double> getMatchedTrendLastClosePriceAndSubsequentTrend(int index,
       {List<List<dynamic>>? otherCandleListList, List<int>? matchRows}) {
     List<double> lastClosePriceAndSubsequentTrend = [];
-    double selectedLength =
-        MainPresenter.to.selectedPeriodPercentDifferencesList.length.toDouble();
+    double selectedLength = (MainPresenter.to.length.value - 1).toDouble();
 
     otherCandleListList ??= MainPresenter.to.candleListList;
     matchRows ??= MainPresenter.to.matchRows;
@@ -299,8 +296,8 @@ class SubsequentAnalytics {
     double lastActualDifference = MainPresenter.to.candleListList.last[4] /
         otherCandleListList[matchRows[index] + selectedLength.toInt()][4];
 
-    lastClosePriceAndSubsequentTrend.add(MainPresenter
-        .to.selectedPeriodActualPricesList[selectedLength.toInt()]);
+    lastClosePriceAndSubsequentTrend
+        .add(MainPresenter.to.candleListList.last[4]);
 
     int length = MainPresenter.to.length.value;
     int subLen = MainPresenter.to.subLength.value;
