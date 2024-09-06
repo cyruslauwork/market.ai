@@ -29,6 +29,7 @@ class TrendMatch {
     int dataLength = listCandledata.length;
     int totalDataLength = dataLength;
 
+    // For price matching
     List<double> selectedPeriodPercentDifferencesList = [];
     // List<double> selectedPeriodActualDifferencesList =
     //     []; // For unnecessary chart
@@ -91,7 +92,7 @@ class TrendMatch {
     double maTolerance = MainPresenter.to.maTolerance.value / 100;
     double firstMaTolerance = MainPresenter.to.firstMaTolerance.value / 100;
 
-    // For MAs matching
+    // For MA matching
     bool hasMa = listCandledata.last.trends.isNotEmpty;
     bool isMaMatch = MainPresenter.to.maMatchCriteria.value;
     List<double> selectedPeriodFirstMaAndPricePercentDifferencesList = [];
@@ -112,32 +113,34 @@ class TrendMatch {
       }
       double selectedFirstPrice = listCandledata[dataLength - len].close!;
       // Loop selected data
+      for (int i = len; i > 0; i--) {
+        // Candle
+        List<double> selectedPeriodOpenHighLowTheirDiffInRelationToCloseList =
+            [];
+        double close = listCandledata[dataLength - i].close!;
+        double openAndClosePercentDiff =
+            (listCandledata[dataLength - i].open! - close) / close;
+        selectedPeriodOpenHighLowTheirDiffInRelationToCloseList
+            .add(openAndClosePercentDiff);
+        double highAndClosePercentDiff =
+            (listCandledata[dataLength - i].high! - close) / close;
+        selectedPeriodOpenHighLowTheirDiffInRelationToCloseList
+            .add(highAndClosePercentDiff);
+        double lowAndClosePercentDiff =
+            (listCandledata[dataLength - i].low! - close) / close;
+        selectedPeriodOpenHighLowTheirDiffInRelationToCloseList
+            .add(lowAndClosePercentDiff);
+        selectedPeriodOpenHighLowTheirDiffInRelationToCloseListList
+            .add(selectedPeriodOpenHighLowTheirDiffInRelationToCloseList);
+      }
       for (int i = len; i > 1; i--) {
+        // Price
         double newVal = listCandledata[dataLength - (i - 1)].close!;
         double oriVal = listCandledata[dataLength - i].close!;
         double percentDiff = (newVal - oriVal) / oriVal;
 
         selectedPeriodPercentDifferencesList.add(percentDiff);
         // selectedPeriodActualDifferencesList.add(newVal - oriVal);
-
-        // Candle
-        List<double> selectedPeriodOpenHighLowTheirDiffInRelationToCloseList =
-            [];
-        double close = newVal;
-        double openAndClosePercentDiff =
-            (listCandledata[dataLength - (i - 1)].open! - close) / close;
-        selectedPeriodOpenHighLowTheirDiffInRelationToCloseList
-            .add(openAndClosePercentDiff);
-        double highAndClosePercentDiff =
-            (listCandledata[dataLength - (i - 1)].high! - close) / close;
-        selectedPeriodOpenHighLowTheirDiffInRelationToCloseList
-            .add(highAndClosePercentDiff);
-        double lowAndClosePercentDiff =
-            (listCandledata[dataLength - (i - 1)].low! - close) / close;
-        selectedPeriodOpenHighLowTheirDiffInRelationToCloseList
-            .add(lowAndClosePercentDiff);
-        selectedPeriodOpenHighLowTheirDiffInRelationToCloseListList
-            .add(selectedPeriodOpenHighLowTheirDiffInRelationToCloseList);
 
         // MA
         List<double> selectedPeriodMaPercentDifferencesList = [];
@@ -158,32 +161,34 @@ class TrendMatch {
       }
     } else {
       // Loop selected data
+      for (int i = len; i > 0; i--) {
+        // Candle
+        List<double> selectedPeriodOpenHighLowTheirDiffInRelationToCloseList =
+            [];
+        double close = listCandledata[dataLength - i].close!;
+        double openAndClosePercentDiff =
+            (listCandledata[dataLength - i].open! - close) / close;
+        selectedPeriodOpenHighLowTheirDiffInRelationToCloseList
+            .add(openAndClosePercentDiff);
+        double highAndClosePercentDiff =
+            (listCandledata[dataLength - i].high! - close) / close;
+        selectedPeriodOpenHighLowTheirDiffInRelationToCloseList
+            .add(highAndClosePercentDiff);
+        double lowAndClosePercentDiff =
+            (listCandledata[dataLength - i].low! - close) / close;
+        selectedPeriodOpenHighLowTheirDiffInRelationToCloseList
+            .add(lowAndClosePercentDiff);
+        selectedPeriodOpenHighLowTheirDiffInRelationToCloseListList
+            .add(selectedPeriodOpenHighLowTheirDiffInRelationToCloseList);
+      }
       for (int i = len; i > 1; i--) {
+        // Price
         double newVal = listCandledata[dataLength - (i - 1)].close!;
         double oriVal = listCandledata[dataLength - i].close!;
         double percentDiff = (newVal - oriVal) / oriVal;
 
         selectedPeriodPercentDifferencesList.add(percentDiff);
         // selectedPeriodActualDifferencesList.add(newVal - oriVal);
-
-        // Candle
-        List<double> selectedPeriodOpenHighLowTheirDiffInRelationToCloseList =
-            [];
-        double close = newVal;
-        double openAndClosePercentDiff =
-            (listCandledata[dataLength - (i - 1)].open! - close) / close;
-        selectedPeriodOpenHighLowTheirDiffInRelationToCloseList
-            .add(openAndClosePercentDiff);
-        double highAndClosePercentDiff =
-            (listCandledata[dataLength - (i - 1)].high! - close) / close;
-        selectedPeriodOpenHighLowTheirDiffInRelationToCloseList
-            .add(highAndClosePercentDiff);
-        double lowAndClosePercentDiff =
-            (listCandledata[dataLength - (i - 1)].low! - close) / close;
-        selectedPeriodOpenHighLowTheirDiffInRelationToCloseList
-            .add(lowAndClosePercentDiff);
-        selectedPeriodOpenHighLowTheirDiffInRelationToCloseListList
-            .add(selectedPeriodOpenHighLowTheirDiffInRelationToCloseList);
       }
     }
 
@@ -781,6 +786,31 @@ class TrendMatch {
       for (int l = (isMaMatch ? maxMa() : 0);
           l < dataLength - len - subLen;
           l++) {
+        // For candle matching
+        List<List<double>>
+            comparePeriodOpenHighLowTheirDiffInRelationToCloseListList = [];
+        for (int i = 0; i < len; i++) {
+          // Candle
+          List<double> comparePeriodOpenHighLowTheirDiffInRelationToCloseList =
+              [];
+          double close = listCandledata[l + i].close!;
+          double openAndClosePercentDiff =
+              (listCandledata[l + i].open! - close) / close;
+          comparePeriodOpenHighLowTheirDiffInRelationToCloseList
+              .add(openAndClosePercentDiff);
+          double highAndClosePercentDiff =
+              (listCandledata[l + i].high! - close) / close;
+          comparePeriodOpenHighLowTheirDiffInRelationToCloseList
+              .add(highAndClosePercentDiff);
+          double lowAndClosePercentDiff =
+              (listCandledata[l + i].low! - close) / close;
+          comparePeriodOpenHighLowTheirDiffInRelationToCloseList
+              .add(lowAndClosePercentDiff);
+          comparePeriodOpenHighLowTheirDiffInRelationToCloseListList
+              .add(comparePeriodOpenHighLowTheirDiffInRelationToCloseList);
+        }
+
+        // For price matching
         for (int i = 0; i < len - 1; i++) {
           double percentDiff = (listCandledata[l + i + 1].close! -
                   listCandledata[l + i].close!) /
@@ -794,15 +824,21 @@ class TrendMatch {
         // }
         // print(selectedPeriodPercentDifferencesList.length);
         // print(comparePeriodPercentDifferencesList.length);
+
+        // Candle, price
         (
           bool,
           List<double>
         ) comparisonResult = areDifferencesLessThanOrEqualToCertainPercent(
+            selectedPeriodOpenHighLowTheirDiffInRelationToCloseListList,
+            comparePeriodOpenHighLowTheirDiffInRelationToCloseListList,
+            candleTolerance,
             selectedPeriodPercentDifferencesList,
             comparePeriodPercentDifferencesList,
             priceTolerance); // Record data type in Dart is equivalent to Tuple in Java and Python
 
         if (comparisonResult.$1) {
+          // MA
           if (isMaMatch) {
             List<double> comparePeriodFirstMaAndPricePercentDifferencesList =
                 [];
@@ -923,22 +959,62 @@ class TrendMatch {
   }
 
   (bool, List<double>) areDifferencesLessThanOrEqualToCertainPercent(
-      List<double> selList, List<double> comList, double priceTolerance) {
-    if (selList.length != comList.length) {
-      // logger.d('${selList.length} != ${comList.length}');
-      throw ArgumentError('Both lists must have the same length.');
+    List<List<double>> selCandleListList,
+    List<List<double>> comCandleListList,
+    double candleTolerance,
+    List<double> selPriceList,
+    List<double> comPriceList,
+    double priceTolerance,
+  ) {
+    if (selPriceList.length != comPriceList.length) {
+      // logger.d('${selPriceList.length} != ${comPriceList.length}');
+      throw ArgumentError('Both price lists must have the same length.');
+    }
+    if (selCandleListList.length != comCandleListList.length) {
+      // logger.d('${selCandleListList.length} != ${comCandleListList.length}');
+      throw ArgumentError('Both candle lists must have the same length.');
     }
 
     if (MainPresenter.to.strictMatchCriteria.value) {
+      // Candle
+      for (int i = 0; i < selCandleListList.length; i++) {
+        for (int l = 0; l < selCandleListList.first.length; l++) {
+          double comVal = comCandleListList[i][l];
+          double selVal = selCandleListList[i][l];
+          double difference = comVal - selVal;
+          double percentDiff;
+
+          // Handle zero in selPriceList to avoid division by zero
+          if (selVal == 0.0) {
+            if (comVal != 0.0) {
+              return (
+                false,
+                []
+              ); // Any non-zero value compared to zero is a large difference
+            } else {
+              percentDiff = 0.0; // Both are zero, no difference
+            }
+          } else {
+            percentDiff = difference / selVal;
+          }
+
+          if (percentDiff.abs() > candleTolerance) {
+            return (false, []); // Difference is larger than certain %
+          }
+        }
+      }
+      // Price
       double positiveTolerance = priceTolerance;
       double negativeTolerance = -priceTolerance;
-      for (int i = 0; i < selList.length; i++) {
-        double difference = comList[i] - selList[i];
+      for (int i = 0; i < selPriceList.length; i++) {
+        double comVal = comPriceList[i];
+        double selVal = selPriceList[i];
+        double difference = comVal - selVal;
         double percentDiff;
 
-        // Handle zero in selList to avoid division by zero
-        if (selList[i] == 0.0) {
-          if (comList[i] != 0.0) {
+        // Handle zero in selPriceList to avoid division by zero
+        if (selVal == 0.0) {
+          if (comVal != 0.0) {
             return (
               false,
               []
@@ -947,7 +1023,7 @@ class TrendMatch {
             percentDiff = 0.0; // Both are zero, no difference
           }
         } else {
-          percentDiff = difference / selList[i];
+          percentDiff = difference / selVal;
         }
 
         if (percentDiff >= 0) {
@@ -973,13 +1049,43 @@ class TrendMatch {
         }
       }
     } else {
-      for (int i = 0; i < selList.length; i++) {
-        double difference = comList[i] - selList[i];
+      // Candle
+      for (int i = 0; i < selCandleListList.length; i++) {
+        for (int l = 0; l < selCandleListList.first.length; l++) {
+          double comVal = comCandleListList[i][l];
+          double selVal = selCandleListList[i][l];
+          double difference = comVal - selVal;
+          double percentDiff;
+
+          // Handle zero in selPriceList to avoid division by zero
+          if (selVal == 0.0) {
+            if (comVal != 0.0) {
+              return (
+                false,
+                []
+              ); // Any non-zero value compared to zero is a large difference
+            } else {
+              percentDiff = 0.0; // Both are zero, no difference
+            }
+          } else {
+            percentDiff = difference / selVal;
+          }
+
+          if (percentDiff.abs() > candleTolerance) {
+            return (false, []); // Difference is larger than certain %
+          }
+        }
+      }
+      // Price
+      for (int i = 0; i < selPriceList.length; i++) {
+        double comVal = comPriceList[i];
+        double selVal = selPriceList[i];
+        double difference = comVal - selVal;
         double percentDiff;
 
-        // Handle zero in selList to avoid division by zero
-        if (selList[i] == 0.0) {
-          if (comList[i] != 0.0) {
+        // Handle zero in selPriceList to avoid division by zero
+        if (selVal == 0.0) {
+          if (comVal != 0.0) {
             return (
               false,
               []
@@ -988,7 +1094,7 @@ class TrendMatch {
             percentDiff = 0.0; // Both are zero, no difference
           }
         } else {
-          percentDiff = difference / selList[i];
+          percentDiff = difference / selVal;
         }
 
         if (percentDiff.abs() > priceTolerance) {
@@ -997,7 +1103,8 @@ class TrendMatch {
       }
     }
 
-    return (true, comList); // All differences are less than certain %
+    // return (true, comPriceList); // All differences are less than certain %
+    return (true, []); // All differences are less than certain %
   }
 
   bool maDifferencesLessThanOrEqualToCertainPercent(
@@ -1020,18 +1127,20 @@ class TrendMatch {
       double negativeTolerance = -firstMaTolerance;
 
       for (int i = 0; i < length; i++) {
-        double difference = comFirstList[i] - selFirstList[i];
+        double comVal = comFirstList[i];
+        double selVal = selFirstList[i];
+        double difference = comVal - selVal;
         double percentDiff;
 
         // Handle zero in selList to avoid division by zero
-        if (selFirstList[i] == 0.0) {
-          if (comFirstList[i] != 0.0) {
+        if (selVal == 0.0) {
+          if (comVal != 0.0) {
             return false; // Any non-zero value compared to zero is a large difference
           } else {
             percentDiff = 0.0; // Both are zero, no difference
           }
         } else {
-          percentDiff = difference / selFirstList[i];
+          percentDiff = difference / selVal;
         }
 
         if (percentDiff >= 0) {
@@ -1061,18 +1170,20 @@ class TrendMatch {
       negativeTolerance = -maTolerance;
       for (int i = 0; i < comList.length; i++) {
         for (int l = 0; l < maLength; l++) {
-          double difference = comList[i][l] - selList[i][l];
+          double comVal = comList[i][l];
+          double selVal = selList[i][l];
+          double difference = comVal - selVal;
           double percentDiff;
 
           // Handle zero in selList to avoid division by zero
-          if (selList[i][l] == 0.0) {
-            if (comList[i][l] != 0.0) {
+          if (selVal == 0.0) {
+            if (comVal != 0.0) {
               return false; // Any non-zero value compared to zero is a large difference
             } else {
               percentDiff = 0.0; // Both are zero, no difference
             }
           } else {
-            percentDiff = difference / selList[i][l];
+            percentDiff = difference / selVal;
           }
 
           if (percentDiff >= 0) {
@@ -1100,18 +1211,20 @@ class TrendMatch {
       }
     } else {
       for (int i = 0; i < length; i++) {
-        double difference = comFirstList[i] - selFirstList[i];
+        double comVal = comFirstList[i];
+        double selVal = selFirstList[i];
+        double difference = comVal - selVal;
         double percentDiff;
 
         // Handle zero in selList to avoid division by zero
-        if (selFirstList[i] == 0.0) {
-          if (comFirstList[i] != 0.0) {
+        if (selVal == 0.0) {
+          if (comVal != 0.0) {
             return false; // Any non-zero value compared to zero is a large difference
           } else {
             percentDiff = 0.0; // Both are zero, no difference
           }
         } else {
-          percentDiff = difference / selFirstList[i];
+          percentDiff = difference / selVal;
         }
 
         if (percentDiff.abs() > firstMaTolerance) {
@@ -1121,18 +1234,20 @@ class TrendMatch {
 
       for (int i = 0; i < comList.length; i++) {
         for (int l = 0; l < maLength; l++) {
-          double difference = comList[i][l] - selList[i][l];
+          double comVal = comList[i][l];
+          double selVal = selList[i][l];
+          double difference = comVal - selVal;
           double percentDiff;
 
           // Handle zero in selList to avoid division by zero
-          if (selList[i][l] == 0.0) {
-            if (comList[i][l] != 0.0) {
+          if (selVal == 0.0) {
+            if (comVal != 0.0) {
               return false; // Any non-zero value compared to zero is a large difference
             } else {
               percentDiff = 0.0; // Both are zero, no difference
             }
           } else {
-            percentDiff = difference / selList[i][l];
+            percentDiff = difference / selVal;
           }
 
           if (percentDiff.abs() > maTolerance) {

@@ -1845,16 +1845,41 @@ class MainPresenter extends GetxController {
           double actualLastClosePrice =
               sublist[l + len - 1 + yFinMinuteDelay].close!;
           List<double> selectedPeriodPercentDifferencesList = [];
+          // For MA matching
           List<List<double>> selectedPeriodMaPercentDifferencesListList = [];
           List<double> selectedPeriodFirstMaAndPricePercentDifferencesList = [];
-
+          // For candle matching
+          List<List<double>>
+              selectedPeriodOpenHighLowTheirDiffInRelationToCloseListList = [];
+          // Loop selected data
+          for (int i = 0; i < len; i++) {
+            // Candle
+            List<double>
+                selectedPeriodOpenHighLowTheirDiffInRelationToCloseList = [];
+            double close = sublist[l + i].close!;
+            double openAndClosePercentDiff =
+                (sublist[l + i].open! - close) / close;
+            selectedPeriodOpenHighLowTheirDiffInRelationToCloseList
+                .add(openAndClosePercentDiff);
+            double highAndClosePercentDiff =
+                (sublist[l + i].high! - close) / close;
+            selectedPeriodOpenHighLowTheirDiffInRelationToCloseList
+                .add(highAndClosePercentDiff);
+            double lowAndClosePercentDiff =
+                (sublist[l + i].low! - close) / close;
+            selectedPeriodOpenHighLowTheirDiffInRelationToCloseList
+                .add(lowAndClosePercentDiff);
+            selectedPeriodOpenHighLowTheirDiffInRelationToCloseListList
+                .add(selectedPeriodOpenHighLowTheirDiffInRelationToCloseList);
+          }
           for (int i = 0; i < len - 1; i++) {
+            // Price
             double newVal = sublist[l + i + 1].close!;
             double oriVal = sublist[l + i].close!;
             double percentDiff = (newVal - oriVal) / oriVal;
-
             selectedPeriodPercentDifferencesList.add(percentDiff);
 
+            // MA
             List<double> selectedPeriodMaPercentDifferencesList = [];
             for (int n = 0; n < maLength; n++) {
               double newVal = sublist[l + i + 1].trends[n]!;
@@ -1865,6 +1890,7 @@ class MainPresenter extends GetxController {
             selectedPeriodMaPercentDifferencesListList
                 .add(selectedPeriodMaPercentDifferencesList);
           }
+          // MA
           for (int m = 0; m < maLength; m++) {
             selectedPeriodFirstMaAndPricePercentDifferencesList.add(
                 (sublist[l].trends[m]! - startingClosePrice) /
@@ -1885,8 +1911,32 @@ class MainPresenter extends GetxController {
               m < candle.length - len - subsequentLen + 1 - yFinMinuteDelay;
               // Minus yFinMinuteDelay for actualReturn calculation
               m++) {
-            List<double> comparePeriodPercentDifferencesList = [];
+            // For candle matching
+            List<List<double>>
+                comparePeriodOpenHighLowTheirDiffInRelationToCloseListList = [];
+            for (int i = 0; i < len; i++) {
+              // Candle
+              List<double>
+                  comparePeriodOpenHighLowTheirDiffInRelationToCloseList = [];
+              double close = candle[m + i].close!;
+              double openAndClosePercentDiff =
+                  (candle[m + i].open! - close) / close;
+              comparePeriodOpenHighLowTheirDiffInRelationToCloseList
+                  .add(openAndClosePercentDiff);
+              double highAndClosePercentDiff =
+                  (candle[m + i].high! - close) / close;
+              comparePeriodOpenHighLowTheirDiffInRelationToCloseList
+                  .add(highAndClosePercentDiff);
+              double lowAndClosePercentDiff =
+                  (candle[m + i].low! - close) / close;
+              comparePeriodOpenHighLowTheirDiffInRelationToCloseList
+                  .add(lowAndClosePercentDiff);
+              comparePeriodOpenHighLowTheirDiffInRelationToCloseListList
+                  .add(comparePeriodOpenHighLowTheirDiffInRelationToCloseList);
+            }
 
+            // For price matching
+            List<double> comparePeriodPercentDifferencesList = [];
             for (int i = 0; i < len - 1; i++) {
               double percentDiff =
                   (candle[m + i + 1].close! - candle[m + i].close!) /
@@ -1896,6 +1946,9 @@ class MainPresenter extends GetxController {
 
             (bool, List<double>) comparisonResult = TrendMatch()
                 .areDifferencesLessThanOrEqualToCertainPercent(
+                    selectedPeriodOpenHighLowTheirDiffInRelationToCloseListList,
+                    comparePeriodOpenHighLowTheirDiffInRelationToCloseListList,
+                    candleTol,
                     selectedPeriodPercentDifferencesList,
                     comparePeriodPercentDifferencesList,
                     priceTol); // Record data type in Dart is equivalent to Tuple in Java and Python
@@ -2385,17 +2438,42 @@ class MainPresenter extends GetxController {
             double actualLastClosePrice =
                 candle[thisCandleRow + len - 1 + yFinMinuteDelay].close!;
             List<double> selectedPeriodPercentDifferencesList = [];
+            // For MA matching
             List<List<double>> selectedPeriodMaPercentDifferencesListList = [];
             List<double> selectedPeriodFirstMaAndPricePercentDifferencesList =
                 [];
-
+            // For candle matching
+            List<List<double>>
+                selectedPeriodOpenHighLowTheirDiffInRelationToCloseListList =
+                [];
+            // Loop selected data
+            for (int i = 0; i < len; i++) {
+              // Candle
+              List<double>
+                  selectedPeriodOpenHighLowTheirDiffInRelationToCloseList = [];
+              double close = candle[thisCandleRow + i].close!;
+              double openAndClosePercentDiff =
+                  (candle[thisCandleRow + i].open! - close) / close;
+              selectedPeriodOpenHighLowTheirDiffInRelationToCloseList
+                  .add(openAndClosePercentDiff);
+              double highAndClosePercentDiff =
+                  (candle[thisCandleRow + i].high! - close) / close;
+              selectedPeriodOpenHighLowTheirDiffInRelationToCloseList
+                  .add(highAndClosePercentDiff);
+              double lowAndClosePercentDiff =
+                  (candle[thisCandleRow + i].low! - close) / close;
+              selectedPeriodOpenHighLowTheirDiffInRelationToCloseList
+                  .add(lowAndClosePercentDiff);
+              selectedPeriodOpenHighLowTheirDiffInRelationToCloseListList
+                  .add(selectedPeriodOpenHighLowTheirDiffInRelationToCloseList);
+            }
             for (int i = 0; i < len - 1; i++) {
               double newVal = candle[thisCandleRow + i + 1].close!;
               double oriVal = candle[thisCandleRow + i].close!;
               double percentDiff = (newVal - oriVal) / oriVal;
-
               selectedPeriodPercentDifferencesList.add(percentDiff);
 
+              // MA
               List<double> selectedPeriodMaPercentDifferencesList = [];
               for (int n = 0; n < maLength; n++) {
                 double newVal = candle[thisCandleRow + i + 1].trends[n]!;
@@ -2406,6 +2484,7 @@ class MainPresenter extends GetxController {
               selectedPeriodMaPercentDifferencesListList
                   .add(selectedPeriodMaPercentDifferencesList);
             }
+            // MA
             for (int m = 0; m < maLength; m++) {
               selectedPeriodFirstMaAndPricePercentDifferencesList.add(
                   (sublist[l].trends[m]! - startingClosePrice) /
@@ -2426,8 +2505,33 @@ class MainPresenter extends GetxController {
                 m < candle.length - len - subsequentLen + 1 - yFinMinuteDelay;
                 // Minus yFinMinuteDelay for actualReturn calculation
                 m++) {
-              List<double> comparePeriodPercentDifferencesList = [];
+              // For candle matching
+              List<List<double>>
+                  comparePeriodOpenHighLowTheirDiffInRelationToCloseListList =
+                  [];
+              for (int i = 0; i < len; i++) {
+                // Candle
+                List<double>
+                    comparePeriodOpenHighLowTheirDiffInRelationToCloseList = [];
+                double close = candle[m + i].close!;
+                double openAndClosePercentDiff =
+                    (candle[m + i].open! - close) / close;
+                comparePeriodOpenHighLowTheirDiffInRelationToCloseList
+                    .add(openAndClosePercentDiff);
+                double highAndClosePercentDiff =
+                    (candle[m + i].high! - close) / close;
+                comparePeriodOpenHighLowTheirDiffInRelationToCloseList
+                    .add(highAndClosePercentDiff);
+                double lowAndClosePercentDiff =
+                    (candle[m + i].low! - close) / close;
+                comparePeriodOpenHighLowTheirDiffInRelationToCloseList
+                    .add(lowAndClosePercentDiff);
+                comparePeriodOpenHighLowTheirDiffInRelationToCloseListList.add(
+                    comparePeriodOpenHighLowTheirDiffInRelationToCloseList);
+              }
 
+              // For price matching
+              List<double> comparePeriodPercentDifferencesList = [];
               for (int i = 0; i < len - 1; i++) {
                 double percentDiff =
                     (candle[m + i + 1].close! - candle[m + i].close!) /
@@ -2437,6 +2541,9 @@ class MainPresenter extends GetxController {
 
               (bool, List<double>) comparisonResult = TrendMatch()
                   .areDifferencesLessThanOrEqualToCertainPercent(
+                      selectedPeriodOpenHighLowTheirDiffInRelationToCloseListList,
+                      comparePeriodOpenHighLowTheirDiffInRelationToCloseListList,
+                      candleTol,
                       selectedPeriodPercentDifferencesList,
                       comparePeriodPercentDifferencesList,
                       priceTol); // Record data type in Dart is equivalent to Tuple in Java and Python
@@ -2895,7 +3002,7 @@ class MainPresenter extends GetxController {
       int randomID = 100000 + random.nextInt(900000);
       // Export CSV to device's local file directory
       String fileName =
-          '${randomID}_${symbol}_priceTol${priceTolerance.value}_firstMaTol${firstMaTolerance.value}_maTol${maTolerance.value}_len${len}_subLen${subsequentLen}_probThreshold${thisProbThreshold}_maTrue_strict${strictMatchCriteria.value}_outsideFirst30mins_minMatchCount${minMatchCount}_minOneSidedMatchCount${minOneSidedMatchCount}_minReturnRate${minMedianReturnRate}_reachedMedian${closePosWhenReachedMedian.value}_hitCeilingOrBottom-OneThirdSubLength_goOppo-HalfSubLength_backtest_results';
+          '${randomID}_${symbol}_candleTol${candleTol}_priceTol${priceTolerance.value}_firstMaTol${firstMaTolerance.value}_maTol${maTolerance.value}_len${len}_subLen${subsequentLen}_probThreshold${thisProbThreshold}_maTrue_strict${strictMatchCriteria.value}_outsideFirst30mins_minMatchCount${minMatchCount}_minOneSidedMatchCount${minOneSidedMatchCount}_minReturnRate${minMedianReturnRate}_reachedMedian${closePosWhenReachedMedian.value}_hitCeilingOrBottom-OneThirdSubLength_goOppo-HalfSubLength_backtest_results';
       exportCsv(listList, fileName);
 
       // printInfo(info: 'Exported backtesting results CSV');
