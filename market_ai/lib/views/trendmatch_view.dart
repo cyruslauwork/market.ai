@@ -50,7 +50,7 @@ class TrendMatchView extends StatelessWidget {
                   style: const TextTheme().sp5.w700,
                 ),
                 Text(
-                  '${'expected_prob'.tr} +${(MainPresenter.to.expectedProb.value * 100).toStringAsFixed(1)}%',
+                  '${'expected_prob'.tr} ${(MainPresenter.to.expectedProb.value * 100).toStringAsFixed(1)}%',
                   style: MainPresenter.to.lockTrendTextStyle.value,
                 ),
                 Text(

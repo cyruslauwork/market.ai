@@ -184,12 +184,14 @@ def https(request):
     cluster_ratio_list = []
     upper_count = 0
     lower_count = 0
+    baseline_count = 0
     upper_percent = 0
     lower_percent = 0
     max_val = 0
     min_val = 0
     upper_list = []
     lower_list = []
+    baseline_list = []
     majority_list = []
     minority_list = []
     current_price = subsequent_trends[0][0]
@@ -348,6 +350,9 @@ def https(request):
             elif last_value < current_price:
                 lower_count += 1
                 lower_list.append(last_value)
+            else:
+                baseline_count += 1
+                baseline_list.append(last_value)
     # Avoid multiple plotting
     dash_patterns = [(5, 1), (4, 2, 1, 2), (3, 1, 1, 1), (1, 1)]  # List of dash patterns for each hue
     hue_line_styles = {hue: dash for hue, dash in zip(main_df['cluster'].unique(), dash_patterns)}
@@ -356,8 +361,8 @@ def https(request):
         hue_line_styles[missing_hue] = (1, 1)  # Default dash pattern
     sns.lineplot(data=main_df, x='position', y='value', hue='cluster', palette=colors[:len(cluster_ori_list)], style='cluster', dashes=hue_line_styles, legend=False, alpha=0.1)
     ### Calculation of upper/lower percentage and set them to the 2nd y-axis
-    upper_percent = round(upper_count / (upper_count + lower_count) * 100, 2)
-    lower_percent = round(lower_count / (upper_count + lower_count) * 100, 2)
+    upper_percent = round(upper_count / (upper_count + lower_count + baseline_count) * 100, 2)
+    lower_percent = round(lower_count / (upper_count + lower_count + baseline_count) * 100, 2)
     
     ### 2nd y-axis
     axis_y_second = axis.twinx()
@@ -385,11 +390,11 @@ def https(request):
 
     # Distribution preparations
     if len(upper_list) > len(lower_list):
-        majority_list = upper_list
-        minority_list = lower_list
+        majority_list = upper_list + baseline_list
+        minority_list = lower_list + baseline_list
     else:
-        majority_list = lower_list
-        minority_list = upper_list
+        majority_list = lower_list + baseline_list
+        minority_list = upper_list + baseline_list
     # Calculate the mean and standard deviation of the majority_list
     mean = np.mean(majority_list)
     std = np.std(majority_list)

@@ -568,26 +568,26 @@ class MainPresenter extends GetxController {
               40)
           .obs;
   RxList<double> selectedPeriodPercentDifferencesList = [0.0].obs;
-  RxList<double> selectedPeriodActualDifferencesList = [0.0].obs;
-  RxList<double> selectedPeriodActualPricesList = [0.0].obs;
-  RxList<List<double>> comparePeriodPercentDifferencesListList = [
-    [0.0]
-  ].obs;
-  RxList<List<double>> comparePeriodActualDifferencesListList = [
-    [0.0]
-  ].obs;
-  RxList<List<double>> comparePeriodActualPricesListList = [
-    [0.0]
-  ].obs;
-  RxList<List<double>> matchPercentDifferencesListList = [
-    [0.0]
-  ].obs;
-  RxList<List<double>> matchActualDifferencesListList = [
-    [0.0]
-  ].obs;
-  RxList<List<double>> matchActualPricesListList = [
-    [0.0]
-  ].obs;
+  // RxList<double> selectedPeriodActualDifferencesList = [0.0].obs;
+  // RxList<double> selectedPeriodActualPricesList = [0.0].obs;
+  // RxList<List<double>> comparePeriodPercentDifferencesListList = [
+  //   [0.0]
+  // ].obs;
+  // RxList<List<double>> comparePeriodActualDifferencesListList = [
+  //   [0.0]
+  // ].obs;
+  // RxList<List<double>> comparePeriodActualPricesListList = [
+  //   [0.0]
+  // ].obs;
+  // RxList<List<double>> matchPercentDifferencesListList = [
+  //   [0.0]
+  // ].obs;
+  // RxList<List<double>> matchActualDifferencesListList = [
+  //   [0.0]
+  // ].obs;
+  // RxList<List<double>> matchActualPricesListList = [
+  //   [0.0]
+  // ].obs;
   RxList<int> trendMatchOutput = [0, 0, 0, 0, 0].obs;
   RxList<int> matchRows = [0].obs;
   RxList<int> spyMatchRows = [0].obs; // Cross-data
@@ -919,15 +919,15 @@ class MainPresenter extends GetxController {
       } else {
         sidePlot.value = SizedBox(
             child: Padding(
-          padding: EdgeInsets.only(top: 7.5.h),
+          padding: EdgeInsets.only(top: 11.h),
           child: Image.memory(
             img10Bytes,
             width: (Platform.isWindows || Platform.isLinux || Platform.isMacOS
                 ? ((Get.width - 5.w) * 0.3)
                 : 52.5.w),
             height: (Platform.isWindows || Platform.isLinux || Platform.isMacOS
-                ? 110.1.h
-                : 80.h),
+                ? 109.h
+                : 78.h),
             fit: BoxFit.fill,
           ),
         ));
@@ -1228,21 +1228,25 @@ class MainPresenter extends GetxController {
           trendsLessThanFive.value = false;
         });
       }
+      int baseline = 0;
       if (lockTrendSubTrendList.isNotEmpty) {
         // logger.d(lockTrendSubTrendList);
         for (var values in lockTrendSubTrendList) {
-          // print(values.last);
-          if (values.last >= values.first) {
+          if (values.last > values.first) {
             upper.add(values);
           } else if (values.last < values.first) {
             lower.add(values);
+          } else {
+            baseline++;
           }
         }
       }
 
       if (upper.isNotEmpty || lower.isNotEmpty) {
-        double upperProb = upper.length / (upper.length + lower.length);
-        double lowerProb = lower.length / (upper.length + lower.length);
+        double upperProb =
+            upper.length / (upper.length + lower.length + baseline);
+        double lowerProb =
+            lower.length / (upper.length + lower.length + baseline);
         thisExpectedProb = max(upperProb, lowerProb);
         if (upperProb > probThreshold.value) {
           thisIsLong = true;
@@ -1345,6 +1349,7 @@ class MainPresenter extends GetxController {
             });
           }
         } else {
+          thisReturnRate = 0.0;
           thisLowReturn = true;
           Future.microtask(() {
             lowReturn.value = true;
@@ -1381,6 +1386,7 @@ class MainPresenter extends GetxController {
             });
           }
         } else {
+          thisReturnRate = 0.0;
           thisLowReturn = true;
           Future.microtask(() {
             lowReturn.value = true;
@@ -1900,6 +1906,7 @@ class MainPresenter extends GetxController {
 
           List<List<double>> upper = [];
           List<List<double>> lower = [];
+          int baseline = 0;
           List<List<double>> subClosePrices = [];
           List<int> subClosePricesRowID = [];
           bool isLong = false;
@@ -1996,7 +2003,7 @@ class MainPresenter extends GetxController {
                   matchedAdjustedSubsequentCloseList
                       .add(adjustedSubsequentClose);
                 }
-                if (matchedAdjustedSubsequentCloseList.last >= lastClosePrice) {
+                if (matchedAdjustedSubsequentCloseList.last > lastClosePrice) {
                   subClosePrices.add(matchedAdjustedSubsequentCloseList);
                   subClosePricesRowID.add(m + len);
                   upper.add(matchedAdjustedSubsequentCloseList);
@@ -2005,6 +2012,10 @@ class MainPresenter extends GetxController {
                   subClosePrices.add(matchedAdjustedSubsequentCloseList);
                   subClosePricesRowID.add(m + len);
                   lower.add(matchedAdjustedSubsequentCloseList);
+                } else {
+                  subClosePrices.add(matchedAdjustedSubsequentCloseList);
+                  subClosePricesRowID.add(m + len);
+                  baseline++;
                 }
               }
               // else {
@@ -2025,8 +2036,10 @@ class MainPresenter extends GetxController {
             continue;
           }
           // Probability calculation and amount of matched trends
-          double upperProb = upper.length / (upper.length + lower.length);
-          double lowerProb = lower.length / (upper.length + lower.length);
+          double upperProb =
+              upper.length / (upper.length + lower.length + baseline);
+          double lowerProb =
+              lower.length / (upper.length + lower.length + baseline);
           // Round to 3 decimal places
           upperProb = double.parse(upperProb.toStringAsFixed(4));
           lowerProb = double.parse(lowerProb.toStringAsFixed(4));
@@ -2494,6 +2507,7 @@ class MainPresenter extends GetxController {
 
             List<List<double>> upper = [];
             List<List<double>> lower = [];
+            int baseline = 0;
             List<List<double>> subClosePrices = [];
             List<int> subClosePricesRowID = [];
             bool isLong = false;
@@ -2592,7 +2606,7 @@ class MainPresenter extends GetxController {
                     matchedAdjustedSubsequentCloseList
                         .add(adjustedSubsequentClose);
                   }
-                  if (matchedAdjustedSubsequentCloseList.last >=
+                  if (matchedAdjustedSubsequentCloseList.last >
                       lastClosePrice) {
                     subClosePrices.add(matchedAdjustedSubsequentCloseList);
                     subClosePricesRowID.add(m + len);
@@ -2602,6 +2616,10 @@ class MainPresenter extends GetxController {
                     subClosePrices.add(matchedAdjustedSubsequentCloseList);
                     subClosePricesRowID.add(m + len);
                     lower.add(matchedAdjustedSubsequentCloseList);
+                  } else {
+                    subClosePrices.add(matchedAdjustedSubsequentCloseList);
+                    subClosePricesRowID.add(m + len);
+                    baseline++;
                   }
                 }
                 // else {
@@ -2622,8 +2640,10 @@ class MainPresenter extends GetxController {
               continue;
             }
             // Probability calculation and amount of matched trends
-            double upperProb = upper.length / (upper.length + lower.length);
-            double lowerProb = lower.length / (upper.length + lower.length);
+            double upperProb =
+                upper.length / (upper.length + lower.length + baseline);
+            double lowerProb =
+                lower.length / (upper.length + lower.length + baseline);
             // Round to 3 decimal places
             upperProb = double.parse(upperProb.toStringAsFixed(4));
             lowerProb = double.parse(lowerProb.toStringAsFixed(4));

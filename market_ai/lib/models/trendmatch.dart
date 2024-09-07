@@ -83,9 +83,9 @@ class TrendMatch {
     MainPresenter.to.gskMatchRows.value = [];
     MainPresenter.to.tslaMatchRows.value = [];
     MainPresenter.to.amznMatchRows.value = [];
-    MainPresenter.to.matchPercentDifferencesListList.value = [];
-    MainPresenter.to.matchActualDifferencesListList.value = [];
-    MainPresenter.to.matchActualPricesListList.value = [];
+    // MainPresenter.to.matchPercentDifferencesListList.value = [];
+    // MainPresenter.to.matchActualDifferencesListList.value = [];
+    // MainPresenter.to.matchActualPricesListList.value = [];
 
     double candleTolerance = MainPresenter.to.candleTolerance.value / 100;
     double priceTolerance = MainPresenter.to.priceTolerance.value / 100;
@@ -1574,8 +1574,7 @@ class TrendMatch {
   List<FlSpot> getCurrentPriceLine() {
     List<FlSpot> flspotList = [];
 
-    double selectedLength =
-        MainPresenter.to.selectedPeriodPercentDifferencesList.length.toDouble();
+    double selectedLength = (MainPresenter.to.length.value - 1).toDouble();
     double subLen = MainPresenter.to.subLength.value.toDouble();
     double lastSelectedClosePrice = MainPresenter.to.candleListList.last[4];
 
