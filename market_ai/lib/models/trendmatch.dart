@@ -1753,7 +1753,7 @@ class TrendMatch {
         const Color(0xFFFF00FF), // Magenta
       ];
       double initialClosePrice = 0.0;
-      int mapLength = 0;
+      int mapLength = cluster.first.length;
 
       // Iterate over each map in the cluster list
       cluster.asMap().forEach((mapIndex, map) {
@@ -1786,18 +1786,14 @@ class TrendMatch {
         if (initialClosePrice == 0.0) {
           initialClosePrice = map['Close 1'][0];
         }
-        if (mapLength == 0) {
-          mapLength = map.length;
-        }
       });
 
       // Limit to 500 items if necessary
       lineBarsData = lineBarsData.take(500).toList();
 
       List<FlSpot> spots = [];
-      for (int i = 0; i < mapLength; i++) {
-        spots.add(FlSpot(i.toDouble(), initialClosePrice));
-      }
+      spots.add(FlSpot(0, initialClosePrice));
+      spots.add(FlSpot((mapLength - 1), initialClosePrice));
       lineBarsData.add(
         LineChartBarData(
           spots: spots,
