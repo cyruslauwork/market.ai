@@ -23,7 +23,7 @@ class Msg extends Translations {
           'tm_title1':
               '-timeunit(s) trend with matched historical trend(s) and their subsequent trend(s) (',
           'tm_title2': '% candle tolerance) (',
-          'tm_title3': '% price tolerance) (',
+          'tm_title3': '% price tolerance)',
           'tm_title4': '% first MA tolerance) (',
           'tm_title5': '% MA tolerance)',
           'sub_analyzing': 'Awaiting subsequent trend analytics results...',
@@ -215,7 +215,7 @@ class Msg extends Translations {
           'recent': '最近',
           'tm_title1': '時間單位的走勢與相似歷史走勢及其後續走勢(',
           'tm_title2': '% 陰陽燭容差) (',
-          'tm_title3': '% 價格容差) (',
+          'tm_title3': '% 價格容差)',
           'tm_title4': '% 第一平均線容差) (',
           'tm_title5': '% 平均線容差)',
           'sub_analyzing': '等待後續走勢分析結果...',

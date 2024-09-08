@@ -1840,8 +1840,8 @@ class TrendMatch {
             sideTitles: SideTitles(
                 reservedSize:
                     (Platform.isWindows || Platform.isLinux || Platform.isMacOS
-                        ? 24.w
-                        : 16.w),
+                        ? 31.w
+                        : 19.w),
                 showTitles: true)),
       ),
     );

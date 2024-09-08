@@ -660,7 +660,7 @@ class MainPresenter extends GetxController {
           .obs;
   RxString expectedMdd =
       (PrefsService.to.prefs.getString(SharedPreferencesConstant.expectedMdd) ??
-              '')
+              '±0')
           .obs;
   RxBool isLong =
       (PrefsService.to.prefs.getBool(SharedPreferencesConstant.isLong) ?? false)
@@ -897,7 +897,7 @@ class MainPresenter extends GetxController {
 
   void subsequentAnalyticsListener() {
     double width = (Platform.isWindows || Platform.isLinux || Platform.isMacOS
-        ? (Get.width - 10.w)
+        ? (Get.width - 5.w)
         : 135.w);
     if (subsequentAnalyticsNotifier.value &&
         subsequentAnalyticsErr.value != '') {
@@ -919,22 +919,25 @@ class MainPresenter extends GetxController {
       } else {
         sidePlot.value = SizedBox(
             child: Padding(
-          padding: EdgeInsets.only(top: 11.h),
+          padding: EdgeInsets.only(
+              top: (Platform.isWindows || Platform.isLinux || Platform.isMacOS
+                  ? 11.h
+                  : 8.h)),
           child: Image.memory(
             img10Bytes,
             width: (Platform.isWindows || Platform.isLinux || Platform.isMacOS
-                ? ((Get.width - 5.w) * 0.3)
-                : 52.5.w),
+                ? ((Get.width - 5.w) * 0.25)
+                : 35.6.w),
             height: (Platform.isWindows || Platform.isLinux || Platform.isMacOS
                 ? 109.h
-                : 78.h),
+                : 82.h),
             fit: BoxFit.fill,
           ),
         ));
         tmChartWidth.value =
             (Platform.isWindows || Platform.isLinux || Platform.isMacOS
-                ? ((Get.width - 5.w) * 0.7)
-                : 90.w);
+                ? ((Get.width - 5.w) * 0.75)
+                : 106.8.w);
       }
     } else {
       sidePlot.value = const SizedBox.shrink();
