@@ -233,16 +233,20 @@ def https(request):
                     last_time_key = int(last_time_key)
                     new_documents = [] # Initialize an empty list
                     for time, o, high, low, close, volume in zip(times, opens, highs, lows, closes, volumes):
+                        if int(time) <= last_time_key:
+                            continue # Skip the current iteration and move to the next iteration
+                        if time == 'null' or o == 'null' or high == 'null' or low == 'null' or close == 'null' or volume == 'null':
+                            continue # Skip the current iteration and move to the next iteration
                         if time is None or o is None or high is None or low is None or close is None or volume is None:
                             # Handle the case where any of the variables is None
                             continue  # Skip the current iteration and move to the next iteration
-                        if time == 'null' or o == 'null' or high == 'null' or low == 'null' or close == 'null' or volume == 'null':
-                            continue # Skip the current iteration and move to the next iteration
                         # Convert 'time' to string and check if the last character is not '0'
                         if str(time)[-1] != '0':
                             continue # Skip the current iteration and move to the next iteration
-                        if int(time) <= last_time_key:
-                            continue # Skip the current iteration and move to the next iteration
+                        if volume == 0:
+                            regular_end_time = response_data['chart']['result'][0]['meta']['currentTradingPeriod']['regular']['end']
+                            if time == regular_end_time:
+                                continue # Skip the current iteration and move to the next iteration
                         # Create a new JSON with the desired columns
                         result_json = {
                             'time_key': time,
