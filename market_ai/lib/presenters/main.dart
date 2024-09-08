@@ -3668,7 +3668,7 @@ class MainPresenter extends GetxController {
 
   String showCandleListListLastItem({required int i}) {
     if (candleListList.isNotEmpty) {
-      return candleListList.last[i].toString();
+      return candleListList.last[i].toStringAsFixed(4);
     } else {
       return 'Loading';
     }
