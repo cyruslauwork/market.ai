@@ -1606,17 +1606,16 @@ class MainPresenter extends GetxController {
       // Check whether the lock-in trend return rate has reaches the median return rate in matched trends
       if (closePosWhenReachedMedian.value) {
         thisReachedMedian = false;
-        for (final double spot in spots) {
-          final double thisReturnRate =
-              (spot - startingClosePrice) / startingClosePrice;
-          if (thisIsLong) {
-            if (thisReturnRate >= returnRate.value) {
-              thisReachedMedian = true;
-            }
-          } else if (thisIsShort) {
-            if (thisReturnRate <= returnRate.value) {
-              thisReachedMedian = true;
-            }
+        final double spot = spots.last;
+        final double thisReturnRate =
+            (spot - startingClosePrice) / startingClosePrice;
+        if (thisIsLong) {
+          if (thisReturnRate >= thisMinReturnRateThreshold) {
+            thisReachedMedian = true;
+          }
+        } else if (thisIsShort) {
+          if (thisReturnRate <= -thisMinReturnRateThreshold) {
+            thisReachedMedian = true;
           }
         }
         if (thisReachedMedian) {
