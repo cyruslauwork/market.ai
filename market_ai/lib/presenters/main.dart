@@ -1914,6 +1914,7 @@ class MainPresenter extends GetxController {
           bool isLong = false;
           bool isShort = false;
           double lastDifference = 0;
+          List<double> lastDifferenceList = [];
 
           // Look for similar trend(s)
           for (int m = initIndex;
@@ -1999,6 +2000,7 @@ class MainPresenter extends GetxController {
                 // Store the adjusted close prices into different lists
                 List<double> matchedAdjustedSubsequentCloseList = [];
                 lastDifference = lastClosePrice / candle[m + len - 1].close!;
+                lastDifferenceList.add(lastDifference);
                 for (int i = 0; i < subsequentLen; i++) {
                   double adjustedSubsequentClose =
                       candle[m + len + i].close! * lastDifference;
@@ -2317,7 +2319,7 @@ class MainPresenter extends GetxController {
                           firstHitID +
                           yFinMinuteDelay]
                       .close! *
-                  lastDifference;
+                  lastDifferenceList[randomIndex];
               interruptActualReturn = newVal - actualLastClosePrice;
               interruptActualReturnRate =
                   (newVal - actualLastClosePrice) / actualLastClosePrice;
