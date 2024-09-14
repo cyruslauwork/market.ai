@@ -1918,7 +1918,7 @@ class MainPresenter extends GetxController {
           List<double> lastDifferenceList = [];
 
           // Look for similar trend(s)
-          for (int m = initIndex;
+          for (int m = 0;
               m < candle.length - len - subsequentLen + 1 - yFinMinuteDelay;
               // Minus yFinMinuteDelay for actualReturn calculation
               m++) {
@@ -2521,7 +2521,7 @@ class MainPresenter extends GetxController {
             List<double> lastDifferenceList = [];
 
             // Look for similar trend(s)
-            for (int m = initIndex;
+            for (int m = 0;
                 m < candle.length - len - subsequentLen + 1 - yFinMinuteDelay;
                 // Minus yFinMinuteDelay for actualReturn calculation
                 m++) {
