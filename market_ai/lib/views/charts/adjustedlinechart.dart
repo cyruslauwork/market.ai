@@ -11,13 +11,15 @@ import 'package:market_ai/utils/utils.dart';
 
 class AdjustedLineChart extends StatelessWidget {
   final LineChartData lineChartData;
-  final isLockTrend = false;
 
   AdjustedLineChart(
-      {super.key, LineChartData? lineChartData, required bool isLockTrend})
+      {super.key,
+      LineChartData? lineChartData,
+      required bool isLockTrend,
+      bool isTracking = false})
       : lineChartData = lineChartData ??
-            TrendMatch()
-                .getDefaultAdjustedLineChartData(isLockTrend: isLockTrend);
+            TrendMatch().getDefaultAdjustedLineChartData(
+                isLockTrend: isLockTrend, isTracking: isTracking);
 
   @override
   Widget build(BuildContext context) {

@@ -623,6 +623,7 @@ class MainPresenter extends GetxController {
       (PrefsService.to.prefs.getInt(SharedPreferencesConstant.subLength) ?? 12)
           .obs;
   RxInt maxMa = 240.obs;
+  /* Lock-in Trend */
   RxBool isLockTrend =
       (PrefsService.to.prefs.getBool(SharedPreferencesConstant.lockTrend) ??
               false)
@@ -682,6 +683,8 @@ class MainPresenter extends GetxController {
     [0.0]
   ].obs;
   RxBool over = false.obs;
+  // TODO: add trackingSubLen here
+  // TODO: add expectedTrackingProb here
 
   /* Subsequent analytics */
   RxInt lastClosePriceAndSubsequentTrendsExeTime = 0.obs;
@@ -1179,6 +1182,7 @@ class MainPresenter extends GetxController {
     double thisExpectedProb = expectedProb.value;
     String thisExpectedMdd = expectedMdd.value;
     bool thisReachedMedian = reachedMedian.value;
+    // TODO: add tracking bool
 
     if (lockTrendDatetime != 0) {
       DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
@@ -1467,6 +1471,7 @@ class MainPresenter extends GetxController {
       if (closePosWhenReachedMedian.value) {
         thisReachedMedian = false;
       }
+      // TODO: reset local tracking
       Future.microtask(() {
         expectedProb.value = thisExpectedProb;
         returnRate.value = thisReturnRate.abs();
@@ -1476,9 +1481,10 @@ class MainPresenter extends GetxController {
         if (closePosWhenReachedMedian.value) {
           reachedMedian.value = false;
         }
-      });
+        // TODO: reset global tracking
+        // TODO: redefine global trackingSubLen to subLen here
+        // TODO: redefine global expectedTrackingProb to -1
 
-      Future.microtask(() {
         PrefsService.to.prefs
             .setBool(SharedPreferencesConstant.lowReturn, thisLowReturn);
         PrefsService.to.prefs
@@ -1501,6 +1507,7 @@ class MainPresenter extends GetxController {
             .setBool(SharedPreferencesConstant.isLong, thisIsLong);
         PrefsService.to.prefs
             .setBool(SharedPreferencesConstant.isShort, thisIsShort);
+        // TODO: reset tracking in pref
       });
     } else {
       List<double> spots = [];
@@ -1629,8 +1636,13 @@ class MainPresenter extends GetxController {
           });
         }
       }
+
+      // TODO: add tracking checking here (if the tracking is already hit, never redefine the bool again in this lock-in trend)
+      // TODO: calculate and redefine global trackingSubLen here
+      // TODO: calculation and redefine global expectedTrackingProb here
     }
 
+// TODO: modify instruction if a tracking has go opposite
     if ((!thisIsFirstThirtyMins &&
             !thisLowProb &&
             !thisLowReturn &&

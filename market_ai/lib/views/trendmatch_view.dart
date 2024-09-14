@@ -256,6 +256,8 @@ class TrendMatchView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AdjustedLineChart(isLockTrend: true),
+                  // TODO: add tracking probability l10n text here (not to show prob if expectedTrackingProb is -1
+                  AdjustedLineChart(isLockTrend: true, isTracking: true)
                 ],
               ),
             )

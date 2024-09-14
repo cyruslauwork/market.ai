@@ -1516,7 +1516,9 @@ class TrendMatch {
   }
 
   List<FlSpot> getAdjustedLineData(int index,
-      {List<int>? matchRows, List<List<dynamic>>? candleListList}) {
+      {List<int>? matchRows,
+      List<List<dynamic>>? candleListList,
+      double? subLen}) {
     List<FlSpot> flspotList = [];
     List<double> newLockTrendSubTrendList = [];
 
@@ -1530,7 +1532,7 @@ class TrendMatch {
     double lastActualDifference = lastSelectedClosePrice /
         candleListList[matchRows[index] + selectedLength.toInt()][4];
 
-    double subLen = MainPresenter.to.subLength.value.toDouble();
+    subLen ??= MainPresenter.to.subLength.value.toDouble();
 
     for (double i = 0; i < selectedLength + subLen + 1; i++) {
       if (i == selectedLength) {
@@ -1596,9 +1598,136 @@ class TrendMatch {
     return flspotList;
   }
 
-  LineChartData getDefaultAdjustedLineChartData({required bool isLockTrend}) {
+  LineChartData getDefaultAdjustedLineChartData(
+      {required bool isLockTrend, required bool isTracking}) {
     List<LineChartBarData> lineBarsData = [];
-    if (!isLockTrend) {
+    if (!isTracking) {
+      // TODO: trigger a trend matching here
+      trackingSubLen; // TODO: define trackingSubLen by variable in checkLockTrend
+      if (MainPresenter.to.alwaysUseCrossData.value) {
+        List<String> minuteDataList =
+            List<String>.from(MainPresenter.to.minuteDataList);
+        String fiSymbol = MainPresenter.to.financialInstrumentSymbol.value;
+        for (String symbol in minuteDataList) {
+          List<int> matchRows;
+          List<List<dynamic>> candleListList;
+          if (symbol == 'SPY' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.spyMatchRows;
+            candleListList = MainPresenter.to.spyCandleListList;
+          } else if (symbol == 'QQQ' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.qqqMatchRows;
+            candleListList = MainPresenter.to.qqqCandleListList;
+          } else if (symbol == 'USO' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.usoMatchRows;
+            candleListList = MainPresenter.to.usoCandleListList;
+          } else if (symbol == 'GLD' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.gldMatchRows;
+            candleListList = MainPresenter.to.gldCandleListList;
+          } else if (symbol == 'SLV' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.slvMatchRows;
+            candleListList = MainPresenter.to.slvCandleListList;
+          } else if (symbol == 'IWM' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.iwmMatchRows;
+            candleListList = MainPresenter.to.iwmCandleListList;
+          } else if (symbol == 'XLK' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.xlkMatchRows;
+            candleListList = MainPresenter.to.xlkCandleListList;
+          } else if (symbol == 'AAPL' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.aaplMatchRows;
+            candleListList = MainPresenter.to.aaplCandleListList;
+          } else if (symbol == 'BA' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.baMatchRows;
+            candleListList = MainPresenter.to.baCandleListList;
+          } else if (symbol == 'BAC' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.bacMatchRows;
+            candleListList = MainPresenter.to.bacCandleListList;
+          } else if (symbol == 'MCD' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.mcdMatchRows;
+            candleListList = MainPresenter.to.mcdCandleListList;
+          } else if (symbol == 'NVDA' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.nvdaMatchRows;
+            candleListList = MainPresenter.to.nvdaCandleListList;
+          } else if (symbol == 'MSFT' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.msftMatchRows;
+            candleListList = MainPresenter.to.msftCandleListList;
+          } else if (symbol == 'GSK' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.gskMatchRows;
+            candleListList = MainPresenter.to.gskCandleListList;
+          } else if (symbol == 'TSLA' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.tslaMatchRows;
+            candleListList = MainPresenter.to.tslaCandleListList;
+          } else if (symbol == 'AMZN' && symbol != fiSymbol) {
+            matchRows = MainPresenter.to.amznMatchRows;
+            candleListList = MainPresenter.to.amznCandleListList;
+          } else {
+            matchRows = MainPresenter.to.matchRows;
+            candleListList = MainPresenter.to.candleListList;
+          }
+          if (matchRows.isEmpty || candleListList.isEmpty) {
+            continue;
+          }
+          if (lineBarsData.length >= 500) {
+            break;
+          }
+          List<LineChartBarData> newLineBarsData = matchRows
+              .mapIndexed((index, row) => LineChartBarData(
+                  spots: getAdjustedLineData(
+                    index,
+                    matchRows: matchRows,
+                    candleListList: candleListList,
+                    subLen: trackingSubLen,
+                  ),
+                  isCurved: true,
+                  barWidth: 1,
+                  color: ThemeColor.secondary.value))
+              .take((500 - lineBarsData.length).clamp(0,
+                  500)) // Limit the items to the first 500 or the available number of lineBarsData
+              .toList();
+          lineBarsData.addAll(newLineBarsData);
+        }
+        lineBarsData.add(
+          LineChartBarData(
+            spots: getSelectedPeriodClosePrices(),
+            isCurved: true,
+            barWidth: 3,
+            color: ThemeColor.primary.value,
+          ),
+        );
+        lineBarsData.add(
+          LineChartBarData(
+            spots: getCurrentPriceLine(),
+            isCurved: false,
+            barWidth: 1,
+            color: AppColor.blackColor,
+          ),
+        );
+      } else {
+        lineBarsData = MainPresenter.to.matchRows
+            .mapIndexed((index, row) => LineChartBarData(
+                spots: getAdjustedLineData(index, subLen: trackingSubLen),
+                isCurved: true,
+                barWidth: 1,
+                color: ThemeColor.secondary.value))
+            .take(500) // Add this line to limit the items to the first 500
+            .toList()
+          ..add(
+            LineChartBarData(
+              spots: getSelectedPeriodClosePrices(),
+              isCurved: true,
+              barWidth: 3,
+              color: ThemeColor.primary.value,
+            ),
+          )
+          ..add(
+            LineChartBarData(
+              spots: getCurrentPriceLine(),
+              isCurved: false,
+              barWidth: 1,
+              color: AppColor.blackColor,
+            ),
+          );
+      }
+    } else if (!isLockTrend) {
       MainPresenter.to.lockTrendSubTrendList.value = [];
       if (MainPresenter.to.alwaysUseCrossData.value) {
         List<String> minuteDataList =
