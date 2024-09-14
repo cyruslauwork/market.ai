@@ -1914,8 +1914,7 @@ class MainPresenter extends GetxController {
           List<int> subClosePricesRowID = [];
           bool isLong = false;
           bool isShort = false;
-          double lastDifference = 0;
-          List<double> lastDifferenceList = [];
+          List<double> actualLastDifferenceList = [];
 
           // Look for similar trend(s)
           for (int m = 0;
@@ -2000,8 +1999,11 @@ class MainPresenter extends GetxController {
                 // printInfo(info: '✅ A trend MAs matched');
                 // Store the adjusted close prices into different lists
                 List<double> matchedAdjustedSubsequentCloseList = [];
-                lastDifference = lastClosePrice / candle[m + len - 1].close!;
-                lastDifferenceList.add(lastDifference);
+                double lastDifference =
+                    lastClosePrice / candle[m + len - 1].close!;
+                double actualLastDifference =
+                    lastClosePrice / candle[m + len - 1].close!;
+                actualLastDifferenceList.add(actualLastDifference);
                 for (int i = 0; i < subsequentLen; i++) {
                   double adjustedSubsequentClose =
                       candle[m + len + i].close! * lastDifference;
@@ -2320,7 +2322,7 @@ class MainPresenter extends GetxController {
                           firstHitID +
                           yFinMinuteDelay]
                       .close! *
-                  lastDifferenceList[randomIndex];
+                  actualLastDifferenceList[randomIndex];
               interruptActualReturn = newVal - actualLastClosePrice;
               interruptActualReturnRate =
                   (newVal - actualLastClosePrice) / actualLastClosePrice;
@@ -2517,8 +2519,7 @@ class MainPresenter extends GetxController {
             List<int> subClosePricesRowID = [];
             bool isLong = false;
             bool isShort = false;
-            double lastDifference = 0;
-            List<double> lastDifferenceList = [];
+            List<double> actualLastDifferenceList = [];
 
             // Look for similar trend(s)
             for (int m = 0;
@@ -2605,8 +2606,11 @@ class MainPresenter extends GetxController {
                   // printInfo(info: '✅ A trend MAs matched');
                   // Store the adjusted close prices into different lists
                   List<double> matchedAdjustedSubsequentCloseList = [];
-                  lastDifference = lastClosePrice / candle[m + len - 1].close!;
-                  lastDifferenceList.add(lastDifference);
+                  double lastDifference =
+                      lastClosePrice / candle[m + len - 1].close!;
+                  double actualLastDifference =
+                      lastClosePrice / candle[m + len - 1].close!;
+                  actualLastDifferenceList.add(actualLastDifference);
                   for (int i = 0; i < subsequentLen; i++) {
                     double adjustedSubsequentClose =
                         candle[m + len + i].close! * lastDifference;
@@ -2935,7 +2939,7 @@ class MainPresenter extends GetxController {
                             firstHitID +
                             yFinMinuteDelay]
                         .close! *
-                    lastDifferenceList[randomIndex];
+                    actualLastDifferenceList[randomIndex];
                 interruptActualReturn = newVal - actualLastClosePrice;
                 interruptActualReturnRate =
                     (newVal - actualLastClosePrice) / actualLastClosePrice;
