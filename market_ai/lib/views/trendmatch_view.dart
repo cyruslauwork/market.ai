@@ -255,7 +255,7 @@ class TrendMatchView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  AdjustedLineChart(isCluster: true),
+                  AdjustedLineChart(isLockTrend: true),
                 ],
               ),
             )
@@ -311,7 +311,7 @@ class TrendMatchView extends StatelessWidget {
             )
           ],
         ),
-        AdjustedLineChart(isCluster: false),
+        AdjustedLineChart(isLockTrend: false),
         MainPresenter.to.showMatchesExceededMsg(),
       ],
     );

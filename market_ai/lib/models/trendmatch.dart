@@ -1596,9 +1596,9 @@ class TrendMatch {
     return flspotList;
   }
 
-  LineChartData getDefaultAdjustedLineChartData({required bool isCluster}) {
+  LineChartData getDefaultAdjustedLineChartData({required bool isLockTrend}) {
     List<LineChartBarData> lineBarsData = [];
-    if (!isCluster) {
+    if (!isLockTrend) {
       MainPresenter.to.lockTrendSubTrendList.value = [];
       if (MainPresenter.to.alwaysUseCrossData.value) {
         List<String> minuteDataList =

@@ -11,18 +11,16 @@ import 'package:market_ai/utils/utils.dart';
 
 class AdjustedLineChart extends StatelessWidget {
   final LineChartData lineChartData;
-  final isCluster = false;
+  final isLockTrend = false;
 
   AdjustedLineChart(
-      {super.key, LineChartData? lineChartData, required bool isCluster})
+      {super.key, LineChartData? lineChartData, required bool isLockTrend})
       : lineChartData = lineChartData ??
-            TrendMatch().getDefaultAdjustedLineChartData(isCluster: isCluster);
+            TrendMatch()
+                .getDefaultAdjustedLineChartData(isLockTrend: isLockTrend);
 
   @override
   Widget build(BuildContext context) {
-    if (!isCluster) {
-      MainPresenter.to.checkLockTrend();
-    }
     return SingleChildScrollView(
       physics: const NeverScrollableScrollPhysics(),
       scrollDirection: Axis.horizontal,
