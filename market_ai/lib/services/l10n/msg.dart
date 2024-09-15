@@ -202,6 +202,7 @@ class Msg extends Translations {
               'Close position when reached median return rate',
           'reaching_median': '❌ Reaching median return rate',
           'not_reaching_median': '✅︎ Not reaching median return rate',
+          'lockin_trend_tracking_title': 'Lock-in Trend Tracking',
         },
         'zh_HK': {
           'app_name': '市場慧眼📈',
@@ -367,7 +368,8 @@ class Msg extends Translations {
           'not_over': '✅︎ 鎖定的走勢未完結',
           'close_pos_when_reached_median': '當觸及回報中位數時平倉',
           'reaching_median': '❌ 觸及回報中位數',
-          'not_reaching_median': '✅︎ 沒有觸及回報中位數'
+          'not_reaching_median': '✅︎ 沒有觸及回報中位數',
+          'lockin_trend_tracking_title': '鎖定走勢追踪',
         },
       };
 }

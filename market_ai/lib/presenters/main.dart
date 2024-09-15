@@ -683,8 +683,8 @@ class MainPresenter extends GetxController {
     [0.0]
   ].obs;
   RxBool over = false.obs;
-  // TODO: add trackingSubLen here
-  // TODO: add expectedTrackingProb here
+  RxInt trackingSubLen = 0.obs;
+  RxDouble expectedTrackingProb = 0.0.obs;
 
   /* Subsequent analytics */
   RxInt lastClosePriceAndSubsequentTrendsExeTime = 0.obs;
@@ -1190,7 +1190,7 @@ class MainPresenter extends GetxController {
     double thisExpectedProb = expectedProb.value;
     String thisExpectedMdd = expectedMdd.value;
     bool thisReachedMedian = reachedMedian.value;
-    // TODO: add tracking bool
+    bool thisTracking = isLockTrend.value;
 
     if (lockTrendDatetime != 0) {
       DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
@@ -1479,7 +1479,7 @@ class MainPresenter extends GetxController {
       if (closePosWhenReachedMedian.value) {
         thisReachedMedian = false;
       }
-      // TODO: reset local tracking
+      thisTracking = false;
       Future.microtask(() {
         expectedProb.value = thisExpectedProb;
         returnRate.value = thisReturnRate.abs();
@@ -1489,9 +1489,8 @@ class MainPresenter extends GetxController {
         if (closePosWhenReachedMedian.value) {
           reachedMedian.value = false;
         }
-        // TODO: reset global tracking
-        // TODO: redefine global trackingSubLen to subLen here
-        // TODO: redefine global expectedTrackingProb to -1
+        trackingSubLen.value = subLength.value;
+        expectedTrackingProb.value = -1;
 
         PrefsService.to.prefs
             .setBool(SharedPreferencesConstant.lowReturn, thisLowReturn);
@@ -1515,7 +1514,6 @@ class MainPresenter extends GetxController {
             .setBool(SharedPreferencesConstant.isLong, thisIsLong);
         PrefsService.to.prefs
             .setBool(SharedPreferencesConstant.isShort, thisIsShort);
-        // TODO: reset tracking in pref
       });
     } else {
       List<double> spots = [];

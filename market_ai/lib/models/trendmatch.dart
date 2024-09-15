@@ -1602,8 +1602,8 @@ class TrendMatch {
       {required bool isLockTrend, required bool isTracking}) {
     List<LineChartBarData> lineBarsData = [];
     if (!isTracking) {
-      // TODO: trigger a trend matching here
-      trackingSubLen; // TODO: define trackingSubLen by variable in checkLockTrend
+      TrendMatch().init();
+      double trackingSubLen = MainPresenter.to.trackingSubLen.value.toDouble();
       if (MainPresenter.to.alwaysUseCrossData.value) {
         List<String> minuteDataList =
             List<String>.from(MainPresenter.to.minuteDataList);
