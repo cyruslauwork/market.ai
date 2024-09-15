@@ -588,13 +588,11 @@ class Candle {
           }
           MainPresenter.to.isMarketDataProviderErr.value = true;
           return dummyData;
-        }
-        if (jsonData.containsKey('public_url')) {
+        } else if (jsonData.containsKey('public_url')) {
           String publicUrl = jsonData['public_url'];
           final res = await HTTPService().getFetchJson(publicUrl);
           jsonData = res;
-        }
-        if (jsonData.containsKey('message')) {
+        } else if (jsonData.containsKey('message')) {
           if (jsonData['message'] == 'No update required') {
             switch (stockSymbol) {
               case 'SPY':

@@ -195,14 +195,14 @@ def https(request):
                         volumes = volumes[:-2]
                         print('Due to trading hours, the last 2 items from each list have been removed')
                     # Get last_time_key
-                    field_name = 'last_time_key'
+                    last_time_key_field_name = 'last_time_key'
                     print(f'Retrieving last_time_key document in {symbol}_update collection')
-                    last_time_key_doc_ref = update_collection_ref.document(field_name)
+                    last_time_key_doc_ref = update_collection_ref.document(last_time_key_field_name)
                     doc = last_time_key_doc_ref.get()
                     if doc.exists:
-                        last_time_key = doc.get(field_name)
+                        last_time_key = doc.get(last_time_key_field_name)
                         if last_time_key is None:
-                            print(f'{field_name} is not set in the document')
+                            print(f'{last_time_key_field_name} is not set in the document')
                             docs = collection_ref.order_by('time_key', direction=firestore.Query.DESCENDING).limit(1).stream(retry=Retry())
                             for doc in docs:
                                 last_time_key = doc.get('time_key')
@@ -211,8 +211,8 @@ def https(request):
                                 doc_ref = update_collection_ref.document(is_updating)
                                 doc_ref.update({is_updating: 0})
                                 return
-                            last_time_key_doc_ref = update_collection_ref.document(field_name)
-                            last_time_key_doc_ref.update({field_name: last_time_key})
+                            last_time_key_doc_ref = update_collection_ref.document(last_time_key_field_name)
+                            last_time_key_doc_ref.update({last_time_key_field_name: last_time_key})
                             print(f'Updated value {last_time_key} in last_time_key document in {symbol}_update collection')
                         else:
                             print(f'value {last_time_key} in last_time_key document in {symbol}_update collection retrieved')
@@ -226,11 +226,12 @@ def https(request):
                             doc_ref = update_collection_ref.document(is_updating)
                             doc_ref.update({is_updating: 0})
                             return
-                        last_time_key_doc_ref = update_collection_ref.document(field_name)
-                        last_time_key_doc_ref.set({field_name: last_time_key})
+                        last_time_key_doc_ref = update_collection_ref.document(last_time_key_field_name)
+                        last_time_key_doc_ref.set({last_time_key_field_name: last_time_key})
                         print(f'Added value {last_time_key} in last_time_key document in {symbol}_update collection')
                     print(f'Filtering time_key from new document(s) that have not value greater than last_time_key {last_time_key}')
                     last_time_key = int(last_time_key)
+                    LAST_TIME_KEY = last_time_key
                     new_documents = [] # Initialize an empty list
                     for time, o, high, low, close, volume in zip(times, opens, highs, lows, closes, volumes):
                         if int(time) <= last_time_key:
@@ -287,8 +288,8 @@ def https(request):
                         # Update last_time_key document
                         last_time_key = max(doc['time_key'] for doc in new_documents)
                         print(f'Updating last_time_key document in {symbol}_update collection with value {last_time_key}')
-                        doc_ref = update_collection_ref.document(field_name)
-                        doc_ref.update({field_name: last_time_key})
+                        doc_ref = update_collection_ref.document(last_time_key_field_name)
+                        doc_ref.update({last_time_key_field_name: last_time_key})
                         # Reset queue and update status
                         docs = update_queue_collection_ref.stream(retry=Retry())
                         for doc in docs:
@@ -298,11 +299,13 @@ def https(request):
                         # Create/update Cloud Storage
                         if timestamp == -1 or timestamp == 0: # Request from server (-1) or client with no data (0)
                             backend_json_data = {'content': []}
+                            json_file_last_time_key = None
                             if bucket.exists():
                                 if blob.exists():
                                     json_file = download_blob_with_retry(blob)
                                     collection = json.loads(json_file)
                                     docs = collection.get('content', [])
+                                    json_file_last_time_key = collection.get(last_time_key_field_name, None)
                                     if docs is None or docs == 'null':
                                         docs = []
                                     blob.delete()  # Delete existing blob
@@ -311,8 +314,38 @@ def https(request):
                                     print(f'Retrieving all documents in {symbol} collection')
                                     docs = collection_ref.order_by('time_key').stream(retry=Retry())
                                     docs = [doc.to_dict() for doc in docs]
-                                    new_documents = []
+                                new_documents = []
+                                if json_file_last_time_key is not None:
+                                    comparison_value = json_file_last_time_key
+                                else:
+                                    comparison_value = LAST_TIME_KEY
+                                for time, o, high, low, close, volume in zip(times, opens, highs, lows, closes, volumes):
+                                    if int(time) <= comparison_value:
+                                        continue # Skip the current iteration and move to the next iteration
+                                    if time == 'null' or o == 'null' or high == 'null' or low == 'null' or close == 'null' or volume == 'null':
+                                        continue # Skip the current iteration and move to the next iteration
+                                    if time is None or o is None or high is None or low is None or close is None or volume is None:
+                                        # Handle the case where any of the variables is None
+                                        continue  # Skip the current iteration and move to the next iteration
+                                    # Convert 'time' to string and check if the last character is not '0'
+                                    if str(time)[-1] != '0':
+                                        continue # Skip the current iteration and move to the next iteration
+                                    if volume == 0:
+                                        regular_end_time = response_data['chart']['result'][0]['meta']['currentTradingPeriod']['regular']['end']
+                                        if time == regular_end_time:
+                                            continue # Skip the current iteration and move to the next iteration
+                                    # Create a new JSON with the desired columns
+                                    result_json = {
+                                        'time_key': time,
+                                        'open': round(o, 4),
+                                        'high': round(high, 4),
+                                        'low': round(low, 4),
+                                        'close': round(close, 4),
+                                        'volume': volume
+                                    }
+                                    new_documents.append(result_json) # Append the dictionary to the list
                                 backend_json_data['content'] = docs + new_documents
+                                backend_json_data[last_time_key_field_name] = LAST_TIME_KEY
                                 # Convert the result to JSON format
                                 json_str = json.dumps(backend_json_data)
                                 try:
@@ -335,6 +368,7 @@ def https(request):
                                 print(f'Retrieved required document(s) in {symbol} collection')
                                 print(f'Preparing to return JSON')
                                 backend_json_data['content'] = docs_list
+                                backend_json_data[last_time_key_field_name] = LAST_TIME_KEY
                                 print('Uploading JSON to GCS')
                                 # Convert the result to JSON format
                                 json_str = json.dumps(backend_json_data)

@@ -425,9 +425,33 @@ class MainView extends StatefulWidget {
               ),
             ),
             const Divider(),
-            Obx(() => (MainPresenter.to.backtestDataLen.value != 0
+            Obx(() => (MainPresenter.to.backtestDataLen1.value != 0
                 ? Text(
-                    '${MainPresenter.to.backtestDataRan.value}/${MainPresenter.to.backtestDataLen.value}',
+                    '${MainPresenter.to.backtestDataRan1.value}/${MainPresenter.to.backtestDataLen1.value}',
+                    style: const TextTheme().sp5.w700,
+                  )
+                : const SizedBox.shrink())),
+            Obx(() => (MainPresenter.to.backtestDataLen2.value != 0
+                ? Text(
+                    '${MainPresenter.to.backtestDataRan2.value}/${MainPresenter.to.backtestDataLen2.value}',
+                    style: const TextTheme().sp5.w700,
+                  )
+                : const SizedBox.shrink())),
+            Obx(() => (MainPresenter.to.backtestDataLen3.value != 0
+                ? Text(
+                    '${MainPresenter.to.backtestDataRan3.value}/${MainPresenter.to.backtestDataLen3.value}',
+                    style: const TextTheme().sp5.w700,
+                  )
+                : const SizedBox.shrink())),
+            Obx(() => (MainPresenter.to.backtestDataLen4.value != 0
+                ? Text(
+                    '${MainPresenter.to.backtestDataRan4.value}/${MainPresenter.to.backtestDataLen4.value}',
+                    style: const TextTheme().sp5.w700,
+                  )
+                : const SizedBox.shrink())),
+            Obx(() => (MainPresenter.to.backtestDataLen5.value != 0
+                ? Text(
+                    '${MainPresenter.to.backtestDataRan5.value}/${MainPresenter.to.backtestDataLen5.value}',
                     style: const TextTheme().sp5.w700,
                   )
                 : const SizedBox.shrink())),
