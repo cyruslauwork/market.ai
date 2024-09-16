@@ -1552,7 +1552,12 @@ class TrendMatch {
       }
     }
 
-    MainPresenter.to.lockTrendSubTrendList.add(newLockTrendSubTrendList);
+    if (!isTracking) {
+      MainPresenter.to.lockTrendSubTrendList.add(newLockTrendSubTrendList);
+    } else {
+      MainPresenter.to.lockTrendTrackingSubTrendList
+          .add(newLockTrendSubTrendList);
+    }
     return flspotList;
   }
 
@@ -1601,9 +1606,10 @@ class TrendMatch {
   LineChartData getDefaultAdjustedLineChartData(
       {required bool isLockTrend, required bool isTracking}) {
     List<LineChartBarData> lineBarsData = [];
-    if (!isTracking) {
+    if (isTracking) {
       TrendMatch().init();
       double trackingSubLen = MainPresenter.to.trackingSubLen.value.toDouble();
+      // TODO: modify the below storages for tracking
       if (MainPresenter.to.alwaysUseCrossData.value) {
         List<String> minuteDataList =
             List<String>.from(MainPresenter.to.minuteDataList);

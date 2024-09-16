@@ -23,6 +23,9 @@ class TrendMatchView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double probThreshold = MainPresenter.to.probThreshold.value;
+    double minReturnRateThreshold =
+        MainPresenter.to.minReturnRateThreshold.value;
     return Obx(
       () => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -76,20 +79,20 @@ class TrendMatchView extends StatelessWidget {
                       )),
                 (MainPresenter.to.lowReturn.value
                     ? Text(
-                        '${'low_return_rate'.tr + (MainPresenter.to.minReturnRateThreshold.value * 100).toStringAsFixed(3)}%',
+                        '${'low_return_rate'.tr + (minReturnRateThreshold * 100).toStringAsFixed(3)}%',
                         style: MainPresenter.to.lockTrendTextStyle.value,
                       )
                     : Text(
-                        '${'profitable_return_rate'.tr + (MainPresenter.to.minReturnRateThreshold.value * 100).toStringAsFixed(3)}%',
+                        '${'profitable_return_rate'.tr + (minReturnRateThreshold * 100).toStringAsFixed(3)}%',
                         style: MainPresenter.to.lockTrendTextStyle.value,
                       )),
                 (MainPresenter.to.lowProb.value
                     ? Text(
-                        '${'low_probability'.tr + (MainPresenter.to.probThreshold.value * 100).toStringAsFixed(0)}%',
+                        '${'low_probability'.tr + (probThreshold * 100).toStringAsFixed(0)}%',
                         style: MainPresenter.to.lockTrendTextStyle.value,
                       )
                     : Text(
-                        '${'high_probability'.tr + (MainPresenter.to.probThreshold.value * 100).toStringAsFixed(0)}%',
+                        '${'high_probability'.tr + (probThreshold * 100).toStringAsFixed(0)}%',
                         style: MainPresenter.to.lockTrendTextStyle.value,
                       )),
                 (MainPresenter.to.trendsNotOneSided.value
@@ -150,6 +153,15 @@ class TrendMatchView extends StatelessWidget {
                             style: MainPresenter.to.lockTrendTextStyle.value,
                           )),
                   ],
+                  (MainPresenter.to.trackingHits.value
+                      ? Text(
+                          '${'lockin_trend_tracking_hits'.tr + (probThreshold * 100).toStringAsFixed(0)}%',
+                          style: MainPresenter.to.lockTrendTextStyle.value,
+                        )
+                      : Text(
+                          '${'lockin_trend_tracking_not_hits'.tr + (probThreshold * 100).toStringAsFixed(0)}%',
+                          style: MainPresenter.to.lockTrendTextStyle.value,
+                        )),
                 ],
                 SizedBox(
                   height: 5.h,

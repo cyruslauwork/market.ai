@@ -685,6 +685,10 @@ class MainPresenter extends GetxController {
   RxBool over = false.obs;
   RxInt trackingSubLen = 0.obs;
   RxDouble expectedTrackingProb = 0.0.obs;
+  RxBool trackingHits =
+      (PrefsService.to.prefs.getBool(SharedPreferencesConstant.trackingHits) ??
+              true)
+          .obs;
 
   /* Subsequent analytics */
   RxInt lastClosePriceAndSubsequentTrendsExeTime = 0.obs;
@@ -1190,7 +1194,7 @@ class MainPresenter extends GetxController {
     double thisExpectedProb = expectedProb.value;
     String thisExpectedMdd = expectedMdd.value;
     bool thisReachedMedian = reachedMedian.value;
-    bool thisTracking = isLockTrend.value;
+    bool thisTrackingHits = trackingHits.value;
 
     if (lockTrendDatetime != 0) {
       DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
@@ -1479,16 +1483,17 @@ class MainPresenter extends GetxController {
       if (closePosWhenReachedMedian.value) {
         thisReachedMedian = false;
       }
-      thisTracking = false;
+      thisTrackingHits = false;
       Future.microtask(() {
         expectedProb.value = thisExpectedProb;
         returnRate.value = thisReturnRate.abs();
-        hitCeilingOrFloor.value = false;
-        goOpposite.value = false;
-        over.value = false;
+        hitCeilingOrFloor.value = thisHitCeilingOrFloor;
+        goOpposite.value = thisGoOpposite;
+        over.value = thisOver;
         if (closePosWhenReachedMedian.value) {
-          reachedMedian.value = false;
+          reachedMedian.value = thisReachedMedian;
         }
+        trackingHits.value = thisTrackingHits;
         trackingSubLen.value = subLength.value;
         expectedTrackingProb.value = -1;
 
@@ -1514,6 +1519,8 @@ class MainPresenter extends GetxController {
             .setBool(SharedPreferencesConstant.isLong, thisIsLong);
         PrefsService.to.prefs
             .setBool(SharedPreferencesConstant.isShort, thisIsShort);
+        PrefsService.to.prefs
+            .setBool(SharedPreferencesConstant.trackingHits, thisTrackingHits);
       });
     } else {
       List<double> spots = [];
@@ -1643,12 +1650,24 @@ class MainPresenter extends GetxController {
         }
       }
 
-      // TODO: add tracking checking here (if the tracking is already hit, never redefine the bool again in this lock-in trend)
+      // Check if a tracking probability has lower than or equal to probThreshold 
       // TODO: calculate and redefine global trackingSubLen here
+      // TODO: use lockTrendLastRow + time lapsed to call TrendMatch.init() and get the indices, 
+      // and storing the matched rows by new variables.
+      lockTrendTrackingSubTrendList.value;
       // TODO: calculation and redefine global expectedTrackingProb here
+        if () {
+        thisTrackingHits = true;
+        Future.microtask(() {
+          trackingHits.value = true;
+          PrefsService.to.prefs.setBool(
+              SharedPreferencesConstant.trackingHits, thisTrackingHits);
+        });
+        } else {
+          
+        }
     }
 
-// TODO: modify instruction if a tracking has go opposite
     if ((!thisIsFirstThirtyMins &&
             !thisLowProb &&
             !thisLowReturn &&
@@ -1656,7 +1675,8 @@ class MainPresenter extends GetxController {
             !thisTrendsLessThanFive &&
             !thisHitCeilingOrFloor &&
             !thisGoOpposite &&
-            !thisOver) ||
+            !thisOver &&
+            !thisTrackingHits) ||
         (!thisIsFirstThirtyMins &&
             !thisLowProb &&
             !thisLowReturn &&
@@ -1664,7 +1684,8 @@ class MainPresenter extends GetxController {
             !thisTrendsOneSidedButLessThanFour &&
             !thisHitCeilingOrFloor &&
             !thisGoOpposite &&
-            !thisOver)) {
+            !thisOver &&
+            !thisTrackingHits)) {
       if (closePosWhenReachedMedian.value) {
         if (thisReachedMedian) {
           Future.microtask(() {

@@ -203,6 +203,9 @@ class Msg extends Translations {
           'reaching_median': '❌ Reaching median return rate',
           'not_reaching_median': '✅︎ Not reaching median return rate',
           'lockin_trend_tracking_title': 'Lock-in Trend Tracking',
+          'lockin_trend_tracking_hits': '❌ Tracking(s) has/have probability ≤',
+          'lockin_trend_tracking_not_hits':
+              '✅︎ No tracking(s) has/have probability ≤',
         },
         'zh_HK': {
           'app_name': '市場慧眼📈',
@@ -370,6 +373,8 @@ class Msg extends Translations {
           'reaching_median': '❌ 觸及回報中位數',
           'not_reaching_median': '✅︎ 沒有觸及回報中位數',
           'lockin_trend_tracking_title': '鎖定走勢追踪',
+          'lockin_trend_tracking_hits': '❌ 鎖定走勢的追踪機率曾 ≤',
+          'lockin_trend_tracking_not_hits': '✅︎ 沒有鎖定走勢的追踪機率曾 ≤',
         },
       };
 }
