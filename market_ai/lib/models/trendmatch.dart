@@ -24,9 +24,12 @@ class TrendMatch {
   factory TrendMatch() => _instance;
   TrendMatch._();
 
-  init() async {
+  init({bool isTracking = false}) async {
     List<CandleData> listCandledata = MainPresenter.to.listCandledata;
-    int dataLength = listCandledata.length;
+    int dataLength = isTracking
+        ? PrefsService.to.prefs
+            .getInt(SharedPreferencesConstant.lockTrendLastRow)!
+        : listCandledata.length;
     int totalDataLength = dataLength;
 
     // For price matching
@@ -58,7 +61,9 @@ class TrendMatch {
     int trueCount = 0;
     int falseCount = 0;
     int len = MainPresenter.to.length.value;
-    int subLen = MainPresenter.to.subLength.value;
+    int subLen = isTracking
+        ? MainPresenter.to.trackingSubLen.value
+        : MainPresenter.to.subLength.value;
 
     if (len <= 1) {
       throw ArgumentError('Selected period must greater than 1 time unit.');
@@ -86,6 +91,23 @@ class TrendMatch {
     // MainPresenter.to.matchPercentDifferencesListList.value = [];
     // MainPresenter.to.matchActualDifferencesListList.value = [];
     // MainPresenter.to.matchActualPricesListList.value = [];
+    MainPresenter.to.trackingMatchRows.value = [];
+    MainPresenter.to.trackingSpyMatchRows.value = [];
+    MainPresenter.to.trackingQqqMatchRows.value = [];
+    MainPresenter.to.trackingUsoMatchRows.value = [];
+    MainPresenter.to.trackingGldMatchRows.value = [];
+    MainPresenter.to.trackingSlvMatchRows.value = [];
+    MainPresenter.to.trackingIwmMatchRows.value = [];
+    MainPresenter.to.trackingXlkMatchRows.value = [];
+    MainPresenter.to.trackingAaplMatchRows.value = [];
+    MainPresenter.to.trackingBaMatchRows.value = [];
+    MainPresenter.to.trackingBacMatchRows.value = [];
+    MainPresenter.to.trackingMcdMatchRows.value = [];
+    MainPresenter.to.trackingNvdaMatchRows.value = [];
+    MainPresenter.to.trackingMsftMatchRows.value = [];
+    MainPresenter.to.trackingGskMatchRows.value = [];
+    MainPresenter.to.trackingTslaMatchRows.value = [];
+    MainPresenter.to.trackingAmznMatchRows.value = [];
 
     double candleTolerance = MainPresenter.to.candleTolerance.value / 100;
     double priceTolerance = MainPresenter.to.priceTolerance.value / 100;
@@ -195,12 +217,14 @@ class TrendMatch {
     // for (int i = len; i > 0; i--) {
     //   selectedPeriodActualPricesList.add(listCandledata[dataLength - i].close!);
     // }
-    MainPresenter.to.selectedPeriodPercentDifferencesList.value =
-        selectedPeriodPercentDifferencesList;
-    // MainPresenter.to.selectedPeriodActualDifferencesList.value =
-    //     selectedPeriodActualDifferencesList;
-    // MainPresenter.to.selectedPeriodActualPricesList.value =
-    //     selectedPeriodActualPricesList;
+    if (!isTracking) {
+      MainPresenter.to.selectedPeriodPercentDifferencesList.value =
+          selectedPeriodPercentDifferencesList;
+      // MainPresenter.to.selectedPeriodActualDifferencesList.value =
+      //     selectedPeriodActualDifferencesList;
+      // MainPresenter.to.selectedPeriodActualPricesList.value =
+      //     selectedPeriodActualPricesList;
+    }
 
     int maxMa() {
       if (MainPresenter.to.hasMinuteData.value &&
@@ -214,455 +238,122 @@ class TrendMatch {
     }
 
     final isar = await IsarService().getIsarInstance();
-    int thisLen;
+    List<String> minuteDataList;
     bool alwaysUseCrossData = MainPresenter.to.alwaysUseCrossData.value;
     String symbol = MainPresenter.to.financialInstrumentSymbol.value;
     // int dummyCandleLen = MainPresenter.to.dummyCandle.length;
     if (alwaysUseCrossData) {
-      thisLen = MainPresenter.to.minuteDataList.length + 1;
-      // if (MainPresenter.to.spyListCandledata.length != dummyCandleLen ||
-      //     MainPresenter.to.qqqListCandledata.length != dummyCandleLen ||
-      //     MainPresenter.to.usoListCandledata.length != dummyCandleLen ||
-      //     MainPresenter.to.gldListCandledata.length != dummyCandleLen ||
-      //     MainPresenter.to.slvListCandledata.length != dummyCandleLen ||
-      //     MainPresenter.to.iwmListCandledata.length != dummyCandleLen ||
-      //     MainPresenter.to.xlkListCandledata.length != dummyCandleLen ||
-      //     MainPresenter.to.aaplListCandledata.length != dummyCandleLen ||
-      //     MainPresenter.to.baListCandledata.length != dummyCandleLen ||
-      //     MainPresenter.to.bacListCandledata.length != dummyCandleLen ||
-      //     MainPresenter.to.mcdListCandledata.length != dummyCandleLen ||
-      //     MainPresenter.to.nvdaListCandledata.length != dummyCandleLen ||
-      //     MainPresenter.to.msftListCandledata.length != dummyCandleLen ||
-      //     MainPresenter.to.gskListCandledata.length != dummyCandleLen ||
-      //     MainPresenter.to.tslaListCandledata.length != dummyCandleLen ||
-      //     MainPresenter.to.amznListCandledata.length != dummyCandleLen) {
-      //   MainPresenter.to.dispose();
-      //   Get.put(MainPresenter());
-      //   logger.d('Instance "MainPresenter" has been reloaded');
-      // }
+      minuteDataList = MainPresenter.to.minuteDataList;
     } else {
-      thisLen = 1;
+      minuteDataList = [symbol];
     }
-    for (int i = 0; i < thisLen; i++) {
+    for (String thisSymbol in minuteDataList) {
       String thisTurnSymbol = '';
       dynamic dataList;
-      // bool hasData = false;
-      // List<CandleData> spyListCandledata = MainPresenter.to.spyListCandledata;
-      // List<CandleData> qqqListCandledata = MainPresenter.to.qqqListCandledata;
-      // List<CandleData> usoListCandledata = MainPresenter.to.usoListCandledata;
-      // List<CandleData> gldListCandledata = MainPresenter.to.gldListCandledata;
-      // List<CandleData> slvListCandledata = MainPresenter.to.slvListCandledata;
-      // List<CandleData> iwmListCandledata = MainPresenter.to.iwmListCandledata;
-      // List<CandleData> xlkListCandledata = MainPresenter.to.xlkListCandledata;
-      // List<CandleData> aaplListCandledata = MainPresenter.to.aaplListCandledata;
-      // List<CandleData> baListCandledata = MainPresenter.to.baListCandledata;
-      // List<CandleData> bacListCandledata = MainPresenter.to.bacListCandledata;
-      // List<CandleData> mcdListCandledata = MainPresenter.to.mcdListCandledata;
-      // List<CandleData> nvdaListCandledata = MainPresenter.to.nvdaListCandledata;
-      // List<CandleData> msftListCandledata = MainPresenter.to.msftListCandledata;
-      // List<CandleData> gskListCandledata = MainPresenter.to.gskListCandledata;
-      // List<CandleData> tslaListCandledata = MainPresenter.to.tslaListCandledata;
-      // List<CandleData> amznListCandledata = MainPresenter.to.amznListCandledata;
-      if (i != 0) {
-        if (i == 1 && symbol != 'SPY') {
-          // if (spyListCandledata.isEmpty ||
-          //     spyListCandledata.length <= dummyCandleLen) {
-          dataList = await isar.spyDatas.where().sortByTimeKey().findAll();
-          thisTurnSymbol = 'SPY';
-          if (dataList.isEmpty) {
-            continue;
-          }
-          // } else {
-          //   hasData = true;
-          //   listCandledata = spyListCandledata;
-          // }
-        } else if (i == 2 && symbol != 'QQQ') {
-          // if (qqqListCandledata.isEmpty ||
-          //     qqqListCandledata.length <= dummyCandleLen) {
-          dataList = await isar.qqqDatas.where().sortByTimeKey().findAll();
-          thisTurnSymbol = 'QQQ';
-          if (dataList.isEmpty) {
-            continue;
-          }
-          // } else {
-          //   hasData = true;
-          //   listCandledata = qqqListCandledata;
-          // }
-        } else if (i == 3 && symbol != 'USO') {
-          // if (usoListCandledata.isEmpty ||
-          //     usoListCandledata.length <= dummyCandleLen) {
-          dataList = await isar.usoDatas.where().sortByTimeKey().findAll();
-          thisTurnSymbol = 'USO';
-          if (dataList.isEmpty) {
-            continue;
-          }
-          // } else {
-          //   hasData = true;
-          //   listCandledata = usoListCandledata;
-          // }
-        } else if (i == 4 && symbol != 'GLD') {
-          // if (gldListCandledata.isEmpty ||
-          //     gldListCandledata.length <= dummyCandleLen) {
-          dataList = await isar.gldDatas.where().sortByTimeKey().findAll();
-          thisTurnSymbol = 'GLD';
-          if (dataList.isEmpty) {
-            continue;
-          }
-          // } else {
-          //   hasData = true;
-          //   listCandledata = gldListCandledata;
-          // }
-        } else if (i == 5 && symbol != 'SLV') {
-          // if (slvListCandledata.isEmpty ||
-          //     slvListCandledata.length <= dummyCandleLen) {
-          dataList = await isar.slvDatas.where().sortByTimeKey().findAll();
-          thisTurnSymbol = 'SLV';
-          if (dataList.isEmpty) {
-            continue;
-          }
-          // } else {
-          //   hasData = true;
-          //   listCandledata = slvListCandledata;
-          // }
-        } else if (i == 6 && symbol != 'IWM') {
-          // if (iwmListCandledata.isEmpty ||
-          //     iwmListCandledata.length <= dummyCandleLen) {
-          dataList = await isar.iwmDatas.where().sortByTimeKey().findAll();
-          thisTurnSymbol = 'IWM';
-          if (dataList.isEmpty) {
-            continue;
-          }
-          // } else {
-          //   hasData = true;
-          //   listCandledata = iwmListCandledata;
-          // }
-        } else if (i == 7 && symbol != 'XLK') {
-          // if (xlkListCandledata.isEmpty ||
-          //     xlkListCandledata.length <= dummyCandleLen) {
-          dataList = await isar.xlkDatas.where().sortByTimeKey().findAll();
-          thisTurnSymbol = 'XLK';
-          if (dataList.isEmpty) {
-            continue;
-          }
-          // } else {
-          //   hasData = true;
-          //   listCandledata = xlkListCandledata;
-          // }
-        } else if (i == 8 && symbol != 'AAPL') {
-          // if (aaplListCandledata.isEmpty ||
-          //     aaplListCandledata.length <= dummyCandleLen) {
-          dataList = await isar.aaplDatas.where().sortByTimeKey().findAll();
-          thisTurnSymbol = 'AAPL';
-          if (dataList.isEmpty) {
-            continue;
-          }
-          // } else {
-          //   hasData = true;
-          //   listCandledata = aaplListCandledata;
-          // }
-        } else if (i == 9 && symbol != 'BA') {
-          // if (baListCandledata.isEmpty ||
-          //     baListCandledata.length <= dummyCandleLen) {
-          dataList = await isar.baDatas.where().sortByTimeKey().findAll();
-          thisTurnSymbol = 'BA';
-          if (dataList.isEmpty) {
-            continue;
-          }
-          // } else {
-          //   hasData = true;
-          //   listCandledata = baListCandledata;
-          // }
-        } else if (i == 10 && symbol != 'BAC') {
-          // if (bacListCandledata.isEmpty ||
-          //     bacListCandledata.length <= dummyCandleLen) {
-          dataList = await isar.bacDatas.where().sortByTimeKey().findAll();
-          thisTurnSymbol = 'BAC';
-          if (dataList.isEmpty) {
-            continue;
-          }
-          // } else {
-          //   hasData = true;
-          //   listCandledata = bacListCandledata;
-          // }
-        } else if (i == 11 && symbol != 'MCD') {
-          // if (mcdListCandledata.isEmpty ||
-          //     mcdListCandledata.length <= dummyCandleLen) {
-          dataList = await isar.mcdDatas.where().sortByTimeKey().findAll();
-          thisTurnSymbol = 'MCD';
-          if (dataList.isEmpty) {
-            continue;
-          }
-          // } else {
-          //   hasData = true;
-          //   listCandledata = mcdListCandledata;
-          // }
-        } else if (i == 12 && symbol != 'NVDA') {
-          // if (nvdaListCandledata.isEmpty ||
-          //     nvdaListCandledata.length <= dummyCandleLen) {
-          dataList = await isar.nvdaDatas.where().sortByTimeKey().findAll();
-          thisTurnSymbol = 'NVDA';
-          if (dataList.isEmpty) {
-            continue;
-          }
-          // } else {
-          //   hasData = true;
-          //   listCandledata = nvdaListCandledata;
-          // }
-        } else if (i == 13 && symbol != 'MSFT') {
-          // if (msftListCandledata.isEmpty ||
-          //     msftListCandledata.length <= dummyCandleLen) {
-          dataList = await isar.msftDatas.where().sortByTimeKey().findAll();
-          thisTurnSymbol = 'MSFT';
-          if (dataList.isEmpty) {
-            continue;
-          }
-          // } else {
-          //   hasData = true;
-          //   listCandledata = msftListCandledata;
-          // }
-        } else if (i == 14 && symbol != 'GSK') {
-          // if (gskListCandledata.isEmpty ||
-          //     gskListCandledata.length <= dummyCandleLen) {
-          dataList = await isar.gskDatas.where().sortByTimeKey().findAll();
-          thisTurnSymbol = 'GSK';
-          if (dataList.isEmpty) {
-            continue;
-          }
-          // } else {
-          //   hasData = true;
-          //   listCandledata = gskListCandledata;
-          // }
-        } else if (i == 15 && symbol != 'TSLA') {
-          // if (tslaListCandledata.isEmpty ||
-          //     tslaListCandledata.length <= dummyCandleLen) {
-          dataList = await isar.tslaDatas.where().sortByTimeKey().findAll();
-          thisTurnSymbol = 'TSLA';
-          if (dataList.isEmpty) {
-            continue;
-          }
-          // } else {
-          //   hasData = true;
-          //   listCandledata = tslaListCandledata;
-          // }
-        } else if (i == 16 && symbol != 'AMZN') {
-          // if (amznListCandledata.isEmpty ||
-          //     amznListCandledata.length <= dummyCandleLen) {
-          dataList = await isar.amznDatas.where().sortByTimeKey().findAll();
-          thisTurnSymbol = 'AMZN';
-          if (dataList.isEmpty) {
-            continue;
-          }
-          // } else {
-          //   hasData = true;
-          //   listCandledata = amznListCandledata;
-          // }
-        } else {
-          if (i == 16) {
-            break;
-          }
-          int l = i + 1;
-          if (l == 1 && symbol != 'SPY') {
-            // if (spyListCandledata.isEmpty ||
-            //     spyListCandledata.length <= dummyCandleLen) {
-            dataList = await isar.spyDatas.where().sortByTimeKey().findAll();
-            thisTurnSymbol = 'SPY';
-            if (dataList.isEmpty) {
-              continue;
-            }
-            // } else {
-            //   hasData = true;
-            //   listCandledata = spyListCandledata;
-            // }
-          } else if (l == 2 && symbol != 'QQQ') {
-            // if (qqqListCandledata.isEmpty ||
-            //     qqqListCandledata.length <= dummyCandleLen) {
-            dataList = await isar.qqqDatas.where().sortByTimeKey().findAll();
-            thisTurnSymbol = 'QQQ';
-            if (dataList.isEmpty) {
-              continue;
-            }
-            // } else {
-            //   hasData = true;
-            //   listCandledata = qqqListCandledata;
-            // }
-          } else if (l == 3 && symbol != 'USO') {
-            // if (usoListCandledata.isEmpty ||
-            //     usoListCandledata.length <= dummyCandleLen) {
-            dataList = await isar.usoDatas.where().sortByTimeKey().findAll();
-            thisTurnSymbol = 'USO';
-            if (dataList.isEmpty) {
-              continue;
-            }
-            // } else {
-            //   hasData = true;
-            //   listCandledata = usoListCandledata;
-            // }
-          } else if (l == 4 && symbol != 'GLD') {
-            // if (gldListCandledata.isEmpty ||
-            //     gldListCandledata.length <= dummyCandleLen) {
-            dataList = await isar.gldDatas.where().sortByTimeKey().findAll();
-            thisTurnSymbol = 'GLD';
-            if (dataList.isEmpty) {
-              continue;
-            }
-            // } else {
-            //   hasData = true;
-            //   listCandledata = gldListCandledata;
-            // }
-          } else if (l == 5 && symbol != 'SLV') {
-            // if (slvListCandledata.isEmpty ||
-            //     slvListCandledata.length <= dummyCandleLen) {
-            dataList = await isar.slvDatas.where().sortByTimeKey().findAll();
-            thisTurnSymbol = 'SLV';
-            if (dataList.isEmpty) {
-              continue;
-            }
-            // } else {
-            //   hasData = true;
-            //   listCandledata = slvListCandledata;
-            // }
-          } else if (l == 6 && symbol != 'IWM') {
-            // if (iwmListCandledata.isEmpty ||
-            //     iwmListCandledata.length <= dummyCandleLen) {
-            dataList = await isar.iwmDatas.where().sortByTimeKey().findAll();
-            thisTurnSymbol = 'IWM';
-            if (dataList.isEmpty) {
-              continue;
-            }
-            // } else {
-            //   hasData = true;
-            //   listCandledata = iwmListCandledata;
-            // }
-          } else if (l == 7 && symbol != 'XLK') {
-            // if (xlkListCandledata.isEmpty ||
-            //     xlkListCandledata.length <= dummyCandleLen) {
-            dataList = await isar.xlkDatas.where().sortByTimeKey().findAll();
-            thisTurnSymbol = 'XLK';
-            if (dataList.isEmpty) {
-              continue;
-            }
-            // } else {
-            //   hasData = true;
-            //   listCandledata = xlkListCandledata;
-            // }
-          } else if (l == 8 && symbol != 'AAPL') {
-            // if (aaplListCandledata.isEmpty ||
-            //     aaplListCandledata.length <= dummyCandleLen) {
-            dataList = await isar.aaplDatas.where().sortByTimeKey().findAll();
-            thisTurnSymbol = 'AAPL';
-            if (dataList.isEmpty) {
-              continue;
-            }
-            // } else {
-            //   hasData = true;
-            //   listCandledata = aaplListCandledata;
-            // }
-          } else if (l == 9 && symbol != 'BA') {
-            // if (baListCandledata.isEmpty ||
-            //     baListCandledata.length <= dummyCandleLen) {
-            dataList = await isar.baDatas.where().sortByTimeKey().findAll();
-            thisTurnSymbol = 'BA';
-            if (dataList.isEmpty) {
-              continue;
-            }
-            // } else {
-            //   hasData = true;
-            //   listCandledata = baListCandledata;
-            // }
-          } else if (l == 10 && symbol != 'BAC') {
-            // if (bacListCandledata.isEmpty ||
-            //     bacListCandledata.length <= dummyCandleLen) {
-            dataList = await isar.bacDatas.where().sortByTimeKey().findAll();
-            thisTurnSymbol = 'BAC';
-            if (dataList.isEmpty) {
-              continue;
-            }
-            // } else {
-            //   hasData = true;
-            //   listCandledata = bacListCandledata;
-            // }
-          } else if (l == 11 && symbol != 'MCD') {
-            // if (mcdListCandledata.isEmpty ||
-            //     mcdListCandledata.length <= dummyCandleLen) {
-            dataList = await isar.mcdDatas.where().sortByTimeKey().findAll();
-            thisTurnSymbol = 'MCD';
-            if (dataList.isEmpty) {
-              continue;
-            }
-            // } else {
-            //   hasData = true;
-            //   listCandledata = mcdListCandledata;
-            // }
-          } else if (l == 12 && symbol != 'NVDA') {
-            // if (nvdaListCandledata.isEmpty ||
-            //     nvdaListCandledata.length <= dummyCandleLen) {
-            dataList = await isar.nvdaDatas.where().sortByTimeKey().findAll();
-            thisTurnSymbol = 'NVDA';
-            if (dataList.isEmpty) {
-              continue;
-            }
-            // } else {
-            //   hasData = true;
-            //   listCandledata = nvdaListCandledata;
-            // }
-          } else if (l == 13 && symbol != 'MSFT') {
-            // if (msftListCandledata.isEmpty ||
-            //     msftListCandledata.length <= dummyCandleLen) {
-            dataList = await isar.msftDatas.where().sortByTimeKey().findAll();
-            thisTurnSymbol = 'MSFT';
-            if (dataList.isEmpty) {
-              continue;
-            }
-            // } else {
-            //   hasData = true;
-            //   listCandledata = msftListCandledata;
-            // }
-          } else if (l == 14 && symbol != 'GSK') {
-            // if (gskListCandledata.isEmpty ||
-            //     gskListCandledata.length <= dummyCandleLen) {
-            dataList = await isar.gskDatas.where().sortByTimeKey().findAll();
-            thisTurnSymbol = 'GSK';
-            if (dataList.isEmpty) {
-              continue;
-            }
-            // } else {
-            //   hasData = true;
-            //   listCandledata = gskListCandledata;
-            // }
-          } else if (l == 15 && symbol != 'TSLA') {
-            // if (tslaListCandledata.isEmpty ||
-            //     tslaListCandledata.length <= dummyCandleLen) {
-            dataList = await isar.tslaDatas.where().sortByTimeKey().findAll();
-            thisTurnSymbol = 'TSLA';
-            if (dataList.isEmpty) {
-              continue;
-            }
-            // } else {
-            //   hasData = true;
-            //   listCandledata = tslaListCandledata;
-            // }
-          } else if (l == 16 && symbol != 'AMZN') {
-            // if (amznListCandledata.isEmpty ||
-            //     amznListCandledata.length <= dummyCandleLen) {
-            dataList = await isar.amznDatas.where().sortByTimeKey().findAll();
-            thisTurnSymbol = 'AMZN';
-            if (dataList.isEmpty) {
-              continue;
-            }
-            // } else {
-            //   hasData = true;
-            //   listCandledata = amznListCandledata;
-            // }
-          } else {
-            throw Exception('There is no minute interval data for $i');
-          }
-          i++;
+      bool skip = false;
+
+      if (thisSymbol == 'SPY' && symbol != 'SPY') {
+        dataList = await isar.spyDatas.where().sortByTimeKey().findAll();
+        thisTurnSymbol = 'SPY';
+        if (dataList.isEmpty) {
+          continue;
         }
-        // if (hasData && listCandledata.isEmpty) {
-        //   continue;
-        // }
+      } else if (thisSymbol == 'QQQ' && symbol != 'QQQ') {
+        dataList = await isar.qqqDatas.where().sortByTimeKey().findAll();
+        thisTurnSymbol = 'QQQ';
+        if (dataList.isEmpty) {
+          continue;
+        }
+      } else if (thisSymbol == 'USO' && symbol != 'USO') {
+        dataList = await isar.usoDatas.where().sortByTimeKey().findAll();
+        thisTurnSymbol = 'USO';
+        if (dataList.isEmpty) {
+          continue;
+        }
+      } else if (thisSymbol == 'GLD' && symbol != 'GLD') {
+        dataList = await isar.gldDatas.where().sortByTimeKey().findAll();
+        thisTurnSymbol = 'GLD';
+        if (dataList.isEmpty) {
+          continue;
+        }
+      } else if (thisSymbol == 'SLV' && symbol != 'SLV') {
+        dataList = await isar.slvDatas.where().sortByTimeKey().findAll();
+        thisTurnSymbol = 'SLV';
+        if (dataList.isEmpty) {
+          continue;
+        }
+      } else if (thisSymbol == 'IWM' && symbol != 'IWM') {
+        dataList = await isar.iwmDatas.where().sortByTimeKey().findAll();
+        thisTurnSymbol = 'IWM';
+        if (dataList.isEmpty) {
+          continue;
+        }
+      } else if (thisSymbol == 'XLK' && symbol != 'XLK') {
+        dataList = await isar.xlkDatas.where().sortByTimeKey().findAll();
+        thisTurnSymbol = 'XLK';
+        if (dataList.isEmpty) {
+          continue;
+        }
+      } else if (thisSymbol == 'AAPL' && symbol != 'AAPL') {
+        dataList = await isar.aaplDatas.where().sortByTimeKey().findAll();
+        thisTurnSymbol = 'AAPL';
+        if (dataList.isEmpty) {
+          continue;
+        }
+      } else if (thisSymbol == 'BA' && symbol != 'BA') {
+        dataList = await isar.baDatas.where().sortByTimeKey().findAll();
+        thisTurnSymbol = 'BA';
+        if (dataList.isEmpty) {
+          continue;
+        }
+      } else if (thisSymbol == 'BAC' && symbol != 'BAC') {
+        dataList = await isar.bacDatas.where().sortByTimeKey().findAll();
+        thisTurnSymbol = 'BAC';
+        if (dataList.isEmpty) {
+          continue;
+        }
+      } else if (thisSymbol == 'MCD' && symbol != 'MCD') {
+        dataList = await isar.mcdDatas.where().sortByTimeKey().findAll();
+        thisTurnSymbol = 'MCD';
+        if (dataList.isEmpty) {
+          continue;
+        }
+      } else if (thisSymbol == 'NVDA' && symbol != 'NVDA') {
+        dataList = await isar.nvdaDatas.where().sortByTimeKey().findAll();
+        thisTurnSymbol = 'NVDA';
+        if (dataList.isEmpty) {
+          continue;
+        }
+      } else if (thisSymbol == 'MSFT' && symbol != 'MSFT') {
+        dataList = await isar.msftDatas.where().sortByTimeKey().findAll();
+        thisTurnSymbol = 'MSFT';
+        if (dataList.isEmpty) {
+          continue;
+        }
+      } else if (thisSymbol == 'GSK' && symbol != 'GSK') {
+        dataList = await isar.gskDatas.where().sortByTimeKey().findAll();
+        thisTurnSymbol = 'GSK';
+        if (dataList.isEmpty) {
+          continue;
+        }
+      } else if (thisSymbol == 'TSLA' && symbol != 'TSLA') {
+        dataList = await isar.tslaDatas.where().sortByTimeKey().findAll();
+        thisTurnSymbol = 'TSLA';
+        if (dataList.isEmpty) {
+          continue;
+        }
+      } else if (thisSymbol == 'AMZN' && symbol != 'AMZN') {
+        dataList = await isar.amznDatas.where().sortByTimeKey().findAll();
+        thisTurnSymbol = 'AMZN';
+        if (dataList.isEmpty) {
+          continue;
+        }
+      } else {
+        skip = true;
+      }
+
+      if (!skip) {
         List<Map<String, dynamic>> docList = [];
-        // if (!hasData) {
         if (thisTurnSymbol == 'SPY') {
           docList = List<SpyData>.from(dataList)
               .map<Map<String, dynamic>>((data) => data.toJson())
@@ -737,47 +428,114 @@ class TrendMatch {
           SrcFileType.json,
           thisTurnSymbol
         ));
-        // }
         dataLength = listCandledata.length;
         totalDataLength += dataLength;
         await Candle().computeTrendLines(listCandledata: listCandledata);
       }
 
       void addMatchRow(int rowId) {
-        if (thisTurnSymbol == 'SPY') {
-          MainPresenter.to.spyMatchRows.add(rowId);
+        if (thisTurnSymbol == '') {
+          if (!isTracking) {
+            MainPresenter.to.matchRows.add(rowId);
+          } else {
+            MainPresenter.to.trackingMatchRows.add(rowId);
+          }
+        } else if (thisTurnSymbol == 'SPY') {
+          if (!isTracking) {
+            MainPresenter.to.spyMatchRows.add(rowId);
+          } else {
+            MainPresenter.to.trackingSpyMatchRows.add(rowId);
+          }
         } else if (thisTurnSymbol == 'QQQ') {
-          MainPresenter.to.qqqMatchRows.add(rowId);
+          if (!isTracking) {
+            MainPresenter.to.qqqMatchRows.add(rowId);
+          } else {
+            MainPresenter.to.trackingQqqMatchRows.add(rowId);
+          }
         } else if (thisTurnSymbol == 'USO') {
-          MainPresenter.to.usoMatchRows.add(rowId);
+          if (!isTracking) {
+            MainPresenter.to.usoMatchRows.add(rowId);
+          } else {
+            MainPresenter.to.trackingUsoMatchRows.add(rowId);
+          }
         } else if (thisTurnSymbol == 'GLD') {
-          MainPresenter.to.gldMatchRows.add(rowId);
+          if (!isTracking) {
+            MainPresenter.to.gldMatchRows.add(rowId);
+          } else {
+            MainPresenter.to.trackingGldMatchRows.add(rowId);
+          }
         } else if (thisTurnSymbol == 'SLV') {
-          MainPresenter.to.slvMatchRows.add(rowId);
+          if (!isTracking) {
+            MainPresenter.to.slvMatchRows.add(rowId);
+          } else {
+            MainPresenter.to.trackingSlvMatchRows.add(rowId);
+          }
         } else if (thisTurnSymbol == 'IWM') {
-          MainPresenter.to.iwmMatchRows.add(rowId);
+          if (!isTracking) {
+            MainPresenter.to.iwmMatchRows.add(rowId);
+          } else {
+            MainPresenter.to.trackingIwmMatchRows.add(rowId);
+          }
         } else if (thisTurnSymbol == 'XLK') {
-          MainPresenter.to.xlkMatchRows.add(rowId);
+          if (!isTracking) {
+            MainPresenter.to.xlkMatchRows.add(rowId);
+          } else {
+            MainPresenter.to.trackingXlkMatchRows.add(rowId);
+          }
         } else if (thisTurnSymbol == 'AAPL') {
-          MainPresenter.to.aaplMatchRows.add(rowId);
+          if (!isTracking) {
+            MainPresenter.to.aaplMatchRows.add(rowId);
+          } else {
+            MainPresenter.to.trackingAaplMatchRows.add(rowId);
+          }
         } else if (thisTurnSymbol == 'BA') {
-          MainPresenter.to.baMatchRows.add(rowId);
+          if (!isTracking) {
+            MainPresenter.to.baMatchRows.add(rowId);
+          } else {
+            MainPresenter.to.trackingBaMatchRows.add(rowId);
+          }
         } else if (thisTurnSymbol == 'BAC') {
-          MainPresenter.to.bacMatchRows.add(rowId);
+          if (!isTracking) {
+            MainPresenter.to.bacMatchRows.add(rowId);
+          } else {
+            MainPresenter.to.trackingBacMatchRows.add(rowId);
+          }
         } else if (thisTurnSymbol == 'MCD') {
-          MainPresenter.to.mcdMatchRows.add(rowId);
+          if (!isTracking) {
+            MainPresenter.to.mcdMatchRows.add(rowId);
+          } else {
+            MainPresenter.to.trackingMcdMatchRows.add(rowId);
+          }
         } else if (thisTurnSymbol == 'NVDA') {
-          MainPresenter.to.nvdaMatchRows.add(rowId);
+          if (!isTracking) {
+            MainPresenter.to.nvdaMatchRows.add(rowId);
+          } else {
+            MainPresenter.to.trackingNvdaMatchRows.add(rowId);
+          }
         } else if (thisTurnSymbol == 'MSFT') {
-          MainPresenter.to.msftMatchRows.add(rowId);
+          if (!isTracking) {
+            MainPresenter.to.msftMatchRows.add(rowId);
+          } else {
+            MainPresenter.to.trackingMsftMatchRows.add(rowId);
+          }
         } else if (thisTurnSymbol == 'GSK') {
-          MainPresenter.to.gskMatchRows.add(rowId);
+          if (!isTracking) {
+            MainPresenter.to.gskMatchRows.add(rowId);
+          } else {
+            MainPresenter.to.trackingGskMatchRows.add(rowId);
+          }
         } else if (thisTurnSymbol == 'TSLA') {
-          MainPresenter.to.tslaMatchRows.add(rowId);
+          if (!isTracking) {
+            MainPresenter.to.tslaMatchRows.add(rowId);
+          } else {
+            MainPresenter.to.trackingTslaMatchRows.add(rowId);
+          }
         } else if (thisTurnSymbol == 'AMZN') {
-          MainPresenter.to.amznMatchRows.add(rowId);
-        } else if (thisTurnSymbol == '') {
-          MainPresenter.to.matchRows.add(rowId);
+          if (!isTracking) {
+            MainPresenter.to.amznMatchRows.add(rowId);
+          } else {
+            MainPresenter.to.trackingAmznMatchRows.add(rowId);
+          }
         } else {
           throw Exception('There is no matchRows for $thisTurnSymbol');
         }
@@ -874,7 +632,11 @@ class TrendMatch {
               if (alwaysUseCrossData) {
                 addMatchRow(l);
               } else {
-                MainPresenter.to.matchRows.add(l);
+                if (!isTracking) {
+                  MainPresenter.to.matchRows.add(l);
+                } else {
+                  MainPresenter.to.trackingMatchRows.add(l);
+                }
               }
               // matchPercentDifferencesListList.add(comparisonResult.$2);
               // for (int i = 0; i < comparisonResult.$2.length; i++) {
@@ -895,7 +657,11 @@ class TrendMatch {
             if (alwaysUseCrossData) {
               addMatchRow(l);
             } else {
-              MainPresenter.to.matchRows.add(l);
+              if (!isTracking) {
+                MainPresenter.to.matchRows.add(l);
+              } else {
+                MainPresenter.to.trackingMatchRows.add(l);
+              }
             }
             // matchPercentDifferencesListList.add(comparisonResult.$2);
             // for (int i = 0; i < comparisonResult.$2.length; i++) {
@@ -927,19 +693,21 @@ class TrendMatch {
       }
     }
 
-    // MainPresenter.to.comparePeriodPercentDifferencesListList.value =
-    //     comparePeriodPercentDifferencesListList;
-    // MainPresenter.to.comparePeriodActualDifferencesListList.value =
-    //     comparePeriodActualDifferencesListList;
-    // MainPresenter.to.comparePeriodActualPricesListList.value =
-    //     comparePeriodActualPricesListList;
+    if (!isTracking) {
+      // MainPresenter.to.comparePeriodPercentDifferencesListList.value =
+      //     comparePeriodPercentDifferencesListList;
+      // MainPresenter.to.comparePeriodActualDifferencesListList.value =
+      //     comparePeriodActualDifferencesListList;
+      // MainPresenter.to.comparePeriodActualPricesListList.value =
+      //     comparePeriodActualPricesListList;
 
-    // MainPresenter.to.matchPercentDifferencesListList.value =
-    //     matchPercentDifferencesListList;
-    // MainPresenter.to.matchActualDifferencesListList.value =
-    //     matchActualDifferencesListList;
-    // MainPresenter.to.matchActualPricesListList.value =
-    //     matchActualPricesListList;
+      // MainPresenter.to.matchPercentDifferencesListList.value =
+      //     matchPercentDifferencesListList;
+      // MainPresenter.to.matchActualDifferencesListList.value =
+      //     matchActualDifferencesListList;
+      // MainPresenter.to.matchActualPricesListList.value =
+      //     matchActualPricesListList;
+    }
 
     DateTime endTime = DateTime.now(); // Record the end time
     // Calculate the time difference
@@ -1518,7 +1286,8 @@ class TrendMatch {
   List<FlSpot> getAdjustedLineData(int index,
       {List<int>? matchRows,
       List<List<dynamic>>? candleListList,
-      double? subLen}) {
+      double? subLen,
+      bool isTracking = false}) {
     List<FlSpot> flspotList = [];
     List<double> newLockTrendSubTrendList = [];
 
@@ -1527,7 +1296,15 @@ class TrendMatch {
 
     double selectedLength = (MainPresenter.to.length.value - 1).toDouble();
 
-    double lastSelectedClosePrice = MainPresenter.to.candleListList.last[4];
+    final mainCandle = MainPresenter.to.candleListList;
+    double lastSelectedClosePrice;
+    if (!isTracking) {
+      lastSelectedClosePrice = mainCandle.last[4];
+    } else {
+      int lockTrendLastRow = PrefsService.to.prefs
+          .getInt(SharedPreferencesConstant.lockTrendLastRow)!;
+      lastSelectedClosePrice = mainCandle[lockTrendLastRow][4];
+    }
 
     double lastActualDifference = lastSelectedClosePrice /
         candleListList[matchRows[index] + selectedLength.toInt()][4];
@@ -1561,33 +1338,48 @@ class TrendMatch {
     return flspotList;
   }
 
-  List<FlSpot> getSelectedPeriodClosePrices() {
+  List<FlSpot> getSelectedPeriodClosePrices({bool isTracking = false}) {
     List<FlSpot> flspotList = [];
 
     List<List<dynamic>> candleListList = MainPresenter.to.candleListList;
+    int len;
+    if (!isTracking) {
+      len = candleListList.length - 1;
+    } else {
+      len = PrefsService.to.prefs
+          .getInt(SharedPreferencesConstant.lockTrendLastRow)!;
+    }
 
     for (int i = 0; i < MainPresenter.to.length.value; i++) {
-      flspotList.add(FlSpot(
-          i.toDouble(),
-          candleListList[MainPresenter.to.candleListList.length -
-              (MainPresenter.to.length.value - 1) +
-              i -
-              1][4]));
+      flspotList.add(FlSpot(i.toDouble(),
+          candleListList[len - (MainPresenter.to.length.value - 1) + i][4]));
     }
 
     return flspotList;
   }
 
-  List<FlSpot> getCurrentPriceLine() {
+  List<FlSpot> getCurrentPriceLine({
+    bool isTracking = false,
+    double? subLen,
+  }) {
     List<FlSpot> flspotList = [];
-
     double selectedLength = (MainPresenter.to.length.value - 1).toDouble();
-    double subLen = MainPresenter.to.subLength.value.toDouble();
-    double lastSelectedClosePrice = MainPresenter.to.candleListList.last[4];
 
-    flspotList.add(FlSpot(0, lastSelectedClosePrice));
-    flspotList.add(FlSpot(selectedLength + subLen, lastSelectedClosePrice));
+    if (!isTracking) {
+      subLen = MainPresenter.to.subLength.value.toDouble();
+      double lastSelectedClosePrice = MainPresenter.to.candleListList.last[4];
 
+      flspotList.add(FlSpot(0, lastSelectedClosePrice));
+      flspotList.add(FlSpot(selectedLength + subLen, lastSelectedClosePrice));
+    } else {
+      int lockTrendLastRow = PrefsService.to.prefs
+          .getInt(SharedPreferencesConstant.lockTrendLastRow)!;
+      double lastSelectedClosePrice =
+          MainPresenter.to.candleListList[lockTrendLastRow][4];
+
+      flspotList.add(FlSpot(0, lastSelectedClosePrice));
+      flspotList.add(FlSpot(selectedLength + subLen!, lastSelectedClosePrice));
+    }
     return flspotList;
   }
 
@@ -1607,9 +1399,10 @@ class TrendMatch {
       {required bool isLockTrend, required bool isTracking}) {
     List<LineChartBarData> lineBarsData = [];
     if (isTracking) {
-      TrendMatch().init();
+      // Call TrendMatch().init() and get the indices (matched rows) and
+      // storing them in new global lists
+      TrendMatch().init(isTracking: isLockTrend);
       double trackingSubLen = MainPresenter.to.trackingSubLen.value.toDouble();
-      // TODO: modify the below storages for tracking
       if (MainPresenter.to.alwaysUseCrossData.value) {
         List<String> minuteDataList =
             List<String>.from(MainPresenter.to.minuteDataList);
@@ -1618,55 +1411,55 @@ class TrendMatch {
           List<int> matchRows;
           List<List<dynamic>> candleListList;
           if (symbol == 'SPY' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.spyMatchRows;
+            matchRows = MainPresenter.to.trackingSpyMatchRows;
             candleListList = MainPresenter.to.spyCandleListList;
           } else if (symbol == 'QQQ' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.qqqMatchRows;
+            matchRows = MainPresenter.to.trackingQqqMatchRows;
             candleListList = MainPresenter.to.qqqCandleListList;
           } else if (symbol == 'USO' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.usoMatchRows;
+            matchRows = MainPresenter.to.trackingUsoMatchRows;
             candleListList = MainPresenter.to.usoCandleListList;
           } else if (symbol == 'GLD' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.gldMatchRows;
+            matchRows = MainPresenter.to.trackingGldMatchRows;
             candleListList = MainPresenter.to.gldCandleListList;
           } else if (symbol == 'SLV' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.slvMatchRows;
+            matchRows = MainPresenter.to.trackingSlvMatchRows;
             candleListList = MainPresenter.to.slvCandleListList;
           } else if (symbol == 'IWM' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.iwmMatchRows;
+            matchRows = MainPresenter.to.trackingIwmMatchRows;
             candleListList = MainPresenter.to.iwmCandleListList;
           } else if (symbol == 'XLK' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.xlkMatchRows;
+            matchRows = MainPresenter.to.trackingXlkMatchRows;
             candleListList = MainPresenter.to.xlkCandleListList;
           } else if (symbol == 'AAPL' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.aaplMatchRows;
+            matchRows = MainPresenter.to.trackingAaplMatchRows;
             candleListList = MainPresenter.to.aaplCandleListList;
           } else if (symbol == 'BA' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.baMatchRows;
+            matchRows = MainPresenter.to.trackingBaMatchRows;
             candleListList = MainPresenter.to.baCandleListList;
           } else if (symbol == 'BAC' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.bacMatchRows;
+            matchRows = MainPresenter.to.trackingBacMatchRows;
             candleListList = MainPresenter.to.bacCandleListList;
           } else if (symbol == 'MCD' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.mcdMatchRows;
+            matchRows = MainPresenter.to.trackingMcdMatchRows;
             candleListList = MainPresenter.to.mcdCandleListList;
           } else if (symbol == 'NVDA' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.nvdaMatchRows;
+            matchRows = MainPresenter.to.trackingNvdaMatchRows;
             candleListList = MainPresenter.to.nvdaCandleListList;
           } else if (symbol == 'MSFT' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.msftMatchRows;
+            matchRows = MainPresenter.to.trackingMsftMatchRows;
             candleListList = MainPresenter.to.msftCandleListList;
           } else if (symbol == 'GSK' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.gskMatchRows;
+            matchRows = MainPresenter.to.trackingGskMatchRows;
             candleListList = MainPresenter.to.gskCandleListList;
           } else if (symbol == 'TSLA' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.tslaMatchRows;
+            matchRows = MainPresenter.to.trackingTslaMatchRows;
             candleListList = MainPresenter.to.tslaCandleListList;
           } else if (symbol == 'AMZN' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.amznMatchRows;
+            matchRows = MainPresenter.to.trackingAmznMatchRows;
             candleListList = MainPresenter.to.amznCandleListList;
           } else {
-            matchRows = MainPresenter.to.matchRows;
+            matchRows = MainPresenter.to.trackingMatchRows;
             candleListList = MainPresenter.to.candleListList;
           }
           if (matchRows.isEmpty || candleListList.isEmpty) {
@@ -1682,6 +1475,7 @@ class TrendMatch {
                     matchRows: matchRows,
                     candleListList: candleListList,
                     subLen: trackingSubLen,
+                    isTracking: isTracking,
                   ),
                   isCurved: true,
                   barWidth: 1,
@@ -1693,7 +1487,7 @@ class TrendMatch {
         }
         lineBarsData.add(
           LineChartBarData(
-            spots: getSelectedPeriodClosePrices(),
+            spots: getSelectedPeriodClosePrices(isTracking: isTracking),
             isCurved: true,
             barWidth: 3,
             color: ThemeColor.primary.value,
@@ -1701,16 +1495,23 @@ class TrendMatch {
         );
         lineBarsData.add(
           LineChartBarData(
-            spots: getCurrentPriceLine(),
+            spots: getCurrentPriceLine(
+              isTracking: isTracking,
+              subLen: trackingSubLen,
+            ),
             isCurved: false,
             barWidth: 1,
             color: AppColor.blackColor,
           ),
         );
       } else {
-        lineBarsData = MainPresenter.to.matchRows
+        lineBarsData = MainPresenter.to.trackingMatchRows
             .mapIndexed((index, row) => LineChartBarData(
-                spots: getAdjustedLineData(index, subLen: trackingSubLen),
+                spots: getAdjustedLineData(
+                  index,
+                  subLen: trackingSubLen,
+                  isTracking: isTracking,
+                ),
                 isCurved: true,
                 barWidth: 1,
                 color: ThemeColor.secondary.value))
@@ -1718,7 +1519,7 @@ class TrendMatch {
             .toList()
           ..add(
             LineChartBarData(
-              spots: getSelectedPeriodClosePrices(),
+              spots: getSelectedPeriodClosePrices(isTracking: isTracking),
               isCurved: true,
               barWidth: 3,
               color: ThemeColor.primary.value,
@@ -1726,7 +1527,10 @@ class TrendMatch {
           )
           ..add(
             LineChartBarData(
-              spots: getCurrentPriceLine(),
+              spots: getCurrentPriceLine(
+                isTracking: isTracking,
+                subLen: trackingSubLen,
+              ),
               isCurved: false,
               barWidth: 1,
               color: AppColor.blackColor,
@@ -1857,7 +1661,7 @@ class TrendMatch {
             ),
           );
       }
-    } else {
+    } else if (isLockTrend) {
       List cluster = MainPresenter.to.clusters;
 
       if (cluster.isEmpty) {
@@ -1960,6 +1764,7 @@ class TrendMatch {
         );
       }
     }
+    MainPresenter.to.checkLockTrend();
     return LineChartData(
       lineTouchData: const LineTouchData(enabled: false),
       borderData: FlBorderData(show: false),

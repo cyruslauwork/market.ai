@@ -460,7 +460,7 @@ class MainPresenter extends GetxController {
   bool isShowAverageListenerAdded = false;
   late RxString marketDataProviderMsg = Rx('mkt_data'.tr)().obs;
   RxBool isMarketDataProviderErr = false.obs;
-  RxList minuteDataList = [
+  RxList<String> minuteDataList = [
     'SPY',
     'QQQ',
     'USO',
@@ -689,6 +689,26 @@ class MainPresenter extends GetxController {
       (PrefsService.to.prefs.getBool(SharedPreferencesConstant.trackingHits) ??
               true)
           .obs;
+  RxList<List<double>> lockTrendTrackingSubTrendList = [
+    [0.0]
+  ].obs;
+  RxList<int> trackingMatchRows = [0].obs;
+  RxList<int> trackingSpyMatchRows = [0].obs; // Cross-data
+  RxList<int> trackingQqqMatchRows = [0].obs; // Cross-data
+  RxList<int> trackingUsoMatchRows = [0].obs; // Cross-data
+  RxList<int> trackingGldMatchRows = [0].obs; // Cross-data
+  RxList<int> trackingSlvMatchRows = [0].obs; // Cross-data
+  RxList<int> trackingIwmMatchRows = [0].obs; // Cross-data
+  RxList<int> trackingXlkMatchRows = [0].obs; // Cross-data
+  RxList<int> trackingAaplMatchRows = [0].obs; // Cross-data
+  RxList<int> trackingBaMatchRows = [0].obs; // Cross-data
+  RxList<int> trackingBacMatchRows = [0].obs; // Cross-data
+  RxList<int> trackingMcdMatchRows = [0].obs; // Cross-data
+  RxList<int> trackingNvdaMatchRows = [0].obs; // Cross-data
+  RxList<int> trackingMsftMatchRows = [0].obs; // Cross-data
+  RxList<int> trackingGskMatchRows = [0].obs; // Cross-data
+  RxList<int> trackingTslaMatchRows = [0].obs; // Cross-data
+  RxList<int> trackingAmznMatchRows = [0].obs; // Cross-data
 
   /* Subsequent analytics */
   RxInt lastClosePriceAndSubsequentTrendsExeTime = 0.obs;
@@ -1000,12 +1020,9 @@ class MainPresenter extends GetxController {
           !isLockTrend.value &&
           listCandledata.length != dummyCandle.length) {
         await TrendMatch().init();
-        checkLockTrend();
         if (apiKey.value != '') {
           SubsequentAnalytics().init();
         }
-      } else {
-        checkLockTrend();
       }
     }
     checkMinuteData();
@@ -1177,6 +1194,7 @@ class MainPresenter extends GetxController {
         .getInt(SharedPreferencesConstant.lockTrendLastRow)!;
     double startingClosePrice = candleListList[lockTrendLastRow][4];
     double thisMinReturnRateThreshold = minReturnRateThreshold.value;
+    int subLen = subLength.value;
 
     bool thisIsFirstThirtyMins = isFirstThirtyMins.value;
     bool thisLowProb = lowProb.value;
@@ -1526,7 +1544,7 @@ class MainPresenter extends GetxController {
       List<double> spots = [];
       if (lockTrendLastRow != 0) {
         int lastRow = candleListList.length - 1;
-        for (int i = 0; i < subLength.value + 1; i++) {
+        for (int i = 0; i < subLen + 1; i++) {
           if ((lockTrendLastRow + i) <= lastRow) {
             spots.add(candleListList[lockTrendLastRow + i][4]);
           } else {
@@ -1570,7 +1588,7 @@ class MainPresenter extends GetxController {
             }
           }
         }
-        if (hitOppositeCeilingOrBottomCount >= subLength.value ~/ 3) {
+        if (hitOppositeCeilingOrBottomCount >= subLen ~/ 3) {
           thisHitCeilingOrFloor = true;
           Future.microtask(() {
             hitCeilingOrFloor.value = true;
@@ -1597,7 +1615,7 @@ class MainPresenter extends GetxController {
           }
         }
       }
-      int halfSubLength = subLength.value ~/ 2;
+      int halfSubLength = subLen ~/ 2;
       if (goOppositeCount >= halfSubLength) {
         thisGoOpposite = true;
         Future.microtask(() {
@@ -1612,7 +1630,7 @@ class MainPresenter extends GetxController {
 
       // Check if the lock-in trend is over
       const int yFinMinuteDelay = 1;
-      if (spots.length - 1 >= subLength.value - yFinMinuteDelay) {
+      if (spots.length - 1 >= subLen - yFinMinuteDelay) {
         thisOver = true;
         Future.microtask(() {
           over.value = true;
@@ -1650,22 +1668,59 @@ class MainPresenter extends GetxController {
         }
       }
 
-      // Check if a tracking probability has lower than or equal to probThreshold 
-      // TODO: calculate and redefine global trackingSubLen here
-      // TODO: use lockTrendLastRow + time lapsed to call TrendMatch.init() and get the indices, 
-      // and storing the matched rows by new variables.
-      lockTrendTrackingSubTrendList.value;
-      // TODO: calculation and redefine global expectedTrackingProb here
-        if () {
-        thisTrackingHits = true;
+      // Check if a tracking probability has lower than or equal to probThreshold
+      // Calculate and redefine global trackingSubLen
+      int candleLen = candleListList.length - 1;
+      int lapsed = candleLen - lockTrendLastRow;
+      int thisTrackingSubLen = lapsed <= subLen ? subLen - lapsed : lapsed;
+      trackingSubLen.value = thisTrackingSubLen;
+      // Calculation and redefine global expectedTrackingProb
+      List<List<double>> trackingUpper = [];
+      List<List<double>> trackingLower = [];
+      int trackingBaseline = 0;
+      if (lockTrendTrackingSubTrendList.isNotEmpty) {
+        for (var values in lockTrendTrackingSubTrendList) {
+          if (values.last > values.first) {
+            trackingUpper.add(values);
+          } else if (values.last < values.first) {
+            trackingLower.add(values);
+          } else {
+            trackingBaseline++;
+          }
+        }
+      }
+      if (trackingUpper.isNotEmpty || trackingLower.isNotEmpty) {
+        double upperProb = trackingUpper.length /
+            (trackingUpper.length + trackingLower.length + trackingBaseline);
+        double lowerProb = trackingLower.length /
+            (trackingUpper.length + trackingLower.length + trackingBaseline);
+        if (upperProb > probThreshold.value ||
+            lowerProb > probThreshold.value) {
+          thisTrackingHits = true;
+          Future.microtask(() {
+            trackingHits.value = thisTrackingHits;
+            PrefsService.to.prefs.setBool(
+                SharedPreferencesConstant.trackingHits, thisTrackingHits);
+            expectedTrackingProb.value = max(upperProb, lowerProb);
+          });
+        } else {
+          thisTrackingHits = false;
+          Future.microtask(() {
+            trackingHits.value = thisTrackingHits;
+            PrefsService.to.prefs.setBool(
+                SharedPreferencesConstant.trackingHits, thisTrackingHits);
+            expectedTrackingProb.value = max(upperProb, lowerProb);
+          });
+        }
+      } else {
+        thisTrackingHits = false;
         Future.microtask(() {
-          trackingHits.value = true;
+          trackingHits.value = thisTrackingHits;
           PrefsService.to.prefs.setBool(
               SharedPreferencesConstant.trackingHits, thisTrackingHits);
+          expectedTrackingProb.value = 0.0;
         });
-        } else {
-          
-        }
+      }
     }
 
     if ((!thisIsFirstThirtyMins &&
