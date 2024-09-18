@@ -32,8 +32,8 @@ def return_jsonify(json_data, response_code, blob, current_month, gce_monthly_kb
     gce_monthly_kb_counters[current_month] += kb
     # Update the JSON file in Google Cloud Storage
     try:
-        if blob.exists():
-            blob.delete()  # Delete existing blob
+        # if blob.exists():
+        #     blob.delete()  # Delete existing blob
         blob.upload_from_string(json.dumps(gce_monthly_kb_counters), content_type='application/json', timeout=15)
     except:
         print('Handling gce_monthly_kb_counters timed out')
@@ -48,8 +48,8 @@ def return_string(string, response_code, blob, current_month, gce_monthly_kb_cou
     gce_monthly_kb_counters[current_month] += kb
     # Update the JSON file in Google Cloud Storage
     try:
-        if blob.exists():
-            blob.delete()  # Delete existing blob
+        # if blob.exists():
+        #     blob.delete()  # Delete existing blob
         blob.upload_from_string(json.dumps(gce_monthly_kb_counters), content_type='application/json', timeout=15)
     except:
         print('Handling gce_monthly_kb_counters timed out')
@@ -64,8 +64,8 @@ def print_string(string, blob, current_month, gce_monthly_kb_counters, kb):
     gce_monthly_kb_counters[current_month] += kb
     # Update the JSON file in Google Cloud Storage
     try:
-        if blob.exists():
-            blob.delete()  # Delete existing blob
+        # if blob.exists():
+        #     blob.delete()  # Delete existing blob
         blob.upload_from_string(json.dumps(gce_monthly_kb_counters), content_type='application/json', timeout=15)
     except:
         print(({'error': 'Handling gce_monthly_kb_counters timed out'}, 504))

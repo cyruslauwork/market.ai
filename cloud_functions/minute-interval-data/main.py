@@ -247,7 +247,7 @@ def https(request):
                         if volume == 0:
                             regular_end_time = response_data['chart']['result'][0]['meta']['currentTradingPeriod']['regular']['end']
                             if time == regular_end_time:
-                                continue # Skip the current iteration and move to the next iteration
+                                continue
                         # Create a new JSON with the desired columns
                         result_json = {
                             'time_key': time,
@@ -314,7 +314,8 @@ def https(request):
                                     print(f'Retrieving all documents in {symbol} collection')
                                     docs = collection_ref.order_by('time_key').stream(retry=Retry())
                                     docs = [doc.to_dict() for doc in docs]
-                                new_documents = []
+                                # JSON file is inconsistent with the Firestore records, so insert all the data at once
+                                json_new_documents = []
                                 if json_file_last_time_key is not None:
                                     comparison_value = json_file_last_time_key
                                 else:
@@ -333,7 +334,7 @@ def https(request):
                                     if volume == 0:
                                         regular_end_time = response_data['chart']['result'][0]['meta']['currentTradingPeriod']['regular']['end']
                                         if time == regular_end_time:
-                                            continue # Skip the current iteration and move to the next iteration
+                                            continue
                                     # Create a new JSON with the desired columns
                                     result_json = {
                                         'time_key': time,
@@ -343,8 +344,8 @@ def https(request):
                                         'close': round(close, 4),
                                         'volume': volume
                                     }
-                                    new_documents.append(result_json) # Append the dictionary to the list
-                                backend_json_data['content'] = docs + new_documents
+                                    json_new_documents.append(result_json) # Append the dictionary to the list
+                                backend_json_data['content'] = docs + json_new_documents
                                 backend_json_data[last_time_key_field_name] = LAST_TIME_KEY
                                 # Convert the result to JSON format
                                 json_str = json.dumps(backend_json_data)
