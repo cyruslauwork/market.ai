@@ -9077,6 +9077,7 @@ class MainPresenter extends GetxController {
       } else {
         legends.value = '🟠SMA5 🔴SMA20 🟢SMA60 🔵SMA120 🟣SMA240';
         showScaffoldMessenger(context: context, localizedMsg: 'show_one_day');
+        alwaysUseCrossDataToggle(value, context);
       }
       futureListCandledata.value = init();
     } else {
@@ -9208,7 +9209,7 @@ class MainPresenter extends GetxController {
   }
 
   Widget showCrossDataToggleBtn({required BuildContext context}) {
-    if (hasMinuteData.value) {
+    if (hasMinuteData.value && alwaysShowMinuteData.value) {
       return IconButton(
         onPressed: isButtonDisabled.value
             ? () => showScaffoldMessenger(
@@ -9258,6 +9259,12 @@ class MainPresenter extends GetxController {
               TimeService.to.isEasternDaylightTime(dateTime) ? 'EDT' : 'EST';
           return '${'as_of'.tr} $lastDatetime $timezone';
         } else {
+          DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
+              lastDatetime.toInt() * 1000,
+              isUtc: true);
+          DateTime subtractedDateTime =
+              TimeService.to.subtractHoursBasedOnTimezone(dateTime);
+          lastDatetime = DateFormat('yyyy-MM-dd').format(subtractedDateTime);
           return '${'as_of'.tr} $lastDatetime.';
         }
       } catch (e) {
