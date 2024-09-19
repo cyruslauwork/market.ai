@@ -11,13 +11,14 @@ import 'package:market_ai/utils/utils.dart';
 
 class AdjustedLineChart extends StatelessWidget {
   final LineChartData lineChartData;
+  final bool isTracking;
 
-  AdjustedLineChart(
-      {super.key,
-      LineChartData? lineChartData,
-      required bool isLockTrend,
-      bool isTracking = false})
-      : lineChartData = lineChartData ??
+  AdjustedLineChart({
+    super.key,
+    LineChartData? lineChartData,
+    required bool isLockTrend,
+    this.isTracking = false,
+  }) : lineChartData = lineChartData ??
             TrendMatch().getDefaultAdjustedLineChartData(
                 isLockTrend: isLockTrend, isTracking: isTracking);
 
@@ -36,14 +37,22 @@ class AdjustedLineChart extends StatelessWidget {
           child: Row(
             children: [
               SizedBox(
-                width: MainPresenter.to.tmChartWidth.value,
+                width: !isTracking
+                    ? MainPresenter.to.tmChartWidth.value
+                    : (Platform.isWindows ||
+                            Platform.isLinux ||
+                            Platform.isMacOS
+                        ? (Get.width - 5.w)
+                        : 135.w),
                 height:
                     (Platform.isWindows || Platform.isLinux || Platform.isMacOS
                         ? 120.h
                         : 85.h),
                 child: LineChart(lineChartData),
               ),
-              MainPresenter.to.sidePlot.value,
+              if (!isTracking) ...[
+                MainPresenter.to.sidePlot.value,
+              ],
             ],
           ),
         ),

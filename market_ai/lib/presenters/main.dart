@@ -1513,7 +1513,7 @@ class MainPresenter extends GetxController {
         }
         trackingHits.value = thisTrackingHits;
         trackingSubLen.value = subLength.value;
-        expectedTrackingProb.value = -1;
+        expectedTrackingProb.value = -1.0;
 
         PrefsService.to.prefs
             .setBool(SharedPreferencesConstant.lowReturn, thisLowReturn);

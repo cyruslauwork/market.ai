@@ -264,25 +264,20 @@ class TrendMatchView extends StatelessWidget {
               (MainPresenter.to.isLockTrend.value &&
                   MainPresenter.to.hasCluster.value)) ...[
             Center(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AdjustedLineChart(isLockTrend: true),
-                  Text(
-                    'lockin_trend_tracking_title'.tr,
-                    style: const TextTheme().sp5.w700,
-                  ),
-                  if (MainPresenter.to.expectedTrackingProb.value != -1 ||
-                      MainPresenter.to.expectedTrackingProb.value != 0.0) ...[
-                    Text(
-                      '${'expected_prob'.tr} ${(MainPresenter.to.expectedTrackingProb.value * 100).toStringAsFixed(1)}%',
-                      style: MainPresenter.to.lockTrendTextStyle.value,
-                    ),
-                  ],
-                  AdjustedLineChart(isLockTrend: true, isTracking: true)
-                ],
+              child: AdjustedLineChart(isLockTrend: true),
+            ),
+            Text(
+              'lockin_trend_tracking_title'.tr,
+              style: const TextTheme().sp5.w700,
+            ),
+            if (MainPresenter.to.expectedTrackingProb.value > 0.0) ...[
+              Text(
+                '${'expected_prob'.tr} ${(MainPresenter.to.expectedTrackingProb.value * 100).toStringAsFixed(1)}%',
+                style: MainPresenter.to.lockTrendTextStyle.value,
               ),
-            )
+            ],
+            Center(
+                child: AdjustedLineChart(isLockTrend: true, isTracking: true)),
           ],
           if (!MainPresenter.to.isLockTrend.value) ...[
             Center(child: MainPresenter.to.showTm())
