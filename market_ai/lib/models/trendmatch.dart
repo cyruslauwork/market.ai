@@ -429,10 +429,10 @@ class TrendMatch {
         ));
         dataLength = listCandledata.length;
         totalDataLength += dataLength;
-        
+
         bool thisHasMa = listCandledata.last.trends.isNotEmpty;
         if (!thisHasMa) {
-        await Candle().computeTrendLines(listCandledata: listCandledata);
+          await Candle().computeTrendLines(listCandledata: listCandledata);
         }
       }
 
@@ -724,9 +724,9 @@ class TrendMatch {
       totalDataLength,
       len,
     ];
-if (!isTracking){
-    MainPresenter.to.sidePlot.value = const SizedBox.shrink();
-}
+    if (!isTracking) {
+      MainPresenter.to.sidePlot.value = const SizedBox.shrink();
+    }
     MainPresenter.to.trendMatched.value = true;
   }
 
@@ -1378,11 +1378,11 @@ if (!isTracking){
     } else {
       int lockTrendLastRow = PrefsService.to.prefs
           .getInt(SharedPreferencesConstant.lockTrendLastRow)!;
-      double lastSelectedClosePrice =
-          MainPresenter.to.candleListList[lockTrendLastRow + subLen!][4];
+      double lastSelectedClosePrice = MainPresenter
+          .to.candleListList[lockTrendLastRow + subLen!.toInt()][4];
 
       flspotList.add(FlSpot(0, lastSelectedClosePrice));
-      flspotList.add(FlSpot(selectedLength + subLen!, lastSelectedClosePrice));
+      flspotList.add(FlSpot(selectedLength + subLen, lastSelectedClosePrice));
     }
     return flspotList;
   }
@@ -1472,7 +1472,8 @@ if (!isTracking){
           if (lineBarsData.length >= 500) {
             break;
           }
-          List<LineChartBarData> newLineBarsData = trackingMatchRows
+          List<LineChartBarData> newLineBarsData = MainPresenter
+              .to.trackingMatchRows
               .mapIndexed((index, row) => LineChartBarData(
                   spots: getAdjustedLineData(
                     index,
