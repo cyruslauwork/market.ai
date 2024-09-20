@@ -1379,7 +1379,7 @@ if (!isTracking){
       int lockTrendLastRow = PrefsService.to.prefs
           .getInt(SharedPreferencesConstant.lockTrendLastRow)!;
       double lastSelectedClosePrice =
-          MainPresenter.to.candleListList[lockTrendLastRow][4];
+          MainPresenter.to.candleListList[lockTrendLastRow + subLen!][4];
 
       flspotList.add(FlSpot(0, lastSelectedClosePrice));
       flspotList.add(FlSpot(selectedLength + subLen!, lastSelectedClosePrice));
@@ -1472,7 +1472,7 @@ if (!isTracking){
           if (lineBarsData.length >= 500) {
             break;
           }
-          List<LineChartBarData> newLineBarsData = matchRows
+          List<LineChartBarData> newLineBarsData = trackingMatchRows
               .mapIndexed((index, row) => LineChartBarData(
                   spots: getAdjustedLineData(
                     index,
