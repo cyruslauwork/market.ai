@@ -9350,6 +9350,68 @@ class MainPresenter extends GetxController {
     }
   }
 
+    Widget showMatchedCandlestickChart(
+      {required AsyncSnapshot<List<CandleData>> snapshot}) {
+    if (hasCandleData.value) {
+      return SizedBox(
+          width: 393.w,
+          height: candleChartHeight.value,
+          child: InteractiveChart(
+            candles: snapshot.data!,
+            style: ChartStyle(
+              trendLineStyles: [
+                Paint()
+                  ..strokeWidth = 1.0
+                  ..strokeCap = StrokeCap.round
+                  ..color = Colors.orange,
+                Paint()
+                  ..strokeWidth = 1.0
+                  ..strokeCap = StrokeCap.round
+                  ..color = Colors.red,
+                Paint()
+                  ..strokeWidth = 1.0
+                  ..strokeCap = StrokeCap.round
+                  ..color = Colors.green,
+                Paint()
+                  ..strokeWidth = 1.0
+                  ..strokeCap = StrokeCap.round
+                  ..color = Colors.blue[700]!,
+                Paint()
+                  ..strokeWidth = 1.0
+                  ..strokeCap = StrokeCap.round
+                  ..color = Colors.purple[300]!,
+                // Paint()
+                //   ..strokeWidth = 1.0
+                //   ..strokeCap = StrokeCap.round
+                //   ..color = Colors.yellow,
+              ],
+              selectionHighlightColor: Colors.red.withOpacity(0.75),
+              overlayBackgroundColor: Colors.red.withOpacity(0.75),
+              overlayTextStyle: const TextStyle(color: AppColor.whiteColor),
+            ),
+            /** Callbacks */
+            // onTap: (candle) => print("user tapped on $candle"),
+          ),
+      );
+    } else {
+      return Center(
+        child: Column(
+          children: [
+            LoadingAnimationWidget.staggeredDotsWave(
+              color: ThemeColor.primary.value,
+              size: 25.w,
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 10.h),
+              child:
+                  Text('downloading_candle'.tr, style: const TextTheme().sp5),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
   Widget showMatchesExceededMsg() {
     if (matchRows.length > 500) {
       return Text('more_than_500_matches'.tr, style: const TextTheme().sp5);
