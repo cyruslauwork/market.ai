@@ -180,7 +180,7 @@ class SubsequentAnalytics {
       candleListListLength = MainPresenter.to.candleListList.length;
       matchRows = MainPresenter.to.matchRows;
 
-      for (int i = 0; i < (matchLen > 499 ? 499 : matchLen); i++) {
+      for (int i = 0; i < (matchLen > 499 ? 500 : matchLen); i++) {
         // Takes 500 only to avoid a Cloud Functions crash
         lastClosePriceAndSubsequentTrends
             .add(getMatchedTrendLastClosePriceAndSubsequentTrend(i));

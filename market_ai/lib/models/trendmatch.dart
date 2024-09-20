@@ -130,7 +130,6 @@ class TrendMatch {
       if (!hasMa) {
         await Candle().computeTrendLines();
         // listCandledata = MainPresenter.to.listCandledata;
-        hasMa = listCandledata.last.trends.isNotEmpty;
         maLength = listCandledata.last.trends.length;
       }
       double selectedFirstPrice = listCandledata[dataLength - len].close!;
@@ -430,7 +429,11 @@ class TrendMatch {
         ));
         dataLength = listCandledata.length;
         totalDataLength += dataLength;
+        
+        bool thisHasMa = listCandledata.last.trends.isNotEmpty;
+        if (!thisHasMa) {
         await Candle().computeTrendLines(listCandledata: listCandledata);
+        }
       }
 
       void addMatchRow(int rowId) {
@@ -721,8 +724,9 @@ class TrendMatch {
       totalDataLength,
       len,
     ];
-
+if (!isTracking){
     MainPresenter.to.sidePlot.value = const SizedBox.shrink();
+}
     MainPresenter.to.trendMatched.value = true;
   }
 
