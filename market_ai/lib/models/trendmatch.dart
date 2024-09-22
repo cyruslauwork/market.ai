@@ -28,7 +28,10 @@ class TrendMatch {
     List<CandleData> listCandledata = MainPresenter.to.listCandledata;
     int dataLength = isTracking
         ? PrefsService.to.prefs
-            .getInt(SharedPreferencesConstant.lockTrendLastRow)!
+                .getInt(SharedPreferencesConstant.lockTrendLastRow)! +
+            (MainPresenter.to.subLength.value -
+                MainPresenter.to.trackingSubLen.value) +
+            1
         : listCandledata.length;
     int totalDataLength = dataLength;
 
@@ -696,21 +699,21 @@ class TrendMatch {
       }
     }
 
-    if (!isTracking) {
-      // MainPresenter.to.comparePeriodPercentDifferencesListList.value =
-      //     comparePeriodPercentDifferencesListList;
-      // MainPresenter.to.comparePeriodActualDifferencesListList.value =
-      //     comparePeriodActualDifferencesListList;
-      // MainPresenter.to.comparePeriodActualPricesListList.value =
-      //     comparePeriodActualPricesListList;
+    // if (!isTracking) {
+    // MainPresenter.to.comparePeriodPercentDifferencesListList.value =
+    //     comparePeriodPercentDifferencesListList;
+    // MainPresenter.to.comparePeriodActualDifferencesListList.value =
+    //     comparePeriodActualDifferencesListList;
+    // MainPresenter.to.comparePeriodActualPricesListList.value =
+    //     comparePeriodActualPricesListList;
 
-      // MainPresenter.to.matchPercentDifferencesListList.value =
-      //     matchPercentDifferencesListList;
-      // MainPresenter.to.matchActualDifferencesListList.value =
-      //     matchActualDifferencesListList;
-      // MainPresenter.to.matchActualPricesListList.value =
-      //     matchActualPricesListList;
-    }
+    // MainPresenter.to.matchPercentDifferencesListList.value =
+    //     matchPercentDifferencesListList;
+    // MainPresenter.to.matchActualDifferencesListList.value =
+    //     matchActualDifferencesListList;
+    // MainPresenter.to.matchActualPricesListList.value =
+    //     matchActualPricesListList;
+    // }
 
     DateTime endTime = DateTime.now(); // Record the end time
     // Calculate the time difference
@@ -726,8 +729,8 @@ class TrendMatch {
     ];
     if (!isTracking) {
       MainPresenter.to.sidePlot.value = const SizedBox.shrink();
+      MainPresenter.to.trendMatched.value = true;
     }
-    MainPresenter.to.trendMatched.value = true;
   }
 
   (bool, List<double>) areDifferencesLessThanOrEqualToCertainPercent(
@@ -1295,7 +1298,9 @@ class TrendMatch {
     List<FlSpot> flspotList = [];
     List<double> newLockTrendSubTrendList = [];
 
-    matchRows ??= MainPresenter.to.matchRows;
+    matchRows ??= (!isTracking
+        ? MainPresenter.to.matchRows
+        : MainPresenter.to.trackingMatchRows);
     candleListList ??= MainPresenter.to.candleListList;
 
     double selectedLength = (MainPresenter.to.length.value - 1).toDouble();
@@ -1307,7 +1312,8 @@ class TrendMatch {
     } else {
       int lockTrendLastRow = PrefsService.to.prefs
           .getInt(SharedPreferencesConstant.lockTrendLastRow)!;
-      lastSelectedClosePrice = mainCandle[lockTrendLastRow][4];
+      lastSelectedClosePrice = mainCandle[lockTrendLastRow +
+          (MainPresenter.to.subLength.value - subLen!.toInt())][4];
     }
 
     double lastActualDifference = lastSelectedClosePrice /
@@ -1342,7 +1348,8 @@ class TrendMatch {
     return flspotList;
   }
 
-  List<FlSpot> getSelectedPeriodClosePrices({bool isTracking = false}) {
+  List<FlSpot> getSelectedPeriodClosePrices(
+      {bool isTracking = false, double? subLen}) {
     List<FlSpot> flspotList = [];
 
     List<List<dynamic>> candleListList = MainPresenter.to.candleListList;
@@ -1351,7 +1358,8 @@ class TrendMatch {
       len = candleListList.length - 1;
     } else {
       len = PrefsService.to.prefs
-          .getInt(SharedPreferencesConstant.lockTrendLastRow)!;
+              .getInt(SharedPreferencesConstant.lockTrendLastRow)! +
+          (MainPresenter.to.subLength.value - subLen!.toInt());
     }
 
     for (int i = 0; i < MainPresenter.to.length.value; i++) {
@@ -1378,8 +1386,9 @@ class TrendMatch {
     } else {
       int lockTrendLastRow = PrefsService.to.prefs
           .getInt(SharedPreferencesConstant.lockTrendLastRow)!;
-      double lastSelectedClosePrice = MainPresenter
-          .to.candleListList[lockTrendLastRow + subLen!.toInt()][4];
+      double lastSelectedClosePrice = MainPresenter.to.candleListList[
+          lockTrendLastRow +
+              (MainPresenter.to.subLength.value - subLen!.toInt())][4];
 
       flspotList.add(FlSpot(0, lastSelectedClosePrice));
       flspotList.add(FlSpot(selectedLength + subLen, lastSelectedClosePrice));
@@ -1399,14 +1408,26 @@ class TrendMatch {
     return flspotList;
   }
 
-  LineChartData getDefaultAdjustedLineChartData(
-      {required bool isLockTrend, required bool isTracking}) {
+  Future<LineChartData> getDefaultAdjustedLineChartData(
+      {required bool isLockTrend, required bool isTracking}) async {
     List<LineChartBarData> lineBarsData = [];
     if (isTracking) {
+      // Check if a tracking probability has lower than or equal to probThreshold
+      // Calculate and redefine global trackingSubLen
+      int subLen = MainPresenter.to.subLength.value;
+      int lockTrendLastRow = PrefsService.to.prefs
+          .getInt(SharedPreferencesConstant.lockTrendLastRow)!;
+      int candleLen = MainPresenter.to.candleListList.length - 1;
+      int lapsed = (candleLen - lockTrendLastRow >= subLen)
+          ? subLen
+          : (candleLen - lockTrendLastRow);
+      int thisTrackingSubLen = subLen - lapsed;
+      MainPresenter.to.trackingSubLen.value = thisTrackingSubLen;
       // Call TrendMatch().init() and get the indices (matched rows) and
       // storing them in new global lists
-      TrendMatch().init(isTracking: isLockTrend);
+      await TrendMatch().init(isTracking: isLockTrend);
       double trackingSubLen = MainPresenter.to.trackingSubLen.value.toDouble();
+      MainPresenter.to.lockTrendTrackingSubTrendList.value = [];
       if (MainPresenter.to.alwaysUseCrossData.value) {
         List<String> minuteDataList =
             List<String>.from(MainPresenter.to.minuteDataList);
@@ -1492,7 +1513,10 @@ class TrendMatch {
         }
         lineBarsData.add(
           LineChartBarData(
-            spots: getSelectedPeriodClosePrices(isTracking: isTracking),
+            spots: getSelectedPeriodClosePrices(
+              isTracking: isTracking,
+              subLen: trackingSubLen,
+            ),
             isCurved: true,
             barWidth: 3,
             color: ThemeColor.primary.value,
@@ -1524,7 +1548,10 @@ class TrendMatch {
             .toList()
           ..add(
             LineChartBarData(
-              spots: getSelectedPeriodClosePrices(isTracking: isTracking),
+              spots: getSelectedPeriodClosePrices(
+                isTracking: isTracking,
+                subLen: trackingSubLen,
+              ),
               isCurved: true,
               barWidth: 3,
               color: ThemeColor.primary.value,
@@ -1542,6 +1569,7 @@ class TrendMatch {
             ),
           );
       }
+      MainPresenter.to.checkLockTrend();
     } else if (!isLockTrend) {
       MainPresenter.to.lockTrendSubTrendList.value = [];
       if (MainPresenter.to.alwaysUseCrossData.value) {
@@ -1666,6 +1694,7 @@ class TrendMatch {
             ),
           );
       }
+      MainPresenter.to.checkLockTrend();
     } else if (isLockTrend) {
       List cluster = MainPresenter.to.clusters;
 
@@ -1769,7 +1798,6 @@ class TrendMatch {
         );
       }
     }
-    MainPresenter.to.checkLockTrend();
     return LineChartData(
       lineTouchData: const LineTouchData(enabled: false),
       borderData: FlBorderData(show: false),

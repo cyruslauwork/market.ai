@@ -172,9 +172,10 @@ class TrendMatchView extends StatelessWidget {
                       PrefsService.to.prefs
                           .setBool(SharedPreferencesConstant.lockTrend, false);
                       MainPresenter.to.isLockTrend.value = false;
-                      MainPresenter.to.alwaysUseCrossData.value = false;
+
                       PrefsService.to.prefs.setBool(
                           SharedPreferencesConstant.alwaysUseCrossData, false);
+                      MainPresenter.to.alwaysUseCrossData.value = false;
 
                       PrefsService.to.prefs
                           .setString(SharedPreferencesConstant.img1, '');
@@ -204,6 +205,37 @@ class TrendMatchView extends StatelessWidget {
                           SharedPreferencesConstant.lockTrendLastRow, 0);
                       PrefsService.to.prefs.setInt(
                           SharedPreferencesConstant.lockTrendLastDatetime, 0);
+
+                      PrefsService.to.prefs
+                          .setBool(SharedPreferencesConstant.lowProb, true);
+                      PrefsService.to.prefs
+                          .setBool(SharedPreferencesConstant.lowReturn, true);
+                      PrefsService.to.prefs.setBool(
+                          SharedPreferencesConstant.trendsNotOneSided, true);
+                      PrefsService.to.prefs.setBool(
+                          SharedPreferencesConstant.trendsLessThanFive, true);
+                      PrefsService.to.prefs.setBool(
+                          SharedPreferencesConstant
+                              .trendsOneSidedButLessThanFour,
+                          true);
+                      MainPresenter.to.isFirstThirtyMins.value = true;
+                      MainPresenter.to.hitCeilingOrFloor.value = true;
+                      MainPresenter.to.goOpposite.value = true;
+                      PrefsService.to.prefs
+                          .setBool(SharedPreferencesConstant.isLong, false);
+                      PrefsService.to.prefs
+                          .setBool(SharedPreferencesConstant.isShort, false);
+                      MainPresenter.to.over.value = true;
+                      PrefsService.to.prefs
+                          .setDouble(SharedPreferencesConstant.returnRate, 0.0);
+                      PrefsService.to.prefs.setDouble(
+                          SharedPreferencesConstant.expectedProb, 0.0);
+                      PrefsService.to.prefs.setString(
+                          SharedPreferencesConstant.expectedMdd, '±0');
+                      MainPresenter.to.reachedMedian.value = true;
+                      PrefsService.to.prefs.setBool(
+                          SharedPreferencesConstant.trackingHits, true);
+
                       MainPresenter.to.refreshIndicator();
                     } else {
                       int matchedTrends = MainPresenter.to.matchRows.length +
@@ -259,9 +291,8 @@ class TrendMatchView extends StatelessWidget {
               ],
             )
           ],
-          if ((MainPresenter.to.isLockTrend.value &&
-                  MainPresenter.to.clusters.isNotEmpty) ||
-              (MainPresenter.to.isLockTrend.value &&
+          if (MainPresenter.to.isLockTrend.value &&
+              (MainPresenter.to.clusters.isNotEmpty ||
                   MainPresenter.to.hasCluster.value)) ...[
             Center(
               child: AdjustedLineChart(isLockTrend: true),
@@ -278,10 +309,8 @@ class TrendMatchView extends StatelessWidget {
             ],
             Center(
                 child: AdjustedLineChart(isLockTrend: true, isTracking: true)),
-          ],
-          if (!MainPresenter.to.isLockTrend.value) ...[
+          ] else
             Center(child: MainPresenter.to.showTm())
-          ],
         ],
       ),
     );

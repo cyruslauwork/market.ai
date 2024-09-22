@@ -359,7 +359,14 @@ def https(request):
     missing_hues = set(main_df['cluster'].unique()) - set(hue_line_styles.keys())
     for missing_hue in missing_hues:
         hue_line_styles[missing_hue] = (1, 1)  # Default dash pattern
-    sns.lineplot(data=main_df, x='position', y='value', hue='cluster', palette=colors[:len(cluster_ori_list)], style='cluster', dashes=hue_line_styles, legend=False, alpha=0.1)
+    ax = sns.lineplot(data=main_df, x='position', y='value', hue='cluster', palette=colors[:len(cluster_ori_list)], style='cluster', dashes=hue_line_styles, legend=False, alpha=0.1)
+    # Set the xlabel, and ylabel
+    if lang == 'zh':
+        ax.set_xlabel('時間')
+        ax.set_ylabel('值')
+    else:
+        ax.set_xlabel('Time')
+        ax.set_ylabel('Value')
     ### Calculation of upper/lower percentage and set them to the 2nd y-axis
     upper_percent = round(upper_count / (upper_count + lower_count + baseline_count) * 100, 2)
     lower_percent = round(lower_count / (upper_count + lower_count + baseline_count) * 100, 2)
@@ -463,7 +470,14 @@ def https(request):
         plt.plot(cluster_mean_list[i], color=colors[i % 10], linestyle=line_styles[i % 4], 
                 alpha=1, label=f'{delta_abso_list[i]} ({delta_abso_percent_list[i]}/{delta_relative_percent_list[i]}%) | {cluster_ratio_list[i]}%', 
                 linewidth=3)
-    sns.lineplot(data=main_df, x='position', y='value', hue='cluster', palette=colors[:len(cluster_ori_list)], style='cluster', dashes=hue_line_styles, legend=False, alpha=0.1)
+    ax = sns.lineplot(data=main_df, x='position', y='value', hue='cluster', palette=colors[:len(cluster_ori_list)], style='cluster', dashes=hue_line_styles, legend=False, alpha=0.1)
+    # Set the xlabel, and ylabel
+    if lang == 'zh':
+        ax.set_xlabel('時間')
+        ax.set_ylabel('值')
+    else:
+        ax.set_xlabel('Time')
+        ax.set_ylabel('Value')
     # Find the minimum and maximum values in the 'value' column for the last 'position'
     last_position = main_df['position'].max()
     last_position_values = main_df.loc[main_df['position'] == last_position, 'value']

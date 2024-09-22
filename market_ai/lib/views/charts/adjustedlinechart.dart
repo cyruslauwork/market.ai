@@ -9,18 +9,35 @@ import 'package:market_ai/models/models.dart';
 import 'package:market_ai/presenters/presenters.dart';
 import 'package:market_ai/utils/utils.dart';
 
-class AdjustedLineChart extends StatelessWidget {
-  final LineChartData lineChartData;
+class AdjustedLineChart extends StatefulWidget {
+  final bool isLockTrend;
   final bool isTracking;
+  final LineChartData? initialLineChartData;
 
-  AdjustedLineChart({
+  const AdjustedLineChart({
     super.key,
-    LineChartData? lineChartData,
-    required bool isLockTrend,
+    this.initialLineChartData,
+    required this.isLockTrend,
     this.isTracking = false,
-  }) : lineChartData = lineChartData ??
-            TrendMatch().getDefaultAdjustedLineChartData(
-                isLockTrend: isLockTrend, isTracking: isTracking);
+  });
+
+  @override
+  State<AdjustedLineChart> createState() => _AdjustedLineChartState();
+}
+
+class _AdjustedLineChartState extends State<AdjustedLineChart> {
+  late Future<LineChartData> lineChartDataFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    lineChartDataFuture = widget.initialLineChartData != null
+        ? Future.value(widget.initialLineChartData)
+        : TrendMatch().getDefaultAdjustedLineChartData(
+            isLockTrend: widget.isLockTrend,
+            isTracking: widget.isTracking,
+          );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +54,7 @@ class AdjustedLineChart extends StatelessWidget {
           child: Row(
             children: [
               SizedBox(
-                width: !isTracking
+                width: !widget.isTracking
                     ? MainPresenter.to.tmChartWidth.value
                     : (Platform.isWindows ||
                             Platform.isLinux ||
@@ -48,9 +65,32 @@ class AdjustedLineChart extends StatelessWidget {
                     (Platform.isWindows || Platform.isLinux || Platform.isMacOS
                         ? 120.h
                         : 85.h),
-                child: LineChart(lineChartData),
+                child: FutureBuilder<LineChartData>(
+                  future: lineChartDataFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return SizedBox(
+                        width: 20.w,
+                        height: (Platform.isWindows ||
+                                Platform.isLinux ||
+                                Platform.isMacOS
+                            ? 25.h
+                            : 20.h),
+                        child: const CircularProgressIndicator(),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}',
+                          style: const TextTheme().sp5);
+                    } else if (snapshot.hasData) {
+                      return LineChart(snapshot.data!);
+                    } else {
+                      return Text('No data available',
+                          style: const TextTheme().sp5);
+                    }
+                  },
+                ),
               ),
-              if (!isTracking) ...[
+              if (!widget.isTracking) ...[
                 MainPresenter.to.sidePlot.value,
               ],
             ],

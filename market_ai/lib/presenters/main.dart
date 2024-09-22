@@ -628,9 +628,9 @@ class MainPresenter extends GetxController {
       (PrefsService.to.prefs.getBool(SharedPreferencesConstant.lockTrend) ??
               false)
           .obs;
-  RxBool isFirstThirtyMins = false.obs;
-  RxBool hitCeilingOrFloor = false.obs;
-  RxBool goOpposite = false.obs;
+  RxBool isFirstThirtyMins = true.obs;
+  RxBool hitCeilingOrFloor = true.obs;
+  RxBool goOpposite = true.obs;
   RxBool lowReturn =
       (PrefsService.to.prefs.getBool(SharedPreferencesConstant.lowReturn) ??
               true)
@@ -682,7 +682,7 @@ class MainPresenter extends GetxController {
   RxList<List<double>> lockTrendSubTrendList = [
     [0.0]
   ].obs;
-  RxBool over = false.obs;
+  RxBool over = true.obs;
   RxInt trackingSubLen = 0.obs;
   RxDouble expectedTrackingProb = 0.0.obs;
   RxBool trackingHits =
@@ -1280,6 +1280,8 @@ class MainPresenter extends GetxController {
         }
       }
 
+      thisIsLong = false;
+      thisIsShort = false;
       if (upper.isNotEmpty || lower.isNotEmpty) {
         double upperProb =
             upper.length / (upper.length + lower.length + baseline);
@@ -1360,8 +1362,6 @@ class MainPresenter extends GetxController {
         thisExpectedProb = 0.0;
         thisLowProb = true;
         thisTrendsNotOneSided = true;
-        thisIsLong = false;
-        thisIsShort = false;
         Future.microtask(() {
           lowProb.value = true;
           trendsNotOneSided.value = true;
@@ -1668,58 +1668,62 @@ class MainPresenter extends GetxController {
         }
       }
 
-      // Check if a tracking probability has lower than or equal to probThreshold
-      // Calculate and redefine global trackingSubLen
-      int candleLen = candleListList.length - 1;
-      int lapsed = candleLen - lockTrendLastRow;
-      int thisTrackingSubLen = lapsed <= subLen ? subLen - lapsed : lapsed;
-      trackingSubLen.value = thisTrackingSubLen;
-      // Calculation and redefine global expectedTrackingProb
-      List<List<double>> trackingUpper = [];
-      List<List<double>> trackingLower = [];
-      int trackingBaseline = 0;
-      if (lockTrendTrackingSubTrendList.isNotEmpty) {
-        for (var values in lockTrendTrackingSubTrendList) {
-          if (values.last > values.first) {
-            trackingUpper.add(values);
-          } else if (values.last < values.first) {
-            trackingLower.add(values);
-          } else {
-            trackingBaseline++;
+      if (lockTrendLastRow == candleListList.length - 1) {
+        thisTrackingHits = false;
+        Future.microtask(() {
+          trackingHits.value = thisTrackingHits;
+          PrefsService.to.prefs.setBool(
+              SharedPreferencesConstant.trackingHits, thisTrackingHits);
+          expectedTrackingProb.value = -1.0;
+        });
+      } else {
+        // Calculation and redefine global expectedTrackingProb
+        List<List<double>> trackingUpper = [];
+        List<List<double>> trackingLower = [];
+        int trackingBaseline = 0;
+        if (lockTrendTrackingSubTrendList.isNotEmpty) {
+          for (var values in lockTrendTrackingSubTrendList) {
+            if (values.last > values.first) {
+              trackingUpper.add(values);
+            } else if (values.last < values.first) {
+              trackingLower.add(values);
+            } else {
+              trackingBaseline++;
+            }
           }
         }
-      }
-      if (trackingUpper.isNotEmpty || trackingLower.isNotEmpty) {
-        double upperProb = trackingUpper.length /
-            (trackingUpper.length + trackingLower.length + trackingBaseline);
-        double lowerProb = trackingLower.length /
-            (trackingUpper.length + trackingLower.length + trackingBaseline);
-        if (upperProb > probThreshold.value ||
-            lowerProb > probThreshold.value) {
-          thisTrackingHits = true;
-          Future.microtask(() {
-            trackingHits.value = thisTrackingHits;
-            PrefsService.to.prefs.setBool(
-                SharedPreferencesConstant.trackingHits, thisTrackingHits);
-            expectedTrackingProb.value = max(upperProb, lowerProb);
-          });
+        if (trackingUpper.isNotEmpty || trackingLower.isNotEmpty) {
+          double upperProb = trackingUpper.length /
+              (trackingUpper.length + trackingLower.length + trackingBaseline);
+          double lowerProb = trackingLower.length /
+              (trackingUpper.length + trackingLower.length + trackingBaseline);
+          if (upperProb > probThreshold.value ||
+              lowerProb > probThreshold.value) {
+            thisTrackingHits = true;
+            Future.microtask(() {
+              trackingHits.value = thisTrackingHits;
+              PrefsService.to.prefs.setBool(
+                  SharedPreferencesConstant.trackingHits, thisTrackingHits);
+              expectedTrackingProb.value = max(upperProb, lowerProb);
+            });
+          } else {
+            thisTrackingHits = false;
+            Future.microtask(() {
+              trackingHits.value = thisTrackingHits;
+              PrefsService.to.prefs.setBool(
+                  SharedPreferencesConstant.trackingHits, thisTrackingHits);
+              expectedTrackingProb.value = max(upperProb, lowerProb);
+            });
+          }
         } else {
           thisTrackingHits = false;
           Future.microtask(() {
             trackingHits.value = thisTrackingHits;
             PrefsService.to.prefs.setBool(
                 SharedPreferencesConstant.trackingHits, thisTrackingHits);
-            expectedTrackingProb.value = max(upperProb, lowerProb);
+            expectedTrackingProb.value = -1.0;
           });
         }
-      } else {
-        thisTrackingHits = false;
-        Future.microtask(() {
-          trackingHits.value = thisTrackingHits;
-          PrefsService.to.prefs.setBool(
-              SharedPreferencesConstant.trackingHits, thisTrackingHits);
-          expectedTrackingProb.value = 0.0;
-        });
       }
     }
 
@@ -9350,48 +9354,43 @@ class MainPresenter extends GetxController {
     }
   }
 
-    Widget showMatchedCandlestickChart(
+  Widget showMatchedCandlestickChart(
       {required AsyncSnapshot<List<CandleData>> snapshot}) {
+    List<CandleData> listCandle = snapshot.data!;
     if (hasCandleData.value) {
       return SizedBox(
-          width: 393.w,
-          height: candleChartHeight.value,
-          child: InteractiveChart(
-            candles: snapshot.data!,
-            style: ChartStyle(
-              trendLineStyles: [
-                Paint()
-                  ..strokeWidth = 1.0
-                  ..strokeCap = StrokeCap.round
-                  ..color = Colors.orange,
-                Paint()
-                  ..strokeWidth = 1.0
-                  ..strokeCap = StrokeCap.round
-                  ..color = Colors.red,
-                Paint()
-                  ..strokeWidth = 1.0
-                  ..strokeCap = StrokeCap.round
-                  ..color = Colors.green,
-                Paint()
-                  ..strokeWidth = 1.0
-                  ..strokeCap = StrokeCap.round
-                  ..color = Colors.blue[700]!,
-                Paint()
-                  ..strokeWidth = 1.0
-                  ..strokeCap = StrokeCap.round
-                  ..color = Colors.purple[300]!,
-                // Paint()
-                //   ..strokeWidth = 1.0
-                //   ..strokeCap = StrokeCap.round
-                //   ..color = Colors.yellow,
-              ],
-              selectionHighlightColor: Colors.red.withOpacity(0.75),
-              overlayBackgroundColor: Colors.red.withOpacity(0.75),
-              overlayTextStyle: const TextStyle(color: AppColor.whiteColor),
-            ),
-            /** Callbacks */
-            // onTap: (candle) => print("user tapped on $candle"),
+        width: 393.w,
+        height: candleChartHeight.value,
+        child: InteractiveChart(
+          candles: listCandle,
+          style: ChartStyle(
+            trendLineStyles: [
+              Paint()
+                ..strokeWidth = 1.0
+                ..strokeCap = StrokeCap.round
+                ..color = Colors.orange,
+              Paint()
+                ..strokeWidth = 1.0
+                ..strokeCap = StrokeCap.round
+                ..color = Colors.red,
+              Paint()
+                ..strokeWidth = 1.0
+                ..strokeCap = StrokeCap.round
+                ..color = Colors.green,
+              Paint()
+                ..strokeWidth = 1.0
+                ..strokeCap = StrokeCap.round
+                ..color = Colors.blue[700]!,
+              Paint()
+                ..strokeWidth = 1.0
+                ..strokeCap = StrokeCap.round
+                ..color = Colors.purple[300]!,
+            ],
+            selectionHighlightColor: Colors.red.withOpacity(0.75),
+            overlayBackgroundColor: Colors.red.withOpacity(0.75),
+            overlayTextStyle: const TextStyle(color: AppColor.whiteColor),
           ),
+        ),
       );
     } else {
       return Center(
