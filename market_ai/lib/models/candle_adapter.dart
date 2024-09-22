@@ -39,7 +39,7 @@ class CandleAdapter {
   Future<List<CandleData>> listListTolistCandledata(
       (Future<List<List<dynamic>>>, SrcFileType) param) async {
     List<List<dynamic>> listList = await param.$1;
-    MainPresenter.to.candleListList.value = listList;
+    MainPresenter.to.candleListList = listList;
     late List<CandleData> listCandledata;
 
     if (!MainPresenter.to.isLockTrend.value) {
@@ -71,7 +71,7 @@ class CandleAdapter {
                 volume: row[5].toDouble(),
               ))
           .toList();
-      MainPresenter.to.listCandledata.value = listCandledata;
+      MainPresenter.to.listCandledata = listCandledata;
       // final jsonList =
       //     listCandledata.map((candleData) => candleData.toMap()).toList();
       // final jsonString = json.encode(jsonList);
@@ -106,37 +106,37 @@ class CandleAdapter {
       (Future<List<List<dynamic>>>, SrcFileType, String) param) async {
     List<List<dynamic>> listList = await param.$1;
     if (param.$3 == 'SPY') {
-      MainPresenter.to.spyCandleListList.value = listList;
+      MainPresenter.to.spyCandleListList = listList;
     } else if (param.$3 == 'QQQ') {
-      MainPresenter.to.qqqCandleListList.value = listList;
+      MainPresenter.to.qqqCandleListList = listList;
     } else if (param.$3 == 'USO') {
-      MainPresenter.to.usoCandleListList.value = listList;
+      MainPresenter.to.usoCandleListList = listList;
     } else if (param.$3 == 'GLD') {
-      MainPresenter.to.gldCandleListList.value = listList;
+      MainPresenter.to.gldCandleListList = listList;
     } else if (param.$3 == 'SLV') {
-      MainPresenter.to.slvCandleListList.value = listList;
+      MainPresenter.to.slvCandleListList = listList;
     } else if (param.$3 == 'IWM') {
-      MainPresenter.to.iwmCandleListList.value = listList;
+      MainPresenter.to.iwmCandleListList = listList;
     } else if (param.$3 == 'XLK') {
-      MainPresenter.to.xlkCandleListList.value = listList;
+      MainPresenter.to.xlkCandleListList = listList;
     } else if (param.$3 == 'AAPL') {
-      MainPresenter.to.aaplCandleListList.value = listList;
+      MainPresenter.to.aaplCandleListList = listList;
     } else if (param.$3 == 'BA') {
-      MainPresenter.to.baCandleListList.value = listList;
+      MainPresenter.to.baCandleListList = listList;
     } else if (param.$3 == 'BAC') {
-      MainPresenter.to.bacCandleListList.value = listList;
+      MainPresenter.to.bacCandleListList = listList;
     } else if (param.$3 == 'MCD') {
-      MainPresenter.to.mcdCandleListList.value = listList;
+      MainPresenter.to.mcdCandleListList = listList;
     } else if (param.$3 == 'NVDA') {
-      MainPresenter.to.nvdaCandleListList.value = listList;
+      MainPresenter.to.nvdaCandleListList = listList;
     } else if (param.$3 == 'MSFT') {
-      MainPresenter.to.msftCandleListList.value = listList;
+      MainPresenter.to.msftCandleListList = listList;
     } else if (param.$3 == 'GSK') {
-      MainPresenter.to.gskCandleListList.value = listList;
+      MainPresenter.to.gskCandleListList = listList;
     } else if (param.$3 == 'TSLA') {
-      MainPresenter.to.tslaCandleListList.value = listList;
+      MainPresenter.to.tslaCandleListList = listList;
     } else if (param.$3 == 'AMZN') {
-      MainPresenter.to.amznCandleListList.value = listList;
+      MainPresenter.to.amznCandleListList = listList;
     } else {
       throw Exception('There is no candleListList for ${param.$3}');
     }
@@ -154,37 +154,37 @@ class CandleAdapter {
               ))
           .toList();
       if (param.$3 == 'SPY') {
-        MainPresenter.to.spyListCandledata.value = listCandledata;
+        MainPresenter.to.spyListCandledata = listCandledata;
       } else if (param.$3 == 'QQQ') {
-        MainPresenter.to.qqqListCandledata.value = listCandledata;
+        MainPresenter.to.qqqListCandledata = listCandledata;
       } else if (param.$3 == 'USO') {
-        MainPresenter.to.usoListCandledata.value = listCandledata;
+        MainPresenter.to.usoListCandledata = listCandledata;
       } else if (param.$3 == 'GLD') {
-        MainPresenter.to.gldListCandledata.value = listCandledata;
+        MainPresenter.to.gldListCandledata = listCandledata;
       } else if (param.$3 == 'SLV') {
-        MainPresenter.to.slvListCandledata.value = listCandledata;
+        MainPresenter.to.slvListCandledata = listCandledata;
       } else if (param.$3 == 'IWM') {
-        MainPresenter.to.iwmListCandledata.value = listCandledata;
+        MainPresenter.to.iwmListCandledata = listCandledata;
       } else if (param.$3 == 'XLK') {
-        MainPresenter.to.xlkListCandledata.value = listCandledata;
+        MainPresenter.to.xlkListCandledata = listCandledata;
       } else if (param.$3 == 'AAPL') {
-        MainPresenter.to.aaplListCandledata.value = listCandledata;
+        MainPresenter.to.aaplListCandledata = listCandledata;
       } else if (param.$3 == 'BA') {
-        MainPresenter.to.baListCandledata.value = listCandledata;
+        MainPresenter.to.baListCandledata = listCandledata;
       } else if (param.$3 == 'BAC') {
-        MainPresenter.to.bacListCandledata.value = listCandledata;
+        MainPresenter.to.bacListCandledata = listCandledata;
       } else if (param.$3 == 'MCD') {
-        MainPresenter.to.mcdListCandledata.value = listCandledata;
+        MainPresenter.to.mcdListCandledata = listCandledata;
       } else if (param.$3 == 'NVDA') {
-        MainPresenter.to.nvdaListCandledata.value = listCandledata;
+        MainPresenter.to.nvdaListCandledata = listCandledata;
       } else if (param.$3 == 'MSFT') {
-        MainPresenter.to.msftListCandledata.value = listCandledata;
+        MainPresenter.to.msftListCandledata = listCandledata;
       } else if (param.$3 == 'GSK') {
-        MainPresenter.to.gskListCandledata.value = listCandledata;
+        MainPresenter.to.gskListCandledata = listCandledata;
       } else if (param.$3 == 'TSLA') {
-        MainPresenter.to.tslaListCandledata.value = listCandledata;
+        MainPresenter.to.tslaListCandledata = listCandledata;
       } else if (param.$3 == 'AMZN') {
-        MainPresenter.to.amznListCandledata.value = listCandledata;
+        MainPresenter.to.amznListCandledata = listCandledata;
       } else {
         throw Exception('There is no listCandledata for ${param.$3}');
       }
@@ -201,37 +201,37 @@ class CandleAdapter {
               ))
           .toList();
       if (param.$3 == 'SPY') {
-        MainPresenter.to.spyListCandledata.value = listCandledata;
+        MainPresenter.to.spyListCandledata = listCandledata;
       } else if (param.$3 == 'QQQ') {
-        MainPresenter.to.qqqListCandledata.value = listCandledata;
+        MainPresenter.to.qqqListCandledata = listCandledata;
       } else if (param.$3 == 'USO') {
-        MainPresenter.to.usoListCandledata.value = listCandledata;
+        MainPresenter.to.usoListCandledata = listCandledata;
       } else if (param.$3 == 'GLD') {
-        MainPresenter.to.gldListCandledata.value = listCandledata;
+        MainPresenter.to.gldListCandledata = listCandledata;
       } else if (param.$3 == 'SLV') {
-        MainPresenter.to.slvListCandledata.value = listCandledata;
+        MainPresenter.to.slvListCandledata = listCandledata;
       } else if (param.$3 == 'IWM') {
-        MainPresenter.to.iwmListCandledata.value = listCandledata;
+        MainPresenter.to.iwmListCandledata = listCandledata;
       } else if (param.$3 == 'XLK') {
-        MainPresenter.to.xlkListCandledata.value = listCandledata;
+        MainPresenter.to.xlkListCandledata = listCandledata;
       } else if (param.$3 == 'AAPL') {
-        MainPresenter.to.aaplListCandledata.value = listCandledata;
+        MainPresenter.to.aaplListCandledata = listCandledata;
       } else if (param.$3 == 'BA') {
-        MainPresenter.to.baListCandledata.value = listCandledata;
+        MainPresenter.to.baListCandledata = listCandledata;
       } else if (param.$3 == 'BAC') {
-        MainPresenter.to.bacListCandledata.value = listCandledata;
+        MainPresenter.to.bacListCandledata = listCandledata;
       } else if (param.$3 == 'MCD') {
-        MainPresenter.to.mcdListCandledata.value = listCandledata;
+        MainPresenter.to.mcdListCandledata = listCandledata;
       } else if (param.$3 == 'NVDA') {
-        MainPresenter.to.nvdaListCandledata.value = listCandledata;
+        MainPresenter.to.nvdaListCandledata = listCandledata;
       } else if (param.$3 == 'MSFT') {
-        MainPresenter.to.msftListCandledata.value = listCandledata;
+        MainPresenter.to.msftListCandledata = listCandledata;
       } else if (param.$3 == 'GSK') {
-        MainPresenter.to.gskListCandledata.value = listCandledata;
+        MainPresenter.to.gskListCandledata = listCandledata;
       } else if (param.$3 == 'TSLA') {
-        MainPresenter.to.tslaListCandledata.value = listCandledata;
+        MainPresenter.to.tslaListCandledata = listCandledata;
       } else if (param.$3 == 'AMZN') {
-        MainPresenter.to.amznListCandledata.value = listCandledata;
+        MainPresenter.to.amznListCandledata = listCandledata;
       } else {
         throw Exception('There is no listCandledata for ${param.$3}');
       }

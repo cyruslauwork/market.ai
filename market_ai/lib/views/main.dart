@@ -1755,7 +1755,7 @@ class _MainViewState extends State<MainView> {
         body: SafeArea(
           minimum: EdgeInsets.all(1.w),
           child: FutureBuilder<List<CandleData>>(
-            future: MainPresenter.to.futureListCandledata.value,
+            future: MainPresenter.to.futureListCandledata,
             builder: (BuildContext context,
                 AsyncSnapshot<List<CandleData>> snapshot) {
               if (snapshot.hasData) {

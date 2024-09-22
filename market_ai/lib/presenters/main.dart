@@ -421,41 +421,41 @@ class MainPresenter extends GetxController {
           'SPDR S&P 500 ETF Trust')
       .obs;
   RxInt candledownloadTime = 0.obs;
-  RxList<List<dynamic>> candleListList = [[]].obs;
-  RxList<List<dynamic>> spyCandleListList = [[]].obs; // Cross-data
-  RxList<List<dynamic>> qqqCandleListList = [[]].obs; // Cross-data
-  RxList<List<dynamic>> usoCandleListList = [[]].obs; // Cross-data
-  RxList<List<dynamic>> gldCandleListList = [[]].obs; // Cross-data
-  RxList<List<dynamic>> slvCandleListList = [[]].obs; // Cross-data
-  RxList<List<dynamic>> iwmCandleListList = [[]].obs; // Cross-data
-  RxList<List<dynamic>> xlkCandleListList = [[]].obs; // Cross-data
-  RxList<List<dynamic>> aaplCandleListList = [[]].obs; // Cross-data
-  RxList<List<dynamic>> baCandleListList = [[]].obs; // Cross-data
-  RxList<List<dynamic>> bacCandleListList = [[]].obs; // Cross-data
-  RxList<List<dynamic>> mcdCandleListList = [[]].obs; // Cross-data
-  RxList<List<dynamic>> nvdaCandleListList = [[]].obs; // Cross-data
-  RxList<List<dynamic>> msftCandleListList = [[]].obs; // Cross-data
-  RxList<List<dynamic>> gskCandleListList = [[]].obs; // Cross-data
-  RxList<List<dynamic>> tslaCandleListList = [[]].obs; // Cross-data
-  RxList<List<dynamic>> amznCandleListList = [[]].obs; // Cross-data
-  late Rx<Future<List<CandleData>>> futureListCandledata = init().obs;
-  late RxList<CandleData> listCandledata = dummyCandle.obs;
-  late RxList<CandleData> spyListCandledata = dummyCandle.obs; // Cross-data
-  late RxList<CandleData> qqqListCandledata = dummyCandle.obs; // Cross-data
-  late RxList<CandleData> usoListCandledata = dummyCandle.obs; // Cross-data
-  late RxList<CandleData> gldListCandledata = dummyCandle.obs; // Cross-data
-  late RxList<CandleData> slvListCandledata = dummyCandle.obs; // Cross-data
-  late RxList<CandleData> iwmListCandledata = dummyCandle.obs; // Cross-data
-  late RxList<CandleData> xlkListCandledata = dummyCandle.obs; // Cross-data
-  late RxList<CandleData> aaplListCandledata = dummyCandle.obs; // Cross-data
-  late RxList<CandleData> baListCandledata = dummyCandle.obs; // Cross-data
-  late RxList<CandleData> bacListCandledata = dummyCandle.obs; // Cross-data
-  late RxList<CandleData> mcdListCandledata = dummyCandle.obs; // Cross-data
-  late RxList<CandleData> nvdaListCandledata = dummyCandle.obs; // Cross-data
-  late RxList<CandleData> msftListCandledata = dummyCandle.obs; // Cross-data
-  late RxList<CandleData> gskListCandledata = dummyCandle.obs; // Cross-data
-  late RxList<CandleData> tslaListCandledata = dummyCandle.obs; // Cross-data
-  late RxList<CandleData> amznListCandledata = dummyCandle.obs; // Cross-data
+  List<List<dynamic>> candleListList = [[]];
+  List<List<dynamic>> spyCandleListList = [[]]; // Cross-data
+  List<List<dynamic>> qqqCandleListList = [[]]; // Cross-data
+  List<List<dynamic>> usoCandleListList = [[]]; // Cross-data
+  List<List<dynamic>> gldCandleListList = [[]]; // Cross-data
+  List<List<dynamic>> slvCandleListList = [[]]; // Cross-data
+  List<List<dynamic>> iwmCandleListList = [[]]; // Cross-data
+  List<List<dynamic>> xlkCandleListList = [[]]; // Cross-data
+  List<List<dynamic>> aaplCandleListList = [[]]; // Cross-data
+  List<List<dynamic>> baCandleListList = [[]]; // Cross-data
+  List<List<dynamic>> bacCandleListList = [[]]; // Cross-data
+  List<List<dynamic>> mcdCandleListList = [[]]; // Cross-data
+  List<List<dynamic>> nvdaCandleListList = [[]]; // Cross-data
+  List<List<dynamic>> msftCandleListList = [[]]; // Cross-data
+  List<List<dynamic>> gskCandleListList = [[]]; // Cross-data
+  List<List<dynamic>> tslaCandleListList = [[]]; // Cross-data
+  List<List<dynamic>> amznCandleListList = [[]]; // Cross-data
+  late Future<List<CandleData>> futureListCandledata = init();
+  late List<CandleData> listCandledata = dummyCandle;
+  late List<CandleData> spyListCandledata = dummyCandle; // Cross-data
+  late List<CandleData> qqqListCandledata = dummyCandle; // Cross-data
+  late List<CandleData> usoListCandledata = dummyCandle; // Cross-data
+  late List<CandleData> gldListCandledata = dummyCandle; // Cross-data
+  late List<CandleData> slvListCandledata = dummyCandle; // Cross-data
+  late List<CandleData> iwmListCandledata = dummyCandle; // Cross-data
+  late List<CandleData> xlkListCandledata = dummyCandle; // Cross-data
+  late List<CandleData> aaplListCandledata = dummyCandle; // Cross-data
+  late List<CandleData> baListCandledata = dummyCandle; // Cross-data
+  late List<CandleData> bacListCandledata = dummyCandle; // Cross-data
+  late List<CandleData> mcdListCandledata = dummyCandle; // Cross-data
+  late List<CandleData> nvdaListCandledata = dummyCandle; // Cross-data
+  late List<CandleData> msftListCandledata = dummyCandle; // Cross-data
+  late List<CandleData> gskListCandledata = dummyCandle; // Cross-data
+  late List<CandleData> tslaListCandledata = dummyCandle; // Cross-data
+  late List<CandleData> amznListCandledata = dummyCandle; // Cross-data
   ValueNotifier<bool> showAverageNotifier = ValueNotifier<bool>(true);
   bool isShowAverageListenerAdded = false;
   late RxString marketDataProviderMsg = Rx('mkt_data'.tr)().obs;
@@ -905,7 +905,7 @@ class MainPresenter extends GetxController {
     bookmarked.value = watchlist.contains(financialInstrumentSymbol.value)
         ? Icons.bookmark_outlined
         : Icons.bookmark_border_outlined;
-    futureListCandledata.value = init();
+    futureListCandledata = init();
   }
 
   void showAnalyticsListener() {
@@ -9075,7 +9075,7 @@ class MainPresenter extends GetxController {
   }
 
   refreshIndicator() {
-    futureListCandledata.value = init();
+    futureListCandledata = init();
   }
 
   alwaysShowAnalyticsToggle(bool value) {
@@ -9131,7 +9131,7 @@ class MainPresenter extends GetxController {
         showScaffoldMessenger(context: context, localizedMsg: 'show_one_day');
         alwaysUseCrossDataToggle(value, context);
       }
-      futureListCandledata.value = init();
+      futureListCandledata = init();
     } else {
       showScaffoldMessenger(
           context: context, localizedMsg: 'lock_trend_alert'.tr);
@@ -9148,7 +9148,7 @@ class MainPresenter extends GetxController {
     } else {
       showScaffoldMessenger(context: context, localizedMsg: 'cross_data_off');
     }
-    futureListCandledata.value = init();
+    futureListCandledata = init();
   }
 
   closePosWhenReachedMedianToggle(bool value) {

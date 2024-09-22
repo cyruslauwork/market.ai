@@ -303,7 +303,7 @@ class TrendMatchView extends StatelessWidget {
           if (MainPresenter.to.isLockTrend.value &&
               (MainPresenter.to.clusters.isNotEmpty ||
                   MainPresenter.to.hasCluster.value)) ...[
-            Center(
+            const Center(
               child: AdjustedLineChart(isLockTrend: true),
             ),
             Text(
@@ -316,7 +316,7 @@ class TrendMatchView extends StatelessWidget {
                 style: MainPresenter.to.lockTrendTextStyle.value,
               ),
             ],
-            Center(
+            const Center(
                 child: AdjustedLineChart(isLockTrend: true, isTracking: true)),
           ] else
             Center(child: MainPresenter.to.showTm())
@@ -368,7 +368,7 @@ class TrendMatchView extends StatelessWidget {
             )
           ],
         ),
-        AdjustedLineChart(isLockTrend: false),
+        const AdjustedLineChart(isLockTrend: false),
         MainPresenter.to.showMatchesExceededMsg(),
       ],
     );
