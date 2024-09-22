@@ -245,7 +245,7 @@ class TrendMatch {
     String symbol = MainPresenter.to.financialInstrumentSymbol.value;
     // int dummyCandleLen = MainPresenter.to.dummyCandle.length;
     if (alwaysUseCrossData) {
-      minuteDataList = MainPresenter.to.minuteDataList;
+      minuteDataList = MainPresenter.to.universalHasMinuteData.keys.toList();
     } else {
       minuteDataList = [symbol];
     }
@@ -1144,8 +1144,8 @@ class TrendMatch {
     List<LineChartBarData> lineBarsData = [];
     if (MainPresenter.to.alwaysUseCrossData.value ||
         MainPresenter.to.isLockTrend.value) {
-      List<String> minuteDataList =
-          List<String>.from(MainPresenter.to.minuteDataList);
+      List<String> minuteDataList = List<String>.from(
+          MainPresenter.to.universalHasMinuteData.keys.toList());
       String fiSymbol = MainPresenter.to.financialInstrumentSymbol.value;
       for (String symbol in minuteDataList) {
         List<int> matchRows;
@@ -1429,8 +1429,8 @@ class TrendMatch {
       double trackingSubLen = MainPresenter.to.trackingSubLen.value.toDouble();
       MainPresenter.to.lockTrendTrackingSubTrendList.value = [];
       if (MainPresenter.to.alwaysUseCrossData.value) {
-        List<String> minuteDataList =
-            List<String>.from(MainPresenter.to.minuteDataList);
+        List<String> minuteDataList = List<String>.from(
+            MainPresenter.to.universalHasMinuteData.keys.toList());
         String fiSymbol = MainPresenter.to.financialInstrumentSymbol.value;
         for (String symbol in minuteDataList) {
           List<int> matchRows;
@@ -1573,8 +1573,8 @@ class TrendMatch {
     } else if (!isLockTrend) {
       MainPresenter.to.lockTrendSubTrendList.value = [];
       if (MainPresenter.to.alwaysUseCrossData.value) {
-        List<String> minuteDataList =
-            List<String>.from(MainPresenter.to.minuteDataList);
+        List<String> minuteDataList = List<String>.from(
+            MainPresenter.to.universalHasMinuteData.keys.toList());
         String fiSymbol = MainPresenter.to.financialInstrumentSymbol.value;
         for (String symbol in minuteDataList) {
           List<int> matchRows;

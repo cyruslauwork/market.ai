@@ -422,62 +422,48 @@ class MainPresenter extends GetxController {
       .obs;
   RxInt candledownloadTime = 0.obs;
   List<List<dynamic>> candleListList = [[]];
-  List<List<dynamic>> spyCandleListList = [[]]; // Cross-data
-  List<List<dynamic>> qqqCandleListList = [[]]; // Cross-data
-  List<List<dynamic>> usoCandleListList = [[]]; // Cross-data
-  List<List<dynamic>> gldCandleListList = [[]]; // Cross-data
-  List<List<dynamic>> slvCandleListList = [[]]; // Cross-data
-  List<List<dynamic>> iwmCandleListList = [[]]; // Cross-data
-  List<List<dynamic>> xlkCandleListList = [[]]; // Cross-data
-  List<List<dynamic>> aaplCandleListList = [[]]; // Cross-data
-  List<List<dynamic>> baCandleListList = [[]]; // Cross-data
-  List<List<dynamic>> bacCandleListList = [[]]; // Cross-data
-  List<List<dynamic>> mcdCandleListList = [[]]; // Cross-data
-  List<List<dynamic>> nvdaCandleListList = [[]]; // Cross-data
-  List<List<dynamic>> msftCandleListList = [[]]; // Cross-data
-  List<List<dynamic>> gskCandleListList = [[]]; // Cross-data
-  List<List<dynamic>> tslaCandleListList = [[]]; // Cross-data
-  List<List<dynamic>> amznCandleListList = [[]]; // Cross-data
+  Map<String, List<List<dynamic>>> universalCandleListList = {
+    'SPY': [[]],
+    'QQQ': [[]],
+    'USO': [[]],
+    'GLD': [[]],
+    'SLV': [[]],
+    'IWM': [[]],
+    'XLK': [[]],
+    'AAPL': [[]],
+    'BA': [[]],
+    'BAC': [[]],
+    'MCD': [[]],
+    'NVDA': [[]],
+    'MSFT': [[]],
+    'GSK': [[]],
+    'TSLA': [[]],
+    'AMZN': [[]],
+  }; // Cross-data
   late Future<List<CandleData>> futureListCandledata = init();
   late List<CandleData> listCandledata = dummyCandle;
-  late List<CandleData> spyListCandledata = dummyCandle; // Cross-data
-  late List<CandleData> qqqListCandledata = dummyCandle; // Cross-data
-  late List<CandleData> usoListCandledata = dummyCandle; // Cross-data
-  late List<CandleData> gldListCandledata = dummyCandle; // Cross-data
-  late List<CandleData> slvListCandledata = dummyCandle; // Cross-data
-  late List<CandleData> iwmListCandledata = dummyCandle; // Cross-data
-  late List<CandleData> xlkListCandledata = dummyCandle; // Cross-data
-  late List<CandleData> aaplListCandledata = dummyCandle; // Cross-data
-  late List<CandleData> baListCandledata = dummyCandle; // Cross-data
-  late List<CandleData> bacListCandledata = dummyCandle; // Cross-data
-  late List<CandleData> mcdListCandledata = dummyCandle; // Cross-data
-  late List<CandleData> nvdaListCandledata = dummyCandle; // Cross-data
-  late List<CandleData> msftListCandledata = dummyCandle; // Cross-data
-  late List<CandleData> gskListCandledata = dummyCandle; // Cross-data
-  late List<CandleData> tslaListCandledata = dummyCandle; // Cross-data
-  late List<CandleData> amznListCandledata = dummyCandle; // Cross-data
+  late Map<String, List<CandleData>> universalListCandledata = {
+    'SPY': dummyCandle,
+    'QQQ': dummyCandle,
+    'USO': dummyCandle,
+    'GLD': dummyCandle,
+    'SLV': dummyCandle,
+    'IWM': dummyCandle,
+    'XLK': dummyCandle,
+    'AAPL': dummyCandle,
+    'BA': dummyCandle,
+    'BAC': dummyCandle,
+    'MCD': dummyCandle,
+    'NVDA': dummyCandle,
+    'MSFT': dummyCandle,
+    'GSK': dummyCandle,
+    'TSLA': dummyCandle,
+    'AMZN': dummyCandle,
+  }; // Cross-data
   ValueNotifier<bool> showAverageNotifier = ValueNotifier<bool>(true);
   bool isShowAverageListenerAdded = false;
   late RxString marketDataProviderMsg = Rx('mkt_data'.tr)().obs;
   RxBool isMarketDataProviderErr = false.obs;
-  RxList<String> minuteDataList = [
-    'SPY',
-    'QQQ',
-    'USO',
-    'GLD',
-    'SLV',
-    'IWM',
-    'XLK',
-    'AAPL',
-    'BA',
-    'BAC',
-    'MCD',
-    'NVDA',
-    'MSFT',
-    'GSK',
-    'TSLA',
-    'AMZN',
-  ].obs;
   RxBool hasMinuteData = false.obs;
   late Rx<String> lastDatetime = 'Loading last datetime...'.obs;
   RxBool hasCandleData = false.obs;
@@ -485,22 +471,24 @@ class MainPresenter extends GetxController {
           ? '🟠EMA5 🔴EMA10 🟢EMA15 🔵EMA20'
           : '🟠MA5 🔴MA20 🟢MA60 🔵MA120 🟣MA240')
       .obs;
-  RxBool hasSpyMinuteData = false.obs;
-  RxBool hasQqqMinuteData = false.obs;
-  RxBool hasUsoMinuteData = false.obs;
-  RxBool hasGldMinuteData = false.obs;
-  RxBool hasSlvMinuteData = false.obs;
-  RxBool hasIwmMinuteData = false.obs;
-  RxBool hasXlkMinuteData = false.obs;
-  RxBool hasAaplMinuteData = false.obs;
-  RxBool hasBaMinuteData = false.obs;
-  RxBool hasBacMinuteData = false.obs;
-  RxBool hasMcdMinuteData = false.obs;
-  RxBool hasNvdaMinuteData = false.obs;
-  RxBool hasMsftMinuteData = false.obs;
-  RxBool hasGskMinuteData = false.obs;
-  RxBool hasTslaMinuteData = false.obs;
-  RxBool hasAmznMinuteData = false.obs;
+  RxMap<String, bool> universalHasMinuteData = {
+    'SPY': false,
+    'QQQ': false,
+    'USO': false,
+    'GLD': false,
+    'SLV': false,
+    'IWM': false,
+    'XLK': false,
+    'AAPL': false,
+    'BA': false,
+    'BAC': false,
+    'MCD': false,
+    'NVDA': false,
+    'MSFT': false,
+    'GSK': false,
+    'TSLA': false,
+    'AMZN': false,
+  }.obs; // Cross-data
 
   /* Listings */
   RxInt listingsDownloadTime = 0.obs;
@@ -590,22 +578,24 @@ class MainPresenter extends GetxController {
   // ].obs;
   RxList<int> trendMatchOutput = [0, 0, 0, 0, 0].obs;
   RxList<int> matchRows = [0].obs;
-  RxList<int> spyMatchRows = [0].obs; // Cross-data
-  RxList<int> qqqMatchRows = [0].obs; // Cross-data
-  RxList<int> usoMatchRows = [0].obs; // Cross-data
-  RxList<int> gldMatchRows = [0].obs; // Cross-data
-  RxList<int> slvMatchRows = [0].obs; // Cross-data
-  RxList<int> iwmMatchRows = [0].obs; // Cross-data
-  RxList<int> xlkMatchRows = [0].obs; // Cross-data
-  RxList<int> aaplMatchRows = [0].obs; // Cross-data
-  RxList<int> baMatchRows = [0].obs; // Cross-data
-  RxList<int> bacMatchRows = [0].obs; // Cross-data
-  RxList<int> mcdMatchRows = [0].obs; // Cross-data
-  RxList<int> nvdaMatchRows = [0].obs; // Cross-data
-  RxList<int> msftMatchRows = [0].obs; // Cross-data
-  RxList<int> gskMatchRows = [0].obs; // Cross-data
-  RxList<int> tslaMatchRows = [0].obs; // Cross-data
-  RxList<int> amznMatchRows = [0].obs; // Cross-data
+  Map<String, List<int>> universalMatchRows = {
+    'SPY': [],
+    'QQQ': [],
+    'USO': [],
+    'GLD': [],
+    'SLV': [],
+    'IWM': [],
+    'XLK': [],
+    'AAPL': [],
+    'BA': [],
+    'BAC': [],
+    'MCD': [],
+    'NVDA': [],
+    'MSFT': [],
+    'GSK': [],
+    'TSLA': [],
+    'AMZN': [],
+  }; // Cross-data
   RxBool trendMatched = false.obs;
   RxBool showAnalytics = false.obs;
   ValueNotifier<bool> showAnalyticsNotifier = ValueNotifier<bool>(false);
@@ -691,22 +681,24 @@ class MainPresenter extends GetxController {
     [0.0]
   ].obs;
   RxList<int> trackingMatchRows = [0].obs;
-  RxList<int> trackingSpyMatchRows = [0].obs; // Cross-data
-  RxList<int> trackingQqqMatchRows = [0].obs; // Cross-data
-  RxList<int> trackingUsoMatchRows = [0].obs; // Cross-data
-  RxList<int> trackingGldMatchRows = [0].obs; // Cross-data
-  RxList<int> trackingSlvMatchRows = [0].obs; // Cross-data
-  RxList<int> trackingIwmMatchRows = [0].obs; // Cross-data
-  RxList<int> trackingXlkMatchRows = [0].obs; // Cross-data
-  RxList<int> trackingAaplMatchRows = [0].obs; // Cross-data
-  RxList<int> trackingBaMatchRows = [0].obs; // Cross-data
-  RxList<int> trackingBacMatchRows = [0].obs; // Cross-data
-  RxList<int> trackingMcdMatchRows = [0].obs; // Cross-data
-  RxList<int> trackingNvdaMatchRows = [0].obs; // Cross-data
-  RxList<int> trackingMsftMatchRows = [0].obs; // Cross-data
-  RxList<int> trackingGskMatchRows = [0].obs; // Cross-data
-  RxList<int> trackingTslaMatchRows = [0].obs; // Cross-data
-  RxList<int> trackingAmznMatchRows = [0].obs; // Cross-data
+  Map<String, List<int>> universalTrackingMatchRows = {
+    'SPY': [],
+    'QQQ': [],
+    'USO': [],
+    'GLD': [],
+    'SLV': [],
+    'IWM': [],
+    'XLK': [],
+    'AAPL': [],
+    'BA': [],
+    'BAC': [],
+    'MCD': [],
+    'NVDA': [],
+    'MSFT': [],
+    'GSK': [],
+    'TSLA': [],
+    'AMZN': [],
+  }; // Cross-data
 
   /* Subsequent analytics */
   RxInt lastClosePriceAndSubsequentTrendsExeTime = 0.obs;
@@ -777,24 +769,6 @@ class MainPresenter extends GetxController {
       alwaysUseCrossData.value = false;
       PrefsService.to.prefs
           .setBool(SharedPreferencesConstant.alwaysUseCrossData, false);
-
-      matchRows.value = [];
-      spyMatchRows.value = []; // Cross-data
-      qqqMatchRows.value = []; // Cross-data
-      usoMatchRows.value = []; // Cross-data
-      gldMatchRows.value = []; // Cross-data
-      slvMatchRows.value = []; // Cross-data
-      iwmMatchRows.value = []; // Cross-data
-      xlkMatchRows.value = []; // Cross-data
-      aaplMatchRows.value = []; // Cross-data
-      baMatchRows.value = []; // Cross-data
-      bacMatchRows.value = []; // Cross-data
-      mcdMatchRows.value = []; // Cross-data
-      nvdaMatchRows.value = []; // Cross-data
-      msftMatchRows.value = []; // Cross-data
-      gskMatchRows.value = []; // Cross-data
-      tslaMatchRows.value = []; // Cross-data
-      amznMatchRows.value = []; // Cross-data
 
       // isLockTrend.value = false;
       // PrefsService.to.prefs.setBool(SharedPreferencesConstant.lockTrend, false);
@@ -1045,86 +1019,22 @@ class MainPresenter extends GetxController {
     var gskData = await isar.gskDatas.where().findFirst();
     var tslaData = await isar.tslaDatas.where().findFirst();
     var amznData = await isar.amznDatas.where().findFirst();
-    if (spyData == null) {
-      hasSpyMinuteData.value = false;
-    } else {
-      hasSpyMinuteData.value = true;
-    }
-    if (qqqData == null) {
-      hasQqqMinuteData.value = false;
-    } else {
-      hasQqqMinuteData.value = true;
-    }
-    if (usoData == null) {
-      hasUsoMinuteData.value = false;
-    } else {
-      hasUsoMinuteData.value = true;
-    }
-    if (gldData == null) {
-      hasGldMinuteData.value = false;
-    } else {
-      hasGldMinuteData.value = true;
-    }
-    if (slvData == null) {
-      hasSlvMinuteData.value = false;
-    } else {
-      hasSlvMinuteData.value = true;
-    }
-    if (iwmData == null) {
-      hasIwmMinuteData.value = false;
-    } else {
-      hasIwmMinuteData.value = true;
-    }
-    if (xlkData == null) {
-      hasXlkMinuteData.value = false;
-    } else {
-      hasXlkMinuteData.value = true;
-    }
-    if (aaplData == null) {
-      hasAaplMinuteData.value = false;
-    } else {
-      hasAaplMinuteData.value = true;
-    }
-    if (baData == null) {
-      hasBaMinuteData.value = false;
-    } else {
-      hasBaMinuteData.value = true;
-    }
-    if (bacData == null) {
-      hasBacMinuteData.value = false;
-    } else {
-      hasBacMinuteData.value = true;
-    }
-    if (mcdData == null) {
-      hasMcdMinuteData.value = false;
-    } else {
-      hasMcdMinuteData.value = true;
-    }
-    if (nvdaData == null) {
-      hasNvdaMinuteData.value = false;
-    } else {
-      hasNvdaMinuteData.value = true;
-    }
-    if (msftData == null) {
-      hasMsftMinuteData.value = false;
-    } else {
-      hasMsftMinuteData.value = true;
-    }
-    if (gskData == null) {
-      hasGskMinuteData.value = false;
-    } else {
-      hasGskMinuteData.value = true;
-    }
-    if (tslaData == null) {
-      hasTslaMinuteData.value = false;
-    } else {
-      hasTslaMinuteData.value = true;
-    }
-    if (amznData == null) {
-      hasAmznMinuteData.value = false;
-    } else {
-      hasAmznMinuteData.value = true;
-    }
+    universalHasMinuteData['SPY'] = spyData != null;
+    universalHasMinuteData['QQQ'] = qqqData != null;
+    universalHasMinuteData['USO'] = usoData != null;
+    universalHasMinuteData['GLD'] = gldData != null;
+    universalHasMinuteData['SLV'] = slvData != null;
+    universalHasMinuteData['IWM'] = iwmData != null;
+    universalHasMinuteData['XLK'] = xlkData != null;
+    universalHasMinuteData['AAPL'] = aaplData != null;
+    universalHasMinuteData['BA'] = baData != null;
+    universalHasMinuteData['BAC'] = bacData != null;
+    universalHasMinuteData['MCD'] = mcdData != null;
+    universalHasMinuteData['NVDA'] = nvdaData != null;
+    universalHasMinuteData['MSFT'] = msftData != null;
+    universalHasMinuteData['GSK'] = gskData != null;
+    universalHasMinuteData['TSLA'] = tslaData != null;
+    universalHasMinuteData['AMZN'] = amznData != null;
   }
 
   double findMedianOfLastValues(List<List<double>> list) {

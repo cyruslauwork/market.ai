@@ -66,99 +66,60 @@ class IsarService {
     return _isar!;
   }
 
-  Future<void> clearSpyData() async {
+  Future<void> clearData(String symbol) async {
     await _isar!.writeTxn(() async {
-      await _isar!.spyDatas.clear();
-    });
-  }
-
-  Future<void> clearQqqData() async {
-    await _isar!.writeTxn(() async {
-      await _isar!.qqqDatas.clear();
-    });
-  }
-
-  Future<void> clearUsoData() async {
-    await _isar!.writeTxn(() async {
-      await _isar!.usoDatas.clear();
-    });
-  }
-
-  Future<void> clearGldData() async {
-    await _isar!.writeTxn(() async {
-      await _isar!.gldDatas.clear();
-    });
-  }
-
-  Future<void> clearSlvData() async {
-    await _isar!.writeTxn(() async {
-      await _isar!.slvDatas.clear();
-    });
-  }
-
-  Future<void> clearIwmData() async {
-    await _isar!.writeTxn(() async {
-      await _isar!.iwmDatas.clear();
-    });
-  }
-
-  Future<void> clearXlkData() async {
-    await _isar!.writeTxn(() async {
-      await _isar!.xlkDatas.clear();
-    });
-  }
-
-  Future<void> clearAaplData() async {
-    await _isar!.writeTxn(() async {
-      await _isar!.aaplDatas.clear();
-    });
-  }
-
-  Future<void> clearBaData() async {
-    await _isar!.writeTxn(() async {
-      await _isar!.baDatas.clear();
-    });
-  }
-
-  Future<void> clearBacData() async {
-    await _isar!.writeTxn(() async {
-      await _isar!.bacDatas.clear();
-    });
-  }
-
-  Future<void> clearMcdData() async {
-    await _isar!.writeTxn(() async {
-      await _isar!.mcdDatas.clear();
-    });
-  }
-
-  Future<void> clearNvdaData() async {
-    await _isar!.writeTxn(() async {
-      await _isar!.nvdaDatas.clear();
-    });
-  }
-
-  Future<void> clearMsftData() async {
-    await _isar!.writeTxn(() async {
-      await _isar!.msftDatas.clear();
-    });
-  }
-
-  Future<void> clearGskData() async {
-    await _isar!.writeTxn(() async {
-      await _isar!.gskDatas.clear();
-    });
-  }
-
-  Future<void> clearTslaData() async {
-    await _isar!.writeTxn(() async {
-      await _isar!.tslaDatas.clear();
-    });
-  }
-
-  Future<void> clearAmznData() async {
-    await _isar!.writeTxn(() async {
-      await _isar!.amznDatas.clear();
+      switch (symbol) {
+        case 'SPY':
+          await _isar!.spyDatas.clear();
+          break;
+        case 'QQQ':
+          await _isar!.qqqDatas.clear();
+          break;
+        case 'USO':
+          await _isar!.usoDatas.clear();
+          break;
+        case 'GLD':
+          await _isar!.gldDatas.clear();
+          break;
+        case 'SLV':
+          await _isar!.slvDatas.clear();
+          break;
+        case 'IWM':
+          await _isar!.iwmDatas.clear();
+          break;
+        case 'XLK':
+          await _isar!.xlkDatas.clear();
+          break;
+        case 'AAPL':
+          await _isar!.aaplDatas.clear();
+          break;
+        case 'BA':
+          await _isar!.baDatas.clear();
+          break;
+        case 'BAC':
+          await _isar!.bacDatas.clear();
+          break;
+        case 'MCD':
+          await _isar!.mcdDatas.clear();
+          break;
+        case 'NVDA':
+          await _isar!.nvdaDatas.clear();
+          break;
+        case 'MSFT':
+          await _isar!.msftDatas.clear();
+          break;
+        case 'GSK':
+          await _isar!.gskDatas.clear();
+          break;
+        case 'TSLA':
+          await _isar!.tslaDatas.clear();
+          break;
+        case 'AMZN':
+          await _isar!.amznDatas.clear();
+          break;
+        default:
+          throw Exception('Unknown symbol: $symbol');
+      }
     });
   }
 }

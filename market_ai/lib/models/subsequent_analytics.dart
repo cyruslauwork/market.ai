@@ -31,8 +31,8 @@ class SubsequentAnalytics {
     int count = 0;
     if (MainPresenter.to.alwaysUseCrossData.value ||
         MainPresenter.to.isLockTrend.value) {
-      List<String> minuteDataList =
-          List<String>.from(MainPresenter.to.minuteDataList);
+      List<String> minuteDataList = List<String>.from(
+          MainPresenter.to.universalHasMinuteData.keys.toList());
       String fiSymbol = MainPresenter.to.financialInstrumentSymbol.value;
       for (String symbol in minuteDataList) {
         if (symbol == 'SPY' && symbol != fiSymbol) {

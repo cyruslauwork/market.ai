@@ -927,7 +927,8 @@ class Candle {
 
   (Future<List<List<dynamic>>>, SrcFileType) checkAPIProvider(
       {required String stockSymbol}) {
-    bool hasMinuteData = MainPresenter.to.minuteDataList.contains(stockSymbol);
+    bool hasMinuteData =
+        MainPresenter.to.universalHasMinuteData.containsKey(stockSymbol);
     MainPresenter.to.hasMinuteData.value = hasMinuteData;
     MainPresenter.to.marketDataProviderMsg.value = 'mkt_data'.tr;
     MainPresenter.to.isMarketDataProviderErr.value = false;
