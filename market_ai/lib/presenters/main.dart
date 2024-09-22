@@ -685,10 +685,8 @@ class MainPresenter extends GetxController {
   RxBool over = true.obs;
   RxInt trackingSubLen = 0.obs;
   RxDouble expectedTrackingProb = 0.0.obs;
-  RxBool trackingHits =
-      (PrefsService.to.prefs.getBool(SharedPreferencesConstant.trackingHits) ??
-              true)
-          .obs;
+  RxBool trackingHits = true.obs;
+  RxBool trackingHitsOnesided = true.obs;
   RxList<List<double>> lockTrendTrackingSubTrendList = [
     [0.0]
   ].obs;
@@ -1213,6 +1211,7 @@ class MainPresenter extends GetxController {
     String thisExpectedMdd = expectedMdd.value;
     bool thisReachedMedian = reachedMedian.value;
     bool thisTrackingHits = trackingHits.value;
+    bool thisTrackingHitsOnesided = trackingHitsOnesided.value;
 
     if (lockTrendDatetime != 0) {
       DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
@@ -1502,6 +1501,7 @@ class MainPresenter extends GetxController {
         thisReachedMedian = false;
       }
       thisTrackingHits = false;
+      thisTrackingHitsOnesided = false;
       Future.microtask(() {
         expectedProb.value = thisExpectedProb;
         returnRate.value = thisReturnRate.abs();
@@ -1512,6 +1512,7 @@ class MainPresenter extends GetxController {
           reachedMedian.value = thisReachedMedian;
         }
         trackingHits.value = thisTrackingHits;
+        trackingHitsOnesided.value = thisTrackingHitsOnesided;
         trackingSubLen.value = subLength.value;
         expectedTrackingProb.value = -1.0;
 
@@ -1537,8 +1538,6 @@ class MainPresenter extends GetxController {
             .setBool(SharedPreferencesConstant.isLong, thisIsLong);
         PrefsService.to.prefs
             .setBool(SharedPreferencesConstant.isShort, thisIsShort);
-        PrefsService.to.prefs
-            .setBool(SharedPreferencesConstant.trackingHits, thisTrackingHits);
       });
     } else {
       List<double> spots = [];
@@ -1670,10 +1669,10 @@ class MainPresenter extends GetxController {
 
       if (lockTrendLastRow == candleListList.length - 1) {
         thisTrackingHits = false;
+        thisTrackingHitsOnesided = false;
         Future.microtask(() {
           trackingHits.value = thisTrackingHits;
-          PrefsService.to.prefs.setBool(
-              SharedPreferencesConstant.trackingHits, thisTrackingHits);
+          trackingHitsOnesided.value = thisTrackingHitsOnesided;
           expectedTrackingProb.value = -1.0;
         });
       } else {
@@ -1697,30 +1696,77 @@ class MainPresenter extends GetxController {
               (trackingUpper.length + trackingLower.length + trackingBaseline);
           double lowerProb = trackingLower.length /
               (trackingUpper.length + trackingLower.length + trackingBaseline);
-          if (upperProb > probThreshold.value ||
-              lowerProb > probThreshold.value) {
-            thisTrackingHits = true;
+          if (upperProb > probThreshold.value) {
+            if (isShort.value) {
+              if (upperProb == 1.0) {
+                if (trackingUpper.length >= 4) {
+                  thisTrackingHits = false;
+                  thisTrackingHitsOnesided = true;
+                } else {
+                  thisTrackingHits = false;
+                  thisTrackingHitsOnesided = false;
+                }
+              } else {
+                if (trackingUpper.length >= 5) {
+                  thisTrackingHits = true;
+                  thisTrackingHitsOnesided = false;
+                } else {
+                  thisTrackingHits = false;
+                  thisTrackingHitsOnesided = false;
+                }
+              }
+            } else {
+              thisTrackingHits = false;
+              thisTrackingHitsOnesided = false;
+            }
             Future.microtask(() {
               trackingHits.value = thisTrackingHits;
-              PrefsService.to.prefs.setBool(
-                  SharedPreferencesConstant.trackingHits, thisTrackingHits);
-              expectedTrackingProb.value = max(upperProb, lowerProb);
+              trackingHitsOnesided.value = thisTrackingHitsOnesided;
+              expectedTrackingProb.value = upperProb;
+            });
+          } else if (lowerProb > probThreshold.value) {
+            if (isLong.value) {
+              if (lowerProb == 1.0) {
+                if (trackingLower.length >= 4) {
+                  thisTrackingHits = false;
+                  thisTrackingHitsOnesided = true;
+                } else {
+                  thisTrackingHits = false;
+                  thisTrackingHitsOnesided = false;
+                }
+              } else {
+                if (trackingLower.length >= 5) {
+                  thisTrackingHits = true;
+                  thisTrackingHitsOnesided = false;
+                } else {
+                  thisTrackingHits = false;
+                  thisTrackingHitsOnesided = false;
+                }
+              }
+            } else {
+              thisTrackingHits = false;
+              thisTrackingHitsOnesided = false;
+            }
+            Future.microtask(() {
+              trackingHits.value = thisTrackingHits;
+              trackingHitsOnesided.value = thisTrackingHitsOnesided;
+              expectedTrackingProb.value = lowerProb;
             });
           } else {
             thisTrackingHits = false;
+            thisTrackingHitsOnesided = false;
             Future.microtask(() {
               trackingHits.value = thisTrackingHits;
-              PrefsService.to.prefs.setBool(
-                  SharedPreferencesConstant.trackingHits, thisTrackingHits);
+              trackingHitsOnesided.value = thisTrackingHitsOnesided;
               expectedTrackingProb.value = max(upperProb, lowerProb);
             });
           }
         } else {
           thisTrackingHits = false;
+          thisTrackingHitsOnesided = false;
           Future.microtask(() {
             trackingHits.value = thisTrackingHits;
-            PrefsService.to.prefs.setBool(
-                SharedPreferencesConstant.trackingHits, thisTrackingHits);
+            trackingHitsOnesided.value = thisTrackingHitsOnesided;
             expectedTrackingProb.value = -1.0;
           });
         }
@@ -1735,7 +1781,8 @@ class MainPresenter extends GetxController {
             !thisHitCeilingOrFloor &&
             !thisGoOpposite &&
             !thisOver &&
-            !thisTrackingHits) ||
+            !thisTrackingHits &&
+            !thisTrackingHitsOnesided) ||
         (!thisIsFirstThirtyMins &&
             !thisLowProb &&
             !thisLowReturn &&
@@ -1744,7 +1791,8 @@ class MainPresenter extends GetxController {
             !thisHitCeilingOrFloor &&
             !thisGoOpposite &&
             !thisOver &&
-            !thisTrackingHits)) {
+            !thisTrackingHits &&
+            !thisTrackingHitsOnesided)) {
       if (closePosWhenReachedMedian.value) {
         if (thisReachedMedian) {
           Future.microtask(() {

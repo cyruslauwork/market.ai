@@ -162,6 +162,15 @@ class TrendMatchView extends StatelessWidget {
                           '${'lockin_trend_tracking_not_hits'.tr + (probThreshold * 100).toStringAsFixed(0)}%',
                           style: MainPresenter.to.lockTrendTextStyle.value,
                         )),
+                  (MainPresenter.to.trackingHitsOnesided.value
+                      ? Text(
+                          '${'lockin_trend_tracking_hits_onesided'.tr + (probThreshold * 100).toStringAsFixed(0)}%',
+                          style: MainPresenter.to.lockTrendTextStyle.value,
+                        )
+                      : Text(
+                          '${'lockin_trend_tracking_not_hits_onesided'.tr + (probThreshold * 100).toStringAsFixed(0)}%',
+                          style: MainPresenter.to.lockTrendTextStyle.value,
+                        )),
                 ],
                 SizedBox(
                   height: 5.h,
@@ -233,8 +242,8 @@ class TrendMatchView extends StatelessWidget {
                       PrefsService.to.prefs.setString(
                           SharedPreferencesConstant.expectedMdd, '±0');
                       MainPresenter.to.reachedMedian.value = true;
-                      PrefsService.to.prefs.setBool(
-                          SharedPreferencesConstant.trackingHits, true);
+                      MainPresenter.to.trackingHits.value = true;
+                      MainPresenter.to.trackingHitsOnesided.value = true;
 
                       MainPresenter.to.refreshIndicator();
                     } else {
