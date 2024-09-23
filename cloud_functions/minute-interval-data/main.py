@@ -341,7 +341,7 @@ def https(request):
                                             'volume': volume
                                         }
                                         json_new_documents.append(result_json) # Append the dictionary to the list
-                                    backend_json_data[last_time_key_field_name] = json_file_last_time_key
+                                    backend_json_data[last_time_key_field_name] = max(doc['time_key'] for doc in json_new_documents)
                                 else:
                                     backend_json_data[last_time_key_field_name] = last_time_key
                                 backend_json_data['content'] = docs + json_new_documents
