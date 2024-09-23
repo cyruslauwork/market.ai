@@ -25,7 +25,7 @@ class CloudService extends GetxService {
     required double maxValueOfAllTrends,
     required String apiKey,
   }) async {
-    String encodedTrends = jsonEncode(lastClosePriceAndSubsequentTrends);
+    String? encodedTrends = jsonEncode(lastClosePriceAndSubsequentTrends);
     String lang = LangService.to.currentLang.langCode;
 
     /* POST method */
@@ -39,6 +39,7 @@ class CloudService extends GetxService {
       'max_value': '$maxValueOfAllTrends',
     });
 
+    encodedTrends = null;
     return parsedResponse;
   }
 

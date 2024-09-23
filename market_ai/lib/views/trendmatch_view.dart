@@ -32,7 +32,8 @@ class TrendMatchView extends StatelessWidget {
         children: [
           Center(child: MainPresenter.to.showStartBtn()),
           if (MainPresenter.to.trendMatched.value &&
-              MainPresenter.to.showAnalytics.value) ...[
+              MainPresenter.to.showAnalytics.value &&
+              MainPresenter.to.hasCandleData.value) ...[
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -248,22 +249,9 @@ class TrendMatchView extends StatelessWidget {
                       MainPresenter.to.refreshIndicator();
                     } else {
                       int matchedTrends = MainPresenter.to.matchRows.length +
-                          MainPresenter.to.spyMatchRows.length +
-                          MainPresenter.to.qqqMatchRows.length +
-                          MainPresenter.to.usoMatchRows.length +
-                          MainPresenter.to.gldMatchRows.length +
-                          MainPresenter.to.slvMatchRows.length +
-                          MainPresenter.to.iwmMatchRows.length +
-                          MainPresenter.to.xlkMatchRows.length +
-                          MainPresenter.to.aaplMatchRows.length +
-                          MainPresenter.to.baMatchRows.length +
-                          MainPresenter.to.bacMatchRows.length +
-                          MainPresenter.to.mcdMatchRows.length +
-                          MainPresenter.to.nvdaMatchRows.length +
-                          MainPresenter.to.msftMatchRows.length +
-                          MainPresenter.to.gskMatchRows.length +
-                          MainPresenter.to.tslaMatchRows.length +
-                          MainPresenter.to.amznMatchRows.length;
+                          MainPresenter.to.universalMatchRows.values
+                              .map((list) => list.length)
+                              .reduce((a, b) => a + b);
                       if (matchedTrends < 4) {
                         MainPresenter.to.showScaffoldMessenger(
                             context: context,
@@ -299,10 +287,12 @@ class TrendMatchView extends StatelessWidget {
                 ),
               ],
             )
-          ],
+          ] else
+            Center(child: TrendMatchView().showCircularProgressIndicator()),
           if (MainPresenter.to.isLockTrend.value &&
               (MainPresenter.to.clusters.isNotEmpty ||
-                  MainPresenter.to.hasCluster.value)) ...[
+                  MainPresenter.to.hasCluster.value) &&
+              MainPresenter.to.hasCandleData.value) ...[
             const Center(
               child: AdjustedLineChart(isLockTrend: true),
             ),
@@ -318,7 +308,9 @@ class TrendMatchView extends StatelessWidget {
             ],
             const Center(
                 child: AdjustedLineChart(isLockTrend: true, isTracking: true)),
-          ] else
+          ],
+          if (!MainPresenter.to.isLockTrend.value &&
+              MainPresenter.to.hasCandleData.value)
             Center(child: MainPresenter.to.showTm())
         ],
       ),

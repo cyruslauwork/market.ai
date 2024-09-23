@@ -6,13 +6,10 @@ import 'dart:convert'; // For jsonEncode
 
 import 'package:interactive_chart/interactive_chart.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:isar/isar.dart';
 import 'package:market_ai/services/prefs/prefs.dart';
-import 'collections.dart';
 
 import 'package:market_ai/presenters/presenters.dart';
 import 'package:market_ai/styles/styles.dart';
-import 'isac.dart';
 import 'candle_adapter.dart';
 import 'candle.dart';
 import 'package:market_ai/services/flavor_service.dart';
@@ -74,43 +71,19 @@ class TrendMatch {
 
     DateTime startTime = DateTime.now(); // Record the start time
 
+    // Clear all match rows
     MainPresenter.to.matchRows.value = [];
-    MainPresenter.to.spyMatchRows.value = [];
-    MainPresenter.to.qqqMatchRows.value = [];
-    MainPresenter.to.usoMatchRows.value = [];
-    MainPresenter.to.gldMatchRows.value = [];
-    MainPresenter.to.slvMatchRows.value = [];
-    MainPresenter.to.iwmMatchRows.value = [];
-    MainPresenter.to.xlkMatchRows.value = [];
-    MainPresenter.to.aaplMatchRows.value = [];
-    MainPresenter.to.baMatchRows.value = [];
-    MainPresenter.to.bacMatchRows.value = [];
-    MainPresenter.to.mcdMatchRows.value = [];
-    MainPresenter.to.nvdaMatchRows.value = [];
-    MainPresenter.to.msftMatchRows.value = [];
-    MainPresenter.to.gskMatchRows.value = [];
-    MainPresenter.to.tslaMatchRows.value = [];
-    MainPresenter.to.amznMatchRows.value = [];
+    for (var symbol in MainPresenter.to.universalMatchRows.keys) {
+      MainPresenter.to.universalMatchRows[symbol] = [];
+    }
     // MainPresenter.to.matchPercentDifferencesListList.value = [];
     // MainPresenter.to.matchActualDifferencesListList.value = [];
     // MainPresenter.to.matchActualPricesListList.value = [];
+    // Clear all tracking match rows
     MainPresenter.to.trackingMatchRows.value = [];
-    MainPresenter.to.trackingSpyMatchRows.value = [];
-    MainPresenter.to.trackingQqqMatchRows.value = [];
-    MainPresenter.to.trackingUsoMatchRows.value = [];
-    MainPresenter.to.trackingGldMatchRows.value = [];
-    MainPresenter.to.trackingSlvMatchRows.value = [];
-    MainPresenter.to.trackingIwmMatchRows.value = [];
-    MainPresenter.to.trackingXlkMatchRows.value = [];
-    MainPresenter.to.trackingAaplMatchRows.value = [];
-    MainPresenter.to.trackingBaMatchRows.value = [];
-    MainPresenter.to.trackingBacMatchRows.value = [];
-    MainPresenter.to.trackingMcdMatchRows.value = [];
-    MainPresenter.to.trackingNvdaMatchRows.value = [];
-    MainPresenter.to.trackingMsftMatchRows.value = [];
-    MainPresenter.to.trackingGskMatchRows.value = [];
-    MainPresenter.to.trackingTslaMatchRows.value = [];
-    MainPresenter.to.trackingAmznMatchRows.value = [];
+    for (var symbol in MainPresenter.to.universalTrackingMatchRows.keys) {
+      MainPresenter.to.universalTrackingMatchRows[symbol] = [];
+    }
 
     double candleTolerance = MainPresenter.to.candleTolerance.value / 100;
     double priceTolerance = MainPresenter.to.priceTolerance.value / 100;
@@ -239,114 +212,24 @@ class TrendMatch {
       }
     }
 
-    final isar = await IsarService().getIsarInstance();
     List<String> minuteDataList;
     bool alwaysUseCrossData = MainPresenter.to.alwaysUseCrossData.value;
-    String symbol = MainPresenter.to.financialInstrumentSymbol.value;
+    String fiSymbol = MainPresenter.to.financialInstrumentSymbol.value;
     // int dummyCandleLen = MainPresenter.to.dummyCandle.length;
     if (alwaysUseCrossData) {
       minuteDataList = MainPresenter.to.universalHasMinuteData.keys.toList();
     } else {
-      minuteDataList = [symbol];
+      minuteDataList = [fiSymbol];
     }
     for (String thisSymbol in minuteDataList) {
       String thisTurnSymbol = '';
       dynamic dataList;
       bool skip = false;
 
-      if (thisSymbol == 'SPY' && symbol != 'SPY') {
-        dataList = await isar.spyDatas.where().sortByTimeKey().findAll();
-        thisTurnSymbol = 'SPY';
-        if (dataList.isEmpty) {
-          continue;
-        }
-      } else if (thisSymbol == 'QQQ' && symbol != 'QQQ') {
-        dataList = await isar.qqqDatas.where().sortByTimeKey().findAll();
-        thisTurnSymbol = 'QQQ';
-        if (dataList.isEmpty) {
-          continue;
-        }
-      } else if (thisSymbol == 'USO' && symbol != 'USO') {
-        dataList = await isar.usoDatas.where().sortByTimeKey().findAll();
-        thisTurnSymbol = 'USO';
-        if (dataList.isEmpty) {
-          continue;
-        }
-      } else if (thisSymbol == 'GLD' && symbol != 'GLD') {
-        dataList = await isar.gldDatas.where().sortByTimeKey().findAll();
-        thisTurnSymbol = 'GLD';
-        if (dataList.isEmpty) {
-          continue;
-        }
-      } else if (thisSymbol == 'SLV' && symbol != 'SLV') {
-        dataList = await isar.slvDatas.where().sortByTimeKey().findAll();
-        thisTurnSymbol = 'SLV';
-        if (dataList.isEmpty) {
-          continue;
-        }
-      } else if (thisSymbol == 'IWM' && symbol != 'IWM') {
-        dataList = await isar.iwmDatas.where().sortByTimeKey().findAll();
-        thisTurnSymbol = 'IWM';
-        if (dataList.isEmpty) {
-          continue;
-        }
-      } else if (thisSymbol == 'XLK' && symbol != 'XLK') {
-        dataList = await isar.xlkDatas.where().sortByTimeKey().findAll();
-        thisTurnSymbol = 'XLK';
-        if (dataList.isEmpty) {
-          continue;
-        }
-      } else if (thisSymbol == 'AAPL' && symbol != 'AAPL') {
-        dataList = await isar.aaplDatas.where().sortByTimeKey().findAll();
-        thisTurnSymbol = 'AAPL';
-        if (dataList.isEmpty) {
-          continue;
-        }
-      } else if (thisSymbol == 'BA' && symbol != 'BA') {
-        dataList = await isar.baDatas.where().sortByTimeKey().findAll();
-        thisTurnSymbol = 'BA';
-        if (dataList.isEmpty) {
-          continue;
-        }
-      } else if (thisSymbol == 'BAC' && symbol != 'BAC') {
-        dataList = await isar.bacDatas.where().sortByTimeKey().findAll();
-        thisTurnSymbol = 'BAC';
-        if (dataList.isEmpty) {
-          continue;
-        }
-      } else if (thisSymbol == 'MCD' && symbol != 'MCD') {
-        dataList = await isar.mcdDatas.where().sortByTimeKey().findAll();
-        thisTurnSymbol = 'MCD';
-        if (dataList.isEmpty) {
-          continue;
-        }
-      } else if (thisSymbol == 'NVDA' && symbol != 'NVDA') {
-        dataList = await isar.nvdaDatas.where().sortByTimeKey().findAll();
-        thisTurnSymbol = 'NVDA';
-        if (dataList.isEmpty) {
-          continue;
-        }
-      } else if (thisSymbol == 'MSFT' && symbol != 'MSFT') {
-        dataList = await isar.msftDatas.where().sortByTimeKey().findAll();
-        thisTurnSymbol = 'MSFT';
-        if (dataList.isEmpty) {
-          continue;
-        }
-      } else if (thisSymbol == 'GSK' && symbol != 'GSK') {
-        dataList = await isar.gskDatas.where().sortByTimeKey().findAll();
-        thisTurnSymbol = 'GSK';
-        if (dataList.isEmpty) {
-          continue;
-        }
-      } else if (thisSymbol == 'TSLA' && symbol != 'TSLA') {
-        dataList = await isar.tslaDatas.where().sortByTimeKey().findAll();
-        thisTurnSymbol = 'TSLA';
-        if (dataList.isEmpty) {
-          continue;
-        }
-      } else if (thisSymbol == 'AMZN' && symbol != 'AMZN') {
-        dataList = await isar.amznDatas.where().sortByTimeKey().findAll();
-        thisTurnSymbol = 'AMZN';
+      if (fiSymbol != thisSymbol) {
+        // Fetch the data using the mapping
+        dataList = await MainPresenter.to.dataFetchMap[thisSymbol]!();
+        thisTurnSymbol = thisSymbol;
         if (dataList.isEmpty) {
           continue;
         }
@@ -355,81 +238,24 @@ class TrendMatch {
       }
 
       if (!skip) {
-        List<Map<String, dynamic>> docList = [];
-        if (thisTurnSymbol == 'SPY') {
-          docList = List<SpyData>.from(dataList)
-              .map<Map<String, dynamic>>((data) => data.toJson())
-              .toList();
-        } else if (thisTurnSymbol == 'QQQ') {
-          docList = List<QqqData>.from(dataList)
-              .map<Map<String, dynamic>>((data) => data.toJson())
-              .toList();
-        } else if (thisTurnSymbol == 'USO') {
-          docList = List<UsoData>.from(dataList)
-              .map<Map<String, dynamic>>((data) => data.toJson())
-              .toList();
-        } else if (thisTurnSymbol == 'GLD') {
-          docList = List<GldData>.from(dataList)
-              .map<Map<String, dynamic>>((data) => data.toJson())
-              .toList();
-        } else if (thisTurnSymbol == 'SLV') {
-          docList = List<SlvData>.from(dataList)
-              .map<Map<String, dynamic>>((data) => data.toJson())
-              .toList();
-        } else if (thisTurnSymbol == 'IWM') {
-          docList = List<IwmData>.from(dataList)
-              .map<Map<String, dynamic>>((data) => data.toJson())
-              .toList();
-        } else if (thisTurnSymbol == 'XLK') {
-          docList = List<XlkData>.from(dataList)
-              .map<Map<String, dynamic>>((data) => data.toJson())
-              .toList();
-        } else if (thisTurnSymbol == 'AAPL') {
-          docList = List<AaplData>.from(dataList)
-              .map<Map<String, dynamic>>((data) => data.toJson())
-              .toList();
-        } else if (thisTurnSymbol == 'BA') {
-          docList = List<BaData>.from(dataList)
-              .map<Map<String, dynamic>>((data) => data.toJson())
-              .toList();
-        } else if (thisTurnSymbol == 'BAC') {
-          docList = List<BacData>.from(dataList)
-              .map<Map<String, dynamic>>((data) => data.toJson())
-              .toList();
-        } else if (thisTurnSymbol == 'MCD') {
-          docList = List<McdData>.from(dataList)
-              .map<Map<String, dynamic>>((data) => data.toJson())
-              .toList();
-        } else if (thisTurnSymbol == 'NVDA') {
-          docList = List<NvdaData>.from(dataList)
-              .map<Map<String, dynamic>>((data) => data.toJson())
-              .toList();
-        } else if (thisTurnSymbol == 'MSFT') {
-          docList = List<MsftData>.from(dataList)
-              .map<Map<String, dynamic>>((data) => data.toJson())
-              .toList();
-        } else if (thisTurnSymbol == 'GSK') {
-          docList = List<GskData>.from(dataList)
-              .map<Map<String, dynamic>>((data) => data.toJson())
-              .toList();
-        } else if (thisTurnSymbol == 'TSLA') {
-          docList = List<TslaData>.from(dataList)
-              .map<Map<String, dynamic>>((data) => data.toJson())
-              .toList();
-        } else if (thisTurnSymbol == 'AMZN') {
-          docList = List<AmznData>.from(dataList)
-              .map<Map<String, dynamic>>((data) => data.toJson())
-              .toList();
+        // Get the type for the current symbol
+        final dataType = MainPresenter.to.isarDataTypeList[thisTurnSymbol];
+        if (dataType != null) {
+          MainPresenter.to.docList = List.from(
+              dataList.cast<dynamic>().map((data) => data.toJson()).toList());
+          dataList.clear();
         } else {
           throw Exception(
               'There is no Isac data structure for $thisTurnSymbol');
         }
         listCandledata =
             await CandleAdapter().crossDataListListTolistCandledata((
-          CandleAdapter().jsonToListList(Future.value(docList)),
+          CandleAdapter()
+              .jsonToListList(Future.value(MainPresenter.to.docList)),
           SrcFileType.json,
           thisTurnSymbol
         ));
+        MainPresenter.to.docList.clear();
         dataLength = listCandledata.length;
         totalDataLength += dataLength;
 
@@ -440,107 +266,18 @@ class TrendMatch {
       }
 
       void addMatchRow(int rowId) {
-        if (thisTurnSymbol == '') {
+        if (MainPresenter.to.universalMatchRows.containsKey(thisTurnSymbol)) {
+          if (!isTracking) {
+            MainPresenter.to.universalMatchRows[thisTurnSymbol]!.add(rowId);
+          } else {
+            MainPresenter.to.universalTrackingMatchRows[thisTurnSymbol]!
+                .add(rowId);
+          }
+        } else if (thisTurnSymbol.isEmpty) {
           if (!isTracking) {
             MainPresenter.to.matchRows.add(rowId);
           } else {
             MainPresenter.to.trackingMatchRows.add(rowId);
-          }
-        } else if (thisTurnSymbol == 'SPY') {
-          if (!isTracking) {
-            MainPresenter.to.spyMatchRows.add(rowId);
-          } else {
-            MainPresenter.to.trackingSpyMatchRows.add(rowId);
-          }
-        } else if (thisTurnSymbol == 'QQQ') {
-          if (!isTracking) {
-            MainPresenter.to.qqqMatchRows.add(rowId);
-          } else {
-            MainPresenter.to.trackingQqqMatchRows.add(rowId);
-          }
-        } else if (thisTurnSymbol == 'USO') {
-          if (!isTracking) {
-            MainPresenter.to.usoMatchRows.add(rowId);
-          } else {
-            MainPresenter.to.trackingUsoMatchRows.add(rowId);
-          }
-        } else if (thisTurnSymbol == 'GLD') {
-          if (!isTracking) {
-            MainPresenter.to.gldMatchRows.add(rowId);
-          } else {
-            MainPresenter.to.trackingGldMatchRows.add(rowId);
-          }
-        } else if (thisTurnSymbol == 'SLV') {
-          if (!isTracking) {
-            MainPresenter.to.slvMatchRows.add(rowId);
-          } else {
-            MainPresenter.to.trackingSlvMatchRows.add(rowId);
-          }
-        } else if (thisTurnSymbol == 'IWM') {
-          if (!isTracking) {
-            MainPresenter.to.iwmMatchRows.add(rowId);
-          } else {
-            MainPresenter.to.trackingIwmMatchRows.add(rowId);
-          }
-        } else if (thisTurnSymbol == 'XLK') {
-          if (!isTracking) {
-            MainPresenter.to.xlkMatchRows.add(rowId);
-          } else {
-            MainPresenter.to.trackingXlkMatchRows.add(rowId);
-          }
-        } else if (thisTurnSymbol == 'AAPL') {
-          if (!isTracking) {
-            MainPresenter.to.aaplMatchRows.add(rowId);
-          } else {
-            MainPresenter.to.trackingAaplMatchRows.add(rowId);
-          }
-        } else if (thisTurnSymbol == 'BA') {
-          if (!isTracking) {
-            MainPresenter.to.baMatchRows.add(rowId);
-          } else {
-            MainPresenter.to.trackingBaMatchRows.add(rowId);
-          }
-        } else if (thisTurnSymbol == 'BAC') {
-          if (!isTracking) {
-            MainPresenter.to.bacMatchRows.add(rowId);
-          } else {
-            MainPresenter.to.trackingBacMatchRows.add(rowId);
-          }
-        } else if (thisTurnSymbol == 'MCD') {
-          if (!isTracking) {
-            MainPresenter.to.mcdMatchRows.add(rowId);
-          } else {
-            MainPresenter.to.trackingMcdMatchRows.add(rowId);
-          }
-        } else if (thisTurnSymbol == 'NVDA') {
-          if (!isTracking) {
-            MainPresenter.to.nvdaMatchRows.add(rowId);
-          } else {
-            MainPresenter.to.trackingNvdaMatchRows.add(rowId);
-          }
-        } else if (thisTurnSymbol == 'MSFT') {
-          if (!isTracking) {
-            MainPresenter.to.msftMatchRows.add(rowId);
-          } else {
-            MainPresenter.to.trackingMsftMatchRows.add(rowId);
-          }
-        } else if (thisTurnSymbol == 'GSK') {
-          if (!isTracking) {
-            MainPresenter.to.gskMatchRows.add(rowId);
-          } else {
-            MainPresenter.to.trackingGskMatchRows.add(rowId);
-          }
-        } else if (thisTurnSymbol == 'TSLA') {
-          if (!isTracking) {
-            MainPresenter.to.tslaMatchRows.add(rowId);
-          } else {
-            MainPresenter.to.trackingTslaMatchRows.add(rowId);
-          }
-        } else if (thisTurnSymbol == 'AMZN') {
-          if (!isTracking) {
-            MainPresenter.to.amznMatchRows.add(rowId);
-          } else {
-            MainPresenter.to.trackingAmznMatchRows.add(rowId);
           }
         } else {
           throw Exception('There is no matchRows for $thisTurnSymbol');
@@ -1036,7 +773,7 @@ class TrendMatch {
   }
 
   List<FlSpot> getSimplelineBarsData(int index, bool normalized,
-      {List<int>? matchRows, List<List<dynamic>>? candleListList}) {
+      {List<int>? matchRows, List<CandleData>? listCandledata}) {
     List<FlSpot> flsportList = [];
 
     // Whether to normalize
@@ -1047,10 +784,12 @@ class TrendMatch {
 
         for (int l = 0; l < matchRows!.length; l++) {
           for (int i = 0; i < (MainPresenter.to.length.value - 1); i++) {
-            closePrices.add(candleListList![
-                // The CSV/JSON data
-                matchRows[l] + i // Loop all closing prices in the matched trend
-                ][4]); // The 4th row of the list is the closing price
+            closePrices.add(listCandledata![
+                    // The CSV/JSON data
+                    matchRows[l] +
+                        i // Loop all closing prices in the matched trend
+                    ]
+                .close!); // The 4th row of the list is the closing price
           }
         }
 
@@ -1058,12 +797,12 @@ class TrendMatch {
         final upper = closePrices.reduce(max);
 
         for (double i = 0; i < MainPresenter.to.length.value; i++) {
-          double closePrice = candleListList![
+          double closePrice = listCandledata![
                   // The CSV/JSON data
                   matchRows[index] // Get the matched trend row from this index
                       +
                       i.toInt()] // Loop all closing prices in the matched trend
-              [4]; // The 4th row of the list is the closing price
+              .close!; // The 4th row of the list is the closing price
           if (closePrice < 0) {
             closePrice = -(closePrice / lower);
           } else {
@@ -1079,10 +818,13 @@ class TrendMatch {
 
         for (int l = 0; l < MainPresenter.to.matchRows.length; l++) {
           for (int i = 0; i < (MainPresenter.to.length.value - 1); i++) {
-            closePrices.add(MainPresenter.to.candleListList[// The CSV/JSON data
-                MainPresenter.to.matchRows[l] +
-                    i // Loop all closing prices in the matched trend
-                ][4]); // The 4th row of the list is the closing price
+            closePrices.add(MainPresenter
+                .to
+                .listCandledata[// The CSV/JSON data
+                    MainPresenter.to.matchRows[l] +
+                        i // Loop all closing prices in the matched trend
+                    ]
+                .close!); // The 4th row of the list is the closing price
           }
         }
 
@@ -1090,13 +832,15 @@ class TrendMatch {
         final upper = closePrices.reduce(max);
 
         for (double i = 0; i < MainPresenter.to.length.value; i++) {
-          double closePrice = MainPresenter.to.candleListList[
+          double closePrice = MainPresenter
+              .to
+              .listCandledata[
                   // The CSV/JSON data
                   MainPresenter.to.matchRows[
                           index] // Get the matched trend row from this index
                       +
                       i.toInt()] // Loop all closing prices in the matched trend
-              [4]; // The 4th row of the list is the closing price
+              .close!; // The 4th row of the list is the closing price
           if (closePrice < 0) {
             closePrice = -(closePrice / lower);
           } else {
@@ -1114,24 +858,26 @@ class TrendMatch {
         for (double i = 0; i < MainPresenter.to.length.value; i++) {
           flsportList.add(FlSpot(
               i, // Equal to selectedPeriodCount, starting from 0
-              candleListList![// The CSV/JSON data
+              listCandledata![// The CSV/JSON data
                       matchRows![
                               index] // Get the matched trend row from this index
                           +
                           i.toInt()] // Loop all closing prices in the matched trend
-                  [4] // The 4th row of the list is the closing price
+                  .close! // The 4th row of the list is the closing price
               ));
         }
       } else {
         for (double i = 0; i < MainPresenter.to.length.value; i++) {
           flsportList.add(FlSpot(
               i, // Equal to selectedPeriodCount, starting from 0
-              MainPresenter.to.candleListList[// The CSV/JSON data
+              MainPresenter
+                  .to
+                  .listCandledata[// The CSV/JSON data
                       MainPresenter.to.matchRows[
                               index] // Get the matched trend row from this index
                           +
                           i.toInt()] // Loop all closing prices in the matched trend
-                  [4] // The 4th row of the list is the closing price
+                  .close! // The 4th row of the list is the closing price
               ));
         }
       }
@@ -1147,62 +893,19 @@ class TrendMatch {
       List<String> minuteDataList = List<String>.from(
           MainPresenter.to.universalHasMinuteData.keys.toList());
       String fiSymbol = MainPresenter.to.financialInstrumentSymbol.value;
+      Map<String, List<CandleData>> universalListCandledata =
+          MainPresenter.to.universalListCandledata;
       for (String symbol in minuteDataList) {
         List<int> matchRows;
-        List<List<dynamic>> candleListList;
-        if (symbol == 'SPY' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.spyMatchRows;
-          candleListList = MainPresenter.to.spyCandleListList;
-        } else if (symbol == 'QQQ' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.qqqMatchRows;
-          candleListList = MainPresenter.to.qqqCandleListList;
-        } else if (symbol == 'USO' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.usoMatchRows;
-          candleListList = MainPresenter.to.usoCandleListList;
-        } else if (symbol == 'GLD' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.gldMatchRows;
-          candleListList = MainPresenter.to.gldCandleListList;
-        } else if (symbol == 'SLV' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.slvMatchRows;
-          candleListList = MainPresenter.to.slvCandleListList;
-        } else if (symbol == 'IWM' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.iwmMatchRows;
-          candleListList = MainPresenter.to.iwmCandleListList;
-        } else if (symbol == 'XLK' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.xlkMatchRows;
-          candleListList = MainPresenter.to.xlkCandleListList;
-        } else if (symbol == 'AAPL' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.aaplMatchRows;
-          candleListList = MainPresenter.to.aaplCandleListList;
-        } else if (symbol == 'BA' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.baMatchRows;
-          candleListList = MainPresenter.to.baCandleListList;
-        } else if (symbol == 'BAC' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.bacMatchRows;
-          candleListList = MainPresenter.to.bacCandleListList;
-        } else if (symbol == 'MCD' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.mcdMatchRows;
-          candleListList = MainPresenter.to.mcdCandleListList;
-        } else if (symbol == 'NVDA' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.nvdaMatchRows;
-          candleListList = MainPresenter.to.nvdaCandleListList;
-        } else if (symbol == 'MSFT' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.msftMatchRows;
-          candleListList = MainPresenter.to.msftCandleListList;
-        } else if (symbol == 'GSK' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.gskMatchRows;
-          candleListList = MainPresenter.to.gskCandleListList;
-        } else if (symbol == 'TSLA' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.tslaMatchRows;
-          candleListList = MainPresenter.to.tslaCandleListList;
-        } else if (symbol == 'AMZN' && symbol != fiSymbol) {
-          matchRows = MainPresenter.to.amznMatchRows;
-          candleListList = MainPresenter.to.amznCandleListList;
+        List<CandleData> listCandledata;
+        if (symbol != fiSymbol) {
+          listCandledata = universalListCandledata[symbol]!;
+          matchRows = MainPresenter.to.universalMatchRows[symbol]!;
         } else {
+          listCandledata = MainPresenter.to.listCandledata;
           matchRows = MainPresenter.to.matchRows;
-          candleListList = MainPresenter.to.candleListList;
         }
-        if (matchRows.isEmpty || candleListList.isEmpty) {
+        if (matchRows.isEmpty || listCandledata.isEmpty) {
           continue;
         }
         if (lineBarsData.length >= 500) {
@@ -1214,7 +917,7 @@ class TrendMatch {
                   index,
                   normalized,
                   matchRows: matchRows,
-                  candleListList: candleListList,
+                  listCandledata: listCandledata,
                 ),
                 isCurved: true,
                 barWidth: 1,
@@ -1292,7 +995,7 @@ class TrendMatch {
 
   List<FlSpot> getAdjustedLineData(int index,
       {List<int>? matchRows,
-      List<List<dynamic>>? candleListList,
+      List<CandleData>? listCandledata,
       double? subLen,
       bool isTracking = false}) {
     List<FlSpot> flspotList = [];
@@ -1301,23 +1004,24 @@ class TrendMatch {
     matchRows ??= (!isTracking
         ? MainPresenter.to.matchRows
         : MainPresenter.to.trackingMatchRows);
-    candleListList ??= MainPresenter.to.candleListList;
+    listCandledata ??= MainPresenter.to.listCandledata;
 
     double selectedLength = (MainPresenter.to.length.value - 1).toDouble();
 
-    final mainCandle = MainPresenter.to.candleListList;
+    final mainCandle = MainPresenter.to.listCandledata;
     double lastSelectedClosePrice;
     if (!isTracking) {
-      lastSelectedClosePrice = mainCandle.last[4];
+      lastSelectedClosePrice = mainCandle.last.close!;
     } else {
       int lockTrendLastRow = PrefsService.to.prefs
           .getInt(SharedPreferencesConstant.lockTrendLastRow)!;
       lastSelectedClosePrice = mainCandle[lockTrendLastRow +
-          (MainPresenter.to.subLength.value - subLen!.toInt())][4];
+              (MainPresenter.to.subLength.value - subLen!.toInt())]
+          .close!;
     }
 
     double lastActualDifference = lastSelectedClosePrice /
-        candleListList[matchRows[index] + selectedLength.toInt()][4];
+        listCandledata[matchRows[index] + selectedLength.toInt()].close!;
 
     subLen ??= MainPresenter.to.subLength.value.toDouble();
 
@@ -1327,8 +1031,8 @@ class TrendMatch {
         newLockTrendSubTrendList.add(lastSelectedClosePrice);
       } else {
         double adjustedMatchedTrendClosePrice =
-            candleListList[matchRows[index] + i.toInt()]
-                    [4] // Close price of matched trend
+            listCandledata[matchRows[index] + i.toInt()]
+                    .close! // Close price of matched trend
                 *
                 lastActualDifference;
 
@@ -1352,10 +1056,10 @@ class TrendMatch {
       {bool isTracking = false, double? subLen}) {
     List<FlSpot> flspotList = [];
 
-    List<List<dynamic>> candleListList = MainPresenter.to.candleListList;
+    List<CandleData> listCandledata = MainPresenter.to.listCandledata;
     int len;
     if (!isTracking) {
-      len = candleListList.length - 1;
+      len = listCandledata.length - 1;
     } else {
       len = PrefsService.to.prefs
               .getInt(SharedPreferencesConstant.lockTrendLastRow)! +
@@ -1363,8 +1067,10 @@ class TrendMatch {
     }
 
     for (int i = 0; i < MainPresenter.to.length.value; i++) {
-      flspotList.add(FlSpot(i.toDouble(),
-          candleListList[len - (MainPresenter.to.length.value - 1) + i][4]));
+      flspotList.add(FlSpot(
+          i.toDouble(),
+          listCandledata[len - (MainPresenter.to.length.value - 1) + i]
+              .close!));
     }
 
     return flspotList;
@@ -1379,16 +1085,19 @@ class TrendMatch {
 
     if (!isTracking) {
       subLen = MainPresenter.to.subLength.value.toDouble();
-      double lastSelectedClosePrice = MainPresenter.to.candleListList.last[4];
+      double lastSelectedClosePrice =
+          MainPresenter.to.listCandledata.last.close!;
 
       flspotList.add(FlSpot(0, lastSelectedClosePrice));
       flspotList.add(FlSpot(selectedLength + subLen, lastSelectedClosePrice));
     } else {
       int lockTrendLastRow = PrefsService.to.prefs
           .getInt(SharedPreferencesConstant.lockTrendLastRow)!;
-      double lastSelectedClosePrice = MainPresenter.to.candleListList[
-          lockTrendLastRow +
-              (MainPresenter.to.subLength.value - subLen!.toInt())][4];
+      double lastSelectedClosePrice = MainPresenter
+          .to
+          .listCandledata[lockTrendLastRow +
+              (MainPresenter.to.subLength.value - subLen!.toInt())]
+          .close!;
 
       flspotList.add(FlSpot(0, lastSelectedClosePrice));
       flspotList.add(FlSpot(selectedLength + subLen, lastSelectedClosePrice));
@@ -1417,7 +1126,7 @@ class TrendMatch {
       int subLen = MainPresenter.to.subLength.value;
       int lockTrendLastRow = PrefsService.to.prefs
           .getInt(SharedPreferencesConstant.lockTrendLastRow)!;
-      int candleLen = MainPresenter.to.candleListList.length - 1;
+      int candleLen = MainPresenter.to.listCandledata.length - 1;
       int lapsed = (candleLen - lockTrendLastRow >= subLen)
           ? subLen
           : (candleLen - lockTrendLastRow);
@@ -1434,60 +1143,15 @@ class TrendMatch {
         String fiSymbol = MainPresenter.to.financialInstrumentSymbol.value;
         for (String symbol in minuteDataList) {
           List<int> matchRows;
-          List<List<dynamic>> candleListList;
-          if (symbol == 'SPY' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.trackingSpyMatchRows;
-            candleListList = MainPresenter.to.spyCandleListList;
-          } else if (symbol == 'QQQ' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.trackingQqqMatchRows;
-            candleListList = MainPresenter.to.qqqCandleListList;
-          } else if (symbol == 'USO' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.trackingUsoMatchRows;
-            candleListList = MainPresenter.to.usoCandleListList;
-          } else if (symbol == 'GLD' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.trackingGldMatchRows;
-            candleListList = MainPresenter.to.gldCandleListList;
-          } else if (symbol == 'SLV' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.trackingSlvMatchRows;
-            candleListList = MainPresenter.to.slvCandleListList;
-          } else if (symbol == 'IWM' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.trackingIwmMatchRows;
-            candleListList = MainPresenter.to.iwmCandleListList;
-          } else if (symbol == 'XLK' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.trackingXlkMatchRows;
-            candleListList = MainPresenter.to.xlkCandleListList;
-          } else if (symbol == 'AAPL' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.trackingAaplMatchRows;
-            candleListList = MainPresenter.to.aaplCandleListList;
-          } else if (symbol == 'BA' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.trackingBaMatchRows;
-            candleListList = MainPresenter.to.baCandleListList;
-          } else if (symbol == 'BAC' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.trackingBacMatchRows;
-            candleListList = MainPresenter.to.bacCandleListList;
-          } else if (symbol == 'MCD' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.trackingMcdMatchRows;
-            candleListList = MainPresenter.to.mcdCandleListList;
-          } else if (symbol == 'NVDA' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.trackingNvdaMatchRows;
-            candleListList = MainPresenter.to.nvdaCandleListList;
-          } else if (symbol == 'MSFT' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.trackingMsftMatchRows;
-            candleListList = MainPresenter.to.msftCandleListList;
-          } else if (symbol == 'GSK' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.trackingGskMatchRows;
-            candleListList = MainPresenter.to.gskCandleListList;
-          } else if (symbol == 'TSLA' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.trackingTslaMatchRows;
-            candleListList = MainPresenter.to.tslaCandleListList;
-          } else if (symbol == 'AMZN' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.trackingAmznMatchRows;
-            candleListList = MainPresenter.to.amznCandleListList;
+          List<CandleData> listCandledata;
+          if (symbol != fiSymbol) {
+            listCandledata = MainPresenter.to.universalListCandledata[symbol]!;
+            matchRows = MainPresenter.to.universalMatchRows[symbol]!;
           } else {
-            matchRows = MainPresenter.to.trackingMatchRows;
-            candleListList = MainPresenter.to.candleListList;
+            listCandledata = MainPresenter.to.listCandledata;
+            matchRows = MainPresenter.to.matchRows;
           }
-          if (matchRows.isEmpty || candleListList.isEmpty) {
+          if (matchRows.isEmpty || listCandledata.isEmpty) {
             continue;
           }
           if (lineBarsData.length >= 500) {
@@ -1499,7 +1163,7 @@ class TrendMatch {
                   spots: getAdjustedLineData(
                     index,
                     matchRows: matchRows,
-                    candleListList: candleListList,
+                    listCandledata: listCandledata,
                     subLen: trackingSubLen,
                     isTracking: isTracking,
                   ),
@@ -1578,60 +1242,15 @@ class TrendMatch {
         String fiSymbol = MainPresenter.to.financialInstrumentSymbol.value;
         for (String symbol in minuteDataList) {
           List<int> matchRows;
-          List<List<dynamic>> candleListList;
-          if (symbol == 'SPY' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.spyMatchRows;
-            candleListList = MainPresenter.to.spyCandleListList;
-          } else if (symbol == 'QQQ' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.qqqMatchRows;
-            candleListList = MainPresenter.to.qqqCandleListList;
-          } else if (symbol == 'USO' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.usoMatchRows;
-            candleListList = MainPresenter.to.usoCandleListList;
-          } else if (symbol == 'GLD' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.gldMatchRows;
-            candleListList = MainPresenter.to.gldCandleListList;
-          } else if (symbol == 'SLV' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.slvMatchRows;
-            candleListList = MainPresenter.to.slvCandleListList;
-          } else if (symbol == 'IWM' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.iwmMatchRows;
-            candleListList = MainPresenter.to.iwmCandleListList;
-          } else if (symbol == 'XLK' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.xlkMatchRows;
-            candleListList = MainPresenter.to.xlkCandleListList;
-          } else if (symbol == 'AAPL' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.aaplMatchRows;
-            candleListList = MainPresenter.to.aaplCandleListList;
-          } else if (symbol == 'BA' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.baMatchRows;
-            candleListList = MainPresenter.to.baCandleListList;
-          } else if (symbol == 'BAC' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.bacMatchRows;
-            candleListList = MainPresenter.to.bacCandleListList;
-          } else if (symbol == 'MCD' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.mcdMatchRows;
-            candleListList = MainPresenter.to.mcdCandleListList;
-          } else if (symbol == 'NVDA' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.nvdaMatchRows;
-            candleListList = MainPresenter.to.nvdaCandleListList;
-          } else if (symbol == 'MSFT' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.msftMatchRows;
-            candleListList = MainPresenter.to.msftCandleListList;
-          } else if (symbol == 'GSK' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.gskMatchRows;
-            candleListList = MainPresenter.to.gskCandleListList;
-          } else if (symbol == 'TSLA' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.tslaMatchRows;
-            candleListList = MainPresenter.to.tslaCandleListList;
-          } else if (symbol == 'AMZN' && symbol != fiSymbol) {
-            matchRows = MainPresenter.to.amznMatchRows;
-            candleListList = MainPresenter.to.amznCandleListList;
+          List<CandleData> listCandledata;
+          if (symbol != fiSymbol) {
+            listCandledata = MainPresenter.to.universalListCandledata[symbol]!;
+            matchRows = MainPresenter.to.universalMatchRows[symbol]!;
           } else {
+            listCandledata = MainPresenter.to.listCandledata;
             matchRows = MainPresenter.to.matchRows;
-            candleListList = MainPresenter.to.candleListList;
           }
-          if (matchRows.isEmpty || candleListList.isEmpty) {
+          if (matchRows.isEmpty || listCandledata.isEmpty) {
             continue;
           }
           if (lineBarsData.length >= 500) {
@@ -1642,7 +1261,7 @@ class TrendMatch {
                   spots: getAdjustedLineData(
                     index,
                     matchRows: matchRows,
-                    candleListList: candleListList,
+                    listCandledata: listCandledata,
                   ),
                   isCurved: true,
                   barWidth: 1,
@@ -1779,11 +1398,11 @@ class TrendMatch {
       int lockTrendLastRow = PrefsService.to.prefs
           .getInt(SharedPreferencesConstant.lockTrendLastRow)!;
       if (lockTrendLastRow != 0) {
-        int lastRow = MainPresenter.to.candleListList.length - 1;
+        int lastRow = MainPresenter.to.listCandledata.length - 1;
         for (int i = 0; i < MainPresenter.to.subLength.value + 1; i++) {
           if ((lockTrendLastRow + i) <= lastRow) {
             spots.add(FlSpot(i.toDouble(),
-                MainPresenter.to.candleListList[lockTrendLastRow + i][4]));
+                MainPresenter.to.listCandledata[lockTrendLastRow + i].close!));
           } else {
             break;
           }

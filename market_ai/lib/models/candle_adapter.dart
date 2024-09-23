@@ -17,49 +17,51 @@ class CandleAdapter {
   // Future<List<List<dynamic>>> csvToListList(Future<String> futureCsv) async {
   //   String csv = await futureCsv;
 
-  //   List<List<dynamic>> rowsAsListOfValues =
+  //   MainPresenter.to.rowsAsListOfValues =
   //       const CsvToListConverter().convert(csv, eol: '\n');
-  //   rowsAsListOfValues.removeAt(0); // Remove CSV column titles
-  //   return rowsAsListOfValues;
+  //   MainPresenter.to.rowsAsListOfValues.removeAt(0); // Remove CSV column titles
+  //   csv.clear();
+  //   return MainPresenter.to.rowsAsListOfValues;
   // }
 
   Future<List<List<dynamic>>> jsonToListList(
       Future<List<Map<String, dynamic>>> futureJson) async {
     List<Map<String, dynamic>> json = await futureJson;
-    List<List<dynamic>> rowsAsListOfValues = [];
 
     for (Map<String, dynamic> map in json) {
       List<dynamic> values = map.values.toList();
-      rowsAsListOfValues.add(values);
+      MainPresenter.to.rowsAsListOfValues.add(values);
     }
 
-    return rowsAsListOfValues;
+    json.clear();
+    return MainPresenter.to.rowsAsListOfValues;
   }
 
   Future<List<CandleData>> listListTolistCandledata(
       (Future<List<List<dynamic>>>, SrcFileType) param) async {
     List<List<dynamic>> listList = await param.$1;
-    MainPresenter.to.candleListList = listList;
+    MainPresenter.to.docList.clear();
     late List<CandleData> listCandledata;
 
     if (!MainPresenter.to.isLockTrend.value) {
-      PrefsService.to.prefs.setInt(SharedPreferencesConstant.lockTrendLastRow,
-          MainPresenter.to.candleListList.length - 1);
+      PrefsService.to.prefs.setInt(
+          SharedPreferencesConstant.lockTrendLastRow, listList.length - 1);
       if (param.$2 == SrcFileType.json) {
         PrefsService.to.prefs.setInt(
             SharedPreferencesConstant.lockTrendLastDatetime,
-            MainPresenter.to.candleListList.last[0].toInt());
+            listList.last[0].toInt());
         // } else if (param.$2 == SrcFileType.csv) {
         //   PrefsService.to.prefs.setInt(
         //       SharedPreferencesConstant.lockTrendLastDatetime,
         //       TimeService().convertToUnixTimestamp(
-        //           MainPresenter.to.candleListList.last[0]));
+        //           listList.last[0]));
       } else {
         throw ArgumentError('Failed to convert list to candles.');
       }
     }
 
-    MainPresenter.to.lastDatetime.value = MainPresenter.to.getLastDatetime();
+    MainPresenter.to.lastDatetime.value =
+        MainPresenter.to.getLastDatetime(listList);
     if (param.$2 == SrcFileType.json) {
       listCandledata = listList
           .map((row) => CandleData(
@@ -77,10 +79,12 @@ class CandleAdapter {
       // final jsonString = json.encode(jsonList);
 
       // final documentsDirectory = await getApplicationDocumentsDirectory();
-      // final filePath = '${documentsDirectory.path}/marketai_json/spy_ios.json';
+      // final filePath = '${documentsDirectory.path}/marketai_json/candle.json';
       // final file = File(filePath);
       // await file.create(recursive: true);
       // await file.writeAsString(jsonString);
+      MainPresenter.to.rowsAsListOfValues.clear();
+      listList.clear(); // This clears the list
       MainPresenter.to.hasCandleData.value = true;
       return listCandledata;
       // } else if (param.$2 == SrcFileType.csv) {
@@ -95,6 +99,8 @@ class CandleAdapter {
       //           ))
       //       .toList();
       //   MainPresenter.to.listCandledata.value = listCandledata;
+      //   MainPresenter.to.rowsAsListOfValues.clear();
+      //   listList.clear(); // This clears the list
       //   MainPresenter.to.hasCandleData.value = true;
       //   return listCandledata;
     } else {
@@ -105,91 +111,28 @@ class CandleAdapter {
   Future<List<CandleData>> crossDataListListTolistCandledata(
       (Future<List<List<dynamic>>>, SrcFileType, String) param) async {
     List<List<dynamic>> listList = await param.$1;
-    if (param.$3 == 'SPY') {
-      MainPresenter.to.spyCandleListList = listList;
-    } else if (param.$3 == 'QQQ') {
-      MainPresenter.to.qqqCandleListList = listList;
-    } else if (param.$3 == 'USO') {
-      MainPresenter.to.usoCandleListList = listList;
-    } else if (param.$3 == 'GLD') {
-      MainPresenter.to.gldCandleListList = listList;
-    } else if (param.$3 == 'SLV') {
-      MainPresenter.to.slvCandleListList = listList;
-    } else if (param.$3 == 'IWM') {
-      MainPresenter.to.iwmCandleListList = listList;
-    } else if (param.$3 == 'XLK') {
-      MainPresenter.to.xlkCandleListList = listList;
-    } else if (param.$3 == 'AAPL') {
-      MainPresenter.to.aaplCandleListList = listList;
-    } else if (param.$3 == 'BA') {
-      MainPresenter.to.baCandleListList = listList;
-    } else if (param.$3 == 'BAC') {
-      MainPresenter.to.bacCandleListList = listList;
-    } else if (param.$3 == 'MCD') {
-      MainPresenter.to.mcdCandleListList = listList;
-    } else if (param.$3 == 'NVDA') {
-      MainPresenter.to.nvdaCandleListList = listList;
-    } else if (param.$3 == 'MSFT') {
-      MainPresenter.to.msftCandleListList = listList;
-    } else if (param.$3 == 'GSK') {
-      MainPresenter.to.gskCandleListList = listList;
-    } else if (param.$3 == 'TSLA') {
-      MainPresenter.to.tslaCandleListList = listList;
-    } else if (param.$3 == 'AMZN') {
-      MainPresenter.to.amznCandleListList = listList;
-    } else {
-      throw Exception('There is no candleListList for ${param.$3}');
-    }
+    MainPresenter.to.docList.clear();
     late List<CandleData> listCandledata;
 
-    if (param.$2 == SrcFileType.csv) {
-      listCandledata = listList
-          .map((row) => CandleData(
-                timestamp: TimeService().convertToUnixTimestamp(row[0]) * 1000,
-                open: row[1].toDouble(),
-                high: row[2].toDouble(),
-                low: row[3].toDouble(),
-                close: row[4].toDouble(),
-                volume: row[6].toDouble(),
-              ))
-          .toList();
-      if (param.$3 == 'SPY') {
-        MainPresenter.to.spyListCandledata = listCandledata;
-      } else if (param.$3 == 'QQQ') {
-        MainPresenter.to.qqqListCandledata = listCandledata;
-      } else if (param.$3 == 'USO') {
-        MainPresenter.to.usoListCandledata = listCandledata;
-      } else if (param.$3 == 'GLD') {
-        MainPresenter.to.gldListCandledata = listCandledata;
-      } else if (param.$3 == 'SLV') {
-        MainPresenter.to.slvListCandledata = listCandledata;
-      } else if (param.$3 == 'IWM') {
-        MainPresenter.to.iwmListCandledata = listCandledata;
-      } else if (param.$3 == 'XLK') {
-        MainPresenter.to.xlkListCandledata = listCandledata;
-      } else if (param.$3 == 'AAPL') {
-        MainPresenter.to.aaplListCandledata = listCandledata;
-      } else if (param.$3 == 'BA') {
-        MainPresenter.to.baListCandledata = listCandledata;
-      } else if (param.$3 == 'BAC') {
-        MainPresenter.to.bacListCandledata = listCandledata;
-      } else if (param.$3 == 'MCD') {
-        MainPresenter.to.mcdListCandledata = listCandledata;
-      } else if (param.$3 == 'NVDA') {
-        MainPresenter.to.nvdaListCandledata = listCandledata;
-      } else if (param.$3 == 'MSFT') {
-        MainPresenter.to.msftListCandledata = listCandledata;
-      } else if (param.$3 == 'GSK') {
-        MainPresenter.to.gskListCandledata = listCandledata;
-      } else if (param.$3 == 'TSLA') {
-        MainPresenter.to.tslaListCandledata = listCandledata;
-      } else if (param.$3 == 'AMZN') {
-        MainPresenter.to.amznListCandledata = listCandledata;
-      } else {
-        throw Exception('There is no listCandledata for ${param.$3}');
-      }
-      return listCandledata;
-    } else if (param.$2 == SrcFileType.json) {
+    // if (param.$2 == SrcFileType.csv) {
+    //   listCandledata = listList
+    //       .map((row) => CandleData(
+    //             timestamp: TimeService().convertToUnixTimestamp(row[0]) * 1000,
+    //             open: row[1].toDouble(),
+    //             high: row[2].toDouble(),
+    //             low: row[3].toDouble(),
+    //             close: row[4].toDouble(),
+    //             volume: row[6].toDouble(),
+    //           ))
+    //       .toList();
+    //   if (MainPresenter.to.universalListCandledata.containsKey(param.$3)) {
+    //     MainPresenter.to.universalListCandledata[param.$3] = listCandledata;
+    //   } else {
+    //     throw Exception('There is no listCandledata for ${param.$3}');
+    //   }
+    //   return listCandledata;
+    // } else
+    if (param.$2 == SrcFileType.json) {
       listCandledata = listList
           .map((row) => CandleData(
                 timestamp: row[0].toInt() * 1000,
@@ -200,41 +143,13 @@ class CandleAdapter {
                 volume: row[5].toDouble(),
               ))
           .toList();
-      if (param.$3 == 'SPY') {
-        MainPresenter.to.spyListCandledata = listCandledata;
-      } else if (param.$3 == 'QQQ') {
-        MainPresenter.to.qqqListCandledata = listCandledata;
-      } else if (param.$3 == 'USO') {
-        MainPresenter.to.usoListCandledata = listCandledata;
-      } else if (param.$3 == 'GLD') {
-        MainPresenter.to.gldListCandledata = listCandledata;
-      } else if (param.$3 == 'SLV') {
-        MainPresenter.to.slvListCandledata = listCandledata;
-      } else if (param.$3 == 'IWM') {
-        MainPresenter.to.iwmListCandledata = listCandledata;
-      } else if (param.$3 == 'XLK') {
-        MainPresenter.to.xlkListCandledata = listCandledata;
-      } else if (param.$3 == 'AAPL') {
-        MainPresenter.to.aaplListCandledata = listCandledata;
-      } else if (param.$3 == 'BA') {
-        MainPresenter.to.baListCandledata = listCandledata;
-      } else if (param.$3 == 'BAC') {
-        MainPresenter.to.bacListCandledata = listCandledata;
-      } else if (param.$3 == 'MCD') {
-        MainPresenter.to.mcdListCandledata = listCandledata;
-      } else if (param.$3 == 'NVDA') {
-        MainPresenter.to.nvdaListCandledata = listCandledata;
-      } else if (param.$3 == 'MSFT') {
-        MainPresenter.to.msftListCandledata = listCandledata;
-      } else if (param.$3 == 'GSK') {
-        MainPresenter.to.gskListCandledata = listCandledata;
-      } else if (param.$3 == 'TSLA') {
-        MainPresenter.to.tslaListCandledata = listCandledata;
-      } else if (param.$3 == 'AMZN') {
-        MainPresenter.to.amznListCandledata = listCandledata;
+      if (MainPresenter.to.universalListCandledata.containsKey(param.$3)) {
+        MainPresenter.to.universalListCandledata[param.$3] = listCandledata;
       } else {
         throw Exception('There is no listCandledata for ${param.$3}');
       }
+      MainPresenter.to.rowsAsListOfValues.clear();
+      listList.clear(); // This clears the list
       return listCandledata;
     } else {
       throw ArgumentError('Failed to convert list to candles.');

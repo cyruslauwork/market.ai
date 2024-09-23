@@ -421,25 +421,6 @@ class MainPresenter extends GetxController {
           'SPDR S&P 500 ETF Trust')
       .obs;
   RxInt candledownloadTime = 0.obs;
-  List<List<dynamic>> candleListList = [[]];
-  Map<String, List<List<dynamic>>> universalCandleListList = {
-    'SPY': [[]],
-    'QQQ': [[]],
-    'USO': [[]],
-    'GLD': [[]],
-    'SLV': [[]],
-    'IWM': [[]],
-    'XLK': [[]],
-    'AAPL': [[]],
-    'BA': [[]],
-    'BAC': [[]],
-    'MCD': [[]],
-    'NVDA': [[]],
-    'MSFT': [[]],
-    'GSK': [[]],
-    'TSLA': [[]],
-    'AMZN': [[]],
-  }; // Cross-data
   late Future<List<CandleData>> futureListCandledata = init();
   late List<CandleData> listCandledata = dummyCandle;
   late Map<String, List<CandleData>> universalListCandledata = {
@@ -489,6 +470,28 @@ class MainPresenter extends GetxController {
     'TSLA': false,
     'AMZN': false,
   }.obs; // Cross-data
+  List<Map<String, dynamic>> docList = [];
+  List<List<dynamic>> rowsAsListOfValues = [];
+  final Map<String, Type> isarDataTypeList = {
+    'SPY': SpyData,
+    'QQQ': QqqData,
+    'USO': UsoData,
+    'GLD': GldData,
+    'SLV': SlvData,
+    'IWM': IwmData,
+    'XLK': XlkData,
+    'AAPL': AaplData,
+    'BA': BaData,
+    'BAC': BacData,
+    'MCD': McdData,
+    'NVDA': NvdaData,
+    'MSFT': MsftData,
+    'GSK': GskData,
+    'TSLA': TslaData,
+    'AMZN': AmznData,
+  }; // Create a mapping of symbols to their corresponding data types
+  late final Map<String, Future<List<dynamic>> Function()>
+      dataFetchMap; // Create a mapping for symbols to their corresponding data fetch functions
 
   /* Listings */
   RxInt listingsDownloadTime = 0.obs;
@@ -777,6 +780,8 @@ class MainPresenter extends GetxController {
       // isShort.value = false;
       // PrefsService.to.prefs.setBool(SharedPreferencesConstant.isShort, false);
 
+      putDataFetchMap();
+
       isInit = true;
     }
 
@@ -864,11 +869,13 @@ class MainPresenter extends GetxController {
   void isEnListener() {
     if (isEnNotifier.value) {
       LangService.to.changeLanguage(Lang.en);
+      checkLockTrend();
       if (!isLockTrend.value) {
         SubsequentAnalytics().init();
       }
     } else {
       LangService.to.changeLanguage(Lang.zh);
+      checkLockTrend();
       if (!isLockTrend.value) {
         SubsequentAnalytics().init();
       }
@@ -959,6 +966,28 @@ class MainPresenter extends GetxController {
     } else {
       isWaitingForReply.value = false;
     }
+  }
+
+  Future<void> putDataFetchMap() async {
+    final isar = await IsarService().getIsarInstance();
+    dataFetchMap = {
+      'SPY': () => isar.spyDatas.where().sortByTimeKey().findAll(),
+      'QQQ': () => isar.qqqDatas.where().sortByTimeKey().findAll(),
+      'USO': () => isar.usoDatas.where().sortByTimeKey().findAll(),
+      'GLD': () => isar.gldDatas.where().sortByTimeKey().findAll(),
+      'SLV': () => isar.slvDatas.where().sortByTimeKey().findAll(),
+      'IWM': () => isar.iwmDatas.where().sortByTimeKey().findAll(),
+      'XLK': () => isar.xlkDatas.where().sortByTimeKey().findAll(),
+      'AAPL': () => isar.aaplDatas.where().sortByTimeKey().findAll(),
+      'BA': () => isar.baDatas.where().sortByTimeKey().findAll(),
+      'BAC': () => isar.bacDatas.where().sortByTimeKey().findAll(),
+      'MCD': () => isar.mcdDatas.where().sortByTimeKey().findAll(),
+      'NVDA': () => isar.nvdaDatas.where().sortByTimeKey().findAll(),
+      'MSFT': () => isar.msftDatas.where().sortByTimeKey().findAll(),
+      'GSK': () => isar.gskDatas.where().sortByTimeKey().findAll(),
+      'TSLA': () => isar.tslaDatas.where().sortByTimeKey().findAll(),
+      'AMZN': () => isar.amznDatas.where().sortByTimeKey().findAll(),
+    };
   }
 
   @override
@@ -1100,7 +1129,7 @@ class MainPresenter extends GetxController {
     List<List<double>> lower = [];
     int lockTrendLastRow = PrefsService.to.prefs
         .getInt(SharedPreferencesConstant.lockTrendLastRow)!;
-    double startingClosePrice = candleListList[lockTrendLastRow][4];
+    double startingClosePrice = listCandledata[lockTrendLastRow].close!;
     double thisMinReturnRateThreshold = minReturnRateThreshold.value;
     int subLen = subLength.value;
 
@@ -1452,10 +1481,10 @@ class MainPresenter extends GetxController {
     } else {
       List<double> spots = [];
       if (lockTrendLastRow != 0) {
-        int lastRow = candleListList.length - 1;
+        int lastRow = listCandledata.length - 1;
         for (int i = 0; i < subLen + 1; i++) {
           if ((lockTrendLastRow + i) <= lastRow) {
-            spots.add(candleListList[lockTrendLastRow + i][4]);
+            spots.add(listCandledata[lockTrendLastRow + i].close!);
           } else {
             break;
           }
@@ -1577,7 +1606,7 @@ class MainPresenter extends GetxController {
         }
       }
 
-      if (lockTrendLastRow == candleListList.length - 1) {
+      if (lockTrendLastRow == listCandledata.length - 1) {
         thisTrackingHits = false;
         thisTrackingHitsOnesided = false;
         Future.microtask(() {
@@ -9204,30 +9233,29 @@ class MainPresenter extends GetxController {
     ));
   }
 
-  String getLastDatetime() {
-    if (candleListList.isNotEmpty) {
-      var lastDatetime = candleListList.last[0];
+  String getLastDatetime(List<List<dynamic>> listList) {
+    if (listList.isNotEmpty) {
+      int lastDatetime = listList.last[0] * 1000;
       // print(lastDatetime);
       try {
         if (alwaysShowMinuteData.value && hasMinuteData.value) {
-          DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
-              lastDatetime.toInt() * 1000,
-              isUtc: true);
+          DateTime dateTime =
+              DateTime.fromMillisecondsSinceEpoch(lastDatetime, isUtc: true);
           DateTime subtractedDateTime =
               TimeService.to.subtractHoursBasedOnTimezone(dateTime);
-          lastDatetime =
+          String lastDatetimeText =
               DateFormat('yyyy-MM-dd HH:mm:ss').format(subtractedDateTime);
           String timezone =
               TimeService.to.isEasternDaylightTime(dateTime) ? 'EDT' : 'EST';
-          return '${'as_of'.tr} $lastDatetime $timezone';
+          return '${'as_of'.tr} $lastDatetimeText $timezone';
         } else {
-          DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
-              lastDatetime.toInt() * 1000,
-              isUtc: true);
+          DateTime dateTime =
+              DateTime.fromMillisecondsSinceEpoch(lastDatetime, isUtc: true);
           DateTime subtractedDateTime =
               TimeService.to.subtractHoursBasedOnTimezone(dateTime);
-          lastDatetime = DateFormat('yyyy-MM-dd').format(subtractedDateTime);
-          return '${'as_of'.tr} $lastDatetime.';
+          String lastDatetimeText =
+              DateFormat('yyyy-MM-dd').format(subtractedDateTime);
+          return '${'as_of'.tr} $lastDatetimeText.';
         }
       } catch (e) {
         return 'Failed to fetch datetime';
@@ -9237,9 +9265,9 @@ class MainPresenter extends GetxController {
     }
   }
 
-  String showCandleListListLastItem({required int i}) {
-    if (candleListList.isNotEmpty) {
-      return candleListList.last[i].toStringAsFixed(4);
+  String showCandleListListLastItem() {
+    if (listCandledata.isNotEmpty) {
+      return listCandledata.last.close!.toStringAsFixed(4);
     } else {
       return 'Loading';
     }
@@ -9247,9 +9275,9 @@ class MainPresenter extends GetxController {
 
   Widget showCandlestickChart(
       {required AsyncSnapshot<List<CandleData>> snapshot}) {
-    if (hasCandleData.value) {
-      return Obx(
-        () => SizedBox(
+    return Obx(() {
+      if (hasCandleData.value) {
+        return SizedBox(
           width: 393.w,
           height: candleChartHeight.value,
           child: InteractiveChart(
@@ -9291,25 +9319,25 @@ class MainPresenter extends GetxController {
             /** Callbacks */
             // onTap: (candle) => print("user tapped on $candle"),
           ),
-        ),
-      );
-    } else {
-      return Center(
-        child: Column(
-          children: [
-            LoadingAnimationWidget.staggeredDotsWave(
-              color: ThemeColor.primary.value,
-              size: 25.w,
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 10.h),
-              child:
-                  Text('downloading_candle'.tr, style: const TextTheme().sp5),
-            ),
-          ],
-        ),
-      );
-    }
+        );
+      } else {
+        return Center(
+          child: Column(
+            children: [
+              LoadingAnimationWidget.staggeredDotsWave(
+                color: ThemeColor.primary.value,
+                size: 25.w,
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 10.h),
+                child:
+                    Text('downloading_candle'.tr, style: const TextTheme().sp5),
+              ),
+            ],
+          ),
+        );
+      }
+    });
   }
 
   Widget showMatchedCandlestickChart(

@@ -10,6 +10,7 @@ import 'package:market_ai/presenters/presenters.dart';
 import 'candle_adapter.dart';
 import 'collections.dart';
 import 'isac.dart';
+import 'package:http/http.dart' as http;
 
 // import 'package:market_ai/utils/utils.dart';
 
@@ -442,8 +443,8 @@ class Candle {
         DateTime.now(); // Record the download start time
 
     try {
-      final response =
-          await HTTPService().fetchDayCandleJson(stockSymbol: stockSymbol);
+      http.Response? response =
+          await HTTPService().getFetchDayJson(stockSymbol: stockSymbol);
 
       DateTime downloadEndTime = DateTime.now(); // Record the download end time
       // Calculate the time difference
@@ -452,15 +453,19 @@ class Candle {
       MainPresenter.to.candledownloadTime.value = downloadTime;
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        var jsonData = jsonDecode(response.body) as Map<String, dynamic>;
-        List<Map<String, dynamic>> docList = [];
+        Map<String, dynamic> jsonData =
+            jsonDecode(response.body) as Map<String, dynamic>;
+        response = null; // Clear the response
 
-        var chartResult = jsonData['chart']['result'][0];
-        var timestamps = chartResult['timestamp'] as List<dynamic>;
-        var quotes = chartResult['indicators']['quote'][0];
+        // Accessing the necessary parts of the JSON with specific types
+        Map<String, dynamic> chartResult =
+            jsonData['chart']['result'][0] as Map<String, dynamic>;
+        List<dynamic> timestamps = chartResult['timestamp'] as List<dynamic>;
+        Map<String, dynamic> quotes =
+            chartResult['indicators']['quote'][0] as Map<String, dynamic>;
 
         for (int i = 0; i < timestamps.length; i++) {
-          docList.add({
+          MainPresenter.to.docList.add({
             'timestamp': timestamps[i],
             'open': quotes['open'][i],
             'high': quotes['high'][i],
@@ -469,11 +474,18 @@ class Candle {
             'volume': quotes['volume'][i],
           });
         }
-        return docList;
+
+        response = null; // Clear the response
+        jsonData.clear();
+        chartResult.clear();
+        timestamps.clear();
+        quotes.clear();
+        return MainPresenter.to.docList;
       } else {
         MainPresenter.to.marketDataProviderMsg.value =
             '${response.statusCode} error from';
         MainPresenter.to.isMarketDataProviderErr.value = true;
+        response = null; // Clear the response
         return dummyData;
       }
     } on Exception catch (e) {
@@ -558,8 +570,8 @@ class Candle {
         DateTime.now(); // Record the download start time
 
     try {
-      final response =
-          await HTTPService().fetchCandleJSON(stockSymbol, timestamp);
+      http.Response? response =
+          await HTTPService().getFetchMinuteJson(stockSymbol, timestamp);
 
       DateTime downloadEndTime = DateTime.now(); // Record the download end time
       // Calculate the time difference
@@ -569,10 +581,10 @@ class Candle {
 
       // print(response.statusCode);
       if (response.statusCode == 200 || response.statusCode == 201) {
-        var jsonData = jsonDecode(response.body) as Map<String, dynamic>;
+        Map<String, dynamic> jsonData =
+            jsonDecode(response.body) as Map<String, dynamic>;
         // print(jsonData);
         List<dynamic> stockDataList;
-        List<Map<String, dynamic>> docList;
         if (jsonData.containsKey('error')) {
           String err = jsonData['error'];
           if (err == Err.apiKey.name) {
@@ -598,98 +610,130 @@ class Candle {
               case 'SPY':
                 final dataList =
                     await isar.spyDatas.where().sortByTimeKey().findAll();
-                docList = dataList.map((data) => data.toJson()).toList();
-                // print(docList.first.values);
-                // print(docList.last.values);
-                // for (final doc in docList) {
+                MainPresenter.to.docList =
+                    dataList.map((data) => data.toJson()).toList();
+                // print(MainPresenter.to.docList.first.values);
+                // print(MainPresenter.to.docList.last.values);
+                // for (final doc in MainPresenter.to.docList) {
                 //   if (doc['open'] == 463.39) {
                 //     print('time_key: ${doc['time_key']}');
                 //     print('open: ${doc['open']}');
                 //     print('===');
                 //   }
                 // }
-                // print(docList.length);
+                // print(MainPresenter.to.docList.length);
+                dataList.clear();
                 break;
               case 'QQQ':
                 final dataList =
                     await isar.qqqDatas.where().sortByTimeKey().findAll();
-                docList = dataList.map((data) => data.toJson()).toList();
+                MainPresenter.to.docList =
+                    dataList.map((data) => data.toJson()).toList();
+                dataList.clear();
                 break;
               case 'USO':
                 final dataList =
                     await isar.usoDatas.where().sortByTimeKey().findAll();
-                docList = dataList.map((data) => data.toJson()).toList();
+                MainPresenter.to.docList =
+                    dataList.map((data) => data.toJson()).toList();
+                dataList.clear();
                 break;
               case 'GLD':
                 final dataList =
                     await isar.gldDatas.where().sortByTimeKey().findAll();
-                docList = dataList.map((data) => data.toJson()).toList();
+                MainPresenter.to.docList =
+                    dataList.map((data) => data.toJson()).toList();
+                dataList.clear();
                 break;
               case 'SLV':
                 final dataList =
                     await isar.slvDatas.where().sortByTimeKey().findAll();
-                docList = dataList.map((data) => data.toJson()).toList();
+                MainPresenter.to.docList =
+                    dataList.map((data) => data.toJson()).toList();
+                dataList.clear();
                 break;
               case 'IWM':
                 final dataList =
                     await isar.iwmDatas.where().sortByTimeKey().findAll();
-                docList = dataList.map((data) => data.toJson()).toList();
+                MainPresenter.to.docList =
+                    dataList.map((data) => data.toJson()).toList();
+                dataList.clear();
                 break;
               case 'XLK':
                 final dataList =
                     await isar.xlkDatas.where().sortByTimeKey().findAll();
-                docList = dataList.map((data) => data.toJson()).toList();
+                MainPresenter.to.docList =
+                    dataList.map((data) => data.toJson()).toList();
+                dataList.clear();
                 break;
               case 'AAPL':
                 final dataList =
                     await isar.aaplDatas.where().sortByTimeKey().findAll();
-                docList = dataList.map((data) => data.toJson()).toList();
+                MainPresenter.to.docList =
+                    dataList.map((data) => data.toJson()).toList();
+                dataList.clear();
                 break;
               case 'BA':
                 final dataList =
                     await isar.baDatas.where().sortByTimeKey().findAll();
-                docList = dataList.map((data) => data.toJson()).toList();
+                MainPresenter.to.docList =
+                    dataList.map((data) => data.toJson()).toList();
+                dataList.clear();
                 break;
               case 'BAC':
                 final dataList =
                     await isar.bacDatas.where().sortByTimeKey().findAll();
-                docList = dataList.map((data) => data.toJson()).toList();
+                MainPresenter.to.docList =
+                    dataList.map((data) => data.toJson()).toList();
+                dataList.clear();
                 break;
               case 'MCD':
                 final dataList =
                     await isar.mcdDatas.where().sortByTimeKey().findAll();
-                docList = dataList.map((data) => data.toJson()).toList();
+                MainPresenter.to.docList =
+                    dataList.map((data) => data.toJson()).toList();
+                dataList.clear();
                 break;
               case 'NVDA':
                 final dataList =
                     await isar.nvdaDatas.where().sortByTimeKey().findAll();
-                docList = dataList.map((data) => data.toJson()).toList();
+                MainPresenter.to.docList =
+                    dataList.map((data) => data.toJson()).toList();
+                dataList.clear();
                 break;
               case 'MSFT':
                 final dataList =
                     await isar.msftDatas.where().sortByTimeKey().findAll();
-                docList = dataList.map((data) => data.toJson()).toList();
+                MainPresenter.to.docList =
+                    dataList.map((data) => data.toJson()).toList();
+                dataList.clear();
                 break;
               case 'GSK':
                 final dataList =
                     await isar.gskDatas.where().sortByTimeKey().findAll();
-                docList = dataList.map((data) => data.toJson()).toList();
+                MainPresenter.to.docList =
+                    dataList.map((data) => data.toJson()).toList();
+                dataList.clear();
                 break;
               case 'TSLA':
                 final dataList =
                     await isar.tslaDatas.where().sortByTimeKey().findAll();
-                docList = dataList.map((data) => data.toJson()).toList();
+                MainPresenter.to.docList =
+                    dataList.map((data) => data.toJson()).toList();
+                dataList.clear();
                 break;
               case 'AMZN':
                 final dataList =
                     await isar.amznDatas.where().sortByTimeKey().findAll();
-                docList = dataList.map((data) => data.toJson()).toList();
+                MainPresenter.to.docList =
+                    dataList.map((data) => data.toJson()).toList();
+                dataList.clear();
                 break;
               default:
                 throw Exception(
                     'Unknown financial instrument symbol: $stockSymbol');
             }
-            return docList;
+            return MainPresenter.to.docList;
           } else if (jsonData['message'] == 'User data outdated') {
             MainPresenter.to.marketDataProviderMsg.value =
                 'User data outdated, please reinstall';
@@ -709,7 +753,9 @@ class Candle {
             }
             final dataList =
                 await isar.spyDatas.where().sortByTimeKey().findAll();
-            docList = dataList.map((data) => data.toJson()).toList();
+            MainPresenter.to.docList =
+                dataList.map((data) => data.toJson()).toList();
+            dataList.clear();
             break;
           case 'QQQ':
             if (jsonData['content'] != null && !jsonData['content'].isEmpty) {
@@ -722,7 +768,9 @@ class Candle {
             }
             final dataList =
                 await isar.qqqDatas.where().sortByTimeKey().findAll();
-            docList = dataList.map((data) => data.toJson()).toList();
+            MainPresenter.to.docList =
+                dataList.map((data) => data.toJson()).toList();
+            dataList.clear();
             break;
           case 'USO':
             if (jsonData['content'] != null && !jsonData['content'].isEmpty) {
@@ -735,7 +783,9 @@ class Candle {
             }
             final dataList =
                 await isar.usoDatas.where().sortByTimeKey().findAll();
-            docList = dataList.map((data) => data.toJson()).toList();
+            MainPresenter.to.docList =
+                dataList.map((data) => data.toJson()).toList();
+            dataList.clear();
             break;
           case 'GLD':
             if (jsonData['content'] != null && !jsonData['content'].isEmpty) {
@@ -748,7 +798,9 @@ class Candle {
             }
             final dataList =
                 await isar.gldDatas.where().sortByTimeKey().findAll();
-            docList = dataList.map((data) => data.toJson()).toList();
+            MainPresenter.to.docList =
+                dataList.map((data) => data.toJson()).toList();
+            dataList.clear();
             break;
           case 'SLV':
             if (jsonData['content'] != null && !jsonData['content'].isEmpty) {
@@ -761,7 +813,9 @@ class Candle {
             }
             final dataList =
                 await isar.slvDatas.where().sortByTimeKey().findAll();
-            docList = dataList.map((data) => data.toJson()).toList();
+            MainPresenter.to.docList =
+                dataList.map((data) => data.toJson()).toList();
+            dataList.clear();
             break;
           case 'IWM':
             if (jsonData['content'] != null && !jsonData['content'].isEmpty) {
@@ -774,7 +828,9 @@ class Candle {
             }
             final dataList =
                 await isar.iwmDatas.where().sortByTimeKey().findAll();
-            docList = dataList.map((data) => data.toJson()).toList();
+            MainPresenter.to.docList =
+                dataList.map((data) => data.toJson()).toList();
+            dataList.clear();
             break;
           case 'XLK':
             if (jsonData['content'] != null && !jsonData['content'].isEmpty) {
@@ -787,7 +843,9 @@ class Candle {
             }
             final dataList =
                 await isar.xlkDatas.where().sortByTimeKey().findAll();
-            docList = dataList.map((data) => data.toJson()).toList();
+            MainPresenter.to.docList =
+                dataList.map((data) => data.toJson()).toList();
+            dataList.clear();
             break;
           case 'AAPL':
             if (jsonData['content'] != null && !jsonData['content'].isEmpty) {
@@ -800,7 +858,9 @@ class Candle {
             }
             final dataList =
                 await isar.aaplDatas.where().sortByTimeKey().findAll();
-            docList = dataList.map((data) => data.toJson()).toList();
+            MainPresenter.to.docList =
+                dataList.map((data) => data.toJson()).toList();
+            dataList.clear();
             break;
           case 'BA':
             if (jsonData['content'] != null && !jsonData['content'].isEmpty) {
@@ -813,7 +873,9 @@ class Candle {
             }
             final dataList =
                 await isar.baDatas.where().sortByTimeKey().findAll();
-            docList = dataList.map((data) => data.toJson()).toList();
+            MainPresenter.to.docList =
+                dataList.map((data) => data.toJson()).toList();
+            dataList.clear();
             break;
           case 'BAC':
             if (jsonData['content'] != null && !jsonData['content'].isEmpty) {
@@ -826,7 +888,9 @@ class Candle {
             }
             final dataList =
                 await isar.bacDatas.where().sortByTimeKey().findAll();
-            docList = dataList.map((data) => data.toJson()).toList();
+            MainPresenter.to.docList =
+                dataList.map((data) => data.toJson()).toList();
+            dataList.clear();
             break;
           case 'MCD':
             if (jsonData['content'] != null && !jsonData['content'].isEmpty) {
@@ -839,7 +903,9 @@ class Candle {
             }
             final dataList =
                 await isar.mcdDatas.where().sortByTimeKey().findAll();
-            docList = dataList.map((data) => data.toJson()).toList();
+            MainPresenter.to.docList =
+                dataList.map((data) => data.toJson()).toList();
+            dataList.clear();
             break;
           case 'NVDA':
             if (jsonData['content'] != null && !jsonData['content'].isEmpty) {
@@ -852,7 +918,9 @@ class Candle {
             }
             final dataList =
                 await isar.nvdaDatas.where().sortByTimeKey().findAll();
-            docList = dataList.map((data) => data.toJson()).toList();
+            MainPresenter.to.docList =
+                dataList.map((data) => data.toJson()).toList();
+            dataList.clear();
             break;
           case 'MSFT':
             if (jsonData['content'] != null && !jsonData['content'].isEmpty) {
@@ -865,7 +933,9 @@ class Candle {
             }
             final dataList =
                 await isar.msftDatas.where().sortByTimeKey().findAll();
-            docList = dataList.map((data) => data.toJson()).toList();
+            MainPresenter.to.docList =
+                dataList.map((data) => data.toJson()).toList();
+            dataList.clear();
             break;
           case 'GSK':
             if (jsonData['content'] != null && !jsonData['content'].isEmpty) {
@@ -878,7 +948,9 @@ class Candle {
             }
             final dataList =
                 await isar.gskDatas.where().sortByTimeKey().findAll();
-            docList = dataList.map((data) => data.toJson()).toList();
+            MainPresenter.to.docList =
+                dataList.map((data) => data.toJson()).toList();
+            dataList.clear();
             break;
           case 'TSLA':
             if (jsonData['content'] != null && !jsonData['content'].isEmpty) {
@@ -891,7 +963,9 @@ class Candle {
             }
             final dataList =
                 await isar.tslaDatas.where().sortByTimeKey().findAll();
-            docList = dataList.map((data) => data.toJson()).toList();
+            MainPresenter.to.docList =
+                dataList.map((data) => data.toJson()).toList();
+            dataList.clear();
             break;
           case 'AMZN':
             if (jsonData['content'] != null && !jsonData['content'].isEmpty) {
@@ -904,17 +978,23 @@ class Candle {
             }
             final dataList =
                 await isar.amznDatas.where().sortByTimeKey().findAll();
-            docList = dataList.map((data) => data.toJson()).toList();
+            MainPresenter.to.docList =
+                dataList.map((data) => data.toJson()).toList();
+            dataList.clear();
             break;
           default:
             throw Exception(
                 'Unknown financial instrument symbol: $stockSymbol');
         }
-        return docList;
+        response = null;
+        jsonData.clear();
+        stockDataList = [];
+        return MainPresenter.to.docList;
       } else {
         MainPresenter.to.marketDataProviderMsg.value =
             '${response.statusCode} error from server';
         MainPresenter.to.isMarketDataProviderErr.value = true;
+        response = null;
         return dummyData;
       }
     } on Exception catch (e) {

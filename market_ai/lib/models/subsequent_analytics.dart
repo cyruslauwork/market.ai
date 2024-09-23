@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:get/get.dart';
+import 'package:interactive_chart/interactive_chart.dart';
 import 'package:market_ai/presenters/presenters.dart';
 import 'package:market_ai/services/services.dart';
 // import 'package:market_ai/utils/utils.dart';
@@ -22,8 +23,8 @@ class SubsequentAnalytics {
     DateTime exeStartTime = DateTime.now(); // Record the download start time
 
     int matchLen;
-    List<List<dynamic>> candleListList;
-    int candleListListLength;
+    List<CandleData> listCandledata;
+    int listCandledataLength;
     List<int> matchRows;
     double minValueOfAllTrends = double.infinity;
     double maxValueOfAllTrends = double.negativeInfinity;
@@ -34,94 +35,21 @@ class SubsequentAnalytics {
       List<String> minuteDataList = List<String>.from(
           MainPresenter.to.universalHasMinuteData.keys.toList());
       String fiSymbol = MainPresenter.to.financialInstrumentSymbol.value;
+      Map<String, List<CandleData>> universalListCandledata =
+          MainPresenter.to.universalListCandledata;
       for (String symbol in minuteDataList) {
-        if (symbol == 'SPY' && symbol != fiSymbol) {
-          candleListList = MainPresenter.to.spyCandleListList;
-          candleListListLength = candleListList.length;
-          matchRows = MainPresenter.to.spyMatchRows;
-          matchLen = matchRows.length;
-        } else if (symbol == 'QQQ' && symbol != fiSymbol) {
-          candleListList = MainPresenter.to.qqqCandleListList;
-          candleListListLength = candleListList.length;
-          matchRows = MainPresenter.to.qqqMatchRows;
-          matchLen = matchRows.length;
-        } else if (symbol == 'USO' && symbol != fiSymbol) {
-          candleListList = MainPresenter.to.usoCandleListList;
-          candleListListLength = candleListList.length;
-          matchRows = MainPresenter.to.usoMatchRows;
-          matchLen = matchRows.length;
-        } else if (symbol == 'GLD' && symbol != fiSymbol) {
-          candleListList = MainPresenter.to.gldCandleListList;
-          candleListListLength = candleListList.length;
-          matchRows = MainPresenter.to.gldMatchRows;
-          matchLen = matchRows.length;
-        } else if (symbol == 'SLV' && symbol != fiSymbol) {
-          candleListList = MainPresenter.to.slvCandleListList;
-          candleListListLength = candleListList.length;
-          matchRows = MainPresenter.to.slvMatchRows;
-          matchLen = matchRows.length;
-        } else if (symbol == 'IWM' && symbol != fiSymbol) {
-          candleListList = MainPresenter.to.iwmCandleListList;
-          candleListListLength = candleListList.length;
-          matchRows = MainPresenter.to.iwmMatchRows;
-          matchLen = matchRows.length;
-        } else if (symbol == 'XLK' && symbol != fiSymbol) {
-          candleListList = MainPresenter.to.xlkCandleListList;
-          candleListListLength = candleListList.length;
-          matchRows = MainPresenter.to.xlkMatchRows;
-          matchLen = matchRows.length;
-        } else if (symbol == 'AAPL' && symbol != fiSymbol) {
-          candleListList = MainPresenter.to.aaplCandleListList;
-          candleListListLength = candleListList.length;
-          matchRows = MainPresenter.to.aaplMatchRows;
-          matchLen = matchRows.length;
-        } else if (symbol == 'BA' && symbol != fiSymbol) {
-          candleListList = MainPresenter.to.baCandleListList;
-          candleListListLength = candleListList.length;
-          matchRows = MainPresenter.to.baMatchRows;
-          matchLen = matchRows.length;
-        } else if (symbol == 'BAC' && symbol != fiSymbol) {
-          candleListList = MainPresenter.to.bacCandleListList;
-          candleListListLength = candleListList.length;
-          matchRows = MainPresenter.to.bacMatchRows;
-          matchLen = matchRows.length;
-        } else if (symbol == 'MCD' && symbol != fiSymbol) {
-          candleListList = MainPresenter.to.mcdCandleListList;
-          candleListListLength = candleListList.length;
-          matchRows = MainPresenter.to.mcdMatchRows;
-          matchLen = matchRows.length;
-        } else if (symbol == 'NVDA' && symbol != fiSymbol) {
-          candleListList = MainPresenter.to.nvdaCandleListList;
-          candleListListLength = candleListList.length;
-          matchRows = MainPresenter.to.nvdaMatchRows;
-          matchLen = matchRows.length;
-        } else if (symbol == 'MSFT' && symbol != fiSymbol) {
-          candleListList = MainPresenter.to.msftCandleListList;
-          candleListListLength = candleListList.length;
-          matchRows = MainPresenter.to.msftMatchRows;
-          matchLen = matchRows.length;
-        } else if (symbol == 'GSK' && symbol != fiSymbol) {
-          candleListList = MainPresenter.to.gskCandleListList;
-          candleListListLength = candleListList.length;
-          matchRows = MainPresenter.to.gskMatchRows;
-          matchLen = matchRows.length;
-        } else if (symbol == 'TSLA' && symbol != fiSymbol) {
-          candleListList = MainPresenter.to.tslaCandleListList;
-          candleListListLength = candleListList.length;
-          matchRows = MainPresenter.to.tslaMatchRows;
-          matchLen = matchRows.length;
-        } else if (symbol == 'AMZN' && symbol != fiSymbol) {
-          candleListList = MainPresenter.to.amznCandleListList;
-          candleListListLength = candleListList.length;
-          matchRows = MainPresenter.to.amznMatchRows;
+        if (symbol != fiSymbol) {
+          listCandledata = universalListCandledata[symbol]!;
+          listCandledataLength = listCandledata.length;
+          matchRows = MainPresenter.to.universalMatchRows[symbol]!;
           matchLen = matchRows.length;
         } else {
-          candleListList = MainPresenter.to.candleListList;
-          candleListListLength = candleListList.length;
+          listCandledata = MainPresenter.to.listCandledata;
+          listCandledataLength = listCandledata.length;
           matchRows = MainPresenter.to.matchRows;
           matchLen = matchRows.length;
         }
-        if (matchRows.isEmpty || candleListList.isEmpty) {
+        if (matchRows.isEmpty || listCandledata.isEmpty) {
           continue;
         } else if (matchRows.isNotEmpty) {
           if (matchRows[0] == 0) {
@@ -137,7 +65,7 @@ class SubsequentAnalytics {
           }
           lastClosePriceAndSubsequentTrends.add(
               getMatchedTrendLastClosePriceAndSubsequentTrend(i,
-                  otherCandleListList: candleListList, matchRows: matchRows));
+                  otherListCandledata: listCandledata, matchRows: matchRows));
           count++;
         }
         if (outerBreak) {
@@ -147,25 +75,26 @@ class SubsequentAnalytics {
         // Selected trend
         for (int i = 0; i < selectedLength; i++) {
           double value =
-              candleListList[candleListListLength - selectedLength + i][4];
+              listCandledata[listCandledataLength - selectedLength + i].close!;
           minValueOfAllTrends = min(minValueOfAllTrends, value);
           maxValueOfAllTrends = max(maxValueOfAllTrends, value);
         }
-        double lastSelectedClosePrice = MainPresenter.to.candleListList.last[4];
+        double lastSelectedClosePrice =
+            MainPresenter.to.listCandledata.last.close!;
         int subLen = MainPresenter.to.subLength.value;
         // Adjusted trends
         for (int index in matchRows) {
           double lastActualDifference = lastSelectedClosePrice /
-              candleListList[index + selectedLength][4];
+              listCandledata[index + selectedLength].close!;
           for (int i = 0; i < selectedLength + subLen + 1; i++) {
             double adjustedMatchedTrendClosePrice;
             if (i == selectedLength) {
               adjustedMatchedTrendClosePrice = lastSelectedClosePrice;
             } else {
-              adjustedMatchedTrendClosePrice =
-                  candleListList[index + i][4] // Close price of matched trend
-                      *
-                      lastActualDifference;
+              adjustedMatchedTrendClosePrice = listCandledata[index + i]
+                      .close! // Close price of matched trend
+                  *
+                  lastActualDifference;
             }
             minValueOfAllTrends =
                 min(minValueOfAllTrends, adjustedMatchedTrendClosePrice);
@@ -176,10 +105,9 @@ class SubsequentAnalytics {
       }
     } else {
       matchLen = MainPresenter.to.matchRows.length;
-      candleListList = MainPresenter.to.candleListList;
-      candleListListLength = MainPresenter.to.candleListList.length;
+      listCandledata = MainPresenter.to.listCandledata;
+      listCandledataLength = MainPresenter.to.listCandledata.length;
       matchRows = MainPresenter.to.matchRows;
-
       for (int i = 0; i < (matchLen > 499 ? 500 : matchLen); i++) {
         // Takes 500 only to avoid a Cloud Functions crash
         lastClosePriceAndSubsequentTrends
@@ -189,23 +117,23 @@ class SubsequentAnalytics {
       // Selected trend
       for (int i = 0; i < selectedLength; i++) {
         double value =
-            candleListList[candleListListLength - selectedLength + i][4];
+            listCandledata[listCandledataLength - selectedLength + i].close!;
         minValueOfAllTrends = min(minValueOfAllTrends, value);
         maxValueOfAllTrends = max(maxValueOfAllTrends, value);
       }
-      double lastSelectedClosePrice = candleListList.last[4];
+      double lastSelectedClosePrice = listCandledata.last.close!;
       int subLen = MainPresenter.to.subLength.value;
       // Adjusted trends
       for (int index in matchRows) {
-        double lastActualDifference =
-            lastSelectedClosePrice / candleListList[index + selectedLength][4];
+        double lastActualDifference = lastSelectedClosePrice /
+            listCandledata[index + selectedLength].close!;
         for (int i = 0; i < selectedLength + subLen + 1; i++) {
           double adjustedMatchedTrendClosePrice;
           if (i == selectedLength) {
             adjustedMatchedTrendClosePrice = lastSelectedClosePrice;
           } else {
             adjustedMatchedTrendClosePrice =
-                candleListList[index + i][4] // Close price of matched trend
+                listCandledata[index + i].close! // Close price of matched trend
                     *
                     lastActualDifference;
           }
@@ -252,6 +180,9 @@ class SubsequentAnalytics {
             MainPresenter.to.apiKeyErr.value = '';
             PrefsService.to.prefs
                 .setString(SharedPreferencesConstant.apiKeyErr, '');
+
+            lastClosePriceAndSubsequentTrends.clear();
+            parsedResponse.clear();
           } catch (e) {
             String err = parsedResponse['error'];
             if (err == Err.apiKey.name) {
@@ -265,14 +196,20 @@ class SubsequentAnalytics {
             } else {
               MainPresenter.to.apiKeyErr.value = err;
             }
+
+            lastClosePriceAndSubsequentTrends.clear();
+            parsedResponse.clear();
           }
         } else {
+          lastClosePriceAndSubsequentTrends.clear();
+          parsedResponse.clear();
           return;
         }
       }).catchError((error) {
         // Handle any errors during the asynchronous operation
         MainPresenter.to.subsequentAnalyticsErr.value =
             'An unexpected error occurred in getCsvAndPng(): $error';
+        lastClosePriceAndSubsequentTrends.clear();
       });
     } else {
       MainPresenter.to.subsequentAnalyticsErr.value = 'trends_not_enough'.tr;
@@ -286,26 +223,26 @@ class SubsequentAnalytics {
   }
 
   List<double> getMatchedTrendLastClosePriceAndSubsequentTrend(int index,
-      {List<List<dynamic>>? otherCandleListList, List<int>? matchRows}) {
+      {List<CandleData>? otherListCandledata, List<int>? matchRows}) {
     List<double> lastClosePriceAndSubsequentTrend = [];
     double selectedLength = (MainPresenter.to.length.value - 1).toDouble();
 
-    otherCandleListList ??= MainPresenter.to.candleListList;
+    otherListCandledata ??= MainPresenter.to.listCandledata;
     matchRows ??= MainPresenter.to.matchRows;
 
-    double lastActualDifference = MainPresenter.to.candleListList.last[4] /
-        otherCandleListList[matchRows[index] + selectedLength.toInt()][4];
+    double lastActualDifference = MainPresenter.to.listCandledata.last.close! /
+        otherListCandledata[matchRows[index] + selectedLength.toInt()].close!;
 
     lastClosePriceAndSubsequentTrend
-        .add(MainPresenter.to.candleListList.last[4]);
+        .add(MainPresenter.to.listCandledata.last.close!);
 
     int length = MainPresenter.to.length.value;
     int subLen = MainPresenter.to.subLength.value;
 
     for (int i = length; i < length + subLen; i++) {
       double adjustedMatchedTrendClosePrice =
-          otherCandleListList[matchRows[index] + i]
-                  [4] // Close price of matched trend
+          otherListCandledata[matchRows[index] + i]
+                  .close! // Close price of matched trend
               *
               lastActualDifference;
 
