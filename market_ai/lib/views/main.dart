@@ -757,6 +757,39 @@ class MainView extends StatefulWidget {
 
 class _MainViewState extends State<MainView> {
   final ScrollController _scrollController = ScrollController();
+  bool _isChartFrozen = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_scrollListener);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollListener() {
+    // Get half of the screen height
+    double halfScreenHeight = MediaQuery.of(context).size.height / 2;
+    // Check if the scroll position exceeds half the screen height
+    if (_scrollController.offset > halfScreenHeight) {
+      if (!_isChartFrozen) {
+        setState(() {
+          _isChartFrozen = true; // Trigger the freeze
+        });
+      }
+    } else {
+      if (_isChartFrozen) {
+        setState(() {
+          _isChartFrozen = false; // Unfreeze if scrolled back
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Obx(
@@ -907,146 +940,215 @@ class _MainViewState extends State<MainView> {
                 AsyncSnapshot<List<CandleData>> snapshot) {
               if (snapshot.hasData) {
                 return RefreshIndicator(
-                  color: AppColor.whiteColor,
-                  backgroundColor: ThemeColor.primary.value,
-                  onRefresh: () =>
-                      Future.value(MainPresenter.to.refreshIndicator()),
-                  child: SingleChildScrollView(
-                    controller: _scrollController,
-                    scrollDirection: Axis.vertical,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    color: AppColor.whiteColor,
+                    backgroundColor: ThemeColor.primary.value,
+                    onRefresh: () =>
+                        Future.value(MainPresenter.to.refreshIndicator()),
+                    child: Stack(
                       children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                MainPresenter.to.financialInstrumentName.value,
-                                style:
-                                    const TextTheme().sp7.primaryTextColor.w700,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            Text(
-                              '(${MainPresenter.to.financialInstrumentSymbol.value})',
-                              style: const TextTheme().sp5.primaryTextColor,
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              '\$${MainPresenter.to.showCandleListListLastItem()}',
-                              style:
-                                  const TextTheme().sp10.primaryTextColor.w700,
-                            ),
-                            Row(
-                              children: [
-                                IconButton(
-                                  onPressed: () =>
-                                      MainPresenter.to.refreshIndicator(),
-                                  icon: const Icon(
-                                    Icons.refresh_outlined,
-                                  ),
-                                  color: ThemeColor.primary.value,
-                                  iconSize: 10.h,
-                                ),
-                                MainPresenter.to
-                                    .showMinuteDataToggleBtn(context: context),
-                                MainPresenter.to
-                                    .showCrossDataToggleBtn(context: context),
-                                IconButton(
-                                  onPressed: () => MainPresenter.to
-                                      .bookmarkThis(context: context),
-                                  icon: Obx(
-                                    () => Icon(
-                                      MainPresenter.to.bookmarked.value,
+                        SingleChildScrollView(
+                          controller: _scrollController,
+                          scrollDirection: Axis.vertical,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      MainPresenter
+                                          .to.financialInstrumentName.value,
+                                      style: const TextTheme()
+                                          .sp7
+                                          .primaryTextColor
+                                          .w700,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
-                                  color: ThemeColor.primary.value,
-                                  iconSize: 10.h,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        Obx(
-                          () => Text(
-                            MainPresenter.to.lastDatetime.value,
-                            style: const TextTheme().sp4.greyColor,
-                          ),
-                        ),
-                        Center(
-                          child: Text(
-                            'candle_chart_title'.tr,
-                            style: const TextTheme().sp5,
-                          ),
-                        ),
-                        MainPresenter.to
-                            .showCandlestickChart(snapshot: snapshot),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Obx(
-                              () => Text(
-                                MainPresenter.to.legends.value,
-                                style: const TextTheme().sp4.greyColor,
+                                  Text(
+                                    '(${MainPresenter.to.financialInstrumentSymbol.value})',
+                                    style:
+                                        const TextTheme().sp5.primaryTextColor,
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            MainPresenter.to.buildMktDataProviderRichText(),
-                            SizedBox(
-                              height: (Platform.isWindows ||
-                                      Platform.isLinux ||
-                                      Platform.isMacOS
-                                  ? 14.h
-                                  : 10.h),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: AppColor.greyColor.withOpacity(0.5)),
-                                child: IconButton(
-                                  onPressed: () => (MainPresenter
-                                          .to.chartExpandNotifier.value =
-                                      !MainPresenter
-                                          .to.chartExpandNotifier.value),
-                                  icon: Transform.translate(
-                                    offset: Offset(0.0, -1.h),
-                                    child: Obx(
-                                      () => Icon(
-                                        MainPresenter
-                                            .to.expandOrShrinkIcon.value,
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    '\$${MainPresenter.to.showCandleListListLastItem()}',
+                                    style: const TextTheme()
+                                        .sp10
+                                        .primaryTextColor
+                                        .w700,
+                                  ),
+                                  Row(
+                                    children: [
+                                      IconButton(
+                                        onPressed: () =>
+                                            MainPresenter.to.refreshIndicator(),
+                                        icon: const Icon(
+                                          Icons.refresh_outlined,
+                                        ),
+                                        color: ThemeColor.primary.value,
+                                        iconSize: 10.h,
+                                      ),
+                                      MainPresenter.to.showMinuteDataToggleBtn(
+                                          context: context),
+                                      MainPresenter.to.showCrossDataToggleBtn(
+                                          context: context),
+                                      IconButton(
+                                        onPressed: () => MainPresenter.to
+                                            .bookmarkThis(context: context),
+                                        icon: Obx(
+                                          () => Icon(
+                                            MainPresenter.to.bookmarked.value,
+                                          ),
+                                        ),
+                                        color: ThemeColor.primary.value,
+                                        iconSize: 10.h,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              Obx(
+                                () => Text(
+                                  MainPresenter.to.lastDatetime.value,
+                                  style: const TextTheme().sp4.greyColor,
+                                ),
+                              ),
+                              Center(
+                                child: Text(
+                                  'candle_chart_title'.tr,
+                                  style: const TextTheme().sp5,
+                                ),
+                              ),
+                              MainPresenter.to
+                                  .showCandlestickChart(snapshot: snapshot),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Obx(
+                                    () => Text(
+                                      MainPresenter.to.legends.value,
+                                      style: const TextTheme().sp4.greyColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  MainPresenter.to
+                                      .buildMktDataProviderRichText(),
+                                  SizedBox(
+                                    height: (Platform.isWindows ||
+                                            Platform.isLinux ||
+                                            Platform.isMacOS
+                                        ? 14.h
+                                        : 10.h),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: AppColor.greyColor
+                                              .withOpacity(0.5)),
+                                      child: IconButton(
+                                        onPressed: () => (MainPresenter
+                                                .to.chartExpandNotifier.value =
+                                            !MainPresenter
+                                                .to.chartExpandNotifier.value),
+                                        icon: Transform.translate(
+                                          offset: Offset(0.0, -1.h),
+                                          child: Obx(
+                                            () => Icon(
+                                              MainPresenter
+                                                  .to.expandOrShrinkIcon.value,
+                                            ),
+                                          ),
+                                        ),
+                                        color: AppColor.whiteColor,
+                                        iconSize: 7.h,
                                       ),
                                     ),
+                                  )
+                                ],
+                              ),
+                              const Divider(),
+                              SizedBox(height: 5.h),
+                              MainPresenter.to.showDevModeViewOne(
+                                  MainPresenter.to.devModeNotifier.value,
+                                  context),
+                              MainPresenter.to.showDevModeViewTwo(
+                                  MainPresenter.to.devModeNotifier.value),
+                              TrendMatchView(),
+                              SizedBox(height: 10.h),
+                              SubsequentAnalyticsView(context: context),
+                              MainPresenter.to.buildCloudFunctionCol(),
+                              SizedBox(height: 100.h),
+                            ],
+                          ),
+                        ),
+                        // Conditionally render the fixed header
+                        if (MainPresenter.to.devMode.value && _isChartFrozen)
+                          Obx(
+                            () => Positioned(
+                              top: 0,
+                              left: 0,
+                              right: 0,
+                              child: Container(
+                                color: AppColor
+                                    .blackColor, // Background color for visibility
+                                child: SizedBox(
+                                  width: 393.w,
+                                  height:
+                                      MainPresenter.to.candleChartHeight.value,
+                                  child: InteractiveChart(
+                                    candles: (snapshot.data!.length > 1000
+                                        ? snapshot.data!.sublist(
+                                            snapshot.data!.length - 999,
+                                            snapshot.data!.length)
+                                        : snapshot.data!),
+                                    style: ChartStyle(
+                                      trendLineStyles: [
+                                        Paint()
+                                          ..strokeWidth = 1.0
+                                          ..strokeCap = StrokeCap.round
+                                          ..color = Colors.orange,
+                                        Paint()
+                                          ..strokeWidth = 1.0
+                                          ..strokeCap = StrokeCap.round
+                                          ..color = Colors.red,
+                                        Paint()
+                                          ..strokeWidth = 1.0
+                                          ..strokeCap = StrokeCap.round
+                                          ..color = Colors.green,
+                                        Paint()
+                                          ..strokeWidth = 1.0
+                                          ..strokeCap = StrokeCap.round
+                                          ..color = Colors.blue[700]!,
+                                        Paint()
+                                          ..strokeWidth = 1.0
+                                          ..strokeCap = StrokeCap.round
+                                          ..color = Colors.purple[300]!,
+                                      ],
+                                      selectionHighlightColor:
+                                          Colors.red.withOpacity(0.75),
+                                      overlayBackgroundColor:
+                                          Colors.red.withOpacity(0.75),
+                                      overlayTextStyle: const TextStyle(
+                                          color: AppColor.whiteColor),
+                                    ),
                                   ),
-                                  color: AppColor.whiteColor,
-                                  iconSize: 7.h,
                                 ),
                               ),
-                            )
-                          ],
-                        ),
-                        const Divider(),
-                        SizedBox(height: 5.h),
-                        MainPresenter.to.showDevModeViewOne(
-                            MainPresenter.to.devModeNotifier.value, context),
-                        MainPresenter.to.showDevModeViewTwo(
-                            MainPresenter.to.devModeNotifier.value),
-                        TrendMatchView(),
-                        SizedBox(height: 10.h),
-                        SubsequentAnalyticsView(context: context),
-                        MainPresenter.to.buildCloudFunctionCol(),
-                        SizedBox(height: 100.h),
+                            ),
+                          ),
                       ],
-                    ),
-                  ),
-                );
+                    ));
               } else if (snapshot.hasError) {
                 return Center(
                   child: Column(
