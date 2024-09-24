@@ -183,9 +183,9 @@ class TrendMatchView extends StatelessWidget {
                           .setBool(SharedPreferencesConstant.lockTrend, false);
                       MainPresenter.to.isLockTrend.value = false;
 
-                      PrefsService.to.prefs.setBool(
-                          SharedPreferencesConstant.alwaysUseCrossData, false);
-                      MainPresenter.to.alwaysUseCrossData.value = false;
+                      // PrefsService.to.prefs.setBool(
+                      //     SharedPreferencesConstant.alwaysUseCrossData, false);
+                      // MainPresenter.to.alwaysUseCrossData.value = false;
 
                       PrefsService.to.prefs
                           .setString(SharedPreferencesConstant.img1, '');

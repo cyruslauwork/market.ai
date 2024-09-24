@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:market_ai/models/models.dart';
 import 'package:market_ai/presenters/presenters.dart';
 import 'package:market_ai/utils/utils.dart';
+import 'package:market_ai/views/trendmatch_view.dart';
 
 class AdjustedLineChart extends StatefulWidget {
   final bool isLockTrend;
@@ -69,15 +70,7 @@ class _AdjustedLineChartState extends State<AdjustedLineChart> {
                   future: lineChartDataFuture,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return SizedBox(
-                        width: 20.w,
-                        height: (Platform.isWindows ||
-                                Platform.isLinux ||
-                                Platform.isMacOS
-                            ? 25.h
-                            : 20.h),
-                        child: const CircularProgressIndicator(),
-                      );
+                      return TrendMatchView().showCircularProgressIndicator();
                     } else if (snapshot.hasError) {
                       return Text('Error: ${snapshot.error}',
                           style: const TextTheme().sp5);
