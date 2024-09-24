@@ -627,8 +627,7 @@ class MainView extends StatefulWidget {
   }
 
   Widget devModeViewTwo() {
-    if (!MainPresenter.to.alwaysUseCrossData.value &&
-        MainPresenter.to.trendMatched.value) {
+    if (MainPresenter.to.trendMatched.value) {
       return Column(children: [
         const Divider(),
         Text(
@@ -644,6 +643,28 @@ class MainView extends StatefulWidget {
                 ),
               )
             : Text('0', style: const TextTheme().sp4)),
+        // Iterate over the universalMatchRows
+        ...MainPresenter.to.universalMatchRows.entries.map((entry) {
+          String key = entry.key;
+          List<int> values = entry.value;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Title for each key
+              Text(key, style: const TextTheme().sp5.w700),
+              // Content based on values
+              values.isNotEmpty
+                  ? SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Text(
+                        values.toString(),
+                        style: const TextTheme().sp4,
+                      ),
+                    )
+                  : Text('0', style: const TextTheme().sp4),
+            ],
+          );
+        }),
         SizedBox(height: 5.h),
         // Text(
         //   'matched_percent_diff_title'.tr,

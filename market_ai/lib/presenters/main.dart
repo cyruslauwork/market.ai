@@ -9129,15 +9129,15 @@ class MainPresenter extends GetxController {
                     }
                     return null;
                   },
-                  onSaved: (String? value) {
+                  onSaved: (String? value) async {
                     apiKey.value = value!;
-                    PrefsService.to.prefs.setString(
+                    await PrefsService.to.prefs.setString(
                         SharedPreferencesConstant.apiKey, apiKey.value);
                     apiKeyErr.value = '';
-                    PrefsService.to.prefs
+                    await PrefsService.to.prefs
                         .setString(SharedPreferencesConstant.apiKeyErr, '');
                     if (!isLockTrend.value) {
-                      TrendMatch().init();
+                      await TrendMatch().init();
                       SubsequentAnalytics().init();
                     }
                   },
