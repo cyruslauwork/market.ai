@@ -9340,61 +9340,176 @@ class MainPresenter extends GetxController {
     });
   }
 
-  Widget showMatchedCandlestickChart(
-      {required AsyncSnapshot<List<CandleData>> snapshot}) {
-    List<CandleData> listCandle = snapshot.data!;
-    if (hasCandleData.value) {
-      return SizedBox(
-        width: 393.w,
-        height: candleChartHeight.value,
-        child: InteractiveChart(
-          candles: listCandle,
-          style: ChartStyle(
-            trendLineStyles: [
-              Paint()
-                ..strokeWidth = 1.0
-                ..strokeCap = StrokeCap.round
-                ..color = Colors.orange,
-              Paint()
-                ..strokeWidth = 1.0
-                ..strokeCap = StrokeCap.round
-                ..color = Colors.red,
-              Paint()
-                ..strokeWidth = 1.0
-                ..strokeCap = StrokeCap.round
-                ..color = Colors.green,
-              Paint()
-                ..strokeWidth = 1.0
-                ..strokeCap = StrokeCap.round
-                ..color = Colors.blue[700]!,
-              Paint()
-                ..strokeWidth = 1.0
-                ..strokeCap = StrokeCap.round
-                ..color = Colors.purple[300]!,
+  Widget showUniversalMatchedCandlestickCharts() {
+    return Obx(() {
+      if (!devMode.value) {
+        return const SizedBox.shrink();
+      }
+
+      if (!hasCandleData.value) {
+        return Center(
+          child: Column(
+            children: [
+              LoadingAnimationWidget.staggeredDotsWave(
+                color: ThemeColor.primary.value,
+                size: 25.w,
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 10.h),
+                child: Text('preparing_universal_candle_chart'.tr,
+                    style: const TextTheme().sp5),
+              ),
             ],
-            selectionHighlightColor: Colors.red.withOpacity(0.75),
-            overlayBackgroundColor: Colors.red.withOpacity(0.75),
-            overlayTextStyle: const TextStyle(color: AppColor.whiteColor),
           ),
+        );
+      }
+
+      List<Widget> charts = [];
+
+      charts.add(
+        Text(
+          'universal_candle_chart'.tr,
+          style: const TextTheme().sp5.w700,
         ),
       );
-    } else {
-      return Center(
-        child: Column(
-          children: [
-            LoadingAnimationWidget.staggeredDotsWave(
-              color: ThemeColor.primary.value,
-              size: 25.w,
+
+      for (var key in universalMatchRows.keys) {
+        List<int> indices = universalMatchRows[key] ?? [];
+
+        for (var index in indices) {
+          int startIndex = (index - 60).clamp(0, listCandledata.length - 1);
+          int endIndex = (index + 20).clamp(0, listCandledata.length - 1);
+
+          List<CandleData> filteredCandles =
+              listCandledata.sublist(startIndex, endIndex + 1);
+
+          charts.add(
+            SizedBox(
+              width: 393.w,
+              height: candleChartHeight.value,
+              child: InteractiveChart(
+                candles: filteredCandles,
+                style: ChartStyle(
+                  trendLineStyles: [
+                    Paint()
+                      ..strokeWidth = 1.0
+                      ..strokeCap = StrokeCap.round
+                      ..color = Colors.orange,
+                    Paint()
+                      ..strokeWidth = 1.0
+                      ..strokeCap = StrokeCap.round
+                      ..color = Colors.red,
+                    Paint()
+                      ..strokeWidth = 1.0
+                      ..strokeCap = StrokeCap.round
+                      ..color = Colors.green,
+                    Paint()
+                      ..strokeWidth = 1.0
+                      ..strokeCap = StrokeCap.round
+                      ..color = Colors.blue[700]!,
+                    Paint()
+                      ..strokeWidth = 1.0
+                      ..strokeCap = StrokeCap.round
+                      ..color = Colors.purple[300]!,
+                  ],
+                  selectionHighlightColor: Colors.red.withOpacity(0.75),
+                  overlayBackgroundColor: Colors.red.withOpacity(0.75),
+                  overlayTextStyle: const TextStyle(color: AppColor.whiteColor),
+                ),
+              ),
             ),
-            Padding(
-              padding: EdgeInsets.only(top: 10.h),
-              child:
-                  Text('downloading_candle'.tr, style: const TextTheme().sp5),
-            ),
-          ],
+          );
+        }
+      }
+
+      return Column(
+        children: charts,
+      );
+    });
+  }
+
+  Widget showMatchedCandlestickCharts() {
+    return Obx(() {
+      if (!devMode.value) {
+        return const SizedBox.shrink();
+      }
+
+      if (!hasCandleData.value) {
+        return Center(
+          child: Column(
+            children: [
+              LoadingAnimationWidget.staggeredDotsWave(
+                color: ThemeColor.primary.value,
+                size: 25.w,
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 10.h),
+                child: Text('preparing_candle_chart'.tr,
+                    style: const TextTheme().sp5),
+              ),
+            ],
+          ),
+        );
+      }
+
+      List<Widget> charts = [];
+
+      charts.add(
+        Text(
+          'candle_chart'.tr,
+          style: const TextTheme().sp5.w700,
         ),
       );
-    }
+
+      for (var index in MainPresenter.to.matchRows) {
+        int startIndex = (index - 60).clamp(0, listCandledata.length - 1);
+        int endIndex = (index + 20).clamp(0, listCandledata.length - 1);
+
+        List<CandleData> filteredCandles =
+            listCandledata.sublist(startIndex, endIndex + 1);
+
+        charts.add(
+          SizedBox(
+            width: 393.w,
+            height: candleChartHeight.value,
+            child: InteractiveChart(
+              candles: filteredCandles,
+              style: ChartStyle(
+                trendLineStyles: [
+                  Paint()
+                    ..strokeWidth = 1.0
+                    ..strokeCap = StrokeCap.round
+                    ..color = Colors.orange,
+                  Paint()
+                    ..strokeWidth = 1.0
+                    ..strokeCap = StrokeCap.round
+                    ..color = Colors.red,
+                  Paint()
+                    ..strokeWidth = 1.0
+                    ..strokeCap = StrokeCap.round
+                    ..color = Colors.green,
+                  Paint()
+                    ..strokeWidth = 1.0
+                    ..strokeCap = StrokeCap.round
+                    ..color = Colors.blue[700]!,
+                  Paint()
+                    ..strokeWidth = 1.0
+                    ..strokeCap = StrokeCap.round
+                    ..color = Colors.purple[300]!,
+                ],
+                selectionHighlightColor: Colors.red.withOpacity(0.75),
+                overlayBackgroundColor: Colors.red.withOpacity(0.75),
+                overlayTextStyle: const TextStyle(color: AppColor.whiteColor),
+              ),
+            ),
+          ),
+        );
+      }
+
+      return Column(
+        children: charts,
+      );
+    });
   }
 
   Widget showMatchesExceededMsg() {

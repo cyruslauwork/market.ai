@@ -181,6 +181,11 @@ class Msg extends Translations {
               '✅︎ Not tracking ≥ 5 & opposite probability ≥',
           'lockin_trend_tracking_not_hits_onesided':
               '✅︎ Not tracking one-sided ≥ 4 & opposite probability ≥',
+          'preparing_universal_candle_chart':
+              'Preparing unversal matched candletick charts',
+          'universal_candle_chart': 'Unversal matched candletick charts',
+          'preparing_candle_chart': 'Preparing matched candletick charts',
+          'candle_chart': 'Matched candletick charts',
         },
         'zh_HK': {
           'app_name': '市場慧眼📈',
@@ -323,6 +328,10 @@ class Msg extends Translations {
           'lockin_trend_tracking_not_hits': '✅︎ 沒有追踪走勢 ≥ 5 及相反走勢機率 ≥',
           'lockin_trend_tracking_not_hits_onesided':
               '✅︎ 沒有追踪單邊走勢 ≥ 4 及相反走勢機率 ≥',
+          'preparing_universal_candle_chart': '正在準備其他陰陽燭匹配數據...',
+          'universal_candle_chart': '其他陰陽燭匹配數據',
+          'preparing_candle_chart': '正在準備陰陽燭匹配數據...',
+          'candle_chart': '陰陽燭匹配數據',
         },
       };
 }
