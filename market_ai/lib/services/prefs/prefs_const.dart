@@ -25,14 +25,17 @@ class SharedPreferencesConstant {
   static String apiKeyErr = 'apiKeyErr';
   static String jumpServerUrl = 'jumpServerUrl';
   static String alwaysSkipSymbolInSearch = 'alwaysSkipSymbolInSearch';
-  static String alwayStrictMatchCriteria = 'alwayStrictMatchCriteria';
+  static String strictMatchCriteria = 'strictMatchCriteria';
   static String alwaysShowMinuteData = 'alwaysShowMinuteData';
   static String subLength = 'subLength';
-  static String alwaysMaMatchCriteria = 'alwaysMaMatchCriteria';
+  static String maMatchCriteria = 'maMatchCriteria';
   static String alwaysUseCrossData = 'alwaysUseCrossData';
   static String lockTrend = 'lockTrend';
   static String closePosWhenReachedMedian = 'closePosWhenReachedMedian';
   static String probThreshold = 'probThreshold';
+  static String vwma20MatchCriteria = 'vwma20MatchCriteria';
+  static String ema40MatchCriteria = 'ema40MatchCriteria';
+  static String ema60MatchCriteria = 'ema60MatchCriteria';
 
   static String img1 = 'img1';
   static String img2 = 'img2';

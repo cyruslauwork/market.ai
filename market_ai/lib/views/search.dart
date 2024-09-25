@@ -557,11 +557,14 @@ class _SearchViewState extends State<SearchView> {
                     ),
                     Obx(
                       () => Switch(
-                        value: MainPresenter.to.strictMatchCriteria.value,
-                        activeColor: Colors.red,
-                        onChanged: (bool value) =>
-                            MainPresenter.to.strictMatchCriteria.value = value,
-                      ),
+                          value: MainPresenter.to.strictMatchCriteria.value,
+                          activeColor: Colors.red,
+                          onChanged: (bool value) {
+                            MainPresenter.to.strictMatchCriteria.value = value;
+                            PrefsService.to.prefs.setBool(
+                                SharedPreferencesConstant.strictMatchCriteria,
+                                value);
+                          }),
                     ),
                   ],
                 ),
@@ -578,10 +581,88 @@ class _SearchViewState extends State<SearchView> {
                     ),
                     Obx(
                       () => Switch(
-                        value: MainPresenter.to.maMatchCriteria.value,
+                          value: MainPresenter.to.maMatchCriteria.value,
+                          activeColor: Colors.red,
+                          onChanged: (bool value) {
+                            MainPresenter.to.maMatchCriteria.value = value;
+                            PrefsService.to.prefs.setBool(
+                                SharedPreferencesConstant.maMatchCriteria,
+                                value);
+                          }),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 4.w),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'vwma20_mathcing_criteria'.tr,
+                        style: const TextTheme().sp5.w700,
+                      ),
+                    ),
+                    Obx(
+                      () => Switch(
+                        value: MainPresenter.to.vwma20MatchCriteria.value,
                         activeColor: Colors.red,
-                        onChanged: (bool value) =>
-                            MainPresenter.to.maMatchCriteria.value = value,
+                        onChanged: (bool value) {
+                          MainPresenter.to.vwma20MatchCriteria.value = value;
+                          PrefsService.to.prefs.setBool(
+                              SharedPreferencesConstant.vwma20MatchCriteria,
+                              value);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 4.w),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'ema40_mathcing_criteria'.tr,
+                        style: const TextTheme().sp5.w700,
+                      ),
+                    ),
+                    Obx(
+                      () => Switch(
+                        value: MainPresenter.to.ema40MatchCriteria.value,
+                        activeColor: Colors.red,
+                        onChanged: (bool value) {
+                          MainPresenter.to.ema40MatchCriteria.value = value;
+                          PrefsService.to.prefs.setBool(
+                              SharedPreferencesConstant.ema40MatchCriteria,
+                              value);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 4.w),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'ema60_mathcing_criteria'.tr,
+                        style: const TextTheme().sp5.w700,
+                      ),
+                    ),
+                    Obx(
+                      () => Switch(
+                        value: MainPresenter.to.ema60MatchCriteria.value,
+                        activeColor: Colors.red,
+                        onChanged: (bool value) {
+                          MainPresenter.to.ema60MatchCriteria.value = value;
+                          PrefsService.to.prefs.setBool(
+                              SharedPreferencesConstant.ema60MatchCriteria,
+                              value);
+                        },
                       ),
                     ),
                   ],

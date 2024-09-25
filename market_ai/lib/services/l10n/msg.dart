@@ -106,13 +106,9 @@ class Msg extends Translations {
           'always_skip_search_symbol': 'Always skip stock symbol in search',
           'recommended_tolerance': 'Recommended ≤ 50%',
           'strict_matching_criteria': 'Strict trend matching criteria',
-          'always_use_strict_matching':
-              'Always use strict trend matching criteria',
           'show_one_minute': 'Show 1 minute interval data',
           'show_one_day': 'Show 1 day interval data',
           'subsequent_timeunit': 'Subsequent Trend Timeunit(s)',
-          'always_use_ma_matching':
-              'Always use SMA/EMA trend matching criteria',
           'ma_mathcing_criteria': 'SMA/EMA trend matching criteria',
           'more_than_500_matches':
               'There are more than 500 trend matches, only 500 results will be returned',
@@ -188,6 +184,12 @@ class Msg extends Translations {
           'candle_chart': 'Matched candletick charts',
           'more_than_10_matches_chart':
               'There are more than 10 trend matches, only 10 charts will be shown',
+          'vwma20_mathcing_criteria':
+              'VWMA20 trend matching criteria for minute data',
+          'ema40_mathcing_criteria':
+              'EMA40 trend matching criteria for minute data',
+          'ema60_mathcing_criteria':
+              'EMA60 trend matching criteria for minute data',
         },
         'zh_HK': {
           'app_name': '市場慧眼📈',
@@ -272,11 +274,9 @@ class Msg extends Translations {
           'always_skip_search_symbol': '總是在搜尋跳過股票代碼',
           'recommended_tolerance': '建議 ≤ 50%',
           'strict_matching_criteria': '嚴格趨勢匹配條件',
-          'always_use_strict_matching': '總是使用嚴格趨勢匹配條件',
           'show_one_minute': '顯示 1 分鐘間隔數據',
           'show_one_day': '顯示日 K 數據',
           'subsequent_timeunit': '後續走勢時間單位',
-          'always_use_ma_matching': '總是使用 SMA/EMA 趨勢匹配條件',
           'ma_mathcing_criteria': 'SMA/EMA 趨勢匹配條件',
           'more_than_500_matches': '匹配趨勢超過 500 條，僅返回 500 條結果',
           'cross_data': '為了最大限度地提高獲得正面結果的機率，已使用其他金融工具的資料集',
@@ -335,6 +335,9 @@ class Msg extends Translations {
           'preparing_candle_chart': '正在準備陰陽燭匹配數據...',
           'candle_chart': '陰陽燭匹配數據',
           'more_than_10_matches_chart': '匹配趨勢超過 10 條，僅顯示 10 張圖表',
+          'vwma20_mathcing_criteria': 'VWMA20 分鐘數據趨勢匹配條件',
+          'ema40_mathcing_criteria': 'EMA40 分鐘數據趨勢匹配條件',
+          'ema60_mathcing_criteria': 'EMA60 分鐘數據趨勢匹配條件',
         },
       };
 }

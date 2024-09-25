@@ -510,20 +510,24 @@ class MainPresenter extends GetxController {
               .getBool(SharedPreferencesConstant.alwaysSkipSymbolInSearch) ??
           false)
       .obs;
-  RxBool alwayStrictMatchCriteria = (PrefsService.to.prefs
-              .getBool(SharedPreferencesConstant.alwayStrictMatchCriteria) ??
-          false)
-      .obs;
   RxBool strictMatchCriteria = (PrefsService.to.prefs
-              .getBool(SharedPreferencesConstant.alwayStrictMatchCriteria) ??
-          false)
-      .obs;
-  RxBool alwaysMaMatchCriteria = (PrefsService.to.prefs
-              .getBool(SharedPreferencesConstant.alwaysMaMatchCriteria) ??
+              .getBool(SharedPreferencesConstant.strictMatchCriteria) ??
           false)
       .obs;
   RxBool maMatchCriteria = (PrefsService.to.prefs
-              .getBool(SharedPreferencesConstant.alwaysMaMatchCriteria) ??
+              .getBool(SharedPreferencesConstant.maMatchCriteria) ??
+          false)
+      .obs;
+  RxBool vwma20MatchCriteria = (PrefsService.to.prefs
+              .getBool(SharedPreferencesConstant.vwma20MatchCriteria) ??
+          false)
+      .obs;
+  RxBool ema40MatchCriteria = (PrefsService.to.prefs
+              .getBool(SharedPreferencesConstant.ema40MatchCriteria) ??
+          false)
+      .obs;
+  RxBool ema60MatchCriteria = (PrefsService.to.prefs
+              .getBool(SharedPreferencesConstant.ema60MatchCriteria) ??
           false)
       .obs;
 
@@ -9034,20 +9038,6 @@ class MainPresenter extends GetxController {
     alwaysSkipSymbolInSearch.value = value;
     PrefsService.to.prefs
         .setBool(SharedPreferencesConstant.alwaysSkipSymbolInSearch, value);
-  }
-
-  alwayStrictMatchCriteriaToggle(bool value) {
-    alwayStrictMatchCriteria.value = value;
-    PrefsService.to.prefs
-        .setBool(SharedPreferencesConstant.alwayStrictMatchCriteria, value);
-    strictMatchCriteria.value = value;
-  }
-
-  alwayMaMatchCriteriaToggle(bool value) {
-    alwaysMaMatchCriteria.value = value;
-    PrefsService.to.prefs
-        .setBool(SharedPreferencesConstant.alwaysMaMatchCriteria, value);
-    maMatchCriteria.value = value;
   }
 
   alwaysThousandthsDataToggle(bool value) {
