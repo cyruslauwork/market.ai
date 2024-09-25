@@ -1087,6 +1087,8 @@ class _MainViewState extends State<MainView> {
                               TrendMatchView(),
                               SizedBox(height: 10.h),
                               SubsequentAnalyticsView(context: context),
+        MainPresenter.to.showMatchedCandlestickCharts(),
+        MainPresenter.to.showUniversalMatchedCandlestickCharts(),
                               MainPresenter.to.buildCloudFunctionCol(),
                               SizedBox(height: 100.h),
                             ],

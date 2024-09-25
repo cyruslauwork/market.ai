@@ -249,8 +249,6 @@ class SubsequentAnalyticsView extends StatelessWidget {
           child: Hero(tag: 'img7', child: Image.memory(img7Bytes)),
         ),
         SizedBox(height: 5.h),
-        MainPresenter.to.showMatchedCandlestickCharts(),
-        MainPresenter.to.showUniversalMatchedCandlestickCharts(),
       ],
     );
   }

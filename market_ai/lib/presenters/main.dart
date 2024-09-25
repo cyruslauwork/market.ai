@@ -9378,7 +9378,7 @@ class MainPresenter extends GetxController {
 
         for (var index in indices) {
           int startIndex = (index - 60).clamp(0, listCandledata.length - 1);
-          int endIndex = (index + 20).clamp(0, listCandledata.length - 1);
+          int endIndex = (index + length.value).clamp(0, listCandledata.length - 1);
 
           List<CandleData> filteredCandles =
               listCandledata.sublist(startIndex, endIndex + 1);
@@ -9463,7 +9463,7 @@ class MainPresenter extends GetxController {
 
       for (var index in MainPresenter.to.matchRows) {
         int startIndex = (index - 60).clamp(0, listCandledata.length - 1);
-        int endIndex = (index + 20).clamp(0, listCandledata.length - 1);
+        int endIndex = (index + length.value).clamp(0, listCandledata.length - 1);
 
         List<CandleData> filteredCandles =
             listCandledata.sublist(startIndex, endIndex + 1);
