@@ -492,6 +492,7 @@ class MainPresenter extends GetxController {
   }; // Create a mapping of symbols to their corresponding data types
   late final Map<String, Future<List<dynamic>> Function()>
       dataFetchMap; // Create a mapping for symbols to their corresponding data fetch functions
+  double matchedCandleChartHeight = 125.h;
 
   /* Listings */
   RxInt listingsDownloadTime = 0.obs;
@@ -9340,94 +9341,6 @@ class MainPresenter extends GetxController {
     });
   }
 
-  Widget showUniversalMatchedCandlestickCharts() {
-    return Obx(() {
-      if (!devMode.value) {
-        return const SizedBox.shrink();
-      }
-
-      if (!hasCandleData.value) {
-        return Center(
-          child: Column(
-            children: [
-              LoadingAnimationWidget.staggeredDotsWave(
-                color: ThemeColor.primary.value,
-                size: 25.w,
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 10.h),
-                child: Text('preparing_universal_candle_chart'.tr,
-                    style: const TextTheme().sp5),
-              ),
-            ],
-          ),
-        );
-      }
-
-      List<Widget> charts = [];
-
-      charts.add(
-        Text(
-          'universal_candle_chart'.tr,
-          style: const TextTheme().sp5.w700,
-        ),
-      );
-
-      for (var key in universalMatchRows.keys) {
-        List<int> indices = universalMatchRows[key] ?? [];
-
-        for (var index in indices) {
-          int startIndex = (index - 60).clamp(0, listCandledata.length - 1);
-          int endIndex = (index + length.value).clamp(0, listCandledata.length - 1);
-
-          List<CandleData> filteredCandles =
-              listCandledata.sublist(startIndex, endIndex + 1);
-
-          charts.add(
-            SizedBox(
-              width: 393.w,
-              height: candleChartHeight.value,
-              child: InteractiveChart(
-                candles: filteredCandles,
-                style: ChartStyle(
-                  trendLineStyles: [
-                    Paint()
-                      ..strokeWidth = 1.0
-                      ..strokeCap = StrokeCap.round
-                      ..color = Colors.orange,
-                    Paint()
-                      ..strokeWidth = 1.0
-                      ..strokeCap = StrokeCap.round
-                      ..color = Colors.red,
-                    Paint()
-                      ..strokeWidth = 1.0
-                      ..strokeCap = StrokeCap.round
-                      ..color = Colors.green,
-                    Paint()
-                      ..strokeWidth = 1.0
-                      ..strokeCap = StrokeCap.round
-                      ..color = Colors.blue[700]!,
-                    Paint()
-                      ..strokeWidth = 1.0
-                      ..strokeCap = StrokeCap.round
-                      ..color = Colors.purple[300]!,
-                  ],
-                  selectionHighlightColor: Colors.red.withOpacity(0.75),
-                  overlayBackgroundColor: Colors.red.withOpacity(0.75),
-                  overlayTextStyle: const TextStyle(color: AppColor.whiteColor),
-                ),
-              ),
-            ),
-          );
-        }
-      }
-
-      return Column(
-        children: charts,
-      );
-    });
-  }
-
   Widget showMatchedCandlestickCharts() {
     return Obx(() {
       if (!devMode.value) {
@@ -9438,6 +9351,8 @@ class MainPresenter extends GetxController {
         return Center(
           child: Column(
             children: [
+              SizedBox(height: 5.h),
+              const Divider(),
               LoadingAnimationWidget.staggeredDotsWave(
                 color: ThemeColor.primary.value,
                 size: 25.w,
@@ -9453,25 +9368,21 @@ class MainPresenter extends GetxController {
       }
 
       List<Widget> charts = [];
+      charts.add(SizedBox(height: 5.h));
+      charts.add(const Divider());
+      charts.add(Text('candle_chart'.tr, style: const TextTheme().sp5.w700));
+      charts.add(SizedBox(height: 1.h));
+      if (matchRows.isNotEmpty) {
+        for (var index in matchRows) {
+          int startIndex = (index - 60).clamp(0, listCandledata.length - 1);
+          int endIndex =
+              (index + length.value).clamp(0, listCandledata.length - 1);
 
-      charts.add(
-        Text(
-          'candle_chart'.tr,
-          style: const TextTheme().sp5.w700,
-        ),
-      );
-
-      for (var index in MainPresenter.to.matchRows) {
-        int startIndex = (index - 60).clamp(0, listCandledata.length - 1);
-        int endIndex = (index + length.value).clamp(0, listCandledata.length - 1);
-
-        List<CandleData> filteredCandles =
-            listCandledata.sublist(startIndex, endIndex + 1);
-
-        charts.add(
-          SizedBox(
+          List<CandleData> filteredCandles =
+              listCandledata.sublist(startIndex, endIndex + 1);
+          charts.add(SizedBox(
             width: 393.w,
-            height: candleChartHeight.value,
+            height: matchedCandleChartHeight,
             child: InteractiveChart(
               candles: filteredCandles,
               style: ChartStyle(
@@ -9502,13 +9413,105 @@ class MainPresenter extends GetxController {
                 overlayTextStyle: const TextStyle(color: AppColor.whiteColor),
               ),
             ),
+          ));
+          charts.add(SizedBox(height: 1.h));
+        }
+      } else {
+        charts.add(Text('0', style: const TextTheme().sp5));
+        charts.add(SizedBox(height: 1.h));
+      }
+      return Center(child: Column(children: charts));
+    });
+  }
+
+  Widget showUniversalMatchedCandlestickCharts() {
+    return Obx(() {
+      if (!devMode.value) {
+        return const SizedBox.shrink();
+      }
+
+      if (!hasCandleData.value) {
+        return Center(
+          child: Column(
+            children: [
+              LoadingAnimationWidget.staggeredDotsWave(
+                color: ThemeColor.primary.value,
+                size: 25.w,
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 10.h),
+                child: Text('preparing_universal_candle_chart'.tr,
+                    style: const TextTheme().sp5),
+              ),
+            ],
           ),
         );
       }
 
-      return Column(
-        children: charts,
-      );
+      List<Widget> charts = [];
+
+      charts.add(
+          Text('universal_candle_chart'.tr, style: const TextTheme().sp5.w700));
+      charts.add(SizedBox(height: 1.h));
+
+      for (var key in universalMatchRows.keys) {
+        List<int> indices = universalMatchRows[key] ?? [];
+        charts.add(Text(key, style: const TextTheme().sp5));
+        // Check if the list of indices is not empty
+        if (indices.isNotEmpty) {
+          List<CandleData> candleDataList = universalListCandledata[key] ?? [];
+          for (var index in indices) {
+            int startIndex = (index - 60).clamp(0, candleDataList.length - 1);
+            int endIndex =
+                (index + length.value).clamp(0, candleDataList.length - 1);
+
+            List<CandleData> filteredCandles =
+                candleDataList.sublist(startIndex, endIndex + 1);
+            charts.add(
+              SizedBox(
+                width: 393.w,
+                height: matchedCandleChartHeight,
+                child: InteractiveChart(
+                  candles: filteredCandles,
+                  style: ChartStyle(
+                    trendLineStyles: [
+                      Paint()
+                        ..strokeWidth = 1.0
+                        ..strokeCap = StrokeCap.round
+                        ..color = Colors.orange,
+                      Paint()
+                        ..strokeWidth = 1.0
+                        ..strokeCap = StrokeCap.round
+                        ..color = Colors.red,
+                      Paint()
+                        ..strokeWidth = 1.0
+                        ..strokeCap = StrokeCap.round
+                        ..color = Colors.green,
+                      Paint()
+                        ..strokeWidth = 1.0
+                        ..strokeCap = StrokeCap.round
+                        ..color = Colors.blue[700]!,
+                      Paint()
+                        ..strokeWidth = 1.0
+                        ..strokeCap = StrokeCap.round
+                        ..color = Colors.purple[300]!,
+                    ],
+                    selectionHighlightColor: Colors.red.withOpacity(0.75),
+                    overlayBackgroundColor: Colors.red.withOpacity(0.75),
+                    overlayTextStyle:
+                        const TextStyle(color: AppColor.whiteColor),
+                  ),
+                ),
+              ),
+            );
+            charts.add(SizedBox(height: 1.h));
+          }
+        } else {
+          charts.add(Text('0', style: const TextTheme().sp5));
+          charts.add(SizedBox(height: 1.h));
+        }
+      }
+      return Center(child: Column(children: charts));
     });
   }
 

@@ -796,11 +796,24 @@ class _MainViewState extends State<MainView> {
       () => Scaffold(
         appBar: AppBar(
           title: GestureDetector(
-            onTap: () => _scrollController.animateTo(
-              0.0,
-              duration: const Duration(milliseconds: 250),
-              curve: Curves.easeInOut,
-            ),
+            onTap: () {
+              // Check the current offset
+              if (_scrollController.position.pixels == 0) {
+                // If at the top, scroll to the bottom
+                _scrollController.animateTo(
+                  _scrollController.position.maxScrollExtent,
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeInOut,
+                );
+              } else {
+                // If not at the top, scroll to the top
+                _scrollController.animateTo(
+                  0.0,
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeInOut,
+                );
+              }
+            },
             child: Text(
               'app_name'.tr,
               style: const TextTheme().sp7.w700,
@@ -1087,8 +1100,9 @@ class _MainViewState extends State<MainView> {
                               TrendMatchView(),
                               SizedBox(height: 10.h),
                               SubsequentAnalyticsView(context: context),
-        MainPresenter.to.showMatchedCandlestickCharts(),
-        MainPresenter.to.showUniversalMatchedCandlestickCharts(),
+                              MainPresenter.to.showMatchedCandlestickCharts(),
+                              MainPresenter.to
+                                  .showUniversalMatchedCandlestickCharts(),
                               MainPresenter.to.buildCloudFunctionCol(),
                               SizedBox(height: 100.h),
                             ],
@@ -1107,11 +1121,16 @@ class _MainViewState extends State<MainView> {
                                 child: SizedBox(
                                   width: 393.w,
                                   height:
-                                      MainPresenter.to.candleChartHeight.value,
+                                      MainPresenter.to.matchedCandleChartHeight,
                                   child: InteractiveChart(
-                                    candles: (snapshot.data!.length > 1000
+                                    candles: (snapshot.data!.length >
+                                            (60 + MainPresenter.to.length.value)
                                         ? snapshot.data!.sublist(
-                                            snapshot.data!.length - 999,
+                                            snapshot.data!.length -
+                                                (60 +
+                                                    MainPresenter
+                                                        .to.length.value -
+                                                    1),
                                             snapshot.data!.length)
                                         : snapshot.data!),
                                     style: ChartStyle(
