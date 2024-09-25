@@ -455,6 +455,7 @@ class _SearchViewState extends State<SearchView> {
                   ],
                 ),
               ),
+              // TODO: add EMA15 & EMA20 & VWMA20, EMA40, EMA60 tolerance sliders
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 4.w),
                 child: Column(

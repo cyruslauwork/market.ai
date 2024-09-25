@@ -1041,6 +1041,7 @@ class Candle {
       final ema10 = computeEMA(listCandledata, 10);
       final ema15 = computeEMA(listCandledata, 15);
       final ema20 = computeEMA(listCandledata, 20);
+      // TODO: add EMA40, EMA60, VWMA20
 
       for (int i = 0; i < listCandledata.length; i++) {
         listCandledata[i].trends = [

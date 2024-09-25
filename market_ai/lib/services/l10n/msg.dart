@@ -109,7 +109,7 @@ class Msg extends Translations {
           'show_one_minute': 'Show 1 minute interval data',
           'show_one_day': 'Show 1 day interval data',
           'subsequent_timeunit': 'Subsequent Trend Timeunit(s)',
-          'ma_mathcing_criteria': 'SMA/EMA trend matching criteria',
+          'ma_mathcing_criteria': 'MA trend matching criteria',
           'more_than_500_matches':
               'There are more than 500 trend matches, only 500 results will be returned',
           'cross_data':
@@ -277,7 +277,7 @@ class Msg extends Translations {
           'show_one_minute': '顯示 1 分鐘間隔數據',
           'show_one_day': '顯示日 K 數據',
           'subsequent_timeunit': '後續走勢時間單位',
-          'ma_mathcing_criteria': 'SMA/EMA 趨勢匹配條件',
+          'ma_mathcing_criteria': 'MA 趨勢匹配條件',
           'more_than_500_matches': '匹配趨勢超過 500 條，僅返回 500 條結果',
           'cross_data': '為了最大限度地提高獲得正面結果的機率，已使用其他金融工具的資料集',
           'cross_data_off': '跨資料共享已關閉',

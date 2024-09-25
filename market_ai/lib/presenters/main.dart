@@ -1768,6 +1768,7 @@ class MainPresenter extends GetxController {
   }
 
   void backtest(String symbol, BuildContext context) async {
+    // TODO: modify CSV file to have more MA
     scheduleMicrotask(() async {
       // printInfo(info: 'Length: ${length.value}');
       // printInfo(info: 'Candle Tolerance: ${candleTolerance.value}');
