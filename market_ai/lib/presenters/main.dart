@@ -9368,12 +9368,19 @@ class MainPresenter extends GetxController {
       }
 
       List<Widget> charts = [];
+      int chartCount = 0; // Counter for the number of charts added
       charts.add(SizedBox(height: 5.h));
       charts.add(const Divider());
       charts.add(Text('candle_chart'.tr, style: const TextTheme().sp5.w700));
       charts.add(SizedBox(height: 1.h));
       if (matchRows.isNotEmpty) {
         for (var index in matchRows) {
+          if (chartCount >= 10) {
+            // Stop adding more charts after reaching 10
+            charts.add(Text('more_than_10_matches_chart'.tr,
+                style: const TextTheme().sp5));
+            break;
+          }
           int startIndex = (index - 60).clamp(0, listCandledata.length - 1);
           int endIndex =
               (index + length.value).clamp(0, listCandledata.length - 1);
@@ -9415,6 +9422,7 @@ class MainPresenter extends GetxController {
             ),
           ));
           charts.add(SizedBox(height: 1.h));
+          chartCount++; // Increment the counter
         }
       } else {
         charts.add(Text('0', style: const TextTheme().sp5));
@@ -9434,6 +9442,7 @@ class MainPresenter extends GetxController {
         return Center(
           child: Column(
             children: [
+              SizedBox(height: 5.h),
               LoadingAnimationWidget.staggeredDotsWave(
                 color: ThemeColor.primary.value,
                 size: 25.w,
@@ -9449,18 +9458,24 @@ class MainPresenter extends GetxController {
       }
 
       List<Widget> charts = [];
-
+      charts.add(SizedBox(height: 5.h));
       charts.add(
           Text('universal_candle_chart'.tr, style: const TextTheme().sp5.w700));
       charts.add(SizedBox(height: 1.h));
-
       for (var key in universalMatchRows.keys) {
         List<int> indices = universalMatchRows[key] ?? [];
+        int chartCount = 0; // Counter for the number of charts added
         charts.add(Text(key, style: const TextTheme().sp5));
         // Check if the list of indices is not empty
         if (indices.isNotEmpty) {
           List<CandleData> candleDataList = universalListCandledata[key] ?? [];
           for (var index in indices) {
+            if (chartCount >= 10) {
+              // Stop adding more charts after reaching 10
+              charts.add(Text('more_than_10_matches_chart'.tr,
+                  style: const TextTheme().sp5));
+              break;
+            }
             int startIndex = (index - 60).clamp(0, candleDataList.length - 1);
             int endIndex =
                 (index + length.value).clamp(0, candleDataList.length - 1);
@@ -9505,6 +9520,7 @@ class MainPresenter extends GetxController {
               ),
             );
             charts.add(SizedBox(height: 1.h));
+            chartCount++; // Increment the counter
           }
         } else {
           charts.add(Text('0', style: const TextTheme().sp5));

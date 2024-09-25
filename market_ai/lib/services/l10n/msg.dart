@@ -186,6 +186,8 @@ class Msg extends Translations {
           'universal_candle_chart': 'Unversal matched candletick charts',
           'preparing_candle_chart': 'Preparing matched candletick charts',
           'candle_chart': 'Matched candletick charts',
+          'more_than_10_matches_chart':
+              'There are more than 10 trend matches, only 10 charts will be shown',
         },
         'zh_HK': {
           'app_name': '市場慧眼📈',
@@ -332,6 +334,7 @@ class Msg extends Translations {
           'universal_candle_chart': '其他陰陽燭匹配數據',
           'preparing_candle_chart': '正在準備陰陽燭匹配數據...',
           'candle_chart': '陰陽燭匹配數據',
+          'more_than_10_matches_chart': '匹配趨勢超過 10 條，僅顯示 10 張圖表',
         },
       };
 }
