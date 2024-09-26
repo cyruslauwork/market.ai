@@ -23,6 +23,7 @@ class Candle {
   Future<List<CandleData>> init({String? stockSymbol}) {
     stockSymbol ??= MainPresenter.to.financialInstrumentSymbol.value;
     MainPresenter.to.hasCandleData.value = false;
+    // TODO: add String 'ema40'... to MainPresenter.to.extraMaList if ema40MatchCriteria...
     if (!MainPresenter.to.isLockTrend.value) {
       MainPresenter.to.trendMatched.value = false;
     } else {
@@ -1041,7 +1042,31 @@ class Candle {
       final ema10 = computeEMA(listCandledata, 10);
       final ema15 = computeEMA(listCandledata, 15);
       final ema20 = computeEMA(listCandledata, 20);
-      // TODO: add EMA40, EMA60, VWMA20
+      final vwma20 = MainPresenter.to.vwma20MatchCriteria.value
+          ? computeVWMA(listCandledata, 20)
+          : null;
+      final ema40 = MainPresenter.to.ema40MatchCriteria.value
+          ? computeEMA(listCandledata, 40)
+          : null;
+      final ema60 = MainPresenter.to.ema60MatchCriteria.value
+          ? computeEMA(listCandledata, 60)
+          : null;
+
+      Function addVwma20 = vwma20 != null
+          ? (i) {
+              listCandledata![i].trends.add(vwma20[i]);
+            }
+          : () {};
+      Function addEma40 = ema40 != null
+          ? (i) {
+              listCandledata![i].trends.add(ema40[i]);
+            }
+          : () {};
+      Function addEma60 = ema60 != null
+          ? (i) {
+              listCandledata![i].trends.add(ema60[i]);
+            }
+          : () {};
 
       for (int i = 0; i < listCandledata.length; i++) {
         listCandledata[i].trends = [
@@ -1050,6 +1075,9 @@ class Candle {
           ema15[i],
           ema20[i],
         ];
+        addVwma20(i);
+        addEma40(i);
+        addEma60(i);
       }
     } else {
       final sma5 = computeSMA(listCandledata, 5);
@@ -1136,6 +1164,49 @@ class Candle {
       if (curr != null && prev != null) {
         ma = (ma * period + curr - prev) / period;
         result.add(ma);
+      } else {
+        result.add(null);
+      }
+    }
+    return result;
+  }
+
+  /// Computes the Volume Weighted Moving Average (VWMA) for the given data.
+  static List<double?> computeVWMA(List<CandleData> data, [int period = 20]) {
+    // If data length is less than the period, return nulls.
+    if (data.length < period) return List.filled(data.length, null);
+
+    final List<double?> result = [];
+    double sumPriceVolume = 0;
+    double sumVolume = 0;
+
+    // Calculate the initial VWMA for the first [period] data points.
+    for (int i = 0; i < period; i++) {
+      final close = data[i].close;
+      final volume = data[i].volume;
+      if (close != null && volume != null) {
+        sumPriceVolume += close * volume;
+        sumVolume += volume;
+      }
+    }
+
+    result.addAll(List.filled(period - 1, null));
+    result.add(sumVolume != 0 ? sumPriceVolume / sumVolume : null);
+
+    // Compute the VWMA for the rest of the data points.
+    for (int i = period; i < data.length; i++) {
+      final currClose = data[i].close;
+      final currVolume = data[i].volume;
+      final prevClose = data[i - period].close;
+      final prevVolume = data[i - period].volume;
+
+      if (currClose != null &&
+          currVolume != null &&
+          prevClose != null &&
+          prevVolume != null) {
+        sumPriceVolume += currClose * currVolume - prevClose * prevVolume;
+        sumVolume += currVolume - prevVolume;
+        result.add(sumVolume != 0 ? sumPriceVolume / sumVolume : null);
       } else {
         result.add(null);
       }

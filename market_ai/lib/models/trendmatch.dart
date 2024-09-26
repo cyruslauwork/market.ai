@@ -101,6 +101,9 @@ class TrendMatch {
     List<List<double>>
         selectedPeriodOpenHighLowTheirDiffInRelationToCloseListList = [];
 
+    // For extra MA list
+    // TODO: add Functions by checking MainPresenter.to.extraMaList
+
     // Selected period
     if (isMaMatch) {
       if (!hasMa) {
@@ -142,15 +145,6 @@ class TrendMatch {
         // MA
         List<double> selectedPeriodMaPercentDifferencesList = [];
         for (int l = 0; l < maLength; l++) {
-          if (MainPresenter.to.alwaysShowMinuteData.value ) {
-            if (MainPresenter.to.vwma20MatchCriteria.value  && l = 4) {
-
-            } else if (MainPresenter.to.vwma20MatchCriteria.value  && l = 4) {
-
-            } else if (MainPresenter.to.vwma20MatchCriteria.value  && l = 4) {
-
-            }
-          }
           double newVal = listCandledata[dataLength - (i - 1)].trends[l]!;
           double oriVal = listCandledata[dataLength - i].trends[l]!;
           double maPercentDiff = (newVal - oriVal) / oriVal;
@@ -213,8 +207,16 @@ class TrendMatch {
     int maxMa() {
       if (MainPresenter.to.hasMinuteData.value &&
           MainPresenter.to.alwaysShowMinuteData.value) {
-        MainPresenter.to.maxMa.value = 20;
-        return 20;
+        int maVal;
+        if (MainPresenter.to.ema60MatchCriteria.value) {
+          maVal = 60;
+        } else if (MainPresenter.to.ema40MatchCriteria.value) {
+          maVal = 40;
+        } else {
+          maVal = 20;
+        }
+        MainPresenter.to.maxMa.value = maVal;
+        return maVal;
       } else {
         MainPresenter.to.maxMa.value = 240;
         return 240;
@@ -629,12 +631,15 @@ class TrendMatch {
   }
 
   bool maDifferencesLessThanOrEqualToCertainPercent(
-      List<double> selFirstList,
-      List<List<double>> selList,
-      List<double> comFirstList,
-      List<List<double>> comList,
-      double maTolerance,
-      double firstMaTolerance) {
+    List<double> selFirstList,
+    List<List<double>> selList,
+    List<double> comFirstList,
+    List<List<double>> comList,
+    double maTolerance,
+    double firstMaTolerance,
+    // TODO: add Functions through MainPresenter.to.extraMaList for-loop
+    // TODO: update backtest() maDifferencesLessThanOrEqualToCertainPercent()
+  ) {
     if (selList.length != comList.length) {
       // logger.d('${selList.length} != ${comList.length}');
       throw ArgumentError('Both lists must have the same length.');

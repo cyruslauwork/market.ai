@@ -39,6 +39,18 @@ class _SearchViewState extends State<SearchView> {
               .getInt(SharedPreferencesConstant.firstMaTolerance) ??
           40)
       .toDouble();
+  double _currentEma1520Vwma20Tolerance = (PrefsService.to.prefs
+              .getInt(SharedPreferencesConstant.ema1520Vwma20Tolerance) ??
+          40)
+      .toDouble();
+  double _currentEma40Tolerance =
+      (PrefsService.to.prefs.getInt(SharedPreferencesConstant.ema40Tolerance) ??
+              40)
+          .toDouble();
+  double _currentEma60Tolerance =
+      (PrefsService.to.prefs.getInt(SharedPreferencesConstant.ema60Tolerance) ??
+              40)
+          .toDouble();
   int _currentLength =
       PrefsService.to.prefs.getInt(SharedPreferencesConstant.length) ?? 4;
   TextEditingController _textEditingController = TextEditingController();
@@ -62,6 +74,9 @@ class _SearchViewState extends State<SearchView> {
       _currentLength = 5;
       _textEditingController.clear();
       _currentSubLength = 5;
+      _currentEma1520Vwma20Tolerance = 40;
+      _currentEma40Tolerance = 40;
+      _currentEma60Tolerance = 40;
     });
   }
 
@@ -113,6 +128,21 @@ class _SearchViewState extends State<SearchView> {
         PrefsService.to.prefs
             .setInt(SharedPreferencesConstant.subLength, newSubLength);
         MainPresenter.to.subLength.value = newSubLength;
+        int newEma1520Vwma20Tolerance = _currentEma1520Vwma20Tolerance.toInt();
+        PrefsService.to.prefs.setInt(
+            SharedPreferencesConstant.ema1520Vwma20Tolerance,
+            newEma1520Vwma20Tolerance);
+        MainPresenter.to.ema1520Vwma20Tolerance.value =
+            newEma1520Vwma20Tolerance;
+        int newEma40Tolerance = _currentEma40Tolerance.toInt();
+        PrefsService.to.prefs.setInt(
+            SharedPreferencesConstant.ema40Tolerance, newEma40Tolerance);
+        MainPresenter.to.ema40Tolerance.value = newEma40Tolerance;
+        int newEma60Tolerance = _currentEma60Tolerance.toInt();
+        PrefsService.to.prefs.setInt(
+            SharedPreferencesConstant.ema60Tolerance, newEma60Tolerance);
+        MainPresenter.to.ema60Tolerance.value = newEma60Tolerance;
+        // TODO: update MainPresenter.to.extraMaList and MainPresenter.to.legends
         MainPresenter.to.searchCountNotifier.value++;
         MainPresenter.to.back();
       } else {
@@ -153,6 +183,22 @@ class _SearchViewState extends State<SearchView> {
           PrefsService.to.prefs
               .setInt(SharedPreferencesConstant.subLength, newSubLength);
           MainPresenter.to.subLength.value = newSubLength;
+          int newEma1520Vwma20Tolerance =
+              _currentEma1520Vwma20Tolerance.toInt();
+          PrefsService.to.prefs.setInt(
+              SharedPreferencesConstant.ema1520Vwma20Tolerance,
+              newEma1520Vwma20Tolerance);
+          MainPresenter.to.ema1520Vwma20Tolerance.value =
+              newEma1520Vwma20Tolerance;
+          int newEma40Tolerance = _currentEma40Tolerance.toInt();
+          PrefsService.to.prefs.setInt(
+              SharedPreferencesConstant.ema40Tolerance, newEma40Tolerance);
+          MainPresenter.to.ema40Tolerance.value = newEma40Tolerance;
+          int newEma60Tolerance = _currentEma60Tolerance.toInt();
+          PrefsService.to.prefs.setInt(
+              SharedPreferencesConstant.ema60Tolerance, newEma60Tolerance);
+          MainPresenter.to.ema60Tolerance.value = newEma60Tolerance;
+          // TODO: update MainPresenter.to.extraMaList and MainPresenter.to.legends
           MainPresenter.to.searchCountNotifier.value++;
           MainPresenter.to.back();
         } else if (textMatchesName.length > 1) {
@@ -455,7 +501,189 @@ class _SearchViewState extends State<SearchView> {
                   ],
                 ),
               ),
-              // TODO: add EMA15 & EMA20 & VWMA20, EMA40, EMA60 tolerance sliders
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 6.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'ema15_ema20_vwma20_tolerance'.tr,
+                      style: const TextTheme().sp5.primaryTextColor,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 6.w),
+                      child: SliderTheme(
+                        data: SliderTheme.of(context).copyWith(
+                          overlayShape: SliderComponentShape.noOverlay,
+                        ),
+                        child: Slider(
+                          value: _currentEma1520Vwma20Tolerance,
+                          max: 100,
+                          min: 5,
+                          divisions: 19,
+                          label: '${_currentEma1520Vwma20Tolerance.round()}%',
+                          onChanged: (double value) {
+                            setState(() {
+                              _currentEma1520Vwma20Tolerance = value;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '5%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '25%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '50%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '75%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '100%',
+                          style: const TextTheme().sp4,
+                        ),
+                      ],
+                    ),
+                    Text(
+                      'recommended_tolerance'.tr,
+                      style: const TextTheme().sp4.greyColor,
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 6.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'ema40_tolerance'.tr,
+                      style: const TextTheme().sp5.primaryTextColor,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 6.w),
+                      child: SliderTheme(
+                        data: SliderTheme.of(context).copyWith(
+                          overlayShape: SliderComponentShape.noOverlay,
+                        ),
+                        child: Slider(
+                          value: _currentEma40Tolerance,
+                          max: 100,
+                          min: 5,
+                          divisions: 19,
+                          label: '${_currentEma40Tolerance.round()}%',
+                          onChanged: (double value) {
+                            setState(() {
+                              _currentEma40Tolerance = value;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '5%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '25%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '50%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '75%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '100%',
+                          style: const TextTheme().sp4,
+                        ),
+                      ],
+                    ),
+                    Text(
+                      'recommended_tolerance'.tr,
+                      style: const TextTheme().sp4.greyColor,
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 6.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'ema60_tolerance'.tr,
+                      style: const TextTheme().sp5.primaryTextColor,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 6.w),
+                      child: SliderTheme(
+                        data: SliderTheme.of(context).copyWith(
+                          overlayShape: SliderComponentShape.noOverlay,
+                        ),
+                        child: Slider(
+                          value: _currentEma60Tolerance,
+                          max: 100,
+                          min: 5,
+                          divisions: 19,
+                          label: '${_currentEma60Tolerance.round()}%',
+                          onChanged: (double value) {
+                            setState(() {
+                              _currentEma60Tolerance = value;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '5%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '25%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '50%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '75%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '100%',
+                          style: const TextTheme().sp4,
+                        ),
+                      ],
+                    ),
+                    Text(
+                      'recommended_tolerance'.tr,
+                      style: const TextTheme().sp4.greyColor,
+                    ),
+                  ],
+                ),
+              ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 4.w),
                 child: Column(

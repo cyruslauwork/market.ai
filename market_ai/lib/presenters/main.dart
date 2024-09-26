@@ -448,6 +448,7 @@ class MainPresenter extends GetxController {
   RxBool hasMinuteData = false.obs;
   late Rx<String> lastDatetime = 'Loading last datetime...'.obs;
   RxBool hasCandleData = false.obs;
+  // TODO: add legends by extraMaList
   late RxString legends = (alwaysShowMinuteData.value
           ? '🟠EMA5 🔴EMA10 🟢EMA15 🔵EMA20'
           : '🟠MA5 🔴MA20 🟢MA60 🔵MA120 🟣MA240')
@@ -707,6 +708,19 @@ class MainPresenter extends GetxController {
     'TSLA': [],
     'AMZN': [],
   }; // Cross-data
+  RxInt ema1520Vwma20Tolerance = (PrefsService.to.prefs
+              .getInt(SharedPreferencesConstant.ema1520Vwma20Tolerance) ??
+          40)
+      .obs;
+  RxInt ema40Tolerance =
+      (PrefsService.to.prefs.getInt(SharedPreferencesConstant.ema40Tolerance) ??
+              40)
+          .obs;
+  RxInt ema60Tolerance =
+      (PrefsService.to.prefs.getInt(SharedPreferencesConstant.ema60Tolerance) ??
+              40)
+          .obs;
+  List<String> extraMaList = [];
 
   /* Subsequent analytics */
   RxInt lastClosePriceAndSubsequentTrendsExeTime = 0.obs;

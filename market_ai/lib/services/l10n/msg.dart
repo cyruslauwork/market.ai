@@ -190,6 +190,10 @@ class Msg extends Translations {
               'EMA40 trend matching criteria for minute data',
           'ema60_mathcing_criteria':
               'EMA60 trend matching criteria for minute data',
+          'ema15_ema20_vwma20_tolerance':
+              'Trend Match EMA15/20 VWMA20 Tolerance',
+          'ema40_tolerance': 'Trend Match EMA40 Tolerance',
+          'ema60_tolerance': 'Trend Match EMA60 Tolerance',
         },
         'zh_HK': {
           'app_name': '市場慧眼📈',
@@ -338,6 +342,9 @@ class Msg extends Translations {
           'vwma20_mathcing_criteria': 'VWMA20 分鐘數據趨勢匹配條件',
           'ema40_mathcing_criteria': 'EMA40 分鐘數據趨勢匹配條件',
           'ema60_mathcing_criteria': 'EMA60 分鐘數據趨勢匹配條件',
+          'ema15_ema20_vwma20_tolerance': 'EMA15/20 VWMA20 走勢匹配平均線容差',
+          'ema40_tolerance': 'EMA40 走勢匹配平均線容差',
+          'ema60_tolerance': 'EMA60 走勢匹配平均線容差',
         },
       };
 }
