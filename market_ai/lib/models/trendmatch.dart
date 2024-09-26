@@ -142,6 +142,15 @@ class TrendMatch {
         // MA
         List<double> selectedPeriodMaPercentDifferencesList = [];
         for (int l = 0; l < maLength; l++) {
+          if (MainPresenter.to.alwaysShowMinuteData.value ) {
+            if (MainPresenter.to.vwma20MatchCriteria.value  && l = 4) {
+
+            } else if (MainPresenter.to.vwma20MatchCriteria.value  && l = 4) {
+
+            } else if (MainPresenter.to.vwma20MatchCriteria.value  && l = 4) {
+
+            }
+          }
           double newVal = listCandledata[dataLength - (i - 1)].trends[l]!;
           double oriVal = listCandledata[dataLength - i].trends[l]!;
           double maPercentDiff = (newVal - oriVal) / oriVal;
