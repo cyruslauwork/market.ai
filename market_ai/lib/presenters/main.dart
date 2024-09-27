@@ -448,8 +448,7 @@ class MainPresenter extends GetxController {
   RxBool hasMinuteData = false.obs;
   late Rx<String> lastDatetime = 'Loading last datetime...'.obs;
   RxBool hasCandleData = false.obs;
-  late RxString legends = ''
-      .obs;
+  late RxString legends = ''.obs;
   RxMap<String, bool> universalHasMinuteData = {
     'SPY': false,
     'QQQ': false,
@@ -545,20 +544,20 @@ class MainPresenter extends GetxController {
   /* Trend match */
   RxInt length =
       (PrefsService.to.prefs.getInt(SharedPreferencesConstant.length) ?? 4).obs;
-  RxInt candleTolerance = (PrefsService.to.prefs
-              .getInt(SharedPreferencesConstant.candleTolerance) ??
+  RxDouble candleTolerance = (PrefsService.to.prefs
+              .getDouble(SharedPreferencesConstant.candleTolerance) ??
           40)
       .obs;
-  RxInt priceTolerance =
-      (PrefsService.to.prefs.getInt(SharedPreferencesConstant.priceTolerance) ??
-              40)
-          .obs;
-  RxInt firstMaTolerance = (PrefsService.to.prefs
-              .getInt(SharedPreferencesConstant.firstMaTolerance) ??
+  RxDouble priceTolerance = (PrefsService.to.prefs
+              .getDouble(SharedPreferencesConstant.priceTolerance) ??
           40)
       .obs;
-  RxInt maTolerance =
-      (PrefsService.to.prefs.getInt(SharedPreferencesConstant.maTolerance) ??
+  RxDouble firstMaTolerance = (PrefsService.to.prefs
+              .getDouble(SharedPreferencesConstant.firstMaTolerance) ??
+          40)
+      .obs;
+  RxDouble maTolerance =
+      (PrefsService.to.prefs.getDouble(SharedPreferencesConstant.maTolerance) ??
               40)
           .obs;
   RxList<double> selectedPeriodPercentDifferencesList = [0.0].obs;
@@ -705,19 +704,20 @@ class MainPresenter extends GetxController {
     'TSLA': [],
     'AMZN': [],
   }; // Cross-data
-  RxInt ema1520Vwma20Tolerance = (PrefsService.to.prefs
-              .getInt(SharedPreferencesConstant.ema1520Vwma20Tolerance) ??
+  RxDouble ema1520Vwma20Tolerance = (PrefsService.to.prefs
+              .getDouble(SharedPreferencesConstant.ema1520Vwma20Tolerance) ??
           40)
       .obs;
-  RxInt ema40Tolerance =
-      (PrefsService.to.prefs.getInt(SharedPreferencesConstant.ema40Tolerance) ??
-              40)
-          .obs;
-  RxInt ema60Tolerance =
-      (PrefsService.to.prefs.getInt(SharedPreferencesConstant.ema60Tolerance) ??
-              40)
-          .obs;
-  List<String> extraMaList = [];
+  RxDouble ema40Tolerance = (PrefsService.to.prefs
+              .getDouble(SharedPreferencesConstant.ema40Tolerance) ??
+          40)
+      .obs;
+  RxDouble ema60Tolerance = (PrefsService.to.prefs
+              .getDouble(SharedPreferencesConstant.ema60Tolerance) ??
+          40)
+      .obs;
+  List<Function> extraMaFirstFunc = [];
+  List<Function> extraMaSubseqFunc = [];
 
   /* Subsequent analytics */
   RxInt lastClosePriceAndSubsequentTrendsExeTime = 0.obs;
@@ -8631,7 +8631,7 @@ class MainPresenter extends GetxController {
       int randomID = 100000 + random.nextInt(900000);
       // Export CSV to device's local file directory
       String fileName =
-          '${randomID}_${symbol}_cTol${candleTolerance.value}_pTol${priceTolerance.value}_fMaTol${firstMaTolerance.value}_maTol${maTolerance.value}_len${len}_subLen${subsequentLen}_ma1520Tol${ema1520Vwma20Tolerance}_ema40Tol${ema40_tolerance}_ema60Tol${ema60_tolerance}_ema40${ema40_mathcing_criteria}_ema60${ema60_mathcing_criteria}_probThres${thisProbThreshold}_maTrue_strict${strictMatchCriteria.value}_outF30m_minMatchC${minMatchCount}_minSidedMatchC${minOneSidedMatchCount}_minR${minMedianReturnRate}_reachedMed${closePosWhenReachedMedian.value}_hitCeOrBoOneThirdSubLen_goOpHalfSubLen';
+          '${randomID}_${symbol}_cTol${candleTolerance.value}_pTol${priceTolerance.value}_fMaTol${firstMaTolerance.value}_maTol${maTolerance.value}_len${len}_subLen${subsequentLen}_ma1520Tol${ema1520Vwma20Tolerance}_ema40Tol${ema40Tolerance}_ema60Tol${ema60Tolerance}_vwma20${vwma20MatchCriteria}_ema40${ema40MatchCriteria}_ema60${ema60MatchCriteria}_probThres${thisProbThreshold}_maTrue_strict${strictMatchCriteria.value}_outF30m_minMatchC${minMatchCount}_minSidedMatchC${minOneSidedMatchCount}_minR${minMedianReturnRate}_reachedMed${closePosWhenReachedMedian.value}_hitCeOrBoOneThirdSubLen_goOpHalfSubLen';
       exportCsv(listList, fileName);
 
       // printInfo(info: 'Exported backtesting results CSV');
@@ -9542,22 +9542,284 @@ class MainPresenter extends GetxController {
 
   void setExtraMaListAndMaLegends() {
     if (alwaysShowMinuteData.value) {
-          extraMaList.clear();
-    legends.value =  '🟠EMA5 🔴EMA10 🟢EMA15 🔵EMA20';
-    if (vwma20_mathcing_criteria.value) {
-      extraMaList.add('VWMA20');
-      legends.value = legends.value + ' 🟡VWMA20'
-    }
-    if (ema40_mathcing_criteria.value) {
-      extraMaList.add('EMA40');
-      legends.value = legends.value + ' 🟤EMA40'
-    }
-    if (ema60_mathcing_criteria.value) {
-      extraMaList.add('EMA60');
-      legends.value = legends.value + ' 🟣EMA60'
-    }
+      extraMaFirstFunc.clear();
+      extraMaSubseqFunc.clear();
+      legends.value = '🟠EMA5 🔴EMA10 🟢EMA15 🔵EMA20';
+      if (vwma20MatchCriteria.value) {
+        legends.value = '${legends.value} 🟡VWMA20';
+        extraMaFirstFunc.add(({
+          required double comVal,
+          required double selVal,
+        }) {
+          double positiveTolerance = ema1520Vwma20Tolerance.value;
+          double negativeTolerance = -ema1520Vwma20Tolerance.value;
+
+          double difference = comVal - selVal;
+          double percentDiff;
+
+          // Handle zero in selList to avoid division by zero
+          if (selVal == 0.0) {
+            if (comVal != 0.0) {
+              return false; // Any non-zero value compared to zero is a large difference
+            } else {
+              percentDiff = 0.0; // Both are zero, no difference
+            }
+          } else {
+            percentDiff = difference / selVal;
+          }
+
+          if (percentDiff >= 0) {
+            // Positive percentDiff
+            if (percentDiff > positiveTolerance) {
+              return false; // Difference is larger than certain %
+            }
+            if (positiveTolerance == ema1520Vwma20Tolerance.value) {
+              positiveTolerance -= percentDiff;
+            } else {
+              positiveTolerance = ema1520Vwma20Tolerance.value;
+            }
+          } else {
+            // Negative percentDiff
+            if (percentDiff < negativeTolerance) {
+              return false; // Difference is less than certain -%
+            }
+            if (negativeTolerance == -ema1520Vwma20Tolerance) {
+              negativeTolerance -= percentDiff;
+            } else {
+              negativeTolerance = -ema1520Vwma20Tolerance;
+            }
+          }
+          return true;
+        });
+        extraMaSubseqFunc.add(({
+          required double comVal,
+          required double selVal,
+        }) {
+          double positiveTolerance = ema1520Vwma20Tolerance.value;
+          double negativeTolerance = -ema1520Vwma20Tolerance.value;
+
+          double difference = comVal - selVal;
+          double percentDiff;
+
+          // Handle zero in selList to avoid division by zero
+          if (selVal == 0.0) {
+            if (comVal != 0.0) {
+              return false; // Any non-zero value compared to zero is a large difference
+            } else {
+              percentDiff = 0.0; // Both are zero, no difference
+            }
+          } else {
+            percentDiff = difference / selVal;
+          }
+
+          if (percentDiff >= 0) {
+            // Positive percentDiff
+            if (percentDiff > positiveTolerance) {
+              return false; // Difference is larger than certain %
+            }
+            if (positiveTolerance == ema1520Vwma20Tolerance.value) {
+              positiveTolerance -= percentDiff;
+            } else {
+              positiveTolerance = ema1520Vwma20Tolerance.value;
+            }
+          } else {
+            // Negative percentDiff
+            if (percentDiff < negativeTolerance) {
+              return false; // Difference is less than certain -%
+            }
+            if (negativeTolerance == -ema1520Vwma20Tolerance) {
+              negativeTolerance -= percentDiff;
+            } else {
+              negativeTolerance = -ema1520Vwma20Tolerance;
+            }
+          }
+          return true;
+        });
+      }
+      if (ema40MatchCriteria.value) {
+        legends.value = '${legends.value} 🟤EMA40';
+        extraMaFirstFunc.add(({
+          required double comVal,
+          required double selVal,
+        }) {
+          double positiveTolerance = ema40Tolerance.value;
+          double negativeTolerance = -ema40Tolerance.value;
+
+          double difference = comVal - selVal;
+          double percentDiff;
+
+          // Handle zero in selList to avoid division by zero
+          if (selVal == 0.0) {
+            if (comVal != 0.0) {
+              return false; // Any non-zero value compared to zero is a large difference
+            } else {
+              percentDiff = 0.0; // Both are zero, no difference
+            }
+          } else {
+            percentDiff = difference / selVal;
+          }
+
+          if (percentDiff >= 0) {
+            // Positive percentDiff
+            if (percentDiff > positiveTolerance) {
+              return false; // Difference is larger than certain %
+            }
+            if (positiveTolerance == ema40Tolerance.value) {
+              positiveTolerance -= percentDiff;
+            } else {
+              positiveTolerance = ema40Tolerance.value;
+            }
+          } else {
+            // Negative percentDiff
+            if (percentDiff < negativeTolerance) {
+              return false; // Difference is less than certain -%
+            }
+            if (negativeTolerance == -ema40Tolerance) {
+              negativeTolerance -= percentDiff;
+            } else {
+              negativeTolerance = -ema40Tolerance;
+            }
+          }
+          return true;
+        });
+        extraMaSubseqFunc.add(({
+          required double comVal,
+          required double selVal,
+        }) {
+          double positiveTolerance = ema40Tolerance.value;
+          double negativeTolerance = -ema40Tolerance.value;
+
+          double difference = comVal - selVal;
+          double percentDiff;
+
+          // Handle zero in selList to avoid division by zero
+          if (selVal == 0.0) {
+            if (comVal != 0.0) {
+              return false; // Any non-zero value compared to zero is a large difference
+            } else {
+              percentDiff = 0.0; // Both are zero, no difference
+            }
+          } else {
+            percentDiff = difference / selVal;
+          }
+
+          if (percentDiff >= 0) {
+            // Positive percentDiff
+            if (percentDiff > positiveTolerance) {
+              return false; // Difference is larger than certain %
+            }
+            if (positiveTolerance == ema40Tolerance.value) {
+              positiveTolerance -= percentDiff;
+            } else {
+              positiveTolerance = ema40Tolerance.value;
+            }
+          } else {
+            // Negative percentDiff
+            if (percentDiff < negativeTolerance) {
+              return false; // Difference is less than certain -%
+            }
+            if (negativeTolerance == -ema40Tolerance) {
+              negativeTolerance -= percentDiff;
+            } else {
+              negativeTolerance = -ema40Tolerance;
+            }
+          }
+          return true;
+        });
+      }
+      if (ema60MatchCriteria.value) {
+        legends.value = '${legends.value} 🟣EMA60';
+        extraMaFirstFunc.add(({
+          required double comVal,
+          required double selVal,
+        }) {
+          double positiveTolerance = ema60Tolerance.value;
+          double negativeTolerance = -ema60Tolerance.value;
+
+          double difference = comVal - selVal;
+          double percentDiff;
+
+          // Handle zero in selList to avoid division by zero
+          if (selVal == 0.0) {
+            if (comVal != 0.0) {
+              return false; // Any non-zero value compared to zero is a large difference
+            } else {
+              percentDiff = 0.0; // Both are zero, no difference
+            }
+          } else {
+            percentDiff = difference / selVal;
+          }
+
+          if (percentDiff >= 0) {
+            // Positive percentDiff
+            if (percentDiff > positiveTolerance) {
+              return false; // Difference is larger than certain %
+            }
+            if (positiveTolerance == ema60Tolerance.value) {
+              positiveTolerance -= percentDiff;
+            } else {
+              positiveTolerance = ema60Tolerance.value;
+            }
+          } else {
+            // Negative percentDiff
+            if (percentDiff < negativeTolerance) {
+              return false; // Difference is less than certain -%
+            }
+            if (negativeTolerance == -ema60Tolerance) {
+              negativeTolerance -= percentDiff;
+            } else {
+              negativeTolerance = -ema60Tolerance;
+            }
+          }
+          return true;
+        });
+        extraMaSubseqFunc.add(({
+          required double comVal,
+          required double selVal,
+        }) {
+          double positiveTolerance = ema60Tolerance.value;
+          double negativeTolerance = -ema60Tolerance.value;
+
+          double difference = comVal - selVal;
+          double percentDiff;
+
+          // Handle zero in selList to avoid division by zero
+          if (selVal == 0.0) {
+            if (comVal != 0.0) {
+              return false; // Any non-zero value compared to zero is a large difference
+            } else {
+              percentDiff = 0.0; // Both are zero, no difference
+            }
+          } else {
+            percentDiff = difference / selVal;
+          }
+
+          if (percentDiff >= 0) {
+            // Positive percentDiff
+            if (percentDiff > positiveTolerance) {
+              return false; // Difference is larger than certain %
+            }
+            if (positiveTolerance == ema60Tolerance.value) {
+              positiveTolerance -= percentDiff;
+            } else {
+              positiveTolerance = ema60Tolerance.value;
+            }
+          } else {
+            // Negative percentDiff
+            if (percentDiff < negativeTolerance) {
+              return false; // Difference is less than certain -%
+            }
+            if (negativeTolerance == -ema60Tolerance) {
+              negativeTolerance -= percentDiff;
+            } else {
+              negativeTolerance = -ema60Tolerance;
+            }
+          }
+          return true;
+        });
+      }
     } else {
-      legends.value =  '🟠MA5 🔴MA20 🟢MA60 🔵MA120 🟣MA240';
+      legends.value = '🟠MA5 🔴MA20 🟢MA60 🔵MA120 🟣MA240';
     }
   }
 }

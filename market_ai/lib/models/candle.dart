@@ -1053,20 +1053,20 @@ class Candle {
           : null;
 
       Function addVwma20 = vwma20 != null
-          ? (i) {
+          ? (int i) {
               listCandledata![i].trends.add(vwma20[i]);
             }
-          : () {};
+          : (int i) {};
       Function addEma40 = ema40 != null
-          ? (i) {
+          ? (int i) {
               listCandledata![i].trends.add(ema40[i]);
             }
-          : () {};
+          : (int i) {};
       Function addEma60 = ema60 != null
-          ? (i) {
+          ? (int i) {
               listCandledata![i].trends.add(ema60[i]);
             }
-          : () {};
+          : (int i) {};
 
       for (int i = 0; i < listCandledata.length; i++) {
         listCandledata[i].trends = [

@@ -101,9 +101,6 @@ class TrendMatch {
     List<List<double>>
         selectedPeriodOpenHighLowTheirDiffInRelationToCloseListList = [];
 
-    // For extra MA list
-    // TODO: add Functions by checking MainPresenter.to.extraMaList
-
     // Selected period
     if (isMaMatch) {
       if (!hasMa) {
@@ -637,22 +634,20 @@ class TrendMatch {
     List<List<double>> comList,
     double maTolerance,
     double firstMaTolerance,
-    // TODO: add Functions through MainPresenter.to.extraMaList for-loop
-    // TODO: update backtest() maDifferencesLessThanOrEqualToCertainPercent()
   ) {
     if (selList.length != comList.length) {
       // logger.d('${selList.length} != ${comList.length}');
       throw ArgumentError('Both lists must have the same length.');
     }
 
-    int length = selFirstList.length;
-    int maLength = MainPresenter.to.listCandledata.last.trends.length;
+    int maLength = MainPresenter.to.listCandledata.last.trends.length -
+        MainPresenter.to.extraMaFirstFunc.length;
 
     if (MainPresenter.to.strictMatchCriteria.value) {
       double positiveTolerance = firstMaTolerance;
       double negativeTolerance = -firstMaTolerance;
 
-      for (int i = 0; i < length; i++) {
+      for (int i = 0; i < maLength; i++) {
         double comVal = comFirstList[i];
         double selVal = selFirstList[i];
         double difference = comVal - selVal;
@@ -689,6 +684,17 @@ class TrendMatch {
           } else {
             negativeTolerance = -firstMaTolerance;
           }
+        }
+      }
+      // Extra MA(s)
+      int extraIndex = maLength;
+      for (Function firstFunc in MainPresenter.to.extraMaFirstFunc) {
+        bool matched = firstFunc(
+          comVal: comFirstList[extraIndex],
+          selVal: selFirstList[extraIndex],
+        );
+        if (!matched) {
+          return false;
         }
       }
 
@@ -734,9 +740,20 @@ class TrendMatch {
             }
           }
         }
+        // Extra MA(s)
+        int extraIndex = maLength;
+        for (Function firstFunc in MainPresenter.to.extraMaFirstFunc) {
+          bool matched = firstFunc(
+            comVal: comList[i][extraIndex],
+            selVal: selList[i][extraIndex],
+          );
+          if (!matched) {
+            return false;
+          }
+        }
       }
     } else {
-      for (int i = 0; i < length; i++) {
+      for (int i = 0; i < maLength; i++) {
         double comVal = comFirstList[i];
         double selVal = selFirstList[i];
         double difference = comVal - selVal;
