@@ -9545,6 +9545,7 @@ class MainPresenter extends GetxController {
       extraMaFirstFunc.clear();
       extraMaSubseqFunc.clear();
       legends.value = '🟠EMA5 🔴EMA10 🟢EMA15 🔵EMA20';
+      // TODO: replace original tol by new respective firstTol for every extraMaFirstFunc
       if (vwma20MatchCriteria.value) {
         legends.value = '${legends.value} 🟡VWMA20';
         extraMaFirstFunc.add(({

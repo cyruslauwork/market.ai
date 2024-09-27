@@ -491,6 +491,7 @@ class _SearchViewState extends State<SearchView> {
                   ],
                 ),
               ),
+              // TODO: add firstTol slider for every new MA
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 6.w),
                 child: Column(
