@@ -23,7 +23,6 @@ class Candle {
   Future<List<CandleData>> init({String? stockSymbol}) {
     stockSymbol ??= MainPresenter.to.financialInstrumentSymbol.value;
     MainPresenter.to.hasCandleData.value = false;
-    // TODO: add String 'ema40'... to MainPresenter.to.extraMaList if ema40MatchCriteria...
     if (!MainPresenter.to.isLockTrend.value) {
       MainPresenter.to.trendMatched.value = false;
     } else {
@@ -32,6 +31,7 @@ class Candle {
     }
     MainPresenter.to.hasSubsequentAnalytics.value = false;
     // print(stockSymbol);
+    MainPresenter.to.setExtraMaListAndMaLegends();
     return CandleAdapter().listListTolistCandledata(
         Candle().checkAPIProvider(stockSymbol: stockSymbol));
   }

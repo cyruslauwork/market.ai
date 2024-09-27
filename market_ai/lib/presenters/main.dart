@@ -448,10 +448,7 @@ class MainPresenter extends GetxController {
   RxBool hasMinuteData = false.obs;
   late Rx<String> lastDatetime = 'Loading last datetime...'.obs;
   RxBool hasCandleData = false.obs;
-  // TODO: add legends by extraMaList
-  late RxString legends = (alwaysShowMinuteData.value
-          ? '🟠EMA5 🔴EMA10 🟢EMA15 🔵EMA20'
-          : '🟠MA5 🔴MA20 🟢MA60 🔵MA120 🟣MA240')
+  late RxString legends = ''
       .obs;
   RxMap<String, bool> universalHasMinuteData = {
     'SPY': false,
@@ -1782,7 +1779,6 @@ class MainPresenter extends GetxController {
   }
 
   void backtest(String symbol, BuildContext context) async {
-    // TODO: modify CSV file to have more MA
     scheduleMicrotask(() async {
       // printInfo(info: 'Length: ${length.value}');
       // printInfo(info: 'Candle Tolerance: ${candleTolerance.value}');
@@ -8635,7 +8631,7 @@ class MainPresenter extends GetxController {
       int randomID = 100000 + random.nextInt(900000);
       // Export CSV to device's local file directory
       String fileName =
-          '${randomID}_${symbol}_cTol${candleTolerance.value}_pTol${priceTolerance.value}_fMaTol${firstMaTolerance.value}_maTol${maTolerance.value}_len${len}_subLen${subsequentLen}_probThres${thisProbThreshold}_maTrue_strict${strictMatchCriteria.value}_outF30m_minMatchC${minMatchCount}_minSidedMatchC${minOneSidedMatchCount}_minR${minMedianReturnRate}_reachedMed${closePosWhenReachedMedian.value}_hitCeOrBoOneThirdSubLen_goOpHalfSubLen';
+          '${randomID}_${symbol}_cTol${candleTolerance.value}_pTol${priceTolerance.value}_fMaTol${firstMaTolerance.value}_maTol${maTolerance.value}_len${len}_subLen${subsequentLen}_ma1520Tol${ema1520Vwma20Tolerance}_ema40Tol${ema40_tolerance}_ema60Tol${ema60_tolerance}_ema40${ema40_mathcing_criteria}_ema60${ema60_mathcing_criteria}_probThres${thisProbThreshold}_maTrue_strict${strictMatchCriteria.value}_outF30m_minMatchC${minMatchCount}_minSidedMatchC${minOneSidedMatchCount}_minR${minMedianReturnRate}_reachedMed${closePosWhenReachedMedian.value}_hitCeOrBoOneThirdSubLen_goOpHalfSubLen';
       exportCsv(listList, fileName);
 
       // printInfo(info: 'Exported backtesting results CSV');
@@ -9541,6 +9537,27 @@ class MainPresenter extends GetxController {
       return Text('more_than_500_matches'.tr, style: const TextTheme().sp5);
     } else {
       return const SizedBox.shrink();
+    }
+  }
+
+  void setExtraMaListAndMaLegends() {
+    if (alwaysShowMinuteData.value) {
+          extraMaList.clear();
+    legends.value =  '🟠EMA5 🔴EMA10 🟢EMA15 🔵EMA20';
+    if (vwma20_mathcing_criteria.value) {
+      extraMaList.add('VWMA20');
+      legends.value = legends.value + ' 🟡VWMA20'
+    }
+    if (ema40_mathcing_criteria.value) {
+      extraMaList.add('EMA40');
+      legends.value = legends.value + ' 🟤EMA40'
+    }
+    if (ema60_mathcing_criteria.value) {
+      extraMaList.add('EMA60');
+      legends.value = legends.value + ' 🟣EMA60'
+    }
+    } else {
+      legends.value =  '🟠MA5 🔴MA20 🟢MA60 🔵MA120 🟣MA240';
     }
   }
 }
