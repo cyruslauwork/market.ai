@@ -641,11 +641,13 @@ class TrendMatch {
     }
 
     int maLength = MainPresenter.to.listCandledata.last.trends.length -
-        MainPresenter.to.extraMaFirstFunc.length;
+        MainPresenter.to.advMaFirstFunc.length;
 
     if (MainPresenter.to.strictMatchCriteria.value) {
       double positiveTolerance = firstMaTolerance;
       double negativeTolerance = -firstMaTolerance;
+      double originalPositiveTol = firstMaTolerance;
+      double originalNegativeTol = -firstMaTolerance;
 
       for (int i = 0; i < maLength; i++) {
         double comVal = comFirstList[i];
@@ -686,20 +688,32 @@ class TrendMatch {
           }
         }
       }
-      // Extra MA(s)
+      // Advanced MA(s)
       int extraIndex = maLength;
-      for (Function firstFunc in MainPresenter.to.extraMaFirstFunc) {
-        bool matched = firstFunc(
+      for (Function firstFunc in MainPresenter.to.advMaFirstFunc) {
+        (bool, double?, double?, double?, double?) results = firstFunc(
           comVal: comFirstList[extraIndex],
           selVal: selFirstList[extraIndex],
+          positiveTolChange: positiveTolerance != originalPositiveTol
+              ? positiveTolerance / originalPositiveTol
+              : null,
+          negativeTolChange: negativeTolerance != originalNegativeTol
+              ? negativeTolerance / originalNegativeTol
+              : null,
         );
-        if (!matched) {
+        if (!results.$1) {
           return false;
         }
+        positiveTolerance = results.$2!;
+        negativeTolerance = results.$3!;
+        originalPositiveTol = results.$4!;
+        originalNegativeTol = results.$5!;
       }
 
       positiveTolerance = maTolerance;
       negativeTolerance = -maTolerance;
+      originalPositiveTol = maTolerance;
+      originalNegativeTol = -maTolerance;
       for (int i = 0; i < comList.length; i++) {
         for (int l = 0; l < maLength; l++) {
           double comVal = comList[i][l];
@@ -740,16 +754,26 @@ class TrendMatch {
             }
           }
         }
-        // Extra MA(s)
+        // Advanced MA(s)
         int extraIndex = maLength;
-        for (Function firstFunc in MainPresenter.to.extraMaFirstFunc) {
-          bool matched = firstFunc(
+        for (Function subseqFunc in MainPresenter.to.advMaSubseqFunc) {
+          (bool, double?, double?, double?, double?) results = subseqFunc(
             comVal: comList[i][extraIndex],
             selVal: selList[i][extraIndex],
+            positiveTolerance: positiveTolerance != originalPositiveTol
+                ? positiveTolerance / originalPositiveTol
+                : null,
+            negativeTolerance: negativeTolerance != originalNegativeTol
+                ? negativeTolerance / originalNegativeTol
+                : null,
           );
-          if (!matched) {
+          if (!results.$1) {
             return false;
           }
+          positiveTolerance = results.$2!;
+          negativeTolerance = results.$3!;
+          originalPositiveTol = results.$4!;
+          originalNegativeTol = results.$5!;
         }
       }
     } else {
@@ -774,6 +798,17 @@ class TrendMatch {
           return false; // Difference is larger than certain %
         }
       }
+      // Advanced MA(s)
+      int extraIndex = maLength;
+      for (Function firstFunc in MainPresenter.to.advMaFirstFunc) {
+        bool matched = firstFunc(
+          comVal: comFirstList[extraIndex],
+          selVal: selFirstList[extraIndex],
+        );
+        if (!matched) {
+          return false;
+        }
+      }
 
       for (int i = 0; i < comList.length; i++) {
         for (int l = 0; l < maLength; l++) {
@@ -795,6 +830,17 @@ class TrendMatch {
 
           if (percentDiff.abs() > maTolerance) {
             return false; // Difference is larger than certain %
+          }
+        }
+        // Advanced MA(s)
+        int extraIndex = maLength;
+        for (Function subseqFunc in MainPresenter.to.advMaSubseqFunc) {
+          bool matched = subseqFunc(
+            comVal: comList[i][extraIndex],
+            selVal: selList[i][extraIndex],
+          );
+          if (!matched) {
+            return false;
           }
         }
       }

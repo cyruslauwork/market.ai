@@ -491,7 +491,67 @@ class _SearchViewState extends State<SearchView> {
                   ],
                 ),
               ),
-              // TODO: add firstTol slider for every new MA
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 6.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'first_ma_tolerance'.tr,
+                      style: const TextTheme().sp5.primaryTextColor,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 6.w),
+                      child: SliderTheme(
+                        data: SliderTheme.of(context).copyWith(
+                          overlayShape: SliderComponentShape.noOverlay,
+                        ),
+                        child: Slider(
+                          value: _currentFirstMaTolerance,
+                          max: 100,
+                          min: 5,
+                          divisions: 19,
+                          label: '${_currentFirstMaTolerance.round()}%',
+                          onChanged: (double value) {
+                            setState(() {
+                              _currentFirstMaTolerance = value;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '5%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '25%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '50%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '75%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '100%',
+                          style: const TextTheme().sp4,
+                        ),
+                      ],
+                    ),
+                    Text(
+                      'recommended_tolerance'.tr,
+                      style: const TextTheme().sp4.greyColor,
+                    ),
+                  ],
+                ),
+              ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 6.w),
                 child: Column(
@@ -559,6 +619,67 @@ class _SearchViewState extends State<SearchView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
+                      'first_ma_tolerance'.tr,
+                      style: const TextTheme().sp5.primaryTextColor,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 6.w),
+                      child: SliderTheme(
+                        data: SliderTheme.of(context).copyWith(
+                          overlayShape: SliderComponentShape.noOverlay,
+                        ),
+                        child: Slider(
+                          value: _currentFirstMaTolerance,
+                          max: 100,
+                          min: 5,
+                          divisions: 19,
+                          label: '${_currentFirstMaTolerance.round()}%',
+                          onChanged: (double value) {
+                            setState(() {
+                              _currentFirstMaTolerance = value;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '5%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '25%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '50%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '75%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '100%',
+                          style: const TextTheme().sp4,
+                        ),
+                      ],
+                    ),
+                    Text(
+                      'recommended_tolerance'.tr,
+                      style: const TextTheme().sp4.greyColor,
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 6.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
                       'ema40_tolerance'.tr,
                       style: const TextTheme().sp5.primaryTextColor,
                     ),
@@ -577,6 +698,67 @@ class _SearchViewState extends State<SearchView> {
                           onChanged: (double value) {
                             setState(() {
                               _currentEma40Tolerance = value;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '5%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '25%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '50%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '75%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '100%',
+                          style: const TextTheme().sp4,
+                        ),
+                      ],
+                    ),
+                    Text(
+                      'recommended_tolerance'.tr,
+                      style: const TextTheme().sp4.greyColor,
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 6.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'first_ma_tolerance'.tr,
+                      style: const TextTheme().sp5.primaryTextColor,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 6.w),
+                      child: SliderTheme(
+                        data: SliderTheme.of(context).copyWith(
+                          overlayShape: SliderComponentShape.noOverlay,
+                        ),
+                        child: Slider(
+                          value: _currentFirstMaTolerance,
+                          max: 100,
+                          min: 5,
+                          divisions: 19,
+                          label: '${_currentFirstMaTolerance.round()}%',
+                          onChanged: (double value) {
+                            setState(() {
+                              _currentFirstMaTolerance = value;
                             });
                           },
                         ),
@@ -784,6 +966,7 @@ class _SearchViewState extends State<SearchView> {
                             PrefsService.to.prefs.setBool(
                                 SharedPreferencesConstant.strictMatchCriteria,
                                 value);
+                            MainPresenter.to.refreshIndicator();
                           }),
                     ),
                   ],
