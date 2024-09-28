@@ -165,6 +165,9 @@ class SubsequentAnalytics {
       )
           .then((parsedResponse) {
         // log(parsedResponse.toString());
+        if (parsedResponse.runtimeType != Map<String, dynamic>) {
+          throw Exception('Parsed response is not a Map<String, dynamic>');
+        }
         // Check if multiple SAs are queued
         if (MainPresenter.to.saCount.value == saCount) {
           exeEndTime = DateTime.now(); // Record the download end time
@@ -208,7 +211,7 @@ class SubsequentAnalytics {
       }).catchError((error) {
         // Handle any errors during the asynchronous operation
         MainPresenter.to.subsequentAnalyticsErr.value =
-            'An unexpected error occurred in getCsvAndPng(): $error';
+            'An unexpected error occurred in getCsvAndPng(): $error. This could be due to an invalid API key or too many trend matches.';
         lastClosePriceAndSubsequentTrends.clear();
       });
     } else {

@@ -25,25 +25,34 @@ class SearchView extends StatefulWidget {
 class _SearchViewState extends State<SearchView> {
   double _currentCandleTolerance = (PrefsService.to.prefs
           .getDouble(SharedPreferencesConstant.candleTolerance) ??
-      40);
+      40.0);
   double _currentPriceTolerance = (PrefsService.to.prefs
           .getDouble(SharedPreferencesConstant.priceTolerance) ??
-      40);
+      40.0);
   double _currentMaTolerance =
       (PrefsService.to.prefs.getDouble(SharedPreferencesConstant.maTolerance) ??
-          40);
+          40.0);
   double _currentFirstMaTolerance = (PrefsService.to.prefs
           .getDouble(SharedPreferencesConstant.firstMaTolerance) ??
-      40);
+      40.0);
   double _currentEma1520Vwma20Tolerance = (PrefsService.to.prefs
           .getDouble(SharedPreferencesConstant.ema1520Vwma20Tolerance) ??
-      40);
+      40.0);
   double _currentEma40Tolerance = (PrefsService.to.prefs
           .getDouble(SharedPreferencesConstant.ema40Tolerance) ??
-      40);
+      40.0);
   double _currentEma60Tolerance = (PrefsService.to.prefs
           .getDouble(SharedPreferencesConstant.ema60Tolerance) ??
-      40);
+      40.0);
+  double _currentEma1520Vwma20FirstTolerance = (PrefsService.to.prefs
+          .getDouble(SharedPreferencesConstant.firstEma1520Vwma20Tolerance) ??
+      40.0);
+  double _currentEma40FirstTolerance = (PrefsService.to.prefs
+          .getDouble(SharedPreferencesConstant.firstEma40Tolerance) ??
+      40.0);
+  double _currentEma60FirstTolerance = (PrefsService.to.prefs
+          .getDouble(SharedPreferencesConstant.firstEma60Tolerance) ??
+      40.0);
   int _currentLength =
       PrefsService.to.prefs.getInt(SharedPreferencesConstant.length) ?? 4;
   TextEditingController _textEditingController = TextEditingController();
@@ -60,16 +69,19 @@ class _SearchViewState extends State<SearchView> {
 
   void _resetForm() {
     setState(() {
-      _currentCandleTolerance = 40;
-      _currentPriceTolerance = 40;
-      _currentFirstMaTolerance = 40;
-      _currentMaTolerance = 40;
+      _currentCandleTolerance = 40.0;
+      _currentPriceTolerance = 40.0;
+      _currentFirstMaTolerance = 40.0;
+      _currentMaTolerance = 40.0;
+      _currentEma1520Vwma20Tolerance = 40.0;
+      _currentEma40Tolerance = 40.0;
+      _currentEma60Tolerance = 40.0;
+      _currentEma1520Vwma20FirstTolerance = 40.0;
+      _currentEma40FirstTolerance = 40.0;
+      _currentEma60FirstTolerance = 40.0;
       _currentLength = 5;
       _textEditingController.clear();
       _currentSubLength = 5;
-      _currentEma1520Vwma20Tolerance = 40;
-      _currentEma40Tolerance = 40;
-      _currentEma60Tolerance = 40;
     });
   }
 
@@ -135,6 +147,23 @@ class _SearchViewState extends State<SearchView> {
         PrefsService.to.prefs.setDouble(
             SharedPreferencesConstant.ema60Tolerance, newEma60Tolerance);
         MainPresenter.to.ema60Tolerance.value = newEma60Tolerance;
+        double newFirstEma1520Vwma20Tolerance =
+            _currentEma1520Vwma20FirstTolerance;
+        PrefsService.to.prefs.setDouble(
+            SharedPreferencesConstant.firstEma1520Vwma20Tolerance,
+            newFirstEma1520Vwma20Tolerance);
+        MainPresenter.to.firstEma1520Vwma20Tolerance.value =
+            newFirstEma1520Vwma20Tolerance;
+        double newFirstEma40Tolerance = _currentEma40FirstTolerance;
+        PrefsService.to.prefs.setDouble(
+            SharedPreferencesConstant.firstEma40Tolerance,
+            newFirstEma40Tolerance);
+        MainPresenter.to.firstEma40Tolerance.value = newFirstEma40Tolerance;
+        double newFirstEma60Tolerance = _currentEma60FirstTolerance;
+        PrefsService.to.prefs.setDouble(
+            SharedPreferencesConstant.firstEma60Tolerance,
+            newFirstEma60Tolerance);
+        MainPresenter.to.firstEma60Tolerance.value = newFirstEma60Tolerance;
         MainPresenter.to.searchCountNotifier.value++;
         MainPresenter.to.back();
       } else {
@@ -189,6 +218,23 @@ class _SearchViewState extends State<SearchView> {
           PrefsService.to.prefs.setDouble(
               SharedPreferencesConstant.ema60Tolerance, newEma60Tolerance);
           MainPresenter.to.ema60Tolerance.value = newEma60Tolerance;
+          double newFirstEma1520Vwma20Tolerance =
+              _currentEma1520Vwma20FirstTolerance;
+          PrefsService.to.prefs.setDouble(
+              SharedPreferencesConstant.firstEma1520Vwma20Tolerance,
+              newFirstEma1520Vwma20Tolerance);
+          MainPresenter.to.firstEma1520Vwma20Tolerance.value =
+              newFirstEma1520Vwma20Tolerance;
+          double newFirstEma40Tolerance = _currentEma40FirstTolerance;
+          PrefsService.to.prefs.setDouble(
+              SharedPreferencesConstant.firstEma40Tolerance,
+              newFirstEma40Tolerance);
+          MainPresenter.to.firstEma40Tolerance.value = newFirstEma40Tolerance;
+          double newFirstEma60Tolerance = _currentEma60FirstTolerance;
+          PrefsService.to.prefs.setDouble(
+              SharedPreferencesConstant.firstEma60Tolerance,
+              newFirstEma60Tolerance);
+          MainPresenter.to.firstEma60Tolerance.value = newFirstEma60Tolerance;
           MainPresenter.to.searchCountNotifier.value++;
           MainPresenter.to.back();
         } else if (textMatchesName.length > 1) {
@@ -497,7 +543,7 @@ class _SearchViewState extends State<SearchView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'first_ma_tolerance'.tr,
+                      'EMA15/20 VWMA20 ${'first_ma_tolerance'.tr}',
                       style: const TextTheme().sp5.primaryTextColor,
                     ),
                     Padding(
@@ -507,14 +553,15 @@ class _SearchViewState extends State<SearchView> {
                           overlayShape: SliderComponentShape.noOverlay,
                         ),
                         child: Slider(
-                          value: _currentFirstMaTolerance,
+                          value: _currentEma1520Vwma20FirstTolerance,
                           max: 100,
                           min: 5,
                           divisions: 19,
-                          label: '${_currentFirstMaTolerance.round()}%',
+                          label:
+                              '${_currentEma1520Vwma20FirstTolerance.round()}%',
                           onChanged: (double value) {
                             setState(() {
-                              _currentFirstMaTolerance = value;
+                              _currentEma1520Vwma20FirstTolerance = value;
                             });
                           },
                         ),
@@ -619,7 +666,7 @@ class _SearchViewState extends State<SearchView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'first_ma_tolerance'.tr,
+                      'EMA40 ${'first_ma_tolerance'.tr}',
                       style: const TextTheme().sp5.primaryTextColor,
                     ),
                     Padding(
@@ -629,14 +676,14 @@ class _SearchViewState extends State<SearchView> {
                           overlayShape: SliderComponentShape.noOverlay,
                         ),
                         child: Slider(
-                          value: _currentFirstMaTolerance,
+                          value: _currentEma40FirstTolerance,
                           max: 100,
                           min: 5,
                           divisions: 19,
-                          label: '${_currentFirstMaTolerance.round()}%',
+                          label: '${_currentEma40FirstTolerance.round()}%',
                           onChanged: (double value) {
                             setState(() {
-                              _currentFirstMaTolerance = value;
+                              _currentEma40FirstTolerance = value;
                             });
                           },
                         ),
@@ -741,7 +788,7 @@ class _SearchViewState extends State<SearchView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'first_ma_tolerance'.tr,
+                      'EMA60 ${'first_ma_tolerance'.tr}',
                       style: const TextTheme().sp5.primaryTextColor,
                     ),
                     Padding(
@@ -751,14 +798,14 @@ class _SearchViewState extends State<SearchView> {
                           overlayShape: SliderComponentShape.noOverlay,
                         ),
                         child: Slider(
-                          value: _currentFirstMaTolerance,
+                          value: _currentEma60FirstTolerance,
                           max: 100,
                           min: 5,
                           divisions: 19,
-                          label: '${_currentFirstMaTolerance.round()}%',
+                          label: '${_currentEma60FirstTolerance.round()}%',
                           onChanged: (double value) {
                             setState(() {
-                              _currentFirstMaTolerance = value;
+                              _currentEma60FirstTolerance = value;
                             });
                           },
                         ),

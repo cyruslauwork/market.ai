@@ -546,19 +546,19 @@ class MainPresenter extends GetxController {
       (PrefsService.to.prefs.getInt(SharedPreferencesConstant.length) ?? 4).obs;
   RxDouble candleTolerance = (PrefsService.to.prefs
               .getDouble(SharedPreferencesConstant.candleTolerance) ??
-          40)
+          40.0)
       .obs;
   RxDouble priceTolerance = (PrefsService.to.prefs
               .getDouble(SharedPreferencesConstant.priceTolerance) ??
-          40)
+          40.0)
       .obs;
   RxDouble firstMaTolerance = (PrefsService.to.prefs
               .getDouble(SharedPreferencesConstant.firstMaTolerance) ??
-          40)
+          40.0)
       .obs;
   RxDouble maTolerance =
       (PrefsService.to.prefs.getDouble(SharedPreferencesConstant.maTolerance) ??
-              40)
+              40.0)
           .obs;
   RxList<double> selectedPeriodPercentDifferencesList = [0.0].obs;
   // RxList<double> selectedPeriodActualDifferencesList = [0.0].obs;
@@ -706,18 +706,30 @@ class MainPresenter extends GetxController {
   }; // Cross-data
   RxDouble ema1520Vwma20Tolerance = (PrefsService.to.prefs
               .getDouble(SharedPreferencesConstant.ema1520Vwma20Tolerance) ??
-          40)
+          40.0)
       .obs;
   RxDouble ema40Tolerance = (PrefsService.to.prefs
               .getDouble(SharedPreferencesConstant.ema40Tolerance) ??
-          40)
+          40.0)
       .obs;
   RxDouble ema60Tolerance = (PrefsService.to.prefs
               .getDouble(SharedPreferencesConstant.ema60Tolerance) ??
-          40)
+          40.0)
       .obs;
   List<Function> advMaFirstFunc = [];
   List<Function> advMaSubseqFunc = [];
+  RxDouble firstEma1520Vwma20Tolerance = (PrefsService.to.prefs.getDouble(
+              SharedPreferencesConstant.firstEma1520Vwma20Tolerance) ??
+          40.0)
+      .obs;
+  RxDouble firstEma40Tolerance = (PrefsService.to.prefs
+              .getDouble(SharedPreferencesConstant.firstEma40Tolerance) ??
+          40.0)
+      .obs;
+  RxDouble firstEma60Tolerance = (PrefsService.to.prefs
+              .getDouble(SharedPreferencesConstant.firstEma60Tolerance) ??
+          40.0)
+      .obs;
 
   /* Subsequent analytics */
   RxInt lastClosePriceAndSubsequentTrendsExeTime = 0.obs;
@@ -1019,7 +1031,7 @@ class MainPresenter extends GetxController {
       showAnalyticsNotifier.value = true;
     }
     if (apiKey.value == '' && alwaysShowMinuteData.value) {
-      marketDataProviderMsg.value = 'No API key to access Firestore with';
+      marketDataProviderMsg.value = 'no_api_key_mkt_data'.tr;
       isMarketDataProviderErr.value = true;
     } else {
       // listCandledata.value = dummyCandle;
@@ -9184,7 +9196,7 @@ class MainPresenter extends GetxController {
   }
 
   Widget showMinuteDataToggleBtn({required BuildContext context}) {
-    if (hasMinuteData.value) {
+    if (hasMinuteData.value && apiKey.value != '') {
       return IconButton(
         onPressed: () =>
             alwaysShowMinuteDataToggle(!alwaysShowMinuteData.value, context),
@@ -9546,7 +9558,6 @@ class MainPresenter extends GetxController {
       advMaSubseqFunc.clear();
       legends.value = '🟠EMA5 🔴EMA10 🟢EMA15 🔵EMA20';
       if (strictMatchCriteria.value) {
-        // TODO: replace original tol by new respective firstTol for every extraMaFirstFunc
         if (vwma20MatchCriteria.value) {
           legends.value = '${legends.value} 🟡VWMA20';
           for (int i = 0; i < 3; i++) {
@@ -9556,8 +9567,8 @@ class MainPresenter extends GetxController {
               required double positiveTolChange,
               required double negativeTolChange,
             }) {
-              double positiveTolerance = ema1520Vwma20Tolerance.value;
-              double negativeTolerance = -ema1520Vwma20Tolerance.value;
+              double positiveTolerance = firstEma1520Vwma20Tolerance.value;
+              double negativeTolerance = -firstEma1520Vwma20Tolerance.value;
 
               double difference = comVal - selVal;
               double percentDiff;
@@ -9590,10 +9601,10 @@ class MainPresenter extends GetxController {
                     null,
                   ); // Difference is larger than certain %
                 }
-                if (positiveTolerance == ema1520Vwma20Tolerance.value) {
+                if (positiveTolerance == firstEma1520Vwma20Tolerance.value) {
                   positiveTolerance -= percentDiff;
                 } else {
-                  positiveTolerance = ema1520Vwma20Tolerance.value;
+                  positiveTolerance = firstEma1520Vwma20Tolerance.value;
                 }
               } else {
                 // Negative percentDiff
@@ -9606,18 +9617,18 @@ class MainPresenter extends GetxController {
                     null,
                   ); // Difference is less than certain -%
                 }
-                if (negativeTolerance == -ema1520Vwma20Tolerance.value) {
+                if (negativeTolerance == -firstEma1520Vwma20Tolerance.value) {
                   negativeTolerance -= percentDiff;
                 } else {
-                  negativeTolerance = -ema1520Vwma20Tolerance.value;
+                  negativeTolerance = -firstEma1520Vwma20Tolerance.value;
                 }
               }
               return (
                 true,
                 positiveTolerance,
                 negativeTolerance,
-                ema1520Vwma20Tolerance,
-                -ema1520Vwma20Tolerance,
+                firstEma1520Vwma20Tolerance,
+                -firstEma1520Vwma20Tolerance,
               );
             });
             advMaSubseqFunc.add(({
@@ -9700,8 +9711,8 @@ class MainPresenter extends GetxController {
             required double positiveTolChange,
             required double negativeTolChange,
           }) {
-            double positiveTolerance = ema40Tolerance.value;
-            double negativeTolerance = -ema40Tolerance.value;
+            double positiveTolerance = firstEma40Tolerance.value;
+            double negativeTolerance = -firstEma40Tolerance.value;
 
             double difference = comVal - selVal;
             double percentDiff;
@@ -9734,10 +9745,10 @@ class MainPresenter extends GetxController {
                   null,
                 ); // Difference is larger than certain %
               }
-              if (positiveTolerance == ema40Tolerance.value) {
+              if (positiveTolerance == firstEma40Tolerance.value) {
                 positiveTolerance -= percentDiff;
               } else {
-                positiveTolerance = ema40Tolerance.value;
+                positiveTolerance = firstEma40Tolerance.value;
               }
             } else {
               // Negative percentDiff
@@ -9750,18 +9761,18 @@ class MainPresenter extends GetxController {
                   null,
                 ); // Difference is less than certain -%
               }
-              if (negativeTolerance == -ema40Tolerance.value) {
+              if (negativeTolerance == -firstEma40Tolerance.value) {
                 negativeTolerance -= percentDiff;
               } else {
-                negativeTolerance = -ema40Tolerance.value;
+                negativeTolerance = -firstEma40Tolerance.value;
               }
             }
             return (
               true,
               positiveTolerance,
               negativeTolerance,
-              ema40Tolerance,
-              -ema40Tolerance,
+              firstEma40Tolerance,
+              -firstEma40Tolerance,
             );
           });
           advMaSubseqFunc.add(({
@@ -9843,8 +9854,8 @@ class MainPresenter extends GetxController {
             required double positiveTolChange,
             required double negativeTolChange,
           }) {
-            double positiveTolerance = ema60Tolerance.value;
-            double negativeTolerance = -ema60Tolerance.value;
+            double positiveTolerance = firstEma60Tolerance.value;
+            double negativeTolerance = -firstEma60Tolerance.value;
 
             double difference = comVal - selVal;
             double percentDiff;
@@ -9877,10 +9888,10 @@ class MainPresenter extends GetxController {
                   null,
                 ); // Difference is larger than certain %
               }
-              if (positiveTolerance == ema60Tolerance.value) {
+              if (positiveTolerance == firstEma60Tolerance.value) {
                 positiveTolerance -= percentDiff;
               } else {
-                positiveTolerance = ema60Tolerance.value;
+                positiveTolerance = firstEma60Tolerance.value;
               }
             } else {
               // Negative percentDiff
@@ -9893,18 +9904,18 @@ class MainPresenter extends GetxController {
                   null,
                 ); // Difference is less than certain -%
               }
-              if (negativeTolerance == -ema60Tolerance.value) {
+              if (negativeTolerance == -firstEma60Tolerance.value) {
                 negativeTolerance -= percentDiff;
               } else {
-                negativeTolerance = -ema60Tolerance.value;
+                negativeTolerance = -firstEma60Tolerance.value;
               }
             }
             return (
               true,
               positiveTolerance,
               negativeTolerance,
-              ema60Tolerance,
-              -ema60Tolerance,
+              firstEma60Tolerance,
+              -firstEma60Tolerance,
             );
           });
           advMaSubseqFunc.add(({
@@ -10000,7 +10011,7 @@ class MainPresenter extends GetxController {
                 percentDiff = difference / selVal;
               }
 
-              if (percentDiff.abs() > ema1520Vwma20Tolerance.value) {
+              if (percentDiff.abs() > firstEma1520Vwma20Tolerance.value) {
                 return false; // Difference is larger than certain %
               }
               return true;
@@ -10050,7 +10061,7 @@ class MainPresenter extends GetxController {
               percentDiff = difference / selVal;
             }
 
-            if (percentDiff.abs() > ema40Tolerance.value) {
+            if (percentDiff.abs() > firstEma40Tolerance.value) {
               return false; // Difference is larger than certain %
             }
             return true;
@@ -10099,7 +10110,7 @@ class MainPresenter extends GetxController {
               percentDiff = difference / selVal;
             }
 
-            if (percentDiff.abs() > ema60Tolerance.value) {
+            if (percentDiff.abs() > firstEma60Tolerance.value) {
               return false; // Difference is larger than certain %
             }
             return true;

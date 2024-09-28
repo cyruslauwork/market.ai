@@ -194,6 +194,7 @@ class Msg extends Translations {
               'Trend Match EMA15/20 VWMA20 Tolerance',
           'ema40_tolerance': 'Trend Match EMA40 Tolerance',
           'ema60_tolerance': 'Trend Match EMA60 Tolerance',
+          'no_api_key_mkt_data': 'No API key to access Firestore',
         },
         'zh_HK': {
           'app_name': '市場慧眼📈',
@@ -345,6 +346,7 @@ class Msg extends Translations {
           'ema15_ema20_vwma20_tolerance': 'EMA15/20 VWMA20 走勢匹配平均線容差',
           'ema40_tolerance': 'EMA40 走勢匹配平均線容差',
           'ema60_tolerance': 'EMA60 走勢匹配平均線容差',
+          'no_api_key_mkt_data': '沒有 API 密鑰來連接 Firestore',
         },
       };
 }

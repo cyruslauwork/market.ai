@@ -16,6 +16,7 @@ class PrefsService extends GetxService {
 
   Future<PrefsService> init() async {
     prefs = await SharedPreferences.getInstance();
+    prefs.clear(); // Clear all data
     return this;
   }
 }

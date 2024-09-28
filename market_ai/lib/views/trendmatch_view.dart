@@ -287,7 +287,7 @@ class TrendMatchView extends StatelessWidget {
                 ),
               ],
             )
-          ] else
+          ] else if (MainPresenter.to.showAnalytics.value)
             Center(child: TrendMatchView().showCircularProgressIndicator()),
           if (MainPresenter.to.isLockTrend.value &&
               (MainPresenter.to.clusters.isNotEmpty ||
