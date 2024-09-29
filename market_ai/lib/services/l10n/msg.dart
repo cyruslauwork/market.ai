@@ -191,9 +191,9 @@ class Msg extends Translations {
           'ema60_mathcing_criteria':
               'EMA60 trend matching criteria for minute data',
           'ema15_ema20_vwma20_tolerance':
-              'Trend Match EMA15/20 VWMA20 Tolerance',
-          'ema40_tolerance': 'Trend Match EMA40 Tolerance',
-          'ema60_tolerance': 'Trend Match EMA60 Tolerance',
+              'EMA15/20 VWMA20 Trend Match Tolerance',
+          'ema40_tolerance': 'EMA40 Trend Match Tolerance',
+          'ema60_tolerance': 'EMA60 Trend Match Tolerance',
           'no_api_key_mkt_data': 'No API key to access Firestore',
         },
         'zh_HK': {
