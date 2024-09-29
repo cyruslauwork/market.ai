@@ -735,9 +735,9 @@ class _MainViewState extends State<MainView> {
 
   void _scrollListener() {
     // Get half of the screen height
-    double halfScreenHeight = MediaQuery.of(context).size.height / 2;
+    double chartFrozenY = MediaQuery.of(context).size.height * 3;
     // Check if the scroll position exceeds half the screen height
-    if (_scrollController.offset > halfScreenHeight) {
+    if (_scrollController.offset > chartFrozenY) {
       if (!_isChartFrozen) {
         setState(() {
           _isChartFrozen = true; // Trigger the freeze
