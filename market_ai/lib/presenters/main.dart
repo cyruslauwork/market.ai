@@ -490,6 +490,36 @@ class MainPresenter extends GetxController {
   late final Map<String, Future<List<dynamic>> Function()>
       dataFetchMap; // Create a mapping for symbols to their corresponding data fetch functions
   double matchedCandleChartHeight = 125.h;
+  List<Paint> trendLineStyles = [
+    Paint()
+      ..strokeWidth = 1.0
+      ..strokeCap = StrokeCap.round
+      ..color = Colors.orange,
+    Paint()
+      ..strokeWidth = 1.0
+      ..strokeCap = StrokeCap.round
+      ..color = Colors.red,
+    Paint()
+      ..strokeWidth = 1.0
+      ..strokeCap = StrokeCap.round
+      ..color = Colors.green,
+    Paint()
+      ..strokeWidth = 1.0
+      ..strokeCap = StrokeCap.round
+      ..color = Colors.blue[700]!,
+    Paint()
+      ..strokeWidth = 1.0
+      ..strokeCap = StrokeCap.round
+      ..color = Colors.yellow,
+    Paint()
+      ..strokeWidth = 1.0
+      ..strokeCap = StrokeCap.round
+      ..color = Colors.brown,
+    Paint()
+      ..strokeWidth = 1.0
+      ..strokeCap = StrokeCap.round
+      ..color = Colors.purple[300]!,
+  ];
 
   /* Listings */
   RxInt listingsDownloadTime = 0.obs;
@@ -9300,32 +9330,7 @@ class MainPresenter extends GetxController {
                     .sublist(snapshot.data!.length - 999, snapshot.data!.length)
                 : snapshot.data!),
             style: ChartStyle(
-              trendLineStyles: [
-                Paint()
-                  ..strokeWidth = 1.0
-                  ..strokeCap = StrokeCap.round
-                  ..color = Colors.orange,
-                Paint()
-                  ..strokeWidth = 1.0
-                  ..strokeCap = StrokeCap.round
-                  ..color = Colors.red,
-                Paint()
-                  ..strokeWidth = 1.0
-                  ..strokeCap = StrokeCap.round
-                  ..color = Colors.green,
-                Paint()
-                  ..strokeWidth = 1.0
-                  ..strokeCap = StrokeCap.round
-                  ..color = Colors.blue[700]!,
-                Paint()
-                  ..strokeWidth = 1.0
-                  ..strokeCap = StrokeCap.round
-                  ..color = Colors.purple[300]!,
-                // Paint()
-                //   ..strokeWidth = 1.0
-                //   ..strokeCap = StrokeCap.round
-                //   ..color = Colors.yellow,
-              ],
+              trendLineStyles: trendLineStyles,
               selectionHighlightColor: Colors.red.withOpacity(0.75),
               overlayBackgroundColor: Colors.red.withOpacity(0.75),
               overlayTextStyle: const TextStyle(color: AppColor.whiteColor),
@@ -9406,28 +9411,7 @@ class MainPresenter extends GetxController {
             child: InteractiveChart(
               candles: filteredCandles,
               style: ChartStyle(
-                trendLineStyles: [
-                  Paint()
-                    ..strokeWidth = 1.0
-                    ..strokeCap = StrokeCap.round
-                    ..color = Colors.orange,
-                  Paint()
-                    ..strokeWidth = 1.0
-                    ..strokeCap = StrokeCap.round
-                    ..color = Colors.red,
-                  Paint()
-                    ..strokeWidth = 1.0
-                    ..strokeCap = StrokeCap.round
-                    ..color = Colors.green,
-                  Paint()
-                    ..strokeWidth = 1.0
-                    ..strokeCap = StrokeCap.round
-                    ..color = Colors.blue[700]!,
-                  Paint()
-                    ..strokeWidth = 1.0
-                    ..strokeCap = StrokeCap.round
-                    ..color = Colors.purple[300]!,
-                ],
+                trendLineStyles: trendLineStyles,
                 selectionHighlightColor: Colors.red.withOpacity(0.75),
                 overlayBackgroundColor: Colors.red.withOpacity(0.75),
                 overlayTextStyle: const TextStyle(color: AppColor.whiteColor),
@@ -9502,28 +9486,7 @@ class MainPresenter extends GetxController {
                 child: InteractiveChart(
                   candles: filteredCandles,
                   style: ChartStyle(
-                    trendLineStyles: [
-                      Paint()
-                        ..strokeWidth = 1.0
-                        ..strokeCap = StrokeCap.round
-                        ..color = Colors.orange,
-                      Paint()
-                        ..strokeWidth = 1.0
-                        ..strokeCap = StrokeCap.round
-                        ..color = Colors.red,
-                      Paint()
-                        ..strokeWidth = 1.0
-                        ..strokeCap = StrokeCap.round
-                        ..color = Colors.green,
-                      Paint()
-                        ..strokeWidth = 1.0
-                        ..strokeCap = StrokeCap.round
-                        ..color = Colors.blue[700]!,
-                      Paint()
-                        ..strokeWidth = 1.0
-                        ..strokeCap = StrokeCap.round
-                        ..color = Colors.purple[300]!,
-                    ],
+                    trendLineStyles: trendLineStyles,
                     selectionHighlightColor: Colors.red.withOpacity(0.75),
                     overlayBackgroundColor: Colors.red.withOpacity(0.75),
                     overlayTextStyle:
@@ -9639,8 +9602,8 @@ class MainPresenter extends GetxController {
                 true,
                 positiveTolerance,
                 negativeTolerance,
-                firstEma1520Vwma20Tolerance,
-                -firstEma1520Vwma20Tolerance,
+                firstEma1520Vwma20Tolerance.value,
+                -firstEma1520Vwma20Tolerance.value,
               );
             });
             advMaSubseqFunc.add(({
@@ -9721,8 +9684,8 @@ class MainPresenter extends GetxController {
                 true,
                 positiveTolerance,
                 negativeTolerance,
-                ema1520Vwma20Tolerance,
-                -ema1520Vwma20Tolerance,
+                ema1520Vwma20Tolerance.value,
+                -ema1520Vwma20Tolerance.value,
               );
             });
           }
@@ -9807,8 +9770,8 @@ class MainPresenter extends GetxController {
               true,
               positiveTolerance,
               negativeTolerance,
-              firstEma40Tolerance,
-              -firstEma40Tolerance,
+              firstEma40Tolerance.value,
+              -firstEma40Tolerance.value,
             );
           });
           advMaSubseqFunc.add(({
@@ -9889,8 +9852,8 @@ class MainPresenter extends GetxController {
               true,
               positiveTolerance,
               negativeTolerance,
-              ema40Tolerance,
-              -ema40Tolerance,
+              ema40Tolerance.value,
+              -ema40Tolerance.value,
             );
           });
         }
@@ -9974,8 +9937,8 @@ class MainPresenter extends GetxController {
               true,
               positiveTolerance,
               negativeTolerance,
-              firstEma60Tolerance,
-              -firstEma60Tolerance,
+              firstEma60Tolerance.value,
+              -firstEma60Tolerance.value,
             );
           });
           advMaSubseqFunc.add(({
@@ -10056,8 +10019,8 @@ class MainPresenter extends GetxController {
               true,
               positiveTolerance,
               negativeTolerance,
-              ema60Tolerance,
-              -ema60Tolerance,
+              ema60Tolerance.value,
+              -ema60Tolerance.value,
             );
           });
         }

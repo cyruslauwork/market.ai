@@ -760,10 +760,10 @@ class TrendMatch {
           (bool, double?, double?, double?, double?) results = subseqFunc(
             comVal: comList[i][extraIndex],
             selVal: selList[i][extraIndex],
-            positiveTolerance: positiveTolerance != originalPositiveTol
+            positiveTolChange: positiveTolerance != originalPositiveTol
                 ? positiveTolerance / originalPositiveTol
                 : null,
-            negativeTolerance: negativeTolerance != originalNegativeTol
+            negativeTolChange: negativeTolerance != originalNegativeTol
                 ? negativeTolerance / originalNegativeTol
                 : null,
           );

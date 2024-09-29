@@ -1096,28 +1096,8 @@ class _MainViewState extends State<MainView> {
                                             snapshot.data!.length)
                                         : snapshot.data!),
                                     style: ChartStyle(
-                                      trendLineStyles: [
-                                        Paint()
-                                          ..strokeWidth = 1.0
-                                          ..strokeCap = StrokeCap.round
-                                          ..color = Colors.orange,
-                                        Paint()
-                                          ..strokeWidth = 1.0
-                                          ..strokeCap = StrokeCap.round
-                                          ..color = Colors.red,
-                                        Paint()
-                                          ..strokeWidth = 1.0
-                                          ..strokeCap = StrokeCap.round
-                                          ..color = Colors.green,
-                                        Paint()
-                                          ..strokeWidth = 1.0
-                                          ..strokeCap = StrokeCap.round
-                                          ..color = Colors.blue[700]!,
-                                        Paint()
-                                          ..strokeWidth = 1.0
-                                          ..strokeCap = StrokeCap.round
-                                          ..color = Colors.purple[300]!,
-                                      ],
+                                      trendLineStyles:
+                                          MainPresenter.to.trendLineStyles,
                                       selectionHighlightColor:
                                           Colors.red.withOpacity(0.75),
                                       overlayBackgroundColor:
