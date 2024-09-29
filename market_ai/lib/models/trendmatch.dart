@@ -671,20 +671,20 @@ class TrendMatch {
           if (percentDiff > positiveTolerance) {
             return false; // Difference is larger than certain %
           }
-          if (positiveTolerance == firstMaTolerance) {
+          if (positiveTolerance == originalPositiveTol) {
             positiveTolerance -= percentDiff;
           } else {
-            positiveTolerance = firstMaTolerance;
+            positiveTolerance = originalPositiveTol;
           }
         } else {
           // Negative percentDiff
           if (percentDiff < negativeTolerance) {
             return false; // Difference is less than certain -%
           }
-          if (negativeTolerance == -firstMaTolerance) {
+          if (negativeTolerance == originalNegativeTol) {
             negativeTolerance -= percentDiff;
           } else {
-            negativeTolerance = -firstMaTolerance;
+            negativeTolerance = originalNegativeTol;
           }
         }
       }
@@ -737,20 +737,20 @@ class TrendMatch {
             if (percentDiff > positiveTolerance) {
               return false; // Difference is larger than certain %
             }
-            if (positiveTolerance == maTolerance) {
+            if (positiveTolerance == originalPositiveTol) {
               positiveTolerance -= percentDiff;
             } else {
-              positiveTolerance = maTolerance;
+              positiveTolerance = originalPositiveTol;
             }
           } else {
             // Negative percentDiff
             if (percentDiff < negativeTolerance) {
               return false; // Difference is less than certain -%
             }
-            if (negativeTolerance == -maTolerance) {
+            if (negativeTolerance == originalNegativeTol) {
               negativeTolerance -= percentDiff;
             } else {
-              negativeTolerance = -maTolerance;
+              negativeTolerance = originalNegativeTol;
             }
           }
         }

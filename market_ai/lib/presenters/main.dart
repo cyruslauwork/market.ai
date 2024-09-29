@@ -9564,11 +9564,23 @@ class MainPresenter extends GetxController {
             advMaFirstFunc.add(({
               required double comVal,
               required double selVal,
-              required double positiveTolChange,
-              required double negativeTolChange,
+              required double? positiveTolChange,
+              required double? negativeTolChange,
             }) {
-              double positiveTolerance = firstEma1520Vwma20Tolerance.value;
-              double negativeTolerance = -firstEma1520Vwma20Tolerance.value;
+              double positiveTolerance;
+              if (positiveTolChange != null) {
+                positiveTolerance =
+                    firstEma1520Vwma20Tolerance.value * (1 - positiveTolChange);
+              } else {
+                positiveTolerance = firstEma1520Vwma20Tolerance.value;
+              }
+              double negativeTolerance;
+              if (negativeTolChange != null) {
+                negativeTolerance = -firstEma1520Vwma20Tolerance.value *
+                    (1 - negativeTolChange);
+              } else {
+                negativeTolerance = -firstEma1520Vwma20Tolerance.value;
+              }
 
               double difference = comVal - selVal;
               double percentDiff;
@@ -9634,11 +9646,23 @@ class MainPresenter extends GetxController {
             advMaSubseqFunc.add(({
               required double comVal,
               required double selVal,
-              required double positiveTolChange,
-              required double negativeTolChange,
+              required double? positiveTolChange,
+              required double? negativeTolChange,
             }) {
-              double positiveTolerance = ema1520Vwma20Tolerance.value;
-              double negativeTolerance = -ema1520Vwma20Tolerance.value;
+              double positiveTolerance;
+              if (positiveTolChange != null) {
+                positiveTolerance =
+                    ema1520Vwma20Tolerance.value * (1 - positiveTolChange);
+              } else {
+                positiveTolerance = ema1520Vwma20Tolerance.value;
+              }
+              double negativeTolerance;
+              if (negativeTolChange != null) {
+                negativeTolerance =
+                    -ema1520Vwma20Tolerance.value * (1 - negativeTolChange);
+              } else {
+                negativeTolerance = -ema1520Vwma20Tolerance.value;
+              }
 
               double difference = comVal - selVal;
               double percentDiff;
@@ -9708,11 +9732,23 @@ class MainPresenter extends GetxController {
           advMaFirstFunc.add(({
             required double comVal,
             required double selVal,
-            required double positiveTolChange,
-            required double negativeTolChange,
+            required double? positiveTolChange,
+            required double? negativeTolChange,
           }) {
-            double positiveTolerance = firstEma40Tolerance.value;
-            double negativeTolerance = -firstEma40Tolerance.value;
+            double positiveTolerance;
+            if (positiveTolChange != null) {
+              positiveTolerance =
+                  firstEma40Tolerance.value * (1 - positiveTolChange);
+            } else {
+              positiveTolerance = firstEma40Tolerance.value;
+            }
+            double negativeTolerance;
+            if (negativeTolChange != null) {
+              negativeTolerance =
+                  -firstEma40Tolerance.value * (1 - negativeTolChange);
+            } else {
+              negativeTolerance = -firstEma40Tolerance.value;
+            }
 
             double difference = comVal - selVal;
             double percentDiff;
@@ -9778,11 +9814,23 @@ class MainPresenter extends GetxController {
           advMaSubseqFunc.add(({
             required double comVal,
             required double selVal,
-            required double positiveTolChange,
-            required double negativeTolChange,
+            required double? positiveTolChange,
+            required double? negativeTolChange,
           }) {
-            double positiveTolerance = ema40Tolerance.value;
-            double negativeTolerance = -ema40Tolerance.value;
+            double positiveTolerance;
+            if (positiveTolChange != null) {
+              positiveTolerance =
+                  ema40Tolerance.value * (1 - positiveTolChange);
+            } else {
+              positiveTolerance = ema40Tolerance.value;
+            }
+            double negativeTolerance;
+            if (negativeTolChange != null) {
+              negativeTolerance =
+                  -ema40Tolerance.value * (1 - negativeTolChange);
+            } else {
+              negativeTolerance = -ema40Tolerance.value;
+            }
 
             double difference = comVal - selVal;
             double percentDiff;
@@ -9851,11 +9899,23 @@ class MainPresenter extends GetxController {
           advMaFirstFunc.add(({
             required double comVal,
             required double selVal,
-            required double positiveTolChange,
-            required double negativeTolChange,
+            required double? positiveTolChange,
+            required double? negativeTolChange,
           }) {
-            double positiveTolerance = firstEma60Tolerance.value;
-            double negativeTolerance = -firstEma60Tolerance.value;
+            double positiveTolerance;
+            if (positiveTolChange != null) {
+              positiveTolerance =
+                  firstEma60Tolerance.value * (1 - positiveTolChange);
+            } else {
+              positiveTolerance = firstEma60Tolerance.value;
+            }
+            double negativeTolerance;
+            if (negativeTolChange != null) {
+              negativeTolerance =
+                  -firstEma60Tolerance.value * (1 - negativeTolChange);
+            } else {
+              negativeTolerance = -firstEma60Tolerance.value;
+            }
 
             double difference = comVal - selVal;
             double percentDiff;
@@ -9921,11 +9981,23 @@ class MainPresenter extends GetxController {
           advMaSubseqFunc.add(({
             required double comVal,
             required double selVal,
-            required double positiveTolChange,
-            required double negativeTolChange,
+            required double? positiveTolChange,
+            required double? negativeTolChange,
           }) {
-            double positiveTolerance = ema60Tolerance.value;
-            double negativeTolerance = -ema60Tolerance.value;
+            double positiveTolerance;
+            if (positiveTolChange != null) {
+              positiveTolerance =
+                  ema60Tolerance.value * (1 - positiveTolChange);
+            } else {
+              positiveTolerance = ema60Tolerance.value;
+            }
+            double negativeTolerance;
+            if (negativeTolChange != null) {
+              negativeTolerance =
+                  -ema60Tolerance.value * (1 - negativeTolChange);
+            } else {
+              negativeTolerance = -ema60Tolerance.value;
+            }
 
             double difference = comVal - selVal;
             double percentDiff;
