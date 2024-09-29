@@ -165,7 +165,8 @@ class SubsequentAnalytics {
       )
           .then((parsedResponse) {
         // log(parsedResponse.toString());
-        if (parsedResponse.runtimeType != Map<String, dynamic>) {
+        // ignore: unnecessary_type_check
+        if (parsedResponse is! Map<String, dynamic>) {
           throw Exception('Parsed response is not a Map<String, dynamic>');
         }
         // Check if multiple SAs are queued
