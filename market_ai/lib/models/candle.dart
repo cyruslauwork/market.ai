@@ -1111,7 +1111,6 @@ class Candle {
     if (data.length < period) return List.filled(data.length, null);
 
     final List<double?> result = [];
-    final List<double?> emaValues = [];
 
     // Calculate the initial SMA for the first [period] data points.
     final firstPeriod =
@@ -1119,7 +1118,6 @@ class Candle {
     double sma = firstPeriod.reduce((a, b) => a + b) / firstPeriod.length;
 
     // Initialize EMA with the initial SMA value.
-    emaValues.add(sma);
     result.addAll(List.filled(period - 1, null));
     result.add(sma);
 
@@ -1131,10 +1129,8 @@ class Candle {
       final curr = data[i].close;
       if (curr != null) {
         sma = (curr - sma) * multiplier + sma;
-        emaValues.add(sma);
         result.add(sma);
       } else {
-        emaValues.add(null);
         result.add(null);
       }
     }
@@ -1154,6 +1150,8 @@ class Candle {
     final initialPeriod =
         data.take(period).map((d) => d.close).whereType<double>();
     double ma = initialPeriod.reduce((a, b) => a + b) / initialPeriod.length;
+
+    // Initialize SMA with the initial MA value.
     result.addAll(List.filled(period - 1, null));
     result.add(ma);
 
@@ -1172,11 +1170,11 @@ class Candle {
   }
 
   /// Computes the Volume Weighted Moving Average (VWMA) for the given data.
-  static List<double?> computeVWMA(List<CandleData> data, [int period = 20]) {
-    // If data length is less than the period, return nulls.
-    if (data.length < period) return List.filled(data.length, null);
+  static List<double> computeVWMA(List<CandleData> data, [int period = 20]) {
+    // If data length is less than the period, return a list filled with zeros.
+    if (data.length < period) return List.filled(data.length, 0.0);
 
-    final List<double?> result = [];
+    final List<double> result = [];
     double sumPriceVolume = 0;
     double sumVolume = 0;
 
@@ -1190,8 +1188,10 @@ class Candle {
       }
     }
 
-    result.addAll(List.filled(period - 1, null));
-    result.add(sumVolume != 0 ? sumPriceVolume / sumVolume : null);
+    // Add the initial VWMA or zero if sumVolume is zero.
+    double initialVWMA = sumVolume != 0 ? sumPriceVolume / sumVolume : 0.0;
+    result.addAll(List.filled(period - 1, initialVWMA));
+    result.add(initialVWMA);
 
     // Compute the VWMA for the rest of the data points.
     for (int i = period; i < data.length; i++) {
@@ -1206,10 +1206,11 @@ class Candle {
           prevVolume != null) {
         sumPriceVolume += currClose * currVolume - prevClose * prevVolume;
         sumVolume += currVolume - prevVolume;
-        result.add(sumVolume != 0 ? sumPriceVolume / sumVolume : null);
-      } else {
-        result.add(null);
       }
+
+      // Use the last valid VWMA value if the current cannot be computed.
+      double vwma = sumVolume != 0 ? sumPriceVolume / sumVolume : result.last;
+      result.add(vwma);
     }
     return result;
   }
