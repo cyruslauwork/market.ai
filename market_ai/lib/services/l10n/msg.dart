@@ -37,7 +37,7 @@ class Msg extends Translations {
           'search': 'Search 🔍',
           'candle_tolerance': 'Trend Match Candle Tolerance',
           'price_tolerance': 'Trend Match Price Tolerance',
-          'first_ma_tolerance': 'Trend Match First MA Tolerance',
+          'first_tolerance': 'Trend Match First Tolerance',
           'ma_tolerance': 'Trend Match MA Tolerance',
           'time_range': 'Time Range',
           '2_timeunits': '2 Timeunits',
@@ -184,16 +184,8 @@ class Msg extends Translations {
           'candle_chart': 'Matched candletick charts',
           'more_than_10_matches_chart':
               'There are more than 10 trend matches, only 10 charts will be shown',
-          'vwma20_mathcing_criteria':
-              'VWMA20 trend matching criteria for minute data',
-          'ema40_mathcing_criteria':
-              'EMA40 trend matching criteria for minute data',
-          'ema60_mathcing_criteria':
-              'EMA60 trend matching criteria for minute data',
-          'ema15_ema20_vwma20_tolerance':
-              'EMA15/20 VWMA20 Trend Match Tolerance',
-          'ema40_tolerance': 'EMA40 Trend Match Tolerance',
-          'ema60_tolerance': 'EMA60 Trend Match Tolerance',
+          'minute_mathcing_criteria': 'trend matching criteria for minute data',
+          'minute_tolerance': 'Trend Match Tolerance',
           'no_api_key_mkt_data': 'No API key to access Firestore',
         },
         'zh_HK': {
@@ -220,7 +212,7 @@ class Msg extends Translations {
           'candle_tolerance': '走勢匹配陰陽燭容差',
           'price_tolerance': '走勢匹配價值容差',
           'ma_tolerance': '走勢匹配平均線容差',
-          'first_ma_tolerance': '走勢匹配第一平均線容差',
+          'first_tolerance': '走勢匹配第一容差',
           'time_range': '時間單位範圍',
           '2_timeunits': '2 時間單位',
           '10_timeunits': '10 時間單位',
@@ -340,12 +332,8 @@ class Msg extends Translations {
           'preparing_candle_chart': '正在準備陰陽燭匹配數據...',
           'candle_chart': '陰陽燭匹配數據',
           'more_than_10_matches_chart': '匹配趨勢超過 10 條，僅顯示 10 張圖表',
-          'vwma20_mathcing_criteria': 'VWMA20 分鐘數據趨勢匹配條件',
-          'ema40_mathcing_criteria': 'EMA40 分鐘數據趨勢匹配條件',
-          'ema60_mathcing_criteria': 'EMA60 分鐘數據趨勢匹配條件',
-          'ema15_ema20_vwma20_tolerance': 'EMA15/20 VWMA20 走勢匹配平均線容差',
-          'ema40_tolerance': 'EMA40 走勢匹配平均線容差',
-          'ema60_tolerance': 'EMA60 走勢匹配平均線容差',
+          'minute_mathcing_criteria': 'VWMA20 分鐘數據趨勢匹配條件',
+          'minute_tolerance': 'EMA15/20 VWMA20 走勢匹配平均線容差',
           'no_api_key_mkt_data': '沒有 API 密鑰來連接 Firestore',
         },
       };

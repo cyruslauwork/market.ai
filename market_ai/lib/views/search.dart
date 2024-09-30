@@ -176,7 +176,7 @@ class _SearchViewState extends State<SearchView> {
             SharedPreferencesConstant.firstEma60Tolerance,
             newFirstEma60Tolerance);
         MainPresenter.to.firstEma60Tolerance.value = newFirstEma60Tolerance;
-                double newFirstEma120Tolerance = _currentEma120FirstTolerance;
+        double newFirstEma120Tolerance = _currentEma120FirstTolerance;
         PrefsService.to.prefs.setDouble(
             SharedPreferencesConstant.firstEma120Tolerance,
             newFirstEma120Tolerance);
@@ -235,10 +235,10 @@ class _SearchViewState extends State<SearchView> {
           PrefsService.to.prefs.setDouble(
               SharedPreferencesConstant.ema60Tolerance, newEma60Tolerance);
           MainPresenter.to.ema60Tolerance.value = newEma60Tolerance;
-        double newEma120Tolerance = _currentEma120Tolerance;
-        PrefsService.to.prefs.setDouble(
-            SharedPreferencesConstant.ema120Tolerance, newEma120Tolerance);
-        MainPresenter.to.ema120Tolerance.value = newEma120Tolerance;
+          double newEma120Tolerance = _currentEma120Tolerance;
+          PrefsService.to.prefs.setDouble(
+              SharedPreferencesConstant.ema120Tolerance, newEma120Tolerance);
+          MainPresenter.to.ema120Tolerance.value = newEma120Tolerance;
           double newFirstEma1520Vwma20Tolerance =
               _currentEma1520Vwma20FirstTolerance;
           PrefsService.to.prefs.setDouble(
@@ -255,11 +255,11 @@ class _SearchViewState extends State<SearchView> {
           PrefsService.to.prefs.setDouble(
               SharedPreferencesConstant.firstEma60Tolerance,
               newFirstEma60Tolerance);
-                double newFirstEma120Tolerance = _currentEma120FirstTolerance;
-        PrefsService.to.prefs.setDouble(
-            SharedPreferencesConstant.firstEma120Tolerance,
-            newFirstEma120Tolerance);
-        MainPresenter.to.firstEma120Tolerance.value = newFirstEma120Tolerance;
+          double newFirstEma120Tolerance = _currentEma120FirstTolerance;
+          PrefsService.to.prefs.setDouble(
+              SharedPreferencesConstant.firstEma120Tolerance,
+              newFirstEma120Tolerance);
+          MainPresenter.to.firstEma120Tolerance.value = newFirstEma120Tolerance;
           MainPresenter.to.firstEma60Tolerance.value = newFirstEma60Tolerance;
           MainPresenter.to.searchCountNotifier.value++;
           MainPresenter.to.back();
@@ -447,7 +447,7 @@ class _SearchViewState extends State<SearchView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'first_ma_tolerance'.tr,
+                      'MA ${'first_tolerance'.tr}',
                       style: const TextTheme().sp5.primaryTextColor,
                     ),
                     Padding(
@@ -569,7 +569,7 @@ class _SearchViewState extends State<SearchView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'EMA15/20 VWMA20 ${'first_ma_tolerance'.tr}',
+                      'EMA15/20 VWMA20 ${'first_tolerance'.tr}',
                       style: const TextTheme().sp5.primaryTextColor,
                     ),
                     Padding(
@@ -631,7 +631,7 @@ class _SearchViewState extends State<SearchView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'ema15_ema20_vwma20_tolerance'.tr,
+                      'EMA15/20 VWMA20 ${'minute_tolerance'.tr}',
                       style: const TextTheme().sp5.primaryTextColor,
                     ),
                     Padding(
@@ -642,9 +642,9 @@ class _SearchViewState extends State<SearchView> {
                         ),
                         child: Slider(
                           value: _currentEma1520Vwma20Tolerance,
-                          max: 100,
+                          max: 200,
                           min: 5,
-                          divisions: 19,
+                          divisions: 39,
                           label: '${_currentEma1520Vwma20Tolerance.round()}%',
                           onChanged: (double value) {
                             setState(() {
@@ -662,19 +662,19 @@ class _SearchViewState extends State<SearchView> {
                           style: const TextTheme().sp4,
                         ),
                         Text(
-                          '25%',
-                          style: const TextTheme().sp4,
-                        ),
-                        Text(
                           '50%',
                           style: const TextTheme().sp4,
                         ),
                         Text(
-                          '75%',
+                          '100%',
                           style: const TextTheme().sp4,
                         ),
                         Text(
-                          '100%',
+                          '150%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '200%',
                           style: const TextTheme().sp4,
                         ),
                       ],
@@ -692,7 +692,7 @@ class _SearchViewState extends State<SearchView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'EMA40 ${'first_ma_tolerance'.tr}',
+                      'EMA40 ${'first_tolerance'.tr}',
                       style: const TextTheme().sp5.primaryTextColor,
                     ),
                     Padding(
@@ -753,7 +753,7 @@ class _SearchViewState extends State<SearchView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'ema40_tolerance'.tr,
+                      'EMA40 ${'minute_tolerance'.tr}',
                       style: const TextTheme().sp5.primaryTextColor,
                     ),
                     Padding(
@@ -764,9 +764,9 @@ class _SearchViewState extends State<SearchView> {
                         ),
                         child: Slider(
                           value: _currentEma40Tolerance,
-                          max: 100,
+                          max: 200,
                           min: 5,
-                          divisions: 19,
+                          divisions: 39,
                           label: '${_currentEma40Tolerance.round()}%',
                           onChanged: (double value) {
                             setState(() {
@@ -784,19 +784,19 @@ class _SearchViewState extends State<SearchView> {
                           style: const TextTheme().sp4,
                         ),
                         Text(
-                          '25%',
-                          style: const TextTheme().sp4,
-                        ),
-                        Text(
                           '50%',
                           style: const TextTheme().sp4,
                         ),
                         Text(
-                          '75%',
+                          '100%',
                           style: const TextTheme().sp4,
                         ),
                         Text(
-                          '100%',
+                          '150%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '200%',
                           style: const TextTheme().sp4,
                         ),
                       ],
@@ -814,7 +814,7 @@ class _SearchViewState extends State<SearchView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'EMA60 ${'first_ma_tolerance'.tr}',
+                      'EMA60 ${'first_tolerance'.tr}',
                       style: const TextTheme().sp5.primaryTextColor,
                     ),
                     Padding(
@@ -875,7 +875,7 @@ class _SearchViewState extends State<SearchView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'ema60_tolerance'.tr,
+                      'EMA60 ${'minute_tolerance'.tr}',
                       style: const TextTheme().sp5.primaryTextColor,
                     ),
                     Padding(
@@ -886,9 +886,9 @@ class _SearchViewState extends State<SearchView> {
                         ),
                         child: Slider(
                           value: _currentEma60Tolerance,
-                          max: 100,
+                          max: 200,
                           min: 5,
-                          divisions: 19,
+                          divisions: 39,
                           label: '${_currentEma60Tolerance.round()}%',
                           onChanged: (double value) {
                             setState(() {
@@ -906,19 +906,19 @@ class _SearchViewState extends State<SearchView> {
                           style: const TextTheme().sp4,
                         ),
                         Text(
-                          '25%',
-                          style: const TextTheme().sp4,
-                        ),
-                        Text(
                           '50%',
                           style: const TextTheme().sp4,
                         ),
                         Text(
-                          '75%',
+                          '100%',
                           style: const TextTheme().sp4,
                         ),
                         Text(
-                          '100%',
+                          '150%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '200%',
                           style: const TextTheme().sp4,
                         ),
                       ],
@@ -936,7 +936,7 @@ class _SearchViewState extends State<SearchView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'EMA120 ${'first_ma_tolerance'.tr}',
+                      'EMA120 ${'first_tolerance'.tr}',
                       style: const TextTheme().sp5.primaryTextColor,
                     ),
                     Padding(
@@ -997,7 +997,7 @@ class _SearchViewState extends State<SearchView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'ema120_tolerance'.tr,
+                      'EMA120 ${'minute_tolerance'.tr}',
                       style: const TextTheme().sp5.primaryTextColor,
                     ),
                     Padding(
@@ -1008,9 +1008,9 @@ class _SearchViewState extends State<SearchView> {
                         ),
                         child: Slider(
                           value: _currentEma120Tolerance,
-                          max: 100,
+                          max: 300,
                           min: 5,
-                          divisions: 19,
+                          divisions: 59,
                           label: '${_currentEma120Tolerance.round()}%',
                           onChanged: (double value) {
                             setState(() {
@@ -1024,15 +1024,7 @@ class _SearchViewState extends State<SearchView> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          '5%',
-                          style: const TextTheme().sp4,
-                        ),
-                        Text(
-                          '25%',
-                          style: const TextTheme().sp4,
-                        ),
-                        Text(
-                          '50%',
+                          '10%',
                           style: const TextTheme().sp4,
                         ),
                         Text(
@@ -1040,7 +1032,15 @@ class _SearchViewState extends State<SearchView> {
                           style: const TextTheme().sp4,
                         ),
                         Text(
-                          '100%',
+                          '150%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '225%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '300%',
                           style: const TextTheme().sp4,
                         ),
                       ],
@@ -1197,7 +1197,7 @@ class _SearchViewState extends State<SearchView> {
                   children: [
                     Expanded(
                       child: Text(
-                        'vwma20_mathcing_criteria'.tr,
+                        'VWMA20 ${'minute_mathcing_criteria'.tr}',
                         style: const TextTheme().sp5.w700,
                       ),
                     ),
@@ -1222,7 +1222,7 @@ class _SearchViewState extends State<SearchView> {
                   children: [
                     Expanded(
                       child: Text(
-                        'ema40_mathcing_criteria'.tr,
+                        'EMA40 ${'minute_mathcing_criteria'.tr}',
                         style: const TextTheme().sp5.w700,
                       ),
                     ),
@@ -1247,7 +1247,7 @@ class _SearchViewState extends State<SearchView> {
                   children: [
                     Expanded(
                       child: Text(
-                        'ema60_mathcing_criteria'.tr,
+                        'EMA60 ${'minute_mathcing_criteria'.tr}',
                         style: const TextTheme().sp5.w700,
                       ),
                     ),
@@ -1272,7 +1272,7 @@ class _SearchViewState extends State<SearchView> {
                   children: [
                     Expanded(
                       child: Text(
-                        'ema120_mathcing_criteria'.tr,
+                        'EMA120 ${'minute_mathcing_criteria'.tr}',
                         style: const TextTheme().sp5.w700,
                       ),
                     ),

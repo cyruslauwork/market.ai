@@ -754,6 +754,10 @@ class MainPresenter extends GetxController {
               .getDouble(SharedPreferencesConstant.ema60Tolerance) ??
           40.0)
       .obs;
+  RxDouble ema120Tolerance = (PrefsService.to.prefs
+              .getDouble(SharedPreferencesConstant.ema120Tolerance) ??
+          40.0)
+      .obs;
   List<Function> advMaFirstFunc = [];
   List<Function> advMaSubseqFunc = [];
   RxDouble firstEma1520Vwma20Tolerance = (PrefsService.to.prefs.getDouble(
@@ -8685,7 +8689,7 @@ class MainPresenter extends GetxController {
       int randomID = 100000 + random.nextInt(900000);
       // Export CSV to device's local file directory
       String fileName =
-          '${randomID}_${symbol}_cTol${candleTolerance.value}_pTol${priceTolerance.value}_fMaTol${firstMaTolerance.value}_maTol${maTolerance.value}_len${len}_subLen${subsequentLen}_ma1520Tol${ema1520Vwma20Tolerance.value}_ema40Tol${ema40Tolerance.value}_ema60Tol${ema60Tolerance.value}_ema120Tol${ema120Tolerance.value}_vwma20${vwma20MatchCriteria.value}_ema40${ema40MatchCriteria.value}_ema60${ema60MatchCriteria.value}_ema120${ema120MatchCriteria.value}_probThres${thisProbThreshold}_maTrue_strict${strictMatchCriteria.value}_outF30m_minMatchC${minMatchCount}_minSidedMatchC${minOneSidedMatchCount}_minR${minMedianReturnRate}_reachedMed${closePosWhenReachedMedian.value}_hitCeOrBoOneThirdSubLen_goOpHalfSubLen';
+          '${randomID}_${symbol}_cT${candleTolerance.value}_pT${priceTolerance.value}_fMaT${firstMaTolerance.value}_maT${maTolerance.value}_l${len}_subL${subsequentLen}_m1520T${ema1520Vwma20Tolerance.value}_e40T${ema40Tolerance.value}_e60T${ema60Tolerance.value}_e120T${ema120Tolerance.value}_v20${vwma20MatchCriteria.value}_e40${ema40MatchCriteria.value}_e60${ema60MatchCriteria.value}_e120${ema120MatchCriteria.value}_pThres${thisProbThreshold}_maTrue_strict${strictMatchCriteria.value}_outF30m_minMatchC${minMatchCount}_minSidedMatchC${minOneSidedMatchCount}_minR${minMedianReturnRate}_reachMed${closePosWhenReachedMedian.value}_hitCeOrBoOneThirdSubL_goOpHalfSubL';
       exportCsv(listList, fileName);
 
       // printInfo(info: 'Exported backtesting results CSV');
@@ -9118,11 +9122,9 @@ class MainPresenter extends GetxController {
           .setBool(SharedPreferencesConstant.alwaysShowMinuteData, value);
       dataGranularity.value = (value ? Icons.timer_outlined : Icons.today);
       if (value) {
-        legends.value = '🟠EMA5 🔴EMA10 🟢EMA15 🔵EMA20';
         showScaffoldMessenger(
             context: context, localizedMsg: 'show_one_minute');
       } else {
-        legends.value = '🟠SMA5 🔴SMA20 🟢SMA60 🔵SMA120 🟣SMA240';
         showScaffoldMessenger(context: context, localizedMsg: 'show_one_day');
         alwaysUseCrossDataToggle(value, context);
       }
@@ -9528,13 +9530,17 @@ class MainPresenter extends GetxController {
   }
 
   void setExtraMaListAndMaLegends() {
+    List<String> coloredCircles = ['🟡', '🟤', '🟣', '🌚'];
+    int currentColoredCirclesIndex = 0;
     if (alwaysShowMinuteData.value) {
       advMaFirstFunc.clear();
       advMaSubseqFunc.clear();
       legends.value = '🟠EMA5 🔴EMA10 🟢EMA15 🔵EMA20';
       if (strictMatchCriteria.value) {
         if (vwma20MatchCriteria.value) {
-          legends.value = '${legends.value} 🟡VWMA20';
+          legends.value +=
+              ' ${coloredCircles[currentColoredCirclesIndex]}VWMA20';
+          currentColoredCirclesIndex++;
           for (int i = 0; i < 3; i++) {
             advMaFirstFunc.add(({
               required double comVal,
@@ -9703,7 +9709,9 @@ class MainPresenter extends GetxController {
           }
         }
         if (ema40MatchCriteria.value) {
-          legends.value = '${legends.value} 🟤EMA40';
+          legends.value +=
+              ' ${coloredCircles[currentColoredCirclesIndex]}EMA40';
+          currentColoredCirclesIndex++;
           advMaFirstFunc.add(({
             required double comVal,
             required double selVal,
@@ -9870,7 +9878,9 @@ class MainPresenter extends GetxController {
           });
         }
         if (ema60MatchCriteria.value) {
-          legends.value = '${legends.value} 🟣EMA60';
+          legends.value +=
+              ' ${coloredCircles[currentColoredCirclesIndex]}EMA60';
+          currentColoredCirclesIndex++;
           advMaFirstFunc.add(({
             required double comVal,
             required double selVal,
@@ -10037,7 +10047,9 @@ class MainPresenter extends GetxController {
           });
         }
         if (ema120MatchCriteria.value) {
-          legends.value = '${legends.value} 🌚EMA120';
+          legends.value +=
+              ' ${coloredCircles[currentColoredCirclesIndex]}EMA120';
+          currentColoredCirclesIndex++;
           advMaFirstFunc.add(({
             required double comVal,
             required double selVal,
@@ -10205,7 +10217,9 @@ class MainPresenter extends GetxController {
         }
       } else {
         if (vwma20MatchCriteria.value) {
-          legends.value = '${legends.value} 🟡VWMA20';
+          legends.value +=
+              ' ${coloredCircles[currentColoredCirclesIndex]}VWMA20';
+          currentColoredCirclesIndex++;
           for (int i = 0; i < 3; i++) {
             advMaFirstFunc.add(({
               required double comVal,
@@ -10256,7 +10270,9 @@ class MainPresenter extends GetxController {
           }
         }
         if (ema40MatchCriteria.value) {
-          legends.value = '${legends.value} 🟤EMA40';
+          legends.value +=
+              ' ${coloredCircles[currentColoredCirclesIndex]}EMA40';
+          currentColoredCirclesIndex++;
           advMaFirstFunc.add(({
             required double comVal,
             required double selVal,
@@ -10305,7 +10321,9 @@ class MainPresenter extends GetxController {
           });
         }
         if (ema60MatchCriteria.value) {
-          legends.value = '${legends.value} 🟣EMA60';
+          legends.value +=
+              ' ${coloredCircles[currentColoredCirclesIndex]}EMA60';
+          currentColoredCirclesIndex++;
           advMaFirstFunc.add(({
             required double comVal,
             required double selVal,
@@ -10354,7 +10372,9 @@ class MainPresenter extends GetxController {
           });
         }
         if (ema120MatchCriteria.value) {
-          legends.value = '${legends.value} 🌚EMA120';
+          legends.value +=
+              ' ${coloredCircles[currentColoredCirclesIndex]}EMA120';
+          currentColoredCirclesIndex++;
           advMaFirstFunc.add(({
             required double comVal,
             required double selVal,
@@ -10404,7 +10424,7 @@ class MainPresenter extends GetxController {
         }
       }
     } else {
-      legends.value = '🟠MA5 🔴MA20 🟢MA60 🔵MA120 🟣MA240';
+      legends.value = '🟠SMA5 🔴SMA20 🟢SMA60 🔵SMA120 🟣SMA240';
     }
   }
 }

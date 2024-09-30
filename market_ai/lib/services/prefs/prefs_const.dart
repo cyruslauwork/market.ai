@@ -36,6 +36,7 @@ class SharedPreferencesConstant {
   static String vwma20MatchCriteria = 'vwma20MatchCriteria';
   static String ema40MatchCriteria = 'ema40MatchCriteria';
   static String ema60MatchCriteria = 'ema60MatchCriteria';
+  static String ema120MatchCriteria = 'ema120MatchCriteria';
   static String ema1520Vwma20Tolerance = 'ema1520Vwma20Tolerance';
   static String ema40Tolerance = 'ema40Tolerance';
   static String ema60Tolerance = 'ema60Tolerance';
