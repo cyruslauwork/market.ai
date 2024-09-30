@@ -204,8 +204,10 @@ class TrendMatch {
     int maxMa() {
       if (MainPresenter.to.hasMinuteData.value &&
           MainPresenter.to.alwaysShowMinuteData.value) {
-        int maVal;
-        if (MainPresenter.to.ema60MatchCriteria.value) {
+        int maVal; 
+        if (MainPresenter.to.ema120MatchCriteria.value) {
+          maVal = 120;
+        } else if (MainPresenter.to.ema60MatchCriteria.value) {
           maVal = 60;
         } else if (MainPresenter.to.ema40MatchCriteria.value) {
           maVal = 40;

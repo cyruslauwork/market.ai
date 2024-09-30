@@ -39,9 +39,11 @@ class SharedPreferencesConstant {
   static String ema1520Vwma20Tolerance = 'ema1520Vwma20Tolerance';
   static String ema40Tolerance = 'ema40Tolerance';
   static String ema60Tolerance = 'ema60Tolerance';
+  static String ema120Tolerance = 'ema120Tolerance';
   static String firstEma1520Vwma20Tolerance = 'firstEma1520Vwma20Tolerance';
   static String firstEma40Tolerance = 'firstEma40Tolerance';
   static String firstEma60Tolerance = 'firstEma60Tolerance';
+  static String firstEma120Tolerance = 'firstEma120Tolerance';
 
   static String img1 = 'img1';
   static String img2 = 'img2';

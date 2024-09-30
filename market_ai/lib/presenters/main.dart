@@ -519,6 +519,10 @@ class MainPresenter extends GetxController {
       ..strokeWidth = 1.0
       ..strokeCap = StrokeCap.round
       ..color = Colors.purple[300]!,
+    Paint()
+      ..strokeWidth = 1.0
+      ..strokeCap = StrokeCap.round
+      ..color = Colors.grey[700]!,
   ];
 
   /* Listings */
@@ -555,6 +559,10 @@ class MainPresenter extends GetxController {
       .obs;
   RxBool ema60MatchCriteria = (PrefsService.to.prefs
               .getBool(SharedPreferencesConstant.ema60MatchCriteria) ??
+          false)
+      .obs;
+  RxBool ema120MatchCriteria = (PrefsService.to.prefs
+              .getBool(SharedPreferencesConstant.ema120MatchCriteria) ??
           false)
       .obs;
 
@@ -758,6 +766,10 @@ class MainPresenter extends GetxController {
       .obs;
   RxDouble firstEma60Tolerance = (PrefsService.to.prefs
               .getDouble(SharedPreferencesConstant.firstEma60Tolerance) ??
+          40.0)
+      .obs;
+  RxDouble firstEma120Tolerance = (PrefsService.to.prefs
+              .getDouble(SharedPreferencesConstant.firstEma120Tolerance) ??
           40.0)
       .obs;
 
@@ -8673,7 +8685,7 @@ class MainPresenter extends GetxController {
       int randomID = 100000 + random.nextInt(900000);
       // Export CSV to device's local file directory
       String fileName =
-          '${randomID}_${symbol}_cTol${candleTolerance.value}_pTol${priceTolerance.value}_fMaTol${firstMaTolerance.value}_maTol${maTolerance.value}_len${len}_subLen${subsequentLen}_ma1520Tol${ema1520Vwma20Tolerance}_ema40Tol${ema40Tolerance}_ema60Tol${ema60Tolerance}_vwma20${vwma20MatchCriteria}_ema40${ema40MatchCriteria}_ema60${ema60MatchCriteria}_probThres${thisProbThreshold}_maTrue_strict${strictMatchCriteria.value}_outF30m_minMatchC${minMatchCount}_minSidedMatchC${minOneSidedMatchCount}_minR${minMedianReturnRate}_reachedMed${closePosWhenReachedMedian.value}_hitCeOrBoOneThirdSubLen_goOpHalfSubLen';
+          '${randomID}_${symbol}_cTol${candleTolerance.value}_pTol${priceTolerance.value}_fMaTol${firstMaTolerance.value}_maTol${maTolerance.value}_len${len}_subLen${subsequentLen}_ma1520Tol${ema1520Vwma20Tolerance.value}_ema40Tol${ema40Tolerance.value}_ema60Tol${ema60Tolerance.value}_ema120Tol${ema120Tolerance.value}_vwma20${vwma20MatchCriteria.value}_ema40${ema40MatchCriteria.value}_ema60${ema60MatchCriteria.value}_ema120${ema120MatchCriteria.value}_probThres${thisProbThreshold}_maTrue_strict${strictMatchCriteria.value}_outF30m_minMatchC${minMatchCount}_minSidedMatchC${minOneSidedMatchCount}_minR${minMedianReturnRate}_reachedMed${closePosWhenReachedMedian.value}_hitCeOrBoOneThirdSubLen_goOpHalfSubLen';
       exportCsv(listList, fileName);
 
       // printInfo(info: 'Exported backtesting results CSV');
@@ -10024,6 +10036,173 @@ class MainPresenter extends GetxController {
             );
           });
         }
+        if (ema120MatchCriteria.value) {
+          legends.value = '${legends.value} 🌚EMA120';
+          advMaFirstFunc.add(({
+            required double comVal,
+            required double selVal,
+            required double? positiveTolChange,
+            required double? negativeTolChange,
+          }) {
+            double positiveTolerance;
+            if (positiveTolChange != null) {
+              positiveTolerance =
+                  firstEma120Tolerance.value * (1 - positiveTolChange);
+            } else {
+              positiveTolerance = firstEma120Tolerance.value;
+            }
+            double negativeTolerance;
+            if (negativeTolChange != null) {
+              negativeTolerance =
+                  -firstEma120Tolerance.value * (1 - negativeTolChange);
+            } else {
+              negativeTolerance = -firstEma120Tolerance.value;
+            }
+
+            double difference = comVal - selVal;
+            double percentDiff;
+
+            // Handle zero in selList to avoid division by zero
+            if (selVal == 0.0) {
+              if (comVal != 0.0) {
+                return (
+                  false,
+                  null,
+                  null,
+                  null,
+                  null,
+                ); // Any non-zero value compared to zero is a large difference
+              } else {
+                percentDiff = 0.0; // Both are zero, no difference
+              }
+            } else {
+              percentDiff = difference / selVal;
+            }
+
+            if (percentDiff >= 0) {
+              // Positive percentDiff
+              if (percentDiff > positiveTolerance) {
+                return (
+                  false,
+                  null,
+                  null,
+                  null,
+                  null,
+                ); // Difference is larger than certain %
+              }
+              if (positiveTolerance == firstEma120Tolerance.value) {
+                positiveTolerance -= percentDiff;
+              } else {
+                positiveTolerance = firstEma120Tolerance.value;
+              }
+            } else {
+              // Negative percentDiff
+              if (percentDiff < negativeTolerance) {
+                return (
+                  false,
+                  null,
+                  null,
+                  null,
+                  null,
+                ); // Difference is less than certain -%
+              }
+              if (negativeTolerance == -firstEma120Tolerance.value) {
+                negativeTolerance -= percentDiff;
+              } else {
+                negativeTolerance = -firstEma120Tolerance.value;
+              }
+            }
+            return (
+              true,
+              positiveTolerance,
+              negativeTolerance,
+              firstEma120Tolerance.value,
+              -firstEma120Tolerance.value,
+            );
+          });
+          advMaSubseqFunc.add(({
+            required double comVal,
+            required double selVal,
+            required double? positiveTolChange,
+            required double? negativeTolChange,
+          }) {
+            double positiveTolerance;
+            if (positiveTolChange != null) {
+              positiveTolerance =
+                  ema120Tolerance.value * (1 - positiveTolChange);
+            } else {
+              positiveTolerance = ema120Tolerance.value;
+            }
+            double negativeTolerance;
+            if (negativeTolChange != null) {
+              negativeTolerance =
+                  -ema120Tolerance.value * (1 - negativeTolChange);
+            } else {
+              negativeTolerance = -ema120Tolerance.value;
+            }
+
+            double difference = comVal - selVal;
+            double percentDiff;
+
+            // Handle zero in selList to avoid division by zero
+            if (selVal == 0.0) {
+              if (comVal != 0.0) {
+                return (
+                  false,
+                  null,
+                  null,
+                  null,
+                  null,
+                ); // Any non-zero value compared to zero is a large difference
+              } else {
+                percentDiff = 0.0; // Both are zero, no difference
+              }
+            } else {
+              percentDiff = difference / selVal;
+            }
+
+            if (percentDiff >= 0) {
+              // Positive percentDiff
+              if (percentDiff > positiveTolerance) {
+                return (
+                  false,
+                  null,
+                  null,
+                  null,
+                  null,
+                ); // Difference is larger than certain %
+              }
+              if (positiveTolerance == ema120Tolerance.value) {
+                positiveTolerance -= percentDiff;
+              } else {
+                positiveTolerance = ema120Tolerance.value;
+              }
+            } else {
+              // Negative percentDiff
+              if (percentDiff < negativeTolerance) {
+                return (
+                  false,
+                  null,
+                  null,
+                  null,
+                  null,
+                ); // Difference is less than certain -%
+              }
+              if (negativeTolerance == -ema120Tolerance.value) {
+                negativeTolerance -= percentDiff;
+              } else {
+                negativeTolerance = -ema120Tolerance.value;
+              }
+            }
+            return (
+              true,
+              positiveTolerance,
+              negativeTolerance,
+              ema120Tolerance.value,
+              -ema120Tolerance.value,
+            );
+          });
+        }
       } else {
         if (vwma20MatchCriteria.value) {
           legends.value = '${legends.value} 🟡VWMA20';
@@ -10169,6 +10348,55 @@ class MainPresenter extends GetxController {
             }
 
             if (percentDiff.abs() > ema60Tolerance.value) {
+              return false; // Difference is larger than certain %
+            }
+            return true;
+          });
+        }
+        if (ema120MatchCriteria.value) {
+          legends.value = '${legends.value} 🌚EMA120';
+          advMaFirstFunc.add(({
+            required double comVal,
+            required double selVal,
+          }) {
+            double difference = comVal - selVal;
+            double percentDiff;
+
+            // Handle zero in selList to avoid division by zero
+            if (selVal == 0.0) {
+              if (comVal != 0.0) {
+                return false; // Any non-zero value compared to zero is a large difference
+              } else {
+                percentDiff = 0.0; // Both are zero, no difference
+              }
+            } else {
+              percentDiff = difference / selVal;
+            }
+
+            if (percentDiff.abs() > firstEma120Tolerance.value) {
+              return false; // Difference is larger than certain %
+            }
+            return true;
+          });
+          advMaSubseqFunc.add(({
+            required double comVal,
+            required double selVal,
+          }) {
+            double difference = comVal - selVal;
+            double percentDiff;
+
+            // Handle zero in selList to avoid division by zero
+            if (selVal == 0.0) {
+              if (comVal != 0.0) {
+                return false; // Any non-zero value compared to zero is a large difference
+              } else {
+                percentDiff = 0.0; // Both are zero, no difference
+              }
+            } else {
+              percentDiff = difference / selVal;
+            }
+
+            if (percentDiff.abs() > ema120Tolerance.value) {
               return false; // Difference is larger than certain %
             }
             return true;

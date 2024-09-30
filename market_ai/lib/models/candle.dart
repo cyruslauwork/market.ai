@@ -1051,6 +1051,9 @@ class Candle {
       final ema60 = MainPresenter.to.ema60MatchCriteria.value
           ? computeEMA(listCandledata, 60)
           : null;
+      final ema120 = MainPresenter.to.ema120MatchCriteria.value
+          ? computeEMA(listCandledata, 120)
+          : null;
 
       Function addVwma20 = vwma20 != null
           ? (int i) {
@@ -1067,6 +1070,11 @@ class Candle {
               listCandledata![i].trends.add(ema60[i]);
             }
           : (int i) {};
+      Function addEma120 = ema120 != null
+          ? (int i) {
+              listCandledata![i].trends.add(ema120[i]);
+            }
+          : (int i) {};
 
       for (int i = 0; i < listCandledata.length; i++) {
         listCandledata[i].trends = [
@@ -1078,6 +1086,7 @@ class Candle {
         addVwma20(i);
         addEma40(i);
         addEma60(i);
+        addEma120(i);
       }
     } else {
       final sma5 = computeSMA(listCandledata, 5);

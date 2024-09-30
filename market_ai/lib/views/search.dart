@@ -44,6 +44,9 @@ class _SearchViewState extends State<SearchView> {
   double _currentEma60Tolerance = (PrefsService.to.prefs
           .getDouble(SharedPreferencesConstant.ema60Tolerance) ??
       40.0);
+  double _currentEma120Tolerance = (PrefsService.to.prefs
+          .getDouble(SharedPreferencesConstant.ema120Tolerance) ??
+      40.0);
   double _currentEma1520Vwma20FirstTolerance = (PrefsService.to.prefs
           .getDouble(SharedPreferencesConstant.firstEma1520Vwma20Tolerance) ??
       40.0);
@@ -52,6 +55,9 @@ class _SearchViewState extends State<SearchView> {
       40.0);
   double _currentEma60FirstTolerance = (PrefsService.to.prefs
           .getDouble(SharedPreferencesConstant.firstEma60Tolerance) ??
+      40.0);
+  double _currentEma120FirstTolerance = (PrefsService.to.prefs
+          .getDouble(SharedPreferencesConstant.firstEma120Tolerance) ??
       40.0);
   int _currentLength =
       PrefsService.to.prefs.getInt(SharedPreferencesConstant.length) ?? 4;
@@ -76,9 +82,11 @@ class _SearchViewState extends State<SearchView> {
       _currentEma1520Vwma20Tolerance = 40.0;
       _currentEma40Tolerance = 40.0;
       _currentEma60Tolerance = 40.0;
+      _currentEma120Tolerance = 40.0;
       _currentEma1520Vwma20FirstTolerance = 40.0;
       _currentEma40FirstTolerance = 40.0;
       _currentEma60FirstTolerance = 40.0;
+      _currentEma120FirstTolerance = 40.0;
       _currentLength = 5;
       _textEditingController.clear();
       _currentSubLength = 5;
@@ -147,6 +155,10 @@ class _SearchViewState extends State<SearchView> {
         PrefsService.to.prefs.setDouble(
             SharedPreferencesConstant.ema60Tolerance, newEma60Tolerance);
         MainPresenter.to.ema60Tolerance.value = newEma60Tolerance;
+        double newEma120Tolerance = _currentEma120Tolerance;
+        PrefsService.to.prefs.setDouble(
+            SharedPreferencesConstant.ema120Tolerance, newEma120Tolerance);
+        MainPresenter.to.ema120Tolerance.value = newEma120Tolerance;
         double newFirstEma1520Vwma20Tolerance =
             _currentEma1520Vwma20FirstTolerance;
         PrefsService.to.prefs.setDouble(
@@ -164,6 +176,11 @@ class _SearchViewState extends State<SearchView> {
             SharedPreferencesConstant.firstEma60Tolerance,
             newFirstEma60Tolerance);
         MainPresenter.to.firstEma60Tolerance.value = newFirstEma60Tolerance;
+                double newFirstEma120Tolerance = _currentEma120FirstTolerance;
+        PrefsService.to.prefs.setDouble(
+            SharedPreferencesConstant.firstEma120Tolerance,
+            newFirstEma120Tolerance);
+        MainPresenter.to.firstEma120Tolerance.value = newFirstEma120Tolerance;
         MainPresenter.to.searchCountNotifier.value++;
         MainPresenter.to.back();
       } else {
@@ -218,6 +235,10 @@ class _SearchViewState extends State<SearchView> {
           PrefsService.to.prefs.setDouble(
               SharedPreferencesConstant.ema60Tolerance, newEma60Tolerance);
           MainPresenter.to.ema60Tolerance.value = newEma60Tolerance;
+        double newEma120Tolerance = _currentEma120Tolerance;
+        PrefsService.to.prefs.setDouble(
+            SharedPreferencesConstant.ema120Tolerance, newEma120Tolerance);
+        MainPresenter.to.ema120Tolerance.value = newEma120Tolerance;
           double newFirstEma1520Vwma20Tolerance =
               _currentEma1520Vwma20FirstTolerance;
           PrefsService.to.prefs.setDouble(
@@ -234,6 +255,11 @@ class _SearchViewState extends State<SearchView> {
           PrefsService.to.prefs.setDouble(
               SharedPreferencesConstant.firstEma60Tolerance,
               newFirstEma60Tolerance);
+                double newFirstEma120Tolerance = _currentEma120FirstTolerance;
+        PrefsService.to.prefs.setDouble(
+            SharedPreferencesConstant.firstEma120Tolerance,
+            newFirstEma120Tolerance);
+        MainPresenter.to.firstEma120Tolerance.value = newFirstEma120Tolerance;
           MainPresenter.to.firstEma60Tolerance.value = newFirstEma60Tolerance;
           MainPresenter.to.searchCountNotifier.value++;
           MainPresenter.to.back();
@@ -905,6 +931,128 @@ class _SearchViewState extends State<SearchView> {
                 ),
               ),
               Padding(
+                padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 6.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'EMA120 ${'first_ma_tolerance'.tr}',
+                      style: const TextTheme().sp5.primaryTextColor,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 6.w),
+                      child: SliderTheme(
+                        data: SliderTheme.of(context).copyWith(
+                          overlayShape: SliderComponentShape.noOverlay,
+                        ),
+                        child: Slider(
+                          value: _currentEma120FirstTolerance,
+                          max: 100,
+                          min: 5,
+                          divisions: 19,
+                          label: '${_currentEma120FirstTolerance.round()}%',
+                          onChanged: (double value) {
+                            setState(() {
+                              _currentEma120FirstTolerance = value;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '5%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '25%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '50%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '75%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '100%',
+                          style: const TextTheme().sp4,
+                        ),
+                      ],
+                    ),
+                    Text(
+                      'recommended_tolerance'.tr,
+                      style: const TextTheme().sp4.greyColor,
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 6.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'ema120_tolerance'.tr,
+                      style: const TextTheme().sp5.primaryTextColor,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 6.w),
+                      child: SliderTheme(
+                        data: SliderTheme.of(context).copyWith(
+                          overlayShape: SliderComponentShape.noOverlay,
+                        ),
+                        child: Slider(
+                          value: _currentEma120Tolerance,
+                          max: 100,
+                          min: 5,
+                          divisions: 19,
+                          label: '${_currentEma120Tolerance.round()}%',
+                          onChanged: (double value) {
+                            setState(() {
+                              _currentEma120Tolerance = value;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '5%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '25%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '50%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '75%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '100%',
+                          style: const TextTheme().sp4,
+                        ),
+                      ],
+                    ),
+                    Text(
+                      'recommended_tolerance'.tr,
+                      style: const TextTheme().sp4.greyColor,
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
                 padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 4.w),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1111,6 +1259,31 @@ class _SearchViewState extends State<SearchView> {
                           MainPresenter.to.ema60MatchCriteria.value = value;
                           PrefsService.to.prefs.setBool(
                               SharedPreferencesConstant.ema60MatchCriteria,
+                              value);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 4.w),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'ema120_mathcing_criteria'.tr,
+                        style: const TextTheme().sp5.w700,
+                      ),
+                    ),
+                    Obx(
+                      () => Switch(
+                        value: MainPresenter.to.ema120MatchCriteria.value,
+                        activeColor: Colors.red,
+                        onChanged: (bool value) {
+                          MainPresenter.to.ema120MatchCriteria.value = value;
+                          PrefsService.to.prefs.setBool(
+                              SharedPreferencesConstant.ema120MatchCriteria,
                               value);
                         },
                       ),
