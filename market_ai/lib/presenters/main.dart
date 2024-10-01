@@ -1855,7 +1855,8 @@ class MainPresenter extends GetxController {
       List<List<dynamic>> listList = [];
       List<CandleData> candle = [];
 
-      int initIndex = 20; // Assume that the backtest must be minute data
+      int initIndex =
+          120; // Assume that the backtest must be minute data with EMA120
       int len = length.value;
       double commissionsAndFees = (0.25 * 2) + (0.021 * 2);
       int yFinMinuteDelay = 1;
@@ -3191,6 +3192,9 @@ class MainPresenter extends GetxController {
           splitCandleLists = [];
         }
       }
+      candle.clear();
+      splitCandleLists.clear();
+      splitCandleListsLastRows.clear();
 
       // printInfo(info: 'Backtesting ended');
       // printInfo(info: 'Export backtesting results CSV...');
@@ -3228,7 +3232,8 @@ class MainPresenter extends GetxController {
       List<List<dynamic>> listList = [];
       List<CandleData> candle = [];
 
-      int initIndex = 20; // Assume that the backtest must be minute data
+      int initIndex =
+          120; // Assume that the backtest must be minute data with EMA120
       int len = length.value;
       double commissionsAndFees = (0.25 * 2) + (0.021 * 2);
       int yFinMinuteDelay = 1;
@@ -4564,6 +4569,9 @@ class MainPresenter extends GetxController {
           splitCandleLists = [];
         }
       }
+      candle.clear();
+      splitCandleLists.clear();
+      splitCandleListsLastRows.clear();
 
       // printInfo(info: 'Backtesting ended');
       // printInfo(info: 'Export backtesting results CSV...');
@@ -4601,7 +4609,8 @@ class MainPresenter extends GetxController {
       List<List<dynamic>> listList = [];
       List<CandleData> candle = [];
 
-      int initIndex = 20; // Assume that the backtest must be minute data
+      int initIndex =
+          120; // Assume that the backtest must be minute data with EMA120
       int len = length.value;
       double commissionsAndFees = (0.25 * 2) + (0.021 * 2);
       int yFinMinuteDelay = 1;
@@ -5937,6 +5946,9 @@ class MainPresenter extends GetxController {
           splitCandleLists = [];
         }
       }
+      candle.clear();
+      splitCandleLists.clear();
+      splitCandleListsLastRows.clear();
 
       // printInfo(info: 'Backtesting ended');
       // printInfo(info: 'Export backtesting results CSV...');
@@ -5974,7 +5986,8 @@ class MainPresenter extends GetxController {
       List<List<dynamic>> listList = [];
       List<CandleData> candle = [];
 
-      int initIndex = 20; // Assume that the backtest must be minute data
+      int initIndex =
+          120; // Assume that the backtest must be minute data with EMA120
       int len = length.value;
       double commissionsAndFees = (0.25 * 2) + (0.021 * 2);
       int yFinMinuteDelay = 1;
@@ -7310,6 +7323,9 @@ class MainPresenter extends GetxController {
           splitCandleLists = [];
         }
       }
+      candle.clear();
+      splitCandleLists.clear();
+      splitCandleListsLastRows.clear();
 
       // printInfo(info: 'Backtesting ended');
       // printInfo(info: 'Export backtesting results CSV...');
@@ -7347,7 +7363,8 @@ class MainPresenter extends GetxController {
       List<List<dynamic>> listList = [];
       List<CandleData> candle = [];
 
-      int initIndex = 20; // Assume that the backtest must be minute data
+      int initIndex =
+          120; // Assume that the backtest must be minute data with EMA120
       int len = length.value;
       double commissionsAndFees = (0.25 * 2) + (0.021 * 2);
       int yFinMinuteDelay = 1;
@@ -8683,6 +8700,9 @@ class MainPresenter extends GetxController {
           splitCandleLists = [];
         }
       }
+      candle.clear();
+      splitCandleLists.clear();
+      splitCandleListsLastRows.clear();
 
       // printInfo(info: 'Backtesting ended');
       // printInfo(info: 'Export backtesting results CSV...');
