@@ -1209,11 +1209,10 @@ class TrendMatch {
       int lapsed = (candleLen - lockTrendLastRow >= subLen)
           ? subLen
           : (candleLen - lockTrendLastRow);
-      int thisTrackingSubLen = subLen - lapsed;
-      MainPresenter.to.trackingSubLen.value = thisTrackingSubLen;
+      MainPresenter.to.trackingSubLen.value = subLen - lapsed;
       // Call TrendMatch().init() and get the indices (matched rows) and
       // storing them in new global lists
-      await TrendMatch().init(isTracking: isLockTrend);
+      await TrendMatch().init(isTracking: isTracking);
       double trackingSubLen = MainPresenter.to.trackingSubLen.value.toDouble();
       MainPresenter.to.lockTrendTrackingSubTrendList.value = [];
       if (MainPresenter.to.alwaysUseCrossData.value) {
@@ -1221,27 +1220,27 @@ class TrendMatch {
             MainPresenter.to.universalHasMinuteData.keys.toList());
         String fiSymbol = MainPresenter.to.financialInstrumentSymbol.value;
         for (String symbol in minuteDataList) {
-          List<int> matchRows;
+          List<int> trackingMatchRows;
           List<CandleData> listCandledata;
           if (symbol != fiSymbol) {
             listCandledata = MainPresenter.to.universalListCandledata[symbol]!;
-            matchRows = MainPresenter.to.universalMatchRows[symbol]!;
+            trackingMatchRows =
+                MainPresenter.to.universalTrackingMatchRows[symbol]!;
           } else {
             listCandledata = MainPresenter.to.listCandledata;
-            matchRows = MainPresenter.to.matchRows;
+            trackingMatchRows = MainPresenter.to.trackingMatchRows;
           }
-          if (matchRows.isEmpty || listCandledata.isEmpty) {
+          if (trackingMatchRows.isEmpty || listCandledata.isEmpty) {
             continue;
           }
           if (lineBarsData.length >= 500) {
             break;
           }
-          List<LineChartBarData> newLineBarsData = MainPresenter
-              .to.trackingMatchRows
+          List<LineChartBarData> newLineBarsData = trackingMatchRows
               .mapIndexed((index, row) => LineChartBarData(
                   spots: getAdjustedLineData(
                     index,
-                    matchRows: matchRows,
+                    matchRows: trackingMatchRows,
                     listCandledata: listCandledata,
                     subLen: trackingSubLen,
                     isTracking: isTracking,
