@@ -3201,7 +3201,7 @@ class MainPresenter extends GetxController {
       int randomID = 100000 + random.nextInt(900000);
       // Export CSV to device's local file directory
       String fileName =
-          '${randomID}_${symbol}_cTol${candleTolerance.value}_pTol${priceTolerance.value}_fMaTol${firstMaTolerance.value}_maTol${maTolerance.value}_len${len}_subLen${subsequentLen}_probThres${thisProbThreshold}_maTrue_strict${strictMatchCriteria.value}_outF30m_minMatchC${minMatchCount}_minSidedMatchC${minOneSidedMatchCount}_minR${minMedianReturnRate}_reachedMed${closePosWhenReachedMedian.value}_hitCeOrBoOneThirdSubLen_goOpHalfSubLen';
+          '${randomID}_${symbol}_cT${candleTolerance.value.toInt()}_pT${priceTolerance.value.toInt()}_maTf${firstMaTolerance.value.toInt()}s${maTolerance.value.toInt()}_m1520Tf${firstEma1520Vwma20Tolerance.value.toInt()}s${ema1520Vwma20Tolerance.value.toInt()}_e40Tf${firstEma40Tolerance.value.toInt()}s${ema40Tolerance.value.toInt()}_e60Tf${firstEma60Tolerance.value.toInt()}${ema60Tolerance.value.toInt()}_e120Tf${firstEma120Tolerance.value.toInt()}s${ema120Tolerance.value.toInt()}_v20${vwma20MatchCriteria.value ? 'T' : 'F'}_e40${ema40MatchCriteria.value ? 'T' : 'F'}_e60${ema60MatchCriteria.value ? 'T' : 'F'}_e120${ema120MatchCriteria.value ? 'T' : 'F'}_l${len}_subL${subsequentLen.toInt()}_pThres${thisProbThreshold}_maT_strict${strictMatchCriteria.value ? 'T' : 'F'}_outF30m_minMatchC${minMatchCount}_minSidedMatchC${minOneSidedMatchCount}_minR${minMedianReturnRate}_reachMed${closePosWhenReachedMedian.value ? 'T' : 'F'}_hitCeOrBoOneThirdSubL_goOpHalfSubL';
       exportCsv(listList, fileName);
 
       // printInfo(info: 'Exported backtesting results CSV');
@@ -4578,7 +4578,7 @@ class MainPresenter extends GetxController {
       int randomID = 100000 + random.nextInt(900000);
       // Export CSV to device's local file directory
       String fileName =
-          '${randomID}_${symbol}_cTol${candleTolerance.value}_pTol${priceTolerance.value}_fMaTol${firstMaTolerance.value}_maTol${maTolerance.value}_len${len}_subLen${subsequentLen}_probThres${thisProbThreshold}_maTrue_strict${strictMatchCriteria.value}_outF30m_minMatchC${minMatchCount}_minSidedMatchC${minOneSidedMatchCount}_minR${minMedianReturnRate}_reachedMed${closePosWhenReachedMedian.value}_hitCeOrBoOneThirdSubLen_goOpHalfSubLen';
+          '${randomID}_${symbol}_cT${candleTolerance.value.toInt()}_pT${priceTolerance.value.toInt()}_maTf${firstMaTolerance.value.toInt()}s${maTolerance.value.toInt()}_m1520Tf${firstEma1520Vwma20Tolerance.value.toInt()}s${ema1520Vwma20Tolerance.value.toInt()}_e40Tf${firstEma40Tolerance.value.toInt()}s${ema40Tolerance.value.toInt()}_e60Tf${firstEma60Tolerance.value.toInt()}${ema60Tolerance.value.toInt()}_e120Tf${firstEma120Tolerance.value.toInt()}s${ema120Tolerance.value.toInt()}_v20${vwma20MatchCriteria.value ? 'T' : 'F'}_e40${ema40MatchCriteria.value ? 'T' : 'F'}_e60${ema60MatchCriteria.value ? 'T' : 'F'}_e120${ema120MatchCriteria.value ? 'T' : 'F'}_l${len}_subL${subsequentLen.toInt()}_pThres${thisProbThreshold}_maT_strict${strictMatchCriteria.value ? 'T' : 'F'}_outF30m_minMatchC${minMatchCount}_minSidedMatchC${minOneSidedMatchCount}_minR${minMedianReturnRate}_reachMed${closePosWhenReachedMedian.value ? 'T' : 'F'}_hitCeOrBoOneThirdSubL_goOpHalfSubL';
       exportCsv(listList, fileName);
 
       // printInfo(info: 'Exported backtesting results CSV');
@@ -5955,7 +5955,7 @@ class MainPresenter extends GetxController {
       int randomID = 100000 + random.nextInt(900000);
       // Export CSV to device's local file directory
       String fileName =
-          '${randomID}_${symbol}_cTol${candleTolerance.value}_pTol${priceTolerance.value}_fMaTol${firstMaTolerance.value}_maTol${maTolerance.value}_len${len}_subLen${subsequentLen}_probThres${thisProbThreshold}_maTrue_strict${strictMatchCriteria.value}_outF30m_minMatchC${minMatchCount}_minSidedMatchC${minOneSidedMatchCount}_minR${minMedianReturnRate}_reachedMed${closePosWhenReachedMedian.value}_hitCeOrBoOneThirdSubLen_goOpHalfSubLen';
+          '${randomID}_${symbol}_cT${candleTolerance.value.toInt()}_pT${priceTolerance.value.toInt()}_maTf${firstMaTolerance.value.toInt()}s${maTolerance.value.toInt()}_m1520Tf${firstEma1520Vwma20Tolerance.value.toInt()}s${ema1520Vwma20Tolerance.value.toInt()}_e40Tf${firstEma40Tolerance.value.toInt()}s${ema40Tolerance.value.toInt()}_e60Tf${firstEma60Tolerance.value.toInt()}${ema60Tolerance.value.toInt()}_e120Tf${firstEma120Tolerance.value.toInt()}s${ema120Tolerance.value.toInt()}_v20${vwma20MatchCriteria.value ? 'T' : 'F'}_e40${ema40MatchCriteria.value ? 'T' : 'F'}_e60${ema60MatchCriteria.value ? 'T' : 'F'}_e120${ema120MatchCriteria.value ? 'T' : 'F'}_l${len}_subL${subsequentLen.toInt()}_pThres${thisProbThreshold}_maT_strict${strictMatchCriteria.value ? 'T' : 'F'}_outF30m_minMatchC${minMatchCount}_minSidedMatchC${minOneSidedMatchCount}_minR${minMedianReturnRate}_reachMed${closePosWhenReachedMedian.value ? 'T' : 'F'}_hitCeOrBoOneThirdSubL_goOpHalfSubL';
       exportCsv(listList, fileName);
 
       // printInfo(info: 'Exported backtesting results CSV');
@@ -7332,7 +7332,7 @@ class MainPresenter extends GetxController {
       int randomID = 100000 + random.nextInt(900000);
       // Export CSV to device's local file directory
       String fileName =
-          '${randomID}_${symbol}_cTol${candleTolerance.value}_pTol${priceTolerance.value}_fMaTol${firstMaTolerance.value}_maTol${maTolerance.value}_len${len}_subLen${subsequentLen}_probThres${thisProbThreshold}_maTrue_strict${strictMatchCriteria.value}_outF30m_minMatchC${minMatchCount}_minSidedMatchC${minOneSidedMatchCount}_minR${minMedianReturnRate}_reachedMed${closePosWhenReachedMedian.value}_hitCeOrBoOneThirdSubLen_goOpHalfSubLen';
+          '${randomID}_${symbol}_cT${candleTolerance.value.toInt()}_pT${priceTolerance.value.toInt()}_maTf${firstMaTolerance.value.toInt()}s${maTolerance.value.toInt()}_m1520Tf${firstEma1520Vwma20Tolerance.value.toInt()}s${ema1520Vwma20Tolerance.value.toInt()}_e40Tf${firstEma40Tolerance.value.toInt()}s${ema40Tolerance.value.toInt()}_e60Tf${firstEma60Tolerance.value.toInt()}${ema60Tolerance.value.toInt()}_e120Tf${firstEma120Tolerance.value.toInt()}s${ema120Tolerance.value.toInt()}_v20${vwma20MatchCriteria.value ? 'T' : 'F'}_e40${ema40MatchCriteria.value ? 'T' : 'F'}_e60${ema60MatchCriteria.value ? 'T' : 'F'}_e120${ema120MatchCriteria.value ? 'T' : 'F'}_l${len}_subL${subsequentLen.toInt()}_pThres${thisProbThreshold}_maT_strict${strictMatchCriteria.value ? 'T' : 'F'}_outF30m_minMatchC${minMatchCount}_minSidedMatchC${minOneSidedMatchCount}_minR${minMedianReturnRate}_reachMed${closePosWhenReachedMedian.value ? 'T' : 'F'}_hitCeOrBoOneThirdSubL_goOpHalfSubL';
       exportCsv(listList, fileName);
 
       // printInfo(info: 'Exported backtesting results CSV');
@@ -8709,7 +8709,7 @@ class MainPresenter extends GetxController {
       int randomID = 100000 + random.nextInt(900000);
       // Export CSV to device's local file directory
       String fileName =
-          '${randomID}_${symbol}_cT${candleTolerance.value}_pT${priceTolerance.value}_fMaT${firstMaTolerance.value}_maT${maTolerance.value}_l${len}_subL${subsequentLen}_m1520T${ema1520Vwma20Tolerance.value}_e40T${ema40Tolerance.value}_e60T${ema60Tolerance.value}_e120T${ema120Tolerance.value}_v20${vwma20MatchCriteria.value}_e40${ema40MatchCriteria.value}_e60${ema60MatchCriteria.value}_e120${ema120MatchCriteria.value}_pThres${thisProbThreshold}_maTrue_strict${strictMatchCriteria.value}_outF30m_minMatchC${minMatchCount}_minSidedMatchC${minOneSidedMatchCount}_minR${minMedianReturnRate}_reachMed${closePosWhenReachedMedian.value}_hitCeOrBoOneThirdSubL_goOpHalfSubL';
+          '${randomID}_${symbol}_cT${candleTolerance.value.toInt()}_pT${priceTolerance.value.toInt()}_maTf${firstMaTolerance.value.toInt()}s${maTolerance.value.toInt()}_m1520Tf${firstEma1520Vwma20Tolerance.value.toInt()}s${ema1520Vwma20Tolerance.value.toInt()}_e40Tf${firstEma40Tolerance.value.toInt()}s${ema40Tolerance.value.toInt()}_e60Tf${firstEma60Tolerance.value.toInt()}${ema60Tolerance.value.toInt()}_e120Tf${firstEma120Tolerance.value.toInt()}s${ema120Tolerance.value.toInt()}_v20${vwma20MatchCriteria.value ? 'T' : 'F'}_e40${ema40MatchCriteria.value ? 'T' : 'F'}_e60${ema60MatchCriteria.value ? 'T' : 'F'}_e120${ema120MatchCriteria.value ? 'T' : 'F'}_l${len}_subL${subsequentLen.toInt()}_pThres${thisProbThreshold}_maT_strict${strictMatchCriteria.value ? 'T' : 'F'}_outF30m_minMatchC${minMatchCount}_minSidedMatchC${minOneSidedMatchCount}_minR${minMedianReturnRate}_reachMed${closePosWhenReachedMedian.value ? 'T' : 'F'}_hitCeOrBoOneThirdSubL_goOpHalfSubL';
       exportCsv(listList, fileName);
 
       // printInfo(info: 'Exported backtesting results CSV');
