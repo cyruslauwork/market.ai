@@ -71,7 +71,7 @@ class MainView extends StatefulWidget {
                       style: const TextTheme().sp4)
                 ]),
                 Column(children: [
-                  Text(MainPresenter.to.trendMatchOutput[4].toString(),
+                  Text(MainPresenter.to.length.value.toString(),
                       style: const TextTheme().sp4)
                 ]),
                 Column(children: [
@@ -107,9 +107,7 @@ class MainView extends StatefulWidget {
                 Column(children: [
                   Text(
                       (MainPresenter.to.trendMatchOutput[3] -
-                              MainPresenter.to.maxMa.value -
-                              MainPresenter.to.trendMatchOutput[4] -
-                              MainPresenter.to.subLength.value)
+                              MainPresenter.to.trendMatchOutput[4])
                           .toString(),
                       style: const TextTheme().sp4)
                 ]),

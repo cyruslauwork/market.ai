@@ -469,24 +469,24 @@ class MainPresenter extends GetxController {
   }.obs; // Cross-data
   List<Map<String, dynamic>> docList = [];
   List<List<dynamic>> rowsAsListOfValues = [];
-  final Map<String, Type> isarDataTypeList = {
-    'SPY': SpyData,
-    'QQQ': QqqData,
-    'USO': UsoData,
-    'GLD': GldData,
-    'SLV': SlvData,
-    'IWM': IwmData,
-    'XLK': XlkData,
-    'AAPL': AaplData,
-    'BA': BaData,
-    'BAC': BacData,
-    'MCD': McdData,
-    'NVDA': NvdaData,
-    'MSFT': MsftData,
-    'GSK': GskData,
-    'TSLA': TslaData,
-    'AMZN': AmznData,
-  }; // Create a mapping of symbols to their corresponding data types
+  // final Map<String, Type> isarDataTypeList = {
+  //   'SPY': SpyData,
+  //   'QQQ': QqqData,
+  //   'USO': UsoData,
+  //   'GLD': GldData,
+  //   'SLV': SlvData,
+  //   'IWM': IwmData,
+  //   'XLK': XlkData,
+  //   'AAPL': AaplData,
+  //   'BA': BaData,
+  //   'BAC': BacData,
+  //   'MCD': McdData,
+  //   'NVDA': NvdaData,
+  //   'MSFT': MsftData,
+  //   'GSK': GskData,
+  //   'TSLA': TslaData,
+  //   'AMZN': AmznData,
+  // }; // Create a mapping of symbols to their corresponding data types
   late final Map<String, Future<List<dynamic>> Function()>
       dataFetchMap; // Create a mapping for symbols to their corresponding data fetch functions
   double matchedCandleChartHeight = 125.h;

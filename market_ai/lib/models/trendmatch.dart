@@ -56,14 +56,36 @@ class TrendMatch {
     // List<List<double>> matchActualDifferencesListList = [];
     // List<List<double>> matchActualPricesListList = [];
 
-    // Counts & lengths
+    int maxMa() {
+      if (MainPresenter.to.hasMinuteData.value &&
+          MainPresenter.to.alwaysShowMinuteData.value) {
+        int maVal;
+        if (MainPresenter.to.ema120MatchCriteria.value) {
+          maVal = 120;
+        } else if (MainPresenter.to.ema60MatchCriteria.value) {
+          maVal = 60;
+        } else if (MainPresenter.to.ema40MatchCriteria.value) {
+          maVal = 40;
+        } else {
+          maVal = 20;
+        }
+        MainPresenter.to.maxMa.value = maVal;
+        return maVal;
+      } else {
+        MainPresenter.to.maxMa.value = 240;
+        return 240;
+      }
+    }
 
+    // Counts & lengths
     int trueCount = 0;
     int falseCount = 0;
     int len = MainPresenter.to.length.value;
     int subLen = isTracking
         ? MainPresenter.to.trackingSubLen.value
         : MainPresenter.to.subLength.value;
+    int initMa = maxMa();
+    int totalLengthDeduction = subLen + len + initMa;
 
     if (len <= 1) {
       throw ArgumentError('Selected period must greater than 1 time unit.');
@@ -201,33 +223,14 @@ class TrendMatch {
       //     selectedPeriodActualPricesList;
     }
 
-    int maxMa() {
-      if (MainPresenter.to.hasMinuteData.value &&
-          MainPresenter.to.alwaysShowMinuteData.value) {
-        int maVal; 
-        if (MainPresenter.to.ema120MatchCriteria.value) {
-          maVal = 120;
-        } else if (MainPresenter.to.ema60MatchCriteria.value) {
-          maVal = 60;
-        } else if (MainPresenter.to.ema40MatchCriteria.value) {
-          maVal = 40;
-        } else {
-          maVal = 20;
-        }
-        MainPresenter.to.maxMa.value = maVal;
-        return maVal;
-      } else {
-        MainPresenter.to.maxMa.value = 240;
-        return 240;
-      }
-    }
-
     List<String> minuteDataList;
     bool alwaysUseCrossData = MainPresenter.to.alwaysUseCrossData.value;
     String fiSymbol = MainPresenter.to.financialInstrumentSymbol.value;
     // int dummyCandleLen = MainPresenter.to.dummyCandle.length;
     if (alwaysUseCrossData) {
       minuteDataList = MainPresenter.to.universalHasMinuteData.keys.toList();
+      minuteDataList.sort((a, b) =>
+          a == fiSymbol ? -1 : 1); // Sort the list to have fiSymbol first
     } else {
       minuteDataList = [fiSymbol];
     }
@@ -249,15 +252,12 @@ class TrendMatch {
 
       if (!skip) {
         // Get the type for the current symbol
-        final dataType = MainPresenter.to.isarDataTypeList[thisTurnSymbol];
-        if (dataType != null) {
-          MainPresenter.to.docList = List.from(
-              dataList.cast<dynamic>().map((data) => data.toJson()).toList());
-          dataList.clear();
-        } else {
-          throw Exception(
-              'There is no Isac data structure for $thisTurnSymbol');
-        }
+        // Type dataType = MainPresenter.to.isarDataTypeList[thisTurnSymbol]!;
+        // MainPresenter.to.docList = List.from(dataList.cast<dynamic>().map((data) => data.toJson()).toList());
+        MainPresenter.to.docList =
+            List.from(dataList.map((data) => data.toJson()).toList());
+        // MainPresenter.to.docList = List.from(dataList).map<Map<String, dynamic>>((data) => data.toJson()).toList();
+        dataList.clear();
         listCandledata =
             await CandleAdapter().crossDataListListTolistCandledata((
           CandleAdapter()
@@ -265,9 +265,9 @@ class TrendMatch {
           SrcFileType.json,
           thisTurnSymbol
         ));
-        MainPresenter.to.docList.clear();
         dataLength = listCandledata.length;
         totalDataLength += dataLength;
+        totalLengthDeduction += subLen + len + initMa;
 
         bool thisHasMa = listCandledata.last.trends.isNotEmpty;
         if (!thisHasMa) {
@@ -294,7 +294,7 @@ class TrendMatch {
         }
       }
 
-      for (int l = (isMaMatch ? maxMa() : 0);
+      for (int l = (isMaMatch ? initMa : 0);
           l < dataLength - len - subLen;
           l++) {
         // For candle matching
@@ -472,7 +472,7 @@ class TrendMatch {
       falseCount,
       executionTime,
       totalDataLength,
-      len,
+      totalLengthDeduction,
     ];
     if (!isTracking) {
       MainPresenter.to.sidePlot.value = const SizedBox.shrink();
