@@ -2455,13 +2455,14 @@ class MainPresenter extends GetxController {
             // - Commission fee
             // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
             initialFund = initialFund +
-                (((randomTrend.last - actualLastClosePrice) *
+                (((randomTrend.last - actualLastClosePrice).abs() *
                         diffFromEtfAndFuture) ~/
                     0.25 *
                     contractVal) -
                 commissionsAndFees;
             undelayedInitialFund = undelayedInitialFund +
-                (((randomTrend.last - lastClosePrice) * diffFromEtfAndFuture) ~/
+                (((randomTrend.last - lastClosePrice).abs() *
+                        diffFromEtfAndFuture) ~/
                     0.25 *
                     contractVal) -
                 commissionsAndFees;
@@ -2488,19 +2489,21 @@ class MainPresenter extends GetxController {
                           yFinMinuteDelay]
                       .close! *
                   actualLastDifferenceList[randomIndex];
-              interruptActualReturn = newVal - actualLastClosePrice;
+              interruptActualReturn = (newVal - actualLastClosePrice).abs();
               interruptActualReturnRate =
-                  (newVal - actualLastClosePrice) / actualLastClosePrice;
+                  ((newVal - actualLastClosePrice) / actualLastClosePrice)
+                      .abs();
             } else {
               double newVal = randomTrend[firstHitID + yFinMinuteDelay];
-              interruptActualReturn = newVal - actualLastClosePrice;
+              interruptActualReturn = (newVal - actualLastClosePrice).abs();
               interruptActualReturnRate =
-                  (newVal - actualLastClosePrice) / actualLastClosePrice;
+                  ((newVal - actualLastClosePrice) / actualLastClosePrice)
+                      .abs();
             }
             double newVal = randomTrend[firstHitID];
-            interruptUndelayedReturn = newVal - lastClosePrice;
+            interruptUndelayedReturn = (newVal - lastClosePrice).abs();
             interruptUndelayedReturnRate =
-                (newVal - lastClosePrice) / lastClosePrice;
+                ((newVal - lastClosePrice) / lastClosePrice).abs();
 
             // Get the failed trend last close price return and change the fund value
             // - Index points (0.25) contract value (5 USD)
@@ -2520,7 +2523,8 @@ class MainPresenter extends GetxController {
 
           prob =
               double.parse((isLong ? upperProb : lowerProb).toStringAsFixed(4));
-          medianReturnRate = double.parse(medianReturnRate.toStringAsFixed(4));
+          medianReturnRate =
+              double.parse(medianReturnRate.toStringAsFixed(4)).abs();
           hitRate = hitCount / (hitCount + missCount);
           roundedHitRate = double.parse(hitRate.toStringAsFixed(4));
           double roundedMdd = double.parse(mdd.toStringAsFixed(4));
@@ -3071,13 +3075,13 @@ class MainPresenter extends GetxController {
               // - Commission fee
               // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
               initialFund = initialFund +
-                  (((randomTrend.last - actualLastClosePrice) *
+                  (((randomTrend.last - actualLastClosePrice).abs() *
                           diffFromEtfAndFuture) ~/
                       0.25 *
                       contractVal) -
                   commissionsAndFees;
               undelayedInitialFund = undelayedInitialFund +
-                  (((randomTrend.last - lastClosePrice) *
+                  (((randomTrend.last - lastClosePrice).abs() *
                           diffFromEtfAndFuture) ~/
                       0.25 *
                       contractVal) -
@@ -3105,19 +3109,21 @@ class MainPresenter extends GetxController {
                             yFinMinuteDelay]
                         .close! *
                     actualLastDifferenceList[randomIndex];
-                interruptActualReturn = newVal - actualLastClosePrice;
+                interruptActualReturn = (newVal - actualLastClosePrice).abs();
                 interruptActualReturnRate =
-                    (newVal - actualLastClosePrice) / actualLastClosePrice;
+                    ((newVal - actualLastClosePrice) / actualLastClosePrice)
+                        .abs();
               } else {
                 double newVal = randomTrend[firstHitID + yFinMinuteDelay];
-                interruptActualReturn = newVal - actualLastClosePrice;
+                interruptActualReturn = (newVal - actualLastClosePrice).abs();
                 interruptActualReturnRate =
-                    (newVal - actualLastClosePrice) / actualLastClosePrice;
+                    ((newVal - actualLastClosePrice) / actualLastClosePrice)
+                        .abs();
               }
               double newVal = randomTrend[firstHitID];
-              interruptUndelayedReturn = newVal - lastClosePrice;
+              interruptUndelayedReturn = (newVal - lastClosePrice).abs();
               interruptUndelayedReturnRate =
-                  (newVal - lastClosePrice) / lastClosePrice;
+                  ((newVal - lastClosePrice) / lastClosePrice).abs();
 
               // Get the failed trend last close price return and change the fund value
               // - Index points (0.25) contract value (5 USD)
@@ -3138,7 +3144,7 @@ class MainPresenter extends GetxController {
             prob = double.parse(
                 (isLong ? upperProb : lowerProb).toStringAsFixed(4));
             medianReturnRate =
-                double.parse(medianReturnRate.toStringAsFixed(4));
+                double.parse(medianReturnRate.toStringAsFixed(4)).abs();
             hitRate = hitCount / (hitCount + missCount);
             roundedHitRate = double.parse(hitRate.toStringAsFixed(4));
             double roundedMdd = double.parse(mdd.toStringAsFixed(4));
@@ -3832,13 +3838,14 @@ class MainPresenter extends GetxController {
             // - Commission fee
             // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
             initialFund = initialFund +
-                (((randomTrend.last - actualLastClosePrice) *
+                (((randomTrend.last - actualLastClosePrice).abs() *
                         diffFromEtfAndFuture) ~/
                     0.25 *
                     contractVal) -
                 commissionsAndFees;
             undelayedInitialFund = undelayedInitialFund +
-                (((randomTrend.last - lastClosePrice) * diffFromEtfAndFuture) ~/
+                (((randomTrend.last - lastClosePrice).abs() *
+                        diffFromEtfAndFuture) ~/
                     0.25 *
                     contractVal) -
                 commissionsAndFees;
@@ -3865,19 +3872,21 @@ class MainPresenter extends GetxController {
                           yFinMinuteDelay]
                       .close! *
                   actualLastDifferenceList[randomIndex];
-              interruptActualReturn = newVal - actualLastClosePrice;
+              interruptActualReturn = (newVal - actualLastClosePrice).abs();
               interruptActualReturnRate =
-                  (newVal - actualLastClosePrice) / actualLastClosePrice;
+                  ((newVal - actualLastClosePrice) / actualLastClosePrice)
+                      .abs();
             } else {
               double newVal = randomTrend[firstHitID + yFinMinuteDelay];
-              interruptActualReturn = newVal - actualLastClosePrice;
+              interruptActualReturn = (newVal - actualLastClosePrice).abs();
               interruptActualReturnRate =
-                  (newVal - actualLastClosePrice) / actualLastClosePrice;
+                  ((newVal - actualLastClosePrice) / actualLastClosePrice)
+                      .abs();
             }
             double newVal = randomTrend[firstHitID];
-            interruptUndelayedReturn = newVal - lastClosePrice;
+            interruptUndelayedReturn = (newVal - lastClosePrice).abs();
             interruptUndelayedReturnRate =
-                (newVal - lastClosePrice) / lastClosePrice;
+                ((newVal - lastClosePrice) / lastClosePrice).abs();
 
             // Get the failed trend last close price return and change the fund value
             // - Index points (0.25) contract value (5 USD)
@@ -3897,7 +3906,8 @@ class MainPresenter extends GetxController {
 
           prob =
               double.parse((isLong ? upperProb : lowerProb).toStringAsFixed(4));
-          medianReturnRate = double.parse(medianReturnRate.toStringAsFixed(4));
+          medianReturnRate =
+              double.parse(medianReturnRate.toStringAsFixed(4)).abs();
           hitRate = hitCount / (hitCount + missCount);
           roundedHitRate = double.parse(hitRate.toStringAsFixed(4));
           double roundedMdd = double.parse(mdd.toStringAsFixed(4));
@@ -4448,13 +4458,13 @@ class MainPresenter extends GetxController {
               // - Commission fee
               // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
               initialFund = initialFund +
-                  (((randomTrend.last - actualLastClosePrice) *
+                  (((randomTrend.last - actualLastClosePrice).abs() *
                           diffFromEtfAndFuture) ~/
                       0.25 *
                       contractVal) -
                   commissionsAndFees;
               undelayedInitialFund = undelayedInitialFund +
-                  (((randomTrend.last - lastClosePrice) *
+                  (((randomTrend.last - lastClosePrice).abs() *
                           diffFromEtfAndFuture) ~/
                       0.25 *
                       contractVal) -
@@ -4482,19 +4492,21 @@ class MainPresenter extends GetxController {
                             yFinMinuteDelay]
                         .close! *
                     actualLastDifferenceList[randomIndex];
-                interruptActualReturn = newVal - actualLastClosePrice;
+                interruptActualReturn = (newVal - actualLastClosePrice).abs();
                 interruptActualReturnRate =
-                    (newVal - actualLastClosePrice) / actualLastClosePrice;
+                    ((newVal - actualLastClosePrice) / actualLastClosePrice)
+                        .abs();
               } else {
                 double newVal = randomTrend[firstHitID + yFinMinuteDelay];
-                interruptActualReturn = newVal - actualLastClosePrice;
+                interruptActualReturn = (newVal - actualLastClosePrice).abs();
                 interruptActualReturnRate =
-                    (newVal - actualLastClosePrice) / actualLastClosePrice;
+                    ((newVal - actualLastClosePrice) / actualLastClosePrice)
+                        .abs();
               }
               double newVal = randomTrend[firstHitID];
-              interruptUndelayedReturn = newVal - lastClosePrice;
+              interruptUndelayedReturn = (newVal - lastClosePrice).abs();
               interruptUndelayedReturnRate =
-                  (newVal - lastClosePrice) / lastClosePrice;
+                  ((newVal - lastClosePrice) / lastClosePrice).abs();
 
               // Get the failed trend last close price return and change the fund value
               // - Index points (0.25) contract value (5 USD)
@@ -4515,7 +4527,7 @@ class MainPresenter extends GetxController {
             prob = double.parse(
                 (isLong ? upperProb : lowerProb).toStringAsFixed(4));
             medianReturnRate =
-                double.parse(medianReturnRate.toStringAsFixed(4));
+                double.parse(medianReturnRate.toStringAsFixed(4)).abs();
             hitRate = hitCount / (hitCount + missCount);
             roundedHitRate = double.parse(hitRate.toStringAsFixed(4));
             double roundedMdd = double.parse(mdd.toStringAsFixed(4));
@@ -5209,13 +5221,14 @@ class MainPresenter extends GetxController {
             // - Commission fee
             // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
             initialFund = initialFund +
-                (((randomTrend.last - actualLastClosePrice) *
+                (((randomTrend.last - actualLastClosePrice).abs() *
                         diffFromEtfAndFuture) ~/
                     0.25 *
                     contractVal) -
                 commissionsAndFees;
             undelayedInitialFund = undelayedInitialFund +
-                (((randomTrend.last - lastClosePrice) * diffFromEtfAndFuture) ~/
+                (((randomTrend.last - lastClosePrice).abs() *
+                        diffFromEtfAndFuture) ~/
                     0.25 *
                     contractVal) -
                 commissionsAndFees;
@@ -5242,19 +5255,21 @@ class MainPresenter extends GetxController {
                           yFinMinuteDelay]
                       .close! *
                   actualLastDifferenceList[randomIndex];
-              interruptActualReturn = newVal - actualLastClosePrice;
+              interruptActualReturn = (newVal - actualLastClosePrice).abs();
               interruptActualReturnRate =
-                  (newVal - actualLastClosePrice) / actualLastClosePrice;
+                  ((newVal - actualLastClosePrice) / actualLastClosePrice)
+                      .abs();
             } else {
               double newVal = randomTrend[firstHitID + yFinMinuteDelay];
-              interruptActualReturn = newVal - actualLastClosePrice;
+              interruptActualReturn = (newVal - actualLastClosePrice).abs();
               interruptActualReturnRate =
-                  (newVal - actualLastClosePrice) / actualLastClosePrice;
+                  ((newVal - actualLastClosePrice) / actualLastClosePrice)
+                      .abs();
             }
             double newVal = randomTrend[firstHitID];
-            interruptUndelayedReturn = newVal - lastClosePrice;
+            interruptUndelayedReturn = (newVal - lastClosePrice).abs();
             interruptUndelayedReturnRate =
-                (newVal - lastClosePrice) / lastClosePrice;
+                ((newVal - lastClosePrice) / lastClosePrice).abs();
 
             // Get the failed trend last close price return and change the fund value
             // - Index points (0.25) contract value (5 USD)
@@ -5274,7 +5289,8 @@ class MainPresenter extends GetxController {
 
           prob =
               double.parse((isLong ? upperProb : lowerProb).toStringAsFixed(4));
-          medianReturnRate = double.parse(medianReturnRate.toStringAsFixed(4));
+          medianReturnRate =
+              double.parse(medianReturnRate.toStringAsFixed(4)).abs();
           hitRate = hitCount / (hitCount + missCount);
           roundedHitRate = double.parse(hitRate.toStringAsFixed(4));
           double roundedMdd = double.parse(mdd.toStringAsFixed(4));
@@ -5825,13 +5841,13 @@ class MainPresenter extends GetxController {
               // - Commission fee
               // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
               initialFund = initialFund +
-                  (((randomTrend.last - actualLastClosePrice) *
+                  (((randomTrend.last - actualLastClosePrice).abs() *
                           diffFromEtfAndFuture) ~/
                       0.25 *
                       contractVal) -
                   commissionsAndFees;
               undelayedInitialFund = undelayedInitialFund +
-                  (((randomTrend.last - lastClosePrice) *
+                  (((randomTrend.last - lastClosePrice).abs() *
                           diffFromEtfAndFuture) ~/
                       0.25 *
                       contractVal) -
@@ -5859,19 +5875,21 @@ class MainPresenter extends GetxController {
                             yFinMinuteDelay]
                         .close! *
                     actualLastDifferenceList[randomIndex];
-                interruptActualReturn = newVal - actualLastClosePrice;
+                interruptActualReturn = (newVal - actualLastClosePrice).abs();
                 interruptActualReturnRate =
-                    (newVal - actualLastClosePrice) / actualLastClosePrice;
+                    ((newVal - actualLastClosePrice) / actualLastClosePrice)
+                        .abs();
               } else {
                 double newVal = randomTrend[firstHitID + yFinMinuteDelay];
-                interruptActualReturn = newVal - actualLastClosePrice;
+                interruptActualReturn = (newVal - actualLastClosePrice).abs();
                 interruptActualReturnRate =
-                    (newVal - actualLastClosePrice) / actualLastClosePrice;
+                    ((newVal - actualLastClosePrice) / actualLastClosePrice)
+                        .abs();
               }
               double newVal = randomTrend[firstHitID];
-              interruptUndelayedReturn = newVal - lastClosePrice;
+              interruptUndelayedReturn = (newVal - lastClosePrice).abs();
               interruptUndelayedReturnRate =
-                  (newVal - lastClosePrice) / lastClosePrice;
+                  ((newVal - lastClosePrice) / lastClosePrice).abs();
 
               // Get the failed trend last close price return and change the fund value
               // - Index points (0.25) contract value (5 USD)
@@ -5892,7 +5910,7 @@ class MainPresenter extends GetxController {
             prob = double.parse(
                 (isLong ? upperProb : lowerProb).toStringAsFixed(4));
             medianReturnRate =
-                double.parse(medianReturnRate.toStringAsFixed(4));
+                double.parse(medianReturnRate.toStringAsFixed(4)).abs();
             hitRate = hitCount / (hitCount + missCount);
             roundedHitRate = double.parse(hitRate.toStringAsFixed(4));
             double roundedMdd = double.parse(mdd.toStringAsFixed(4));
@@ -6586,13 +6604,14 @@ class MainPresenter extends GetxController {
             // - Commission fee
             // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
             initialFund = initialFund +
-                (((randomTrend.last - actualLastClosePrice) *
+                (((randomTrend.last - actualLastClosePrice).abs() *
                         diffFromEtfAndFuture) ~/
                     0.25 *
                     contractVal) -
                 commissionsAndFees;
             undelayedInitialFund = undelayedInitialFund +
-                (((randomTrend.last - lastClosePrice) * diffFromEtfAndFuture) ~/
+                (((randomTrend.last - lastClosePrice).abs() *
+                        diffFromEtfAndFuture) ~/
                     0.25 *
                     contractVal) -
                 commissionsAndFees;
@@ -6619,19 +6638,21 @@ class MainPresenter extends GetxController {
                           yFinMinuteDelay]
                       .close! *
                   actualLastDifferenceList[randomIndex];
-              interruptActualReturn = newVal - actualLastClosePrice;
+              interruptActualReturn = (newVal - actualLastClosePrice).abs();
               interruptActualReturnRate =
-                  (newVal - actualLastClosePrice) / actualLastClosePrice;
+                  ((newVal - actualLastClosePrice) / actualLastClosePrice)
+                      .abs();
             } else {
               double newVal = randomTrend[firstHitID + yFinMinuteDelay];
-              interruptActualReturn = newVal - actualLastClosePrice;
+              interruptActualReturn = (newVal - actualLastClosePrice).abs();
               interruptActualReturnRate =
-                  (newVal - actualLastClosePrice) / actualLastClosePrice;
+                  ((newVal - actualLastClosePrice) / actualLastClosePrice)
+                      .abs();
             }
             double newVal = randomTrend[firstHitID];
-            interruptUndelayedReturn = newVal - lastClosePrice;
+            interruptUndelayedReturn = (newVal - lastClosePrice).abs();
             interruptUndelayedReturnRate =
-                (newVal - lastClosePrice) / lastClosePrice;
+                ((newVal - lastClosePrice) / lastClosePrice).abs();
 
             // Get the failed trend last close price return and change the fund value
             // - Index points (0.25) contract value (5 USD)
@@ -6651,7 +6672,8 @@ class MainPresenter extends GetxController {
 
           prob =
               double.parse((isLong ? upperProb : lowerProb).toStringAsFixed(4));
-          medianReturnRate = double.parse(medianReturnRate.toStringAsFixed(4));
+          medianReturnRate =
+              double.parse(medianReturnRate.toStringAsFixed(4)).abs();
           hitRate = hitCount / (hitCount + missCount);
           roundedHitRate = double.parse(hitRate.toStringAsFixed(4));
           double roundedMdd = double.parse(mdd.toStringAsFixed(4));
@@ -7202,13 +7224,13 @@ class MainPresenter extends GetxController {
               // - Commission fee
               // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
               initialFund = initialFund +
-                  (((randomTrend.last - actualLastClosePrice) *
+                  (((randomTrend.last - actualLastClosePrice).abs() *
                           diffFromEtfAndFuture) ~/
                       0.25 *
                       contractVal) -
                   commissionsAndFees;
               undelayedInitialFund = undelayedInitialFund +
-                  (((randomTrend.last - lastClosePrice) *
+                  (((randomTrend.last - lastClosePrice).abs() *
                           diffFromEtfAndFuture) ~/
                       0.25 *
                       contractVal) -
@@ -7236,19 +7258,21 @@ class MainPresenter extends GetxController {
                             yFinMinuteDelay]
                         .close! *
                     actualLastDifferenceList[randomIndex];
-                interruptActualReturn = newVal - actualLastClosePrice;
+                interruptActualReturn = (newVal - actualLastClosePrice).abs();
                 interruptActualReturnRate =
-                    (newVal - actualLastClosePrice) / actualLastClosePrice;
+                    ((newVal - actualLastClosePrice) / actualLastClosePrice)
+                        .abs();
               } else {
                 double newVal = randomTrend[firstHitID + yFinMinuteDelay];
-                interruptActualReturn = newVal - actualLastClosePrice;
+                interruptActualReturn = (newVal - actualLastClosePrice).abs();
                 interruptActualReturnRate =
-                    (newVal - actualLastClosePrice) / actualLastClosePrice;
+                    ((newVal - actualLastClosePrice) / actualLastClosePrice)
+                        .abs();
               }
               double newVal = randomTrend[firstHitID];
-              interruptUndelayedReturn = newVal - lastClosePrice;
+              interruptUndelayedReturn = (newVal - lastClosePrice).abs();
               interruptUndelayedReturnRate =
-                  (newVal - lastClosePrice) / lastClosePrice;
+                  ((newVal - lastClosePrice) / lastClosePrice).abs();
 
               // Get the failed trend last close price return and change the fund value
               // - Index points (0.25) contract value (5 USD)
@@ -7269,7 +7293,7 @@ class MainPresenter extends GetxController {
             prob = double.parse(
                 (isLong ? upperProb : lowerProb).toStringAsFixed(4));
             medianReturnRate =
-                double.parse(medianReturnRate.toStringAsFixed(4));
+                double.parse(medianReturnRate.toStringAsFixed(4)).abs();
             hitRate = hitCount / (hitCount + missCount);
             roundedHitRate = double.parse(hitRate.toStringAsFixed(4));
             double roundedMdd = double.parse(mdd.toStringAsFixed(4));
@@ -7963,13 +7987,14 @@ class MainPresenter extends GetxController {
             // - Commission fee
             // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
             initialFund = initialFund +
-                (((randomTrend.last - actualLastClosePrice) *
+                (((randomTrend.last - actualLastClosePrice).abs() *
                         diffFromEtfAndFuture) ~/
                     0.25 *
                     contractVal) -
                 commissionsAndFees;
             undelayedInitialFund = undelayedInitialFund +
-                (((randomTrend.last - lastClosePrice) * diffFromEtfAndFuture) ~/
+                (((randomTrend.last - lastClosePrice).abs() *
+                        diffFromEtfAndFuture) ~/
                     0.25 *
                     contractVal) -
                 commissionsAndFees;
@@ -7996,19 +8021,21 @@ class MainPresenter extends GetxController {
                           yFinMinuteDelay]
                       .close! *
                   actualLastDifferenceList[randomIndex];
-              interruptActualReturn = newVal - actualLastClosePrice;
+              interruptActualReturn = (newVal - actualLastClosePrice).abs();
               interruptActualReturnRate =
-                  (newVal - actualLastClosePrice) / actualLastClosePrice;
+                  ((newVal - actualLastClosePrice) / actualLastClosePrice)
+                      .abs();
             } else {
               double newVal = randomTrend[firstHitID + yFinMinuteDelay];
-              interruptActualReturn = newVal - actualLastClosePrice;
+              interruptActualReturn = (newVal - actualLastClosePrice).abs();
               interruptActualReturnRate =
-                  (newVal - actualLastClosePrice) / actualLastClosePrice;
+                  ((newVal - actualLastClosePrice) / actualLastClosePrice)
+                      .abs();
             }
             double newVal = randomTrend[firstHitID];
-            interruptUndelayedReturn = newVal - lastClosePrice;
+            interruptUndelayedReturn = (newVal - lastClosePrice).abs();
             interruptUndelayedReturnRate =
-                (newVal - lastClosePrice) / lastClosePrice;
+                ((newVal - lastClosePrice) / lastClosePrice).abs();
 
             // Get the failed trend last close price return and change the fund value
             // - Index points (0.25) contract value (5 USD)
@@ -8028,7 +8055,8 @@ class MainPresenter extends GetxController {
 
           prob =
               double.parse((isLong ? upperProb : lowerProb).toStringAsFixed(4));
-          medianReturnRate = double.parse(medianReturnRate.toStringAsFixed(4));
+          medianReturnRate =
+              double.parse(medianReturnRate.toStringAsFixed(4)).abs();
           hitRate = hitCount / (hitCount + missCount);
           roundedHitRate = double.parse(hitRate.toStringAsFixed(4));
           double roundedMdd = double.parse(mdd.toStringAsFixed(4));
@@ -8579,13 +8607,13 @@ class MainPresenter extends GetxController {
               // - Commission fee
               // https://www.futunn.com/en/stock/MESMAIN-US/contract-specs
               initialFund = initialFund +
-                  (((randomTrend.last - actualLastClosePrice) *
+                  (((randomTrend.last - actualLastClosePrice).abs() *
                           diffFromEtfAndFuture) ~/
                       0.25 *
                       contractVal) -
                   commissionsAndFees;
               undelayedInitialFund = undelayedInitialFund +
-                  (((randomTrend.last - lastClosePrice) *
+                  (((randomTrend.last - lastClosePrice).abs() *
                           diffFromEtfAndFuture) ~/
                       0.25 *
                       contractVal) -
@@ -8613,19 +8641,21 @@ class MainPresenter extends GetxController {
                             yFinMinuteDelay]
                         .close! *
                     actualLastDifferenceList[randomIndex];
-                interruptActualReturn = newVal - actualLastClosePrice;
+                interruptActualReturn = (newVal - actualLastClosePrice).abs();
                 interruptActualReturnRate =
-                    (newVal - actualLastClosePrice) / actualLastClosePrice;
+                    ((newVal - actualLastClosePrice) / actualLastClosePrice)
+                        .abs();
               } else {
                 double newVal = randomTrend[firstHitID + yFinMinuteDelay];
-                interruptActualReturn = newVal - actualLastClosePrice;
+                interruptActualReturn = (newVal - actualLastClosePrice).abs();
                 interruptActualReturnRate =
-                    (newVal - actualLastClosePrice) / actualLastClosePrice;
+                    ((newVal - actualLastClosePrice) / actualLastClosePrice)
+                        .abs();
               }
               double newVal = randomTrend[firstHitID];
-              interruptUndelayedReturn = newVal - lastClosePrice;
+              interruptUndelayedReturn = (newVal - lastClosePrice).abs();
               interruptUndelayedReturnRate =
-                  (newVal - lastClosePrice) / lastClosePrice;
+                  ((newVal - lastClosePrice) / lastClosePrice).abs();
 
               // Get the failed trend last close price return and change the fund value
               // - Index points (0.25) contract value (5 USD)
@@ -8646,7 +8676,7 @@ class MainPresenter extends GetxController {
             prob = double.parse(
                 (isLong ? upperProb : lowerProb).toStringAsFixed(4));
             medianReturnRate =
-                double.parse(medianReturnRate.toStringAsFixed(4));
+                double.parse(medianReturnRate.toStringAsFixed(4)).abs();
             hitRate = hitCount / (hitCount + missCount);
             roundedHitRate = double.parse(hitRate.toStringAsFixed(4));
             double roundedMdd = double.parse(mdd.toStringAsFixed(4));
