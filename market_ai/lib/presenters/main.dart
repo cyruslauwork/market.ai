@@ -9601,14 +9601,14 @@ class MainPresenter extends GetxController {
               double positiveTolerance;
               if (positiveTolChange != null) {
                 positiveTolerance =
-                    firstEma1520Vwma20Tolerance.value * (1 - positiveTolChange);
+                    firstEma1520Vwma20Tolerance.value * positiveTolChange;
               } else {
                 positiveTolerance = firstEma1520Vwma20Tolerance.value;
               }
               double negativeTolerance;
               if (negativeTolChange != null) {
-                negativeTolerance = -firstEma1520Vwma20Tolerance.value *
-                    (1 - negativeTolChange);
+                negativeTolerance =
+                    -firstEma1520Vwma20Tolerance.value * negativeTolChange;
               } else {
                 negativeTolerance = -firstEma1520Vwma20Tolerance.value;
               }
@@ -9683,14 +9683,14 @@ class MainPresenter extends GetxController {
               double positiveTolerance;
               if (positiveTolChange != null) {
                 positiveTolerance =
-                    ema1520Vwma20Tolerance.value * (1 - positiveTolChange);
+                    ema1520Vwma20Tolerance.value * positiveTolChange;
               } else {
                 positiveTolerance = ema1520Vwma20Tolerance.value;
               }
               double negativeTolerance;
               if (negativeTolChange != null) {
                 negativeTolerance =
-                    -ema1520Vwma20Tolerance.value * (1 - negativeTolChange);
+                    -ema1520Vwma20Tolerance.value * negativeTolChange;
               } else {
                 negativeTolerance = -ema1520Vwma20Tolerance.value;
               }
@@ -9770,15 +9770,14 @@ class MainPresenter extends GetxController {
           }) {
             double positiveTolerance;
             if (positiveTolChange != null) {
-              positiveTolerance =
-                  firstEma40Tolerance.value * (1 - positiveTolChange);
+              positiveTolerance = firstEma40Tolerance.value * positiveTolChange;
             } else {
               positiveTolerance = firstEma40Tolerance.value;
             }
             double negativeTolerance;
             if (negativeTolChange != null) {
               negativeTolerance =
-                  -firstEma40Tolerance.value * (1 - negativeTolChange);
+                  -firstEma40Tolerance.value * negativeTolChange;
             } else {
               negativeTolerance = -firstEma40Tolerance.value;
             }
@@ -9852,15 +9851,13 @@ class MainPresenter extends GetxController {
           }) {
             double positiveTolerance;
             if (positiveTolChange != null) {
-              positiveTolerance =
-                  ema40Tolerance.value * (1 - positiveTolChange);
+              positiveTolerance = ema40Tolerance.value * positiveTolChange;
             } else {
               positiveTolerance = ema40Tolerance.value;
             }
             double negativeTolerance;
             if (negativeTolChange != null) {
-              negativeTolerance =
-                  -ema40Tolerance.value * (1 - negativeTolChange);
+              negativeTolerance = -ema40Tolerance.value * negativeTolChange;
             } else {
               negativeTolerance = -ema40Tolerance.value;
             }
@@ -9939,15 +9936,14 @@ class MainPresenter extends GetxController {
           }) {
             double positiveTolerance;
             if (positiveTolChange != null) {
-              positiveTolerance =
-                  firstEma60Tolerance.value * (1 - positiveTolChange);
+              positiveTolerance = firstEma60Tolerance.value * positiveTolChange;
             } else {
               positiveTolerance = firstEma60Tolerance.value;
             }
             double negativeTolerance;
             if (negativeTolChange != null) {
               negativeTolerance =
-                  -firstEma60Tolerance.value * (1 - negativeTolChange);
+                  -firstEma60Tolerance.value * negativeTolChange;
             } else {
               negativeTolerance = -firstEma60Tolerance.value;
             }
@@ -10021,15 +10017,13 @@ class MainPresenter extends GetxController {
           }) {
             double positiveTolerance;
             if (positiveTolChange != null) {
-              positiveTolerance =
-                  ema60Tolerance.value * (1 - positiveTolChange);
+              positiveTolerance = ema60Tolerance.value * positiveTolChange;
             } else {
               positiveTolerance = ema60Tolerance.value;
             }
             double negativeTolerance;
             if (negativeTolChange != null) {
-              negativeTolerance =
-                  -ema60Tolerance.value * (1 - negativeTolChange);
+              negativeTolerance = -ema60Tolerance.value * negativeTolChange;
             } else {
               negativeTolerance = -ema60Tolerance.value;
             }
@@ -10109,14 +10103,14 @@ class MainPresenter extends GetxController {
             double positiveTolerance;
             if (positiveTolChange != null) {
               positiveTolerance =
-                  firstEma120Tolerance.value * (1 - positiveTolChange);
+                  firstEma120Tolerance.value * positiveTolChange;
             } else {
               positiveTolerance = firstEma120Tolerance.value;
             }
             double negativeTolerance;
             if (negativeTolChange != null) {
               negativeTolerance =
-                  -firstEma120Tolerance.value * (1 - negativeTolChange);
+                  -firstEma120Tolerance.value * negativeTolChange;
             } else {
               negativeTolerance = -firstEma120Tolerance.value;
             }
@@ -10190,15 +10184,13 @@ class MainPresenter extends GetxController {
           }) {
             double positiveTolerance;
             if (positiveTolChange != null) {
-              positiveTolerance =
-                  ema120Tolerance.value * (1 - positiveTolChange);
+              positiveTolerance = ema120Tolerance.value * positiveTolChange;
             } else {
               positiveTolerance = ema120Tolerance.value;
             }
             double negativeTolerance;
             if (negativeTolChange != null) {
-              negativeTolerance =
-                  -ema120Tolerance.value * (1 - negativeTolChange);
+              negativeTolerance = -ema120Tolerance.value * negativeTolChange;
             } else {
               negativeTolerance = -ema120Tolerance.value;
             }

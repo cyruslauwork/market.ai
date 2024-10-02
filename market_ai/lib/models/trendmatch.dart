@@ -710,6 +710,7 @@ class TrendMatch {
         negativeTolerance = results.$3!;
         originalPositiveTol = results.$4!;
         originalNegativeTol = results.$5!;
+        extraIndex++;
       }
 
       positiveTolerance = maTolerance;
@@ -776,6 +777,7 @@ class TrendMatch {
           negativeTolerance = results.$3!;
           originalPositiveTol = results.$4!;
           originalNegativeTol = results.$5!;
+          extraIndex++;
         }
       }
     } else {
