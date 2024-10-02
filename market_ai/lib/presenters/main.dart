@@ -2326,9 +2326,9 @@ class MainPresenter extends GetxController {
           double undelayedReturnRate =
               ((randomTrend.last - lastClosePrice) / lastClosePrice);
           double roundedActualReturnRate =
-              double.parse(actualReturnRate.toStringAsFixed(4));
+              double.parse(actualReturnRate.toStringAsFixed(4)).abs();
           double roundedUndelayedReturnRate =
-              double.parse(undelayedReturnRate.toStringAsFixed(4));
+              double.parse(undelayedReturnRate.toStringAsFixed(4)).abs();
           int contractVal =
               5; // Micro E-mini Futures: Index points (0.25) contract value (5 USD)
           int diffFromEtfAndFuture =
@@ -2945,9 +2945,9 @@ class MainPresenter extends GetxController {
             double undelayedReturnRate =
                 ((randomTrend.last - lastClosePrice) / lastClosePrice);
             double roundedActualReturnRate =
-                double.parse(actualReturnRate.toStringAsFixed(4));
+                double.parse(actualReturnRate.toStringAsFixed(4)).abs();
             double roundedUndelayedReturnRate =
-                double.parse(undelayedReturnRate.toStringAsFixed(4));
+                double.parse(undelayedReturnRate.toStringAsFixed(4)).abs();
             int contractVal =
                 5; // Micro E-mini Futures: Index points (0.25) contract value (5 USD)
             int diffFromEtfAndFuture =
@@ -3709,9 +3709,9 @@ class MainPresenter extends GetxController {
           double undelayedReturnRate =
               ((randomTrend.last - lastClosePrice) / lastClosePrice);
           double roundedActualReturnRate =
-              double.parse(actualReturnRate.toStringAsFixed(4));
+              double.parse(actualReturnRate.toStringAsFixed(4)).abs();
           double roundedUndelayedReturnRate =
-              double.parse(undelayedReturnRate.toStringAsFixed(4));
+              double.parse(undelayedReturnRate.toStringAsFixed(4)).abs();
           int contractVal =
               5; // Micro E-mini Futures: Index points (0.25) contract value (5 USD)
           int diffFromEtfAndFuture =
@@ -4328,9 +4328,9 @@ class MainPresenter extends GetxController {
             double undelayedReturnRate =
                 ((randomTrend.last - lastClosePrice) / lastClosePrice);
             double roundedActualReturnRate =
-                double.parse(actualReturnRate.toStringAsFixed(4));
+                double.parse(actualReturnRate.toStringAsFixed(4)).abs();
             double roundedUndelayedReturnRate =
-                double.parse(undelayedReturnRate.toStringAsFixed(4));
+                double.parse(undelayedReturnRate.toStringAsFixed(4)).abs();
             int contractVal =
                 5; // Micro E-mini Futures: Index points (0.25) contract value (5 USD)
             int diffFromEtfAndFuture =
@@ -5092,9 +5092,9 @@ class MainPresenter extends GetxController {
           double undelayedReturnRate =
               ((randomTrend.last - lastClosePrice) / lastClosePrice);
           double roundedActualReturnRate =
-              double.parse(actualReturnRate.toStringAsFixed(4));
+              double.parse(actualReturnRate.toStringAsFixed(4)).abs();
           double roundedUndelayedReturnRate =
-              double.parse(undelayedReturnRate.toStringAsFixed(4));
+              double.parse(undelayedReturnRate.toStringAsFixed(4)).abs();
           int contractVal =
               5; // Micro E-mini Futures: Index points (0.25) contract value (5 USD)
           int diffFromEtfAndFuture =
@@ -5711,9 +5711,9 @@ class MainPresenter extends GetxController {
             double undelayedReturnRate =
                 ((randomTrend.last - lastClosePrice) / lastClosePrice);
             double roundedActualReturnRate =
-                double.parse(actualReturnRate.toStringAsFixed(4));
+                double.parse(actualReturnRate.toStringAsFixed(4)).abs();
             double roundedUndelayedReturnRate =
-                double.parse(undelayedReturnRate.toStringAsFixed(4));
+                double.parse(undelayedReturnRate.toStringAsFixed(4)).abs();
             int contractVal =
                 5; // Micro E-mini Futures: Index points (0.25) contract value (5 USD)
             int diffFromEtfAndFuture =
@@ -6475,9 +6475,9 @@ class MainPresenter extends GetxController {
           double undelayedReturnRate =
               ((randomTrend.last - lastClosePrice) / lastClosePrice);
           double roundedActualReturnRate =
-              double.parse(actualReturnRate.toStringAsFixed(4));
+              double.parse(actualReturnRate.toStringAsFixed(4)).abs();
           double roundedUndelayedReturnRate =
-              double.parse(undelayedReturnRate.toStringAsFixed(4));
+              double.parse(undelayedReturnRate.toStringAsFixed(4)).abs();
           int contractVal =
               5; // Micro E-mini Futures: Index points (0.25) contract value (5 USD)
           int diffFromEtfAndFuture =
@@ -7094,9 +7094,9 @@ class MainPresenter extends GetxController {
             double undelayedReturnRate =
                 ((randomTrend.last - lastClosePrice) / lastClosePrice);
             double roundedActualReturnRate =
-                double.parse(actualReturnRate.toStringAsFixed(4));
+                double.parse(actualReturnRate.toStringAsFixed(4)).abs();
             double roundedUndelayedReturnRate =
-                double.parse(undelayedReturnRate.toStringAsFixed(4));
+                double.parse(undelayedReturnRate.toStringAsFixed(4)).abs();
             int contractVal =
                 5; // Micro E-mini Futures: Index points (0.25) contract value (5 USD)
             int diffFromEtfAndFuture =
@@ -7858,9 +7858,9 @@ class MainPresenter extends GetxController {
           double undelayedReturnRate =
               ((randomTrend.last - lastClosePrice) / lastClosePrice);
           double roundedActualReturnRate =
-              double.parse(actualReturnRate.toStringAsFixed(4));
+              double.parse(actualReturnRate.toStringAsFixed(4)).abs();
           double roundedUndelayedReturnRate =
-              double.parse(undelayedReturnRate.toStringAsFixed(4));
+              double.parse(undelayedReturnRate.toStringAsFixed(4)).abs();
           int contractVal =
               5; // Micro E-mini Futures: Index points (0.25) contract value (5 USD)
           int diffFromEtfAndFuture =
@@ -8477,9 +8477,9 @@ class MainPresenter extends GetxController {
             double undelayedReturnRate =
                 ((randomTrend.last - lastClosePrice) / lastClosePrice);
             double roundedActualReturnRate =
-                double.parse(actualReturnRate.toStringAsFixed(4));
+                double.parse(actualReturnRate.toStringAsFixed(4)).abs();
             double roundedUndelayedReturnRate =
-                double.parse(undelayedReturnRate.toStringAsFixed(4));
+                double.parse(undelayedReturnRate.toStringAsFixed(4)).abs();
             int contractVal =
                 5; // Micro E-mini Futures: Index points (0.25) contract value (5 USD)
             int diffFromEtfAndFuture =
