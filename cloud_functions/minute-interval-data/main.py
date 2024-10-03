@@ -244,9 +244,13 @@ def https(request):
                         if str(time)[-1] != '0':
                             continue # Skip the current iteration and move to the next iteration
                         if volume == 0:
-                            regular_end_time = response_data['chart']['result'][0]['meta']['currentTradingPeriod']['regular']['end']
-                            if time == regular_end_time:
-                                continue
+                            trading_periods = response_data['chart']['result'][0]['meta']['tradingPeriods']
+                            # Loop through each trading period
+                            for period in trading_periods:
+                                # Each period is a list, so we need to access the first element
+                                end_time = period[0]['end']
+                                if time == end_time:
+                                    continue
                         # Create a new JSON with the desired columns
                         result_json = {
                             'time_key': time,
