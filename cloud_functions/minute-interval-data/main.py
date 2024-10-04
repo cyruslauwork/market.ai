@@ -139,7 +139,7 @@ def https(request):
                 headers = {
                     'User-Agent': 'Mozilla/5.0'
                 }
-                url = f'https://query1.finance.yahoo.com/v7/finance/chart/{symbol}?dataGranularity=1m&range=7d'
+                url = f'https://query1.finance.yahoo.com/v7/finance/chart/{symbol}?dataGranularity=1m&range=2d'
                 response = requests.get(url, headers=headers) # Send a GET request to the URL and fetch the JSON response
                 print(f"Fetching JSON response for symbol '{symbol}' from Yahoo Finance")
                 # Check if the request was successful (status code 200)
@@ -243,14 +243,13 @@ def https(request):
                         # Convert 'time' to string and check if the last character is not '0'
                         if str(time)[-1] != '0':
                             continue # Skip the current iteration and move to the next iteration
-                        if volume == 0:
-                            trading_periods = response_data['chart']['result'][0]['meta']['tradingPeriods']
-                            # Loop through each trading period
-                            for period in trading_periods:
-                                # Each period is a list, so we need to access the first element
-                                end_time = period[0]['end']
-                                if time == end_time:
-                                    continue
+                        trading_periods = response_data['chart']['result'][0]['meta']['tradingPeriods']
+                        # Loop through each trading period
+                        for period in trading_periods:
+                            # Each period is a list, so we need to access the first element
+                            end_time = period[0]['end']
+                            if time == end_time:
+                                continue
                         # Create a new JSON with the desired columns
                         result_json = {
                             'time_key': time,
@@ -331,9 +330,12 @@ def https(request):
                                         # Convert 'time' to string and check if the last character is not '0'
                                         if str(time)[-1] != '0':
                                             continue # Skip the current iteration and move to the next iteration
-                                        if volume == 0:
-                                            regular_end_time = response_data['chart']['result'][0]['meta']['currentTradingPeriod']['regular']['end']
-                                            if time == regular_end_time:
+                                        trading_periods = response_data['chart']['result'][0]['meta']['tradingPeriods']
+                                        # Loop through each trading period
+                                        for period in trading_periods:
+                                            # Each period is a list, so we need to access the first element
+                                            end_time = period[0]['end']
+                                            if time == end_time:
                                                 continue
                                         # Create a new JSON with the desired columns
                                         result_json = {
