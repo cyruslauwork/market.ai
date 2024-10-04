@@ -1212,9 +1212,6 @@ class TrendMatch {
           ? subLen
           : (candleLen - lockTrendLastRow);
       MainPresenter.to.trackingSubLen.value = subLen - lapsed;
-      // Call TrendMatch().init() and get the indices (matched rows) and
-      // storing them in new global lists
-      await TrendMatch().init(isTracking: isTracking);
       double trackingSubLen = MainPresenter.to.trackingSubLen.value.toDouble();
       MainPresenter.to.lockTrendTrackingSubTrendList.value = [];
       if (MainPresenter.to.alwaysUseCrossData.value) {
