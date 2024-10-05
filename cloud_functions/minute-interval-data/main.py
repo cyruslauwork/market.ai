@@ -236,6 +236,7 @@ def https(request):
                         print(f'Added value {last_time_key} in last_time_key document in {symbol}_update collection')
                     print(f'Filtering time_key from new document(s) that have not value greater than last_time_key {last_time_key}')
                     last_time_key = int(last_time_key)
+                    trading_periods = response_data['chart']['result'][0]['meta']['tradingPeriods']
                     new_documents = [] # Initialize an empty list
                     for time, o, high, low, close, volume in zip(times, opens, highs, lows, closes, volumes):
                         if int(time) <= last_time_key:
@@ -248,13 +249,15 @@ def https(request):
                         # Convert 'time' to string and check if the last character is not '0'
                         if str(time)[-1] != '0':
                             continue # Skip the current iteration and move to the next iteration
-                        trading_periods = response_data['chart']['result'][0]['meta']['tradingPeriods']
+                        outside_of_regular_trading_time = False
                         # Loop through each trading period
                         for period in trading_periods:
                             # Each period is a list, so we need to access the first element
                             end_time = period[0]['end']
-                            if time == end_time:
-                                continue
+                            if time >= end_time:
+                                outside_of_regular_trading_time = True
+                        if outside_of_regular_trading_time:
+                            continue # Skip the current iteration and move to the next iteration
                         # Create a new JSON with the desired columns
                         result_json = {
                             'time_key': time,
@@ -335,13 +338,15 @@ def https(request):
                                         # Convert 'time' to string and check if the last character is not '0'
                                         if str(time)[-1] != '0':
                                             continue # Skip the current iteration and move to the next iteration
-                                        trading_periods = response_data['chart']['result'][0]['meta']['tradingPeriods']
+                                        outside_of_regular_trading_time = False
                                         # Loop through each trading period
                                         for period in trading_periods:
                                             # Each period is a list, so we need to access the first element
                                             end_time = period[0]['end']
-                                            if time == end_time:
-                                                continue
+                                            if time >= end_time:
+                                                outside_of_regular_trading_time = True
+                                        if outside_of_regular_trading_time:
+                                            continue # Skip the current iteration and move to the next iteration
                                         # Create a new JSON with the desired columns
                                         result_json = {
                                             'time_key': time,
