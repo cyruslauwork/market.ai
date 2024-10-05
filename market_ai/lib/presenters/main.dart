@@ -1300,7 +1300,7 @@ class MainPresenter extends GetxController {
         double lowerProb =
             lower.length / (upper.length + lower.length + baseline);
         thisExpectedProb = max(upperProb, lowerProb);
-        if (upperProb > probThreshold.value) {
+        if (upperProb >= probThreshold.value) {
           thisIsLong = true;
           thisLowProb = false;
           Future.microtask(() {
@@ -1329,7 +1329,7 @@ class MainPresenter extends GetxController {
               trendsNotOneSided.value = true;
             });
           }
-        } else if (lowerProb > probThreshold.value) {
+        } else if (lowerProb >= probThreshold.value) {
           thisIsShort = true;
           thisLowProb = false;
           Future.microtask(() {
