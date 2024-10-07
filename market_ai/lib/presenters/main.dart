@@ -716,7 +716,7 @@ class MainPresenter extends GetxController {
     [0.0]
   ].obs;
   RxBool over = true.obs;
-  RxInt trackingSubLen = 0.obs;
+  late RxInt trackingSubLen = subLength.value.obs;
   RxDouble expectedTrackingProb = 0.0.obs;
   RxBool trackingHits = true.obs;
   RxBool trackingHitsOnesided = true.obs;
