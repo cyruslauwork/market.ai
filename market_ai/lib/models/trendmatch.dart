@@ -352,9 +352,10 @@ class TrendMatch {
           bool thisBreak = false;
           if (MainPresenter
               .to.trendsWithinMinReturnRateQuintileNotCounted.value) {
-            double thisReturnRate =
-                (listCandledata[l + len + subLen].close! - selectedFirstPrice) /
-                    selectedFirstPrice;
+            double thisReturnRate = ((listCandledata[l + len + subLen].close! -
+                        selectedFirstPrice) /
+                    selectedFirstPrice)
+                .abs();
             double quintileMinReturnRate =
                 MainPresenter.to.minReturnRateThreshold.value;
             if (thisReturnRate <= quintileMinReturnRate) {

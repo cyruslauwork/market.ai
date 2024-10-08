@@ -9265,7 +9265,7 @@ class MainPresenter extends GetxController {
     PrefsService.to.prefs.setBool(
         SharedPreferencesConstant.trendsWithinMinReturnRateQuintileNotCounted,
         value);
-    checkLockTrend();
+    refreshIndicator();
   }
 
   showApiKeyInput() {
