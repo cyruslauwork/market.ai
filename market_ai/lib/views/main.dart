@@ -385,6 +385,49 @@ class MainView extends StatefulWidget {
               ),
             ),
             const Divider(),
+            Obx(
+              () => Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'close_pos_when_first_half_reached_three_fourths_median'
+                          .tr,
+                      style: const TextTheme().sp5.w700,
+                    ),
+                  ),
+                  Switch(
+                    value: MainPresenter.to
+                        .closePosWhenFirstHalfReachedThreeFourthsMedian.value,
+                    activeColor: Colors.red,
+                    onChanged: (bool value) => MainPresenter.to
+                        .closePosWhenFirstHalfReachedThreeFourthsMedianToggle(
+                            value),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(),
+            Obx(
+              () => Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'trends_within_min_return_rate_quintile_not_counted'.tr,
+                      style: const TextTheme().sp5.w700,
+                    ),
+                  ),
+                  Switch(
+                    value: MainPresenter
+                        .to.trendsWithinMinReturnRateQuintileNotCounted.value,
+                    activeColor: Colors.red,
+                    onChanged: (bool value) => MainPresenter.to
+                        .trendsWithinMinReturnRateQuintileNotCountedToggle(
+                            value),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(),
             Obx(() => (MainPresenter.to.backtestDataLen1.value != 0
                 ? Text(
                     '${MainPresenter.to.backtestDataRan1.value}/${MainPresenter.to.backtestDataLen1.value}',

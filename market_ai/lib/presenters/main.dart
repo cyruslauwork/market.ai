@@ -410,6 +410,16 @@ class MainPresenter extends GetxController {
               .getBool(SharedPreferencesConstant.closePosWhenReachedMedian) ??
           false)
       .obs;
+  RxBool closePosWhenFirstHalfReachedThreeFourthsMedian = (PrefsService.to.prefs
+              .getBool(SharedPreferencesConstant
+                  .closePosWhenFirstHalfReachedThreeFourthsMedian) ??
+          false)
+      .obs;
+  RxBool trendsWithinMinReturnRateQuintileNotCounted = (PrefsService.to.prefs
+              .getBool(SharedPreferencesConstant
+                  .trendsWithinMinReturnRateQuintileNotCounted) ??
+          false)
+      .obs;
 
   /* Candlestick-related */
   RxString financialInstrumentSymbol = (PrefsService.to.prefs
@@ -824,6 +834,7 @@ class MainPresenter extends GetxController {
           0.0005)
       .obs;
   RxBool reachedMedian = true.obs;
+  RxBool reachedThreeFourthsMedian = true.obs;
 
   // A 2nd initialization will be triggered when starting the app
   @override
@@ -1225,6 +1236,7 @@ class MainPresenter extends GetxController {
     bool thisReachedMedian = reachedMedian.value;
     bool thisTrackingHits = trackingHits.value;
     bool thisTrackingHitsOnesided = trackingHitsOnesided.value;
+    bool thisReachedThreeFourthsMedian = reachedThreeFourthsMedian.value;
 
     if (lockTrendDatetime != 0) {
       DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
@@ -1513,6 +1525,9 @@ class MainPresenter extends GetxController {
       if (closePosWhenReachedMedian.value) {
         thisReachedMedian = false;
       }
+      if (closePosWhenFirstHalfReachedThreeFourthsMedian.value) {
+        thisReachedThreeFourthsMedian = false;
+      }
       thisTrackingHits = false;
       thisTrackingHitsOnesided = false;
       Future.microtask(() {
@@ -1523,6 +1538,9 @@ class MainPresenter extends GetxController {
         over.value = thisOver;
         if (closePosWhenReachedMedian.value) {
           reachedMedian.value = thisReachedMedian;
+        }
+        if (closePosWhenFirstHalfReachedThreeFourthsMedian.value) {
+          reachedThreeFourthsMedian.value = thisReachedThreeFourthsMedian;
         }
         trackingHits.value = thisTrackingHits;
         trackingHitsOnesided.value = thisTrackingHitsOnesided;
@@ -1669,15 +1687,9 @@ class MainPresenter extends GetxController {
             thisReachedMedian = true;
           }
         }
-        if (thisReachedMedian) {
-          Future.microtask(() {
-            reachedMedian.value = true;
-          });
-        } else {
-          Future.microtask(() {
-            reachedMedian.value = false;
-          });
-        }
+        Future.microtask(() {
+          reachedMedian.value = thisReachedMedian;
+        });
       }
 
       if (lockTrendLastRow == listCandledata.length - 1) {
@@ -1784,6 +1796,30 @@ class MainPresenter extends GetxController {
           });
         }
       }
+
+      // Check whether the lock-in trend return rate has reaches the 3/4 median return rate in matched trends
+      if (closePosWhenFirstHalfReachedThreeFourthsMedian.value) {
+        thisReachedThreeFourthsMedian = false;
+        if (spots.length <= subLen / 2) {
+          final double spot = spots.last;
+          final double thisReturnRate =
+              (spot - startingClosePrice) / startingClosePrice;
+          final double threeFourthsMinReturnRateThreshold =
+              thisMinReturnRateThreshold;
+          if (thisIsLong) {
+            if (thisReturnRate >= threeFourthsMinReturnRateThreshold) {
+              thisReachedThreeFourthsMedian = true;
+            }
+          } else if (thisIsShort) {
+            if (thisReturnRate <= -threeFourthsMinReturnRateThreshold) {
+              thisReachedThreeFourthsMedian = true;
+            }
+          }
+        }
+        Future.microtask(() {
+          reachedThreeFourthsMedian.value = thisReachedThreeFourthsMedian;
+        });
+      }
     }
 
     if ((!thisIsFirstThirtyMins &&
@@ -1808,6 +1844,16 @@ class MainPresenter extends GetxController {
             !thisTrackingHitsOnesided)) {
       if (closePosWhenReachedMedian.value) {
         if (thisReachedMedian) {
+          Future.microtask(() {
+            instruction.value = 'close_pos_or_wait_n_see'.tr;
+            instructionTextStyle.value =
+                const TextTheme().sp10.tertiarythemeTextColor.w700;
+          });
+          return;
+        }
+      }
+      if (reachedThreeFourthsMedian.value) {
+        if (thisReachedThreeFourthsMedian) {
           Future.microtask(() {
             instruction.value = 'close_pos_or_wait_n_see'.tr;
             instructionTextStyle.value =
@@ -9202,6 +9248,23 @@ class MainPresenter extends GetxController {
     closePosWhenReachedMedian.value = value;
     PrefsService.to.prefs
         .setBool(SharedPreferencesConstant.closePosWhenReachedMedian, value);
+    checkLockTrend();
+  }
+
+  closePosWhenFirstHalfReachedThreeFourthsMedianToggle(bool value) {
+    closePosWhenFirstHalfReachedThreeFourthsMedian.value = value;
+    PrefsService.to.prefs.setBool(
+        SharedPreferencesConstant
+            .closePosWhenFirstHalfReachedThreeFourthsMedian,
+        value);
+    checkLockTrend();
+  }
+
+  trendsWithinMinReturnRateQuintileNotCountedToggle(bool value) {
+    trendsWithinMinReturnRateQuintileNotCounted.value = value;
+    PrefsService.to.prefs.setBool(
+        SharedPreferencesConstant.trendsWithinMinReturnRateQuintileNotCounted,
+        value);
     checkLockTrend();
   }
 

@@ -146,11 +146,11 @@ class TrendMatchView extends StatelessWidget {
                   if (MainPresenter.to.closePosWhenReachedMedian.value) ...[
                     (MainPresenter.to.reachedMedian.value
                         ? Text(
-                            'reaching_median'.tr,
+                            'reached_median'.tr,
                             style: MainPresenter.to.lockTrendTextStyle.value,
                           )
                         : Text(
-                            'not_reaching_median'.tr,
+                            'not_reach_median'.tr,
                             style: MainPresenter.to.lockTrendTextStyle.value,
                           )),
                   ],
@@ -172,6 +172,21 @@ class TrendMatchView extends StatelessWidget {
                           '${'lockin_trend_tracking_not_hits_onesided'.tr + (probThreshold * 100).toStringAsFixed(0)}%',
                           style: MainPresenter.to.lockTrendTextStyle.value,
                         )),
+                  if (MainPresenter
+                      .to
+                      .closePosWhenFirstHalfReachedThreeFourthsMedian
+                      .value) ...[
+                    (MainPresenter.to.reachedThreeFourthsMedian.value
+                        ? Text(
+                            'lockin_first_half_reached_three_fourths_median'.tr,
+                            style: MainPresenter.to.lockTrendTextStyle.value,
+                          )
+                        : Text(
+                            'lockin_first_half_not_reach_three_fourths_median'
+                                .tr,
+                            style: MainPresenter.to.lockTrendTextStyle.value,
+                          )),
+                  ],
                 ],
                 SizedBox(
                   height: 5.h,
@@ -245,6 +260,7 @@ class TrendMatchView extends StatelessWidget {
                       MainPresenter.to.reachedMedian.value = true;
                       MainPresenter.to.trackingHits.value = true;
                       MainPresenter.to.trackingHitsOnesided.value = true;
+                      MainPresenter.to.reachedThreeFourthsMedian.value = true;
 
                       MainPresenter.to.refreshIndicator();
                     } else {

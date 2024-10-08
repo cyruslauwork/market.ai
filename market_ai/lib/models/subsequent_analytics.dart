@@ -30,8 +30,7 @@ class SubsequentAnalytics {
     double maxValueOfAllTrends = double.negativeInfinity;
 
     int count = 0;
-    if (MainPresenter.to.alwaysUseCrossData.value ||
-        MainPresenter.to.isLockTrend.value) {
+    if (MainPresenter.to.alwaysUseCrossData.value) {
       List<String> minuteDataList = List<String>.from(
           MainPresenter.to.universalHasMinuteData.keys.toList());
       String fiSymbol = MainPresenter.to.financialInstrumentSymbol.value;

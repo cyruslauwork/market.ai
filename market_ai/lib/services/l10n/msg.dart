@@ -166,8 +166,8 @@ class Msg extends Translations {
           'not_over': '✅︎ Lock-in trend is not over yet',
           'close_pos_when_reached_median':
               'Close position when reached median return rate',
-          'reaching_median': '❌ Reaching median return rate',
-          'not_reaching_median': '✅︎ Not reaching median return rate',
+          'reached_median': '❌ Reached median return rate',
+          'not_reach_median': '✅︎ Did not reach median return rate',
           'lockin_trend_tracking_title': 'Lock-in Trend Tracking',
           'lockin_trend_tracking_hits':
               '❌ Tracking ≥ 5 & opposite probability ≥',
@@ -187,6 +187,14 @@ class Msg extends Translations {
           'minute_mathcing_criteria': 'trend matching criteria for minute data',
           'minute_tolerance': 'Trend Match Tolerance',
           'no_api_key_mkt_data': 'No API key to access Firestore',
+          'close_pos_when_first_half_reached_three_fourths_median':
+              'Close position when first half reached 3/4 of the median return rate',
+          'trends_within_min_return_rate_quintile_not_counted':
+              'Trends within the 1/5 of the min return rate will not counted',
+          'lockin_first_half_reached_three_fourths_median':
+              '❌ Reached 3/4 of the median return rate',
+          'lockin_first_half_not_reach_three_fourths_median':
+              '✅︎ Did not reach 3/4 of the median return rate',
         },
         'zh_HK': {
           'app_name': '市場慧眼📈',
@@ -319,8 +327,8 @@ class Msg extends Translations {
           'over': '❌ 鎖定的走勢已完結',
           'not_over': '✅︎ 鎖定的走勢未完結',
           'close_pos_when_reached_median': '當觸及回報中位數時平倉',
-          'reaching_median': '❌ 觸及回報中位數',
-          'not_reaching_median': '✅︎ 沒有觸及回報中位數',
+          'reached_median': '❌ 觸及回報中位數',
+          'not_reach_median': '✅︎ 沒有觸及回報中位數',
           'lockin_trend_tracking_title': '鎖定走勢追踪',
           'lockin_trend_tracking_hits': '❌ 追踪單邊走勢 ≥ 5 及相反走勢機率 ≥',
           'lockin_trend_tracking_hits_onesided': '❌ 追踪走勢 ≥ 4 及相反走勢機率 ≥',
@@ -335,6 +343,13 @@ class Msg extends Translations {
           'minute_mathcing_criteria': 'VWMA20 分鐘數據趨勢匹配條件',
           'minute_tolerance': 'EMA15/20 VWMA20 走勢匹配平均線容差',
           'no_api_key_mkt_data': '沒有 API 密鑰來連接 Firestore',
+          'close_pos_when_first_half_reached_three_fourths_median':
+              '當前半觸及 3/4 回報中位數時平倉',
+          'trends_within_min_return_rate_quintile_not_counted':
+              '不計算 1/5 最低回報率的走勢',
+          'lockin_first_half_reached_three_fourths_median': '❌ 觸及 3/4 回報中位數',
+          'lockin_first_half_not_reach_three_fourths_median':
+              '✅︎ 沒有觸及 3/4 回報中位數',
         },
       };
 }
