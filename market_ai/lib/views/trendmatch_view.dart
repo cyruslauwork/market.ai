@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
+import 'package:market_ai/models/trendmatch.dart';
 import 'package:market_ai/presenters/presenters.dart';
 import 'package:market_ai/services/prefs/prefs.dart';
 import 'package:market_ai/styles/styles.dart';
@@ -280,6 +281,8 @@ class TrendMatchView extends StatelessWidget {
                             localizedMsg: 'wait_for_chart'.tr);
                         return;
                       }
+                      // Call TrendMatch().init() and get the indices (matched rows) and storing them in new global lists
+                      TrendMatch().init(isTracking: true);
                       PrefsService.to.prefs
                           .setBool(SharedPreferencesConstant.lockTrend, true);
                       MainPresenter.to.isLockTrend.value = true;
@@ -308,7 +311,8 @@ class TrendMatchView extends StatelessWidget {
           if (MainPresenter.to.isLockTrend.value &&
               (MainPresenter.to.clusters.isNotEmpty ||
                   MainPresenter.to.hasCluster.value) &&
-              MainPresenter.to.hasCandleData.value) ...[
+              MainPresenter.to.hasCandleData.value &&
+              MainPresenter.to.hasTrackingData.value) ...[
             const Center(
               child: AdjustedLineChart(isLockTrend: true),
             ),

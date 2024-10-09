@@ -28,15 +28,9 @@ class AdjustedLineChart extends StatefulWidget {
 
 class _AdjustedLineChartState extends State<AdjustedLineChart> {
   late Future<LineChartData> lineChartDataFuture;
-  late bool isTracking = widget.isTracking;
 
   @override
   void initState() {
-    if (isTracking) {
-      // Call TrendMatch().init() and get the indices (matched rows) and
-      // storing them in new global lists
-      TrendMatch().init(isTracking: isTracking);
-    }
     super.initState();
     lineChartDataFuture = widget.initialLineChartData != null
         ? Future.value(widget.initialLineChartData)

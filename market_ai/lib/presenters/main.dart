@@ -786,6 +786,7 @@ class MainPresenter extends GetxController {
               .getDouble(SharedPreferencesConstant.firstEma120Tolerance) ??
           40.0)
       .obs;
+  RxBool hasTrackingData = false.obs;
 
   /* Subsequent analytics */
   RxInt lastClosePriceAndSubsequentTrendsExeTime = 0.obs;
@@ -1109,6 +1110,12 @@ class MainPresenter extends GetxController {
         if (apiKey.value != '') {
           SubsequentAnalytics().init();
         }
+      } else if (listCandledata.isNotEmpty &&
+          isLockTrend.value &&
+          listCandledata.length != dummyCandle.length) {
+        // Call TrendMatch().init() and get the indices (matched rows) and storing them in new global lists
+        TrendMatch().init(isTracking: true);
+        hasTrackingData.value = true;
       }
     }
     checkMinuteData();

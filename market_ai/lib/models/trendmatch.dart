@@ -94,17 +94,21 @@ class TrendMatch {
     DateTime startTime = DateTime.now(); // Record the start time
 
     // Clear all match rows
-    MainPresenter.to.matchRows.value = [];
-    for (var symbol in MainPresenter.to.universalMatchRows.keys) {
-      MainPresenter.to.universalMatchRows[symbol] = [];
+    if (!isTracking) {
+      MainPresenter.to.matchRows.value = [];
+      for (var symbol in MainPresenter.to.universalMatchRows.keys) {
+        MainPresenter.to.universalMatchRows[symbol] = [];
+      }
     }
     // MainPresenter.to.matchPercentDifferencesListList.value = [];
     // MainPresenter.to.matchActualDifferencesListList.value = [];
     // MainPresenter.to.matchActualPricesListList.value = [];
     // Clear all tracking match rows
-    MainPresenter.to.trackingMatchRows.value = [];
-    for (var symbol in MainPresenter.to.universalTrackingMatchRows.keys) {
-      MainPresenter.to.universalTrackingMatchRows[symbol] = [];
+    if (isTracking) {
+      MainPresenter.to.trackingMatchRows.value = [];
+      for (var symbol in MainPresenter.to.universalTrackingMatchRows.keys) {
+        MainPresenter.to.universalTrackingMatchRows[symbol] = [];
+      }
     }
 
     double candleTolerance = MainPresenter.to.candleTolerance.value / 100;
@@ -480,19 +484,20 @@ class TrendMatch {
     //     matchActualPricesListList;
     // }
 
-    DateTime endTime = DateTime.now(); // Record the end time
-    // Calculate the time difference
-    Duration executionDuration = endTime.difference(startTime);
-    int executionTime = executionDuration.inMilliseconds;
-
-    MainPresenter.to.trendMatchOutput.value = [
-      trueCount,
-      falseCount,
-      executionTime,
-      totalDataLength,
-      totalLengthDeduction,
-    ];
     if (!isTracking) {
+      DateTime endTime = DateTime.now(); // Record the end time
+      // Calculate the time difference
+      Duration executionDuration = endTime.difference(startTime);
+      int executionTime = executionDuration.inMilliseconds;
+
+      MainPresenter.to.trendMatchOutput.value = [
+        trueCount,
+        falseCount,
+        executionTime,
+        totalDataLength,
+        totalLengthDeduction,
+      ];
+
       MainPresenter.to.sidePlot.value = const SizedBox.shrink();
       MainPresenter.to.trendMatched.value = true;
     }
