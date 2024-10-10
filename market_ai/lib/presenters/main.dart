@@ -420,11 +420,11 @@ class MainPresenter extends GetxController {
                   .trendsWithinSpecificMinReturnRateNotCounted) ??
           false)
       .obs;
-  late RxDouble specificMinReturnRateNotCounted = (PrefsService.to.prefs
-              .getDouble(SharedPreferencesConstant
-                  .specificMinReturnRateNotCounted) ??
-       minReturnRateThreshold.value   )
-      .obs;
+  late RxDouble trendsWithinSpecificMinReturnRateNotCountedThreshold =
+      (PrefsService.to.prefs.getDouble(SharedPreferencesConstant
+                  .trendsWithinSpecificMinReturnRateNotCountedThreshold) ??
+              minReturnRateThreshold.value / 2)
+          .obs;
 
   /* Candlestick-related */
   RxString financialInstrumentSymbol = (PrefsService.to.prefs

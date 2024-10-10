@@ -362,8 +362,8 @@ class TrendMatch {
                             selectedFirstPrice) /
                         selectedFirstPrice)
                     .abs();
-            double specificReturnRate =
-                MainPresenter.to.specificMinReturnRateNotCounted.value;
+            double specificReturnRate = MainPresenter
+                .to.trendsWithinSpecificMinReturnRateNotCountedThreshold.value;
             if (thisReturnRate <= specificReturnRate) {
               falseCount += 1;
               thisBreak = true;

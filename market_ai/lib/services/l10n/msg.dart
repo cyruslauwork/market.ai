@@ -349,10 +349,8 @@ class Msg extends Translations {
           'no_api_key_mkt_data': '沒有 API 密鑰來連接 Firestore',
           'close_pos_when_first_half_reached_three_fourths_median':
               '當前半觸及 3/4 回報中位數時平倉',
-          'trends_within_specific_return_rate_not_counted_former':
-              '不計算 ',
-          'trends_within_specific_return_rate_not_counted_latter':
-              ' 最低回報率的走勢',
+          'trends_within_specific_return_rate_not_counted_former': '不計算 ',
+          'trends_within_specific_return_rate_not_counted_latter': ' 最低回報率的走勢',
           'trends_within_specific_return_rate_not_counted_input_title':
               '指定最低回報率的走勢不會計算',
           'lockin_first_half_reached_three_fourths_median': '❌ 觸及 3/4 回報中位數',
