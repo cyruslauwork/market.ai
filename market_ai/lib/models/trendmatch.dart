@@ -355,16 +355,16 @@ class TrendMatch {
         if (comparisonResult.$1) {
           bool thisBreak = false;
           if (MainPresenter
-              .to.trendsWithinMinReturnRateQuintileNotCounted.value) {
+              .to.trendsWithinSpecificMinReturnRateNotCounted.value) {
             double diff = selectedFirstPrice / listCandledata[l].close!;
             double thisReturnRate =
                 (((listCandledata[l + len + subLen].close! * diff) -
                             selectedFirstPrice) /
                         selectedFirstPrice)
                     .abs();
-            double quintileMinReturnRate =
-                MainPresenter.to.minReturnRateThreshold.value / 5;
-            if (thisReturnRate <= quintileMinReturnRate) {
+            double specificReturnRate =
+                MainPresenter.to.specificMinReturnRateNotCounted.value;
+            if (thisReturnRate <= specificReturnRate) {
               falseCount += 1;
               thisBreak = true;
             }

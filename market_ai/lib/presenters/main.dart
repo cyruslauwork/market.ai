@@ -415,10 +415,15 @@ class MainPresenter extends GetxController {
                   .closePosWhenFirstHalfReachedThreeFourthsMedian) ??
           false)
       .obs;
-  RxBool trendsWithinMinReturnRateQuintileNotCounted = (PrefsService.to.prefs
+  RxBool trendsWithinSpecificMinReturnRateNotCounted = (PrefsService.to.prefs
               .getBool(SharedPreferencesConstant
-                  .trendsWithinMinReturnRateQuintileNotCounted) ??
+                  .trendsWithinSpecificMinReturnRateNotCounted) ??
           false)
+      .obs;
+  late RxDouble specificMinReturnRateNotCounted = (PrefsService.to.prefs
+              .getDouble(SharedPreferencesConstant
+                  .specificMinReturnRateNotCounted) ??
+       minReturnRateThreshold.value   )
       .obs;
 
   /* Candlestick-related */
@@ -9267,10 +9272,10 @@ class MainPresenter extends GetxController {
     checkLockTrend();
   }
 
-  trendsWithinMinReturnRateQuintileNotCountedToggle(bool value) {
-    trendsWithinMinReturnRateQuintileNotCounted.value = value;
+  trendsWithinSpecificMinReturnRateNotCountedToggle(bool value) {
+    trendsWithinSpecificMinReturnRateNotCounted.value = value;
     PrefsService.to.prefs.setBool(
-        SharedPreferencesConstant.trendsWithinMinReturnRateQuintileNotCounted,
+        SharedPreferencesConstant.trendsWithinSpecificMinReturnRateNotCounted,
         value);
     refreshIndicator();
   }

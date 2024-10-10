@@ -189,8 +189,12 @@ class Msg extends Translations {
           'no_api_key_mkt_data': 'No API key to access Firestore',
           'close_pos_when_first_half_reached_three_fourths_median':
               'Close position when first half reached 3/4 of the median return rate',
-          'trends_within_min_return_rate_quintile_not_counted':
-              'Trends within the 1/5 of the min return rate will not counted',
+          'trends_within_specific_return_rate_not_counted_former':
+              'Trends within the ',
+          'trends_within_specific_return_rate_not_counted_latter':
+              ' of the min return rate will not counted',
+          'trends_within_specific_return_rate_not_counted_input_title':
+              'The percentage of min return rate will not counted',
           'lockin_first_half_reached_three_fourths_median':
               '❌ Reached 3/4 of the median return rate',
           'lockin_first_half_not_reach_three_fourths_median':
@@ -345,8 +349,12 @@ class Msg extends Translations {
           'no_api_key_mkt_data': '沒有 API 密鑰來連接 Firestore',
           'close_pos_when_first_half_reached_three_fourths_median':
               '當前半觸及 3/4 回報中位數時平倉',
-          'trends_within_min_return_rate_quintile_not_counted':
-              '不計算 1/5 最低回報率的走勢',
+          'trends_within_specific_return_rate_not_counted_former':
+              '不計算 ',
+          'trends_within_specific_return_rate_not_counted_latter':
+              ' 最低回報率的走勢',
+          'trends_within_specific_return_rate_not_counted_input_title':
+              '指定最低回報率的走勢不會計算',
           'lockin_first_half_reached_three_fourths_median': '❌ 觸及 3/4 回報中位數',
           'lockin_first_half_not_reach_three_fourths_median':
               '✅︎ 沒有觸及 3/4 回報中位數',

@@ -75,6 +75,8 @@ class SharedPreferencesConstant {
   static String minReturnRateThreshold = 'minReturnRateThreshold';
   static String closePosWhenFirstHalfReachedThreeFourthsMedian =
       'closePosWhenFirstHalfReachedThreeFourthsMedian';
-  static String trendsWithinMinReturnRateQuintileNotCounted =
-      'trendsWithinMinReturnRateQuintileNotCounted';
+  static String trendsWithinSpecificMinReturnRateNotCounted =
+      'trendsWithinSpecificMinReturnRateNotCounted';
+  static String specificMinReturnRateNotCounted =
+      'specificMinReturnRateNotCounted';
 }

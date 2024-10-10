@@ -37,6 +37,7 @@ class MainView extends StatefulWidget {
     double probThreshold = MainPresenter.to.probThreshold.value;
     double minReturnRateThreshold =
         MainPresenter.to.minReturnRateThreshold.value;
+        double specificMinReturnRateNotCounted = MainPresenter.to.specificMinReturnRateNotCounted.value;
     return Column(children: [
       Column(children: [
         Text(
@@ -412,22 +413,53 @@ class MainView extends StatefulWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      'trends_within_min_return_rate_quintile_not_counted'.tr,
+                      '${'trends_within_specific_return_rate_not_counted_former'.tr}${MainPresenter.to.notCountedReturnRate.value}${'trends_within_specific_return_rate_not_counted_latter'.tr}' ,
                       style: const TextTheme().sp5.w700,
                     ),
                   ),
                   Switch(
                     value: MainPresenter
-                        .to.trendsWithinMinReturnRateQuintileNotCounted.value,
+                        .to.trendsWithinSpecificMinReturnRateNotCounted.value,
                     activeColor: Colors.red,
                     onChanged: (bool value) => MainPresenter.to
-                        .trendsWithinMinReturnRateQuintileNotCountedToggle(
+                        .trendsWithinSpecificMinReturnRateNotCounted(
                             value),
                   ),
+            const Divider(),
+                  if( MainPresenter
+                        .to.trendsWithinSpecificMinReturnRateNotCounted.value)
+                          ...[
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'trends_within_specific_return_rate_not_counted_input_title'.tr,
+                    style: const TextTheme().sp5.w700,
+                  ),
+                ),
+                Expanded(
+                  child: TextField(
+                    onChanged: (String value) {
+                      MainPresenter.to.specificMinReturnRateNotCounted.value =
+                          double.parse(value);
+                      PrefsService.to.prefs.setDouble(
+                          SharedPreferencesConstant.specificMinReturnRateNotCounted,
+                          double.parse(value));
+                    },
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      labelText: specificMinReturnRateNotCounted.toString(),
+                    ),
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                  ),
+                ),
+              ],
+            ),
+            const Divider(),],
                 ],
               ),
             ),
-            const Divider(),
             Obx(() => (MainPresenter.to.backtestDataLen1.value != 0
                 ? Text(
                     '${MainPresenter.to.backtestDataRan1.value}/${MainPresenter.to.backtestDataLen1.value}',
