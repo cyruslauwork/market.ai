@@ -59,7 +59,7 @@ class TrendMatchView extends StatelessWidget {
                   style: MainPresenter.to.lockTrendTextStyle.value,
                 ),
                 Text(
-                  '${'expected_return_median'.tr} +${(MainPresenter.to.returnRate.value * 100).toStringAsFixed(3)}%',
+                  '${'expected_return_median'.tr} ${(MainPresenter.to.returnRate.value * 100).toStringAsFixed(3)}%',
                   style: MainPresenter.to.lockTrendTextStyle.value,
                 ),
                 Text(

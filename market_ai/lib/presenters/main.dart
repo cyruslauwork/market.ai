@@ -1573,8 +1573,8 @@ class MainPresenter extends GetxController {
             SharedPreferencesConstant.trendsNotOneSided, thisTrendsNotOneSided);
         PrefsService.to.prefs.setDouble(
             SharedPreferencesConstant.expectedProb, thisExpectedProb);
-        PrefsService.to.prefs
-            .setDouble(SharedPreferencesConstant.returnRate, thisReturnRate);
+        PrefsService.to.prefs.setDouble(
+            SharedPreferencesConstant.returnRate, thisReturnRate.abs());
         PrefsService.to.prefs
             .setString(SharedPreferencesConstant.expectedMdd, thisExpectedMdd);
         PrefsService.to.prefs
