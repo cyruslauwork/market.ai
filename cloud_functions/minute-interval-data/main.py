@@ -415,7 +415,7 @@ def https(request):
                         print(f'Retrieved required document(s) in {symbol} collection')
                         print(f'Preparing to return JSON')
                         json_data['content'] = docs_list
-                        backend_json_data[last_time_key_field_name] = max(doc['time_key'] for doc in docs_list)
+                        json_data[last_time_key_field_name] = max(doc['time_key'] for doc in docs_list)
                         print('Uploading JSON to GCS')
                         json_str = json.dumps(json_data)
                         try:
@@ -442,7 +442,7 @@ def https(request):
                     print(f'Retrieved required document(s) in {symbol} collection')
                     print(f'Preparing to return JSON')
                     json_data['content'] = docs_list
-                    backend_json_data[last_time_key_field_name] = max(doc['time_key'] for doc in docs_list)
+                    json_data[last_time_key_field_name] = max(doc['time_key'] for doc in docs_list)
                     print('Uploading JSON to GCS')
                     json_str = json.dumps(json_data)
                     try:
