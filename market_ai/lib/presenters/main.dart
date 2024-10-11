@@ -1108,14 +1108,14 @@ class MainPresenter extends GetxController {
       if (showAverageNotifier.value) {
         await Candle().computeTrendLines();
       }
-      if (listCandledata.isNotEmpty &&
+      if (hasCandleData.value &&
           !isLockTrend.value &&
           listCandledata.length != dummyCandle.length) {
         await TrendMatch().init();
         if (apiKey.value != '') {
           SubsequentAnalytics().init();
         }
-      } else if (listCandledata.isNotEmpty &&
+      } else if (hasCandleData.value &&
           isLockTrend.value &&
           listCandledata.length != dummyCandle.length) {
         // Call TrendMatch().init() and get the indices (matched rows) and storing them in new global lists
@@ -9449,7 +9449,7 @@ class MainPresenter extends GetxController {
   }
 
   String showCandleListListLastItem() {
-    if (listCandledata.isNotEmpty) {
+    if (hasCandleData.value) {
       return listCandledata.last.close!.toStringAsFixed(4);
     } else {
       return 'Loading';
@@ -9504,7 +9504,7 @@ class MainPresenter extends GetxController {
         return const SizedBox.shrink();
       }
 
-      if (!hasCandleData.value) {
+      if (!hasCandleData.value || listCandledata.length == dummyCandle.length) {
         return Center(
           child: Column(
             children: [
@@ -9574,7 +9574,7 @@ class MainPresenter extends GetxController {
         return const SizedBox.shrink();
       }
 
-      if (!hasCandleData.value) {
+      if (!hasCandleData.value || listCandledata.length == dummyCandle.length) {
         return Center(
           child: Column(
             children: [

@@ -321,20 +321,26 @@ class MainView extends StatefulWidget {
                   ),
                 ),
                 Expanded(
-                  child: TextField(
-                    onChanged: (String value) {
-                      MainPresenter.to.probThreshold.value =
-                          double.parse(value);
-                      PrefsService.to.prefs.setDouble(
-                          SharedPreferencesConstant.probThreshold,
-                          double.parse(value));
+                  child: GestureDetector(
+                    onTap: () {
+                      // Dismiss the keyboard
+                      FocusScope.of(context).unfocus();
                     },
-                    decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
-                      labelText: probThreshold.toString(),
+                    child: TextField(
+                      onChanged: (String value) {
+                        MainPresenter.to.probThreshold.value =
+                            double.parse(value);
+                        PrefsService.to.prefs.setDouble(
+                            SharedPreferencesConstant.probThreshold,
+                            double.parse(value));
+                      },
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        labelText: probThreshold.toString(),
+                      ),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
                     ),
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
                   ),
                 ),
               ],
@@ -349,20 +355,26 @@ class MainView extends StatefulWidget {
                   ),
                 ),
                 Expanded(
-                  child: TextField(
-                    onChanged: (String value) {
-                      MainPresenter.to.minReturnRateThreshold.value =
-                          double.parse(value);
-                      PrefsService.to.prefs.setDouble(
-                          SharedPreferencesConstant.minReturnRateThreshold,
-                          double.parse(value));
+                  child: GestureDetector(
+                    onTap: () {
+                      // Dismiss the keyboard
+                      FocusScope.of(context).unfocus();
                     },
-                    decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
-                      labelText: minReturnRateThreshold.toString(),
+                    child: TextField(
+                      onChanged: (String value) {
+                        MainPresenter.to.minReturnRateThreshold.value =
+                            double.parse(value);
+                        PrefsService.to.prefs.setDouble(
+                            SharedPreferencesConstant.minReturnRateThreshold,
+                            double.parse(value));
+                      },
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        labelText: minReturnRateThreshold.toString(),
+                      ),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
                     ),
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
                   ),
                 ),
               ],
@@ -423,7 +435,8 @@ class MainView extends StatefulWidget {
                         .to.trendsWithinSpecificMinReturnRateNotCounted.value,
                     activeColor: Colors.red,
                     onChanged: (bool value) => MainPresenter.to
-                        .trendsWithinSpecificMinReturnRateNotCounted(value),
+                        .trendsWithinSpecificMinReturnRateNotCountedToggle(
+                            value),
                   ),
                 ],
               ),
@@ -440,25 +453,31 @@ class MainView extends StatefulWidget {
                         ),
                       ),
                       Expanded(
-                        child: TextField(
-                          onChanged: (String value) {
-                            MainPresenter
-                                .to
-                                .trendsWithinSpecificMinReturnRateNotCountedThreshold
-                                .value = double.parse(value);
-                            PrefsService.to.prefs.setDouble(
-                                SharedPreferencesConstant
-                                    .trendsWithinSpecificMinReturnRateNotCountedThreshold,
-                                double.parse(value));
+                        child: GestureDetector(
+                          onTap: () {
+                            // Dismiss the keyboard
+                            FocusScope.of(context).unfocus();
                           },
-                          decoration: InputDecoration(
-                            border: const OutlineInputBorder(),
-                            labelText:
-                                trendsWithinSpecificMinReturnRateNotCountedThreshold
-                                    .toString(),
+                          child: TextField(
+                            onChanged: (String value) {
+                              MainPresenter
+                                  .to
+                                  .trendsWithinSpecificMinReturnRateNotCountedThreshold
+                                  .value = double.parse(value);
+                              PrefsService.to.prefs.setDouble(
+                                  SharedPreferencesConstant
+                                      .trendsWithinSpecificMinReturnRateNotCountedThreshold,
+                                  double.parse(value));
+                            },
+                            decoration: InputDecoration(
+                              border: const OutlineInputBorder(),
+                              labelText:
+                                  trendsWithinSpecificMinReturnRateNotCountedThreshold
+                                      .toString(),
+                            ),
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true),
                           ),
-                          keyboardType: const TextInputType.numberWithOptions(
-                              decimal: true),
                         ),
                       ),
                     ],
