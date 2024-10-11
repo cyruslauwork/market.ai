@@ -139,12 +139,7 @@ def https(request):
                 headers = {
                     'User-Agent': 'Mozilla/5.0'
                 }
-                if timestamp != -1:
-                    # User request
-                    url = f'https://query1.finance.yahoo.com/v7/finance/chart/{symbol}?dataGranularity=1m&range=1d'
-                else:
-                    # Server request
-                    url = f'https://query1.finance.yahoo.com/v7/finance/chart/{symbol}?dataGranularity=1m&range=2d'
+                url = f'https://query1.finance.yahoo.com/v7/finance/chart/{symbol}?dataGranularity=1m&range=2d'
                 response = requests.get(url, headers=headers) # Send a GET request to the URL and fetch the JSON response
                 print(f"Fetching JSON response for symbol '{symbol}' from Yahoo Finance")
                 # Check if the request was successful (status code 200)
@@ -237,6 +232,7 @@ def https(request):
                     print(f'Filtering time_key from new document(s) that have not value greater than last_time_key {last_time_key}')
                     last_time_key = int(last_time_key)
                     trading_periods = response_data['chart']['result'][0]['meta']['tradingPeriods']
+                    last_period = trading_periods[-1]  # Access the last element
                     new_documents = [] # Initialize an empty list
                     for time, o, high, low, close, volume in zip(times, opens, highs, lows, closes, volumes):
                         if int(time) <= last_time_key:
@@ -249,14 +245,9 @@ def https(request):
                         # Convert 'time' to string and check if the last character is not '0'
                         if str(time)[-1] != '0':
                             continue # Skip the current iteration and move to the next iteration
-                        outside_of_regular_trading_time = False
-                        # Loop through each trading period
-                        for period in trading_periods:
-                            # Each period is a list, so we need to access the first element
-                            end_time = period[0]['end']
-                            if time >= end_time:
-                                outside_of_regular_trading_time = True
-                        if outside_of_regular_trading_time:
+                        # Extract the end time from the last period
+                        end_time = last_period[0]['end'] # Each period is a list, so we access the first element
+                        if time >= end_time:
                             continue # Skip the current iteration and move to the next iteration
                         # Create a new JSON with the desired columns
                         result_json = {
@@ -338,14 +329,9 @@ def https(request):
                                         # Convert 'time' to string and check if the last character is not '0'
                                         if str(time)[-1] != '0':
                                             continue # Skip the current iteration and move to the next iteration
-                                        outside_of_regular_trading_time = False
-                                        # Loop through each trading period
-                                        for period in trading_periods:
-                                            # Each period is a list, so we need to access the first element
-                                            end_time = period[0]['end']
-                                            if time >= end_time:
-                                                outside_of_regular_trading_time = True
-                                        if outside_of_regular_trading_time:
+                                        # Extract the end time from the last period
+                                        end_time = last_period[0]['end'] # Each period is a list, so we access the first element
+                                        if time >= end_time:
                                             continue # Skip the current iteration and move to the next iteration
                                         # Create a new JSON with the desired columns
                                         result_json = {
