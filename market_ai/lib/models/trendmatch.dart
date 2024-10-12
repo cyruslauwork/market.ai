@@ -353,7 +353,6 @@ class TrendMatch {
             priceTolerance); // Record data type in Dart is equivalent to Tuple in Java and Python
 
         if (comparisonResult.$1) {
-          bool thisBreak = false;
           if (MainPresenter
               .to.trendsWithinSpecificMinReturnRateNotCounted.value) {
             double diff = selectedFirstPrice / listCandledata[l].close!;
@@ -366,67 +365,54 @@ class TrendMatch {
                 .to.trendsWithinSpecificMinReturnRateNotCountedThreshold.value;
             if (thisReturnRate <= specificReturnRate) {
               falseCount += 1;
-              thisBreak = true;
+
+              // comparePeriodPercentDifferencesListList
+              //     .add(comparePeriodPercentDifferencesList);
+              // comparePeriodActualDifferencesListList
+              //     .add(comparePeriodActualDifferencesList);
+              // comparePeriodActualPricesListList.add(comparePeriodActualPricesList);
+              comparePeriodPercentDifferencesList = [];
+              // comparePeriodActualDifferencesList = [];
+              // comparePeriodActualPricesList = [];
+
+              // matchActualDifferencesList = [];
+              // matchActualPricesList = [];
+
+              continue;
             }
           }
-          if (!thisBreak) {
-            // MA
-            if (isMaMatch) {
-              List<double> comparePeriodFirstMaAndPricePercentDifferencesList =
-                  [];
-              List<List<double>> comparePeriodMaPercentDifferencesListList = [];
-              double compareFirstPrice = listCandledata[l].close!;
+          // MA
+          if (isMaMatch) {
+            List<double> comparePeriodFirstMaAndPricePercentDifferencesList =
+                [];
+            List<List<double>> comparePeriodMaPercentDifferencesListList = [];
+            double compareFirstPrice = listCandledata[l].close!;
 
-              for (int m = 0; m < len - 1; m++) {
-                List<double> comparePeriodMaPercentDifferencesList = [];
-                for (int i = 0; i < maLength; i++) {
-                  double newVal = listCandledata[l + m + 1].trends[i]!;
-                  double oriVal = listCandledata[l + m].trends[i]!;
-                  double maPercentDiff = (newVal - oriVal) / oriVal;
-                  comparePeriodMaPercentDifferencesList.add(maPercentDiff);
-                }
-                comparePeriodMaPercentDifferencesListList
-                    .add(comparePeriodMaPercentDifferencesList);
-              }
+            for (int m = 0; m < len - 1; m++) {
+              List<double> comparePeriodMaPercentDifferencesList = [];
               for (int i = 0; i < maLength; i++) {
-                comparePeriodFirstMaAndPricePercentDifferencesList.add(
-                    (listCandledata[l].trends[i]! - compareFirstPrice) /
-                        compareFirstPrice);
+                double newVal = listCandledata[l + m + 1].trends[i]!;
+                double oriVal = listCandledata[l + m].trends[i]!;
+                double maPercentDiff = (newVal - oriVal) / oriVal;
+                comparePeriodMaPercentDifferencesList.add(maPercentDiff);
               }
+              comparePeriodMaPercentDifferencesListList
+                  .add(comparePeriodMaPercentDifferencesList);
+            }
+            for (int i = 0; i < maLength; i++) {
+              comparePeriodFirstMaAndPricePercentDifferencesList.add(
+                  (listCandledata[l].trends[i]! - compareFirstPrice) /
+                      compareFirstPrice);
+            }
 
-              bool isMaMatched = maDifferencesLessThanOrEqualToCertainPercent(
-                  selectedPeriodFirstMaAndPricePercentDifferencesList,
-                  selectedPeriodMaPercentDifferencesListList,
-                  comparePeriodFirstMaAndPricePercentDifferencesList,
-                  comparePeriodMaPercentDifferencesListList,
-                  maTolerance,
-                  firstMaTolerance);
-              if (isMaMatched) {
-                trueCount += 1;
-                if (alwaysUseCrossData) {
-                  addMatchRow(l);
-                } else {
-                  if (!isTracking) {
-                    MainPresenter.to.matchRows.add(l);
-                  } else {
-                    MainPresenter.to.trackingMatchRows.add(l);
-                  }
-                }
-                // matchPercentDifferencesListList.add(comparisonResult.$2);
-                // for (int i = 0; i < comparisonResult.$2.length; i++) {
-                //   double actual = listCandledata[l + i + 1].close! -
-                //       listCandledata[l + i].close!;
-                //   matchActualDifferencesList.add(actual);
-                // }
-                // for (int i = 0; i < comparisonResult.$2.length + 1; i++) {
-                //   matchActualPricesList.add(listCandledata[l + i].close!);
-                // }
-                // matchActualDifferencesListList.add(matchActualDifferencesList);
-                // matchActualPricesListList.add(matchActualPricesList);
-              } else {
-                falseCount += 1;
-              }
-            } else {
+            bool isMaMatched = maDifferencesLessThanOrEqualToCertainPercent(
+                selectedPeriodFirstMaAndPricePercentDifferencesList,
+                selectedPeriodMaPercentDifferencesListList,
+                comparePeriodFirstMaAndPricePercentDifferencesList,
+                comparePeriodMaPercentDifferencesListList,
+                maTolerance,
+                firstMaTolerance);
+            if (isMaMatched) {
               trueCount += 1;
               if (alwaysUseCrossData) {
                 addMatchRow(l);
@@ -448,7 +434,31 @@ class TrendMatch {
               // }
               // matchActualDifferencesListList.add(matchActualDifferencesList);
               // matchActualPricesListList.add(matchActualPricesList);
+            } else {
+              falseCount += 1;
             }
+          } else {
+            trueCount += 1;
+            if (alwaysUseCrossData) {
+              addMatchRow(l);
+            } else {
+              if (!isTracking) {
+                MainPresenter.to.matchRows.add(l);
+              } else {
+                MainPresenter.to.trackingMatchRows.add(l);
+              }
+            }
+            // matchPercentDifferencesListList.add(comparisonResult.$2);
+            // for (int i = 0; i < comparisonResult.$2.length; i++) {
+            //   double actual = listCandledata[l + i + 1].close! -
+            //       listCandledata[l + i].close!;
+            //   matchActualDifferencesList.add(actual);
+            // }
+            // for (int i = 0; i < comparisonResult.$2.length + 1; i++) {
+            //   matchActualPricesList.add(listCandledata[l + i].close!);
+            // }
+            // matchActualDifferencesListList.add(matchActualDifferencesList);
+            // matchActualPricesListList.add(matchActualPricesList);
           }
         } else {
           falseCount += 1;
