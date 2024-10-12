@@ -157,9 +157,8 @@ class Msg extends Translations {
           'backtesting_disturbance_detected': 'Button disable when backtesting',
           'backtesting_thousandths_data':
               'Always use thousandths of the data size',
-          'backtesting_prob': 'Backtesting Probability Threshold',
-          'backtesting_min_return_rate':
-              'Backtesting Min. Return Rate Threshold',
+          'global_prob': 'Probability Threshold',
+          'global_min_return_rate': 'Min. Return Rate Threshold',
           'subsequent_time_unit': 'Subseq.',
           'wait_for_chart': 'Please wait for the chart to load',
           'over': '❌ Lock-in trend is over',
@@ -324,8 +323,8 @@ class Msg extends Translations {
           'search_symbol_before_backtest': '在回測之前搜尋相同的金融工具',
           'backtesting_disturbance_detected': '在回測時禁用此按鈕',
           'backtesting_thousandths_data': '始終使用千分之一數據量',
-          'backtesting_prob': '回測機率閾值',
-          'backtesting_min_return_rate': '回測最低回報率閾值',
+          'global_prob': '機率閾值',
+          'global_min_return_rate': '最低回報率閾值',
           'subsequent_time_unit': '後續走勢',
           'wait_for_chart': '請等待圖表載入完成',
           'over': '❌ 鎖定的走勢已完結',

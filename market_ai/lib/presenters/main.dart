@@ -9450,9 +9450,9 @@ class MainPresenter extends GetxController {
 
   String showCandleListListLastItem() {
     if (hasCandleData.value) {
-      return listCandledata.last.close!.toStringAsFixed(4);
+      return '\$${listCandledata.last.close!.toStringAsFixed(4)}';
     } else {
-      return 'Loading';
+      return 'Loading...';
     }
   }
 

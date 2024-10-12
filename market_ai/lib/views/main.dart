@@ -316,31 +316,25 @@ class MainView extends StatefulWidget {
               children: [
                 Expanded(
                   child: Text(
-                    'backtesting_prob'.tr,
+                    'global_prob'.tr,
                     style: const TextTheme().sp5.w700,
                   ),
                 ),
                 Expanded(
-                  child: GestureDetector(
-                    onTap: () {
-                      // Dismiss the keyboard
-                      FocusScope.of(context).unfocus();
+                  child: TextField(
+                    onChanged: (String value) {
+                      MainPresenter.to.probThreshold.value =
+                          double.parse(value);
+                      PrefsService.to.prefs.setDouble(
+                          SharedPreferencesConstant.probThreshold,
+                          double.parse(value));
                     },
-                    child: TextField(
-                      onChanged: (String value) {
-                        MainPresenter.to.probThreshold.value =
-                            double.parse(value);
-                        PrefsService.to.prefs.setDouble(
-                            SharedPreferencesConstant.probThreshold,
-                            double.parse(value));
-                      },
-                      decoration: InputDecoration(
-                        border: const OutlineInputBorder(),
-                        labelText: probThreshold.toString(),
-                      ),
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      labelText: probThreshold.toString(),
                     ),
+                    keyboardType: const TextInputType.numberWithOptions(
+                        signed: true, decimal: true),
                   ),
                 ),
               ],
@@ -350,31 +344,25 @@ class MainView extends StatefulWidget {
               children: [
                 Expanded(
                   child: Text(
-                    'backtesting_min_return_rate'.tr,
+                    'global_min_return_rate'.tr,
                     style: const TextTheme().sp5.w700,
                   ),
                 ),
                 Expanded(
-                  child: GestureDetector(
-                    onTap: () {
-                      // Dismiss the keyboard
-                      FocusScope.of(context).unfocus();
+                  child: TextField(
+                    onChanged: (String value) {
+                      MainPresenter.to.minReturnRateThreshold.value =
+                          double.parse(value);
+                      PrefsService.to.prefs.setDouble(
+                          SharedPreferencesConstant.minReturnRateThreshold,
+                          double.parse(value));
                     },
-                    child: TextField(
-                      onChanged: (String value) {
-                        MainPresenter.to.minReturnRateThreshold.value =
-                            double.parse(value);
-                        PrefsService.to.prefs.setDouble(
-                            SharedPreferencesConstant.minReturnRateThreshold,
-                            double.parse(value));
-                      },
-                      decoration: InputDecoration(
-                        border: const OutlineInputBorder(),
-                        labelText: minReturnRateThreshold.toString(),
-                      ),
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      labelText: minReturnRateThreshold.toString(),
                     ),
+                    keyboardType: const TextInputType.numberWithOptions(
+                        signed: true, decimal: true),
                   ),
                 ),
               ],
@@ -453,31 +441,25 @@ class MainView extends StatefulWidget {
                         ),
                       ),
                       Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            // Dismiss the keyboard
-                            FocusScope.of(context).unfocus();
+                        child: TextField(
+                          onChanged: (String value) {
+                            MainPresenter
+                                .to
+                                .trendsWithinSpecificMinReturnRateNotCountedThreshold
+                                .value = double.parse(value);
+                            PrefsService.to.prefs.setDouble(
+                                SharedPreferencesConstant
+                                    .trendsWithinSpecificMinReturnRateNotCountedThreshold,
+                                double.parse(value));
                           },
-                          child: TextField(
-                            onChanged: (String value) {
-                              MainPresenter
-                                  .to
-                                  .trendsWithinSpecificMinReturnRateNotCountedThreshold
-                                  .value = double.parse(value);
-                              PrefsService.to.prefs.setDouble(
-                                  SharedPreferencesConstant
-                                      .trendsWithinSpecificMinReturnRateNotCountedThreshold,
-                                  double.parse(value));
-                            },
-                            decoration: InputDecoration(
-                              border: const OutlineInputBorder(),
-                              labelText:
-                                  trendsWithinSpecificMinReturnRateNotCountedThreshold
-                                      .toString(),
-                            ),
-                            keyboardType: const TextInputType.numberWithOptions(
-                                decimal: true),
+                          decoration: InputDecoration(
+                            border: const OutlineInputBorder(),
+                            labelText:
+                                trendsWithinSpecificMinReturnRateNotCountedThreshold
+                                    .toString(),
                           ),
+                          keyboardType: const TextInputType.numberWithOptions(
+                              signed: true, decimal: true),
                         ),
                       ),
                     ],
@@ -1049,7 +1031,8 @@ class _MainViewState extends State<MainView> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    '\$${MainPresenter.to.showCandleListListLastItem()}',
+                                    MainPresenter.to
+                                        .showCandleListListLastItem(),
                                     style: const TextTheme()
                                         .sp10
                                         .primaryTextColor
