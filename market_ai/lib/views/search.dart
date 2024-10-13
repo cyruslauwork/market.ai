@@ -117,70 +117,7 @@ class _SearchViewState extends State<SearchView> {
         PrefsService.to.prefs.setString(
             SharedPreferencesConstant.financialInstrumentSymbol, newSymbol);
         MainPresenter.to.financialInstrumentSymbol.value = newSymbol;
-        int newLength = _currentLength;
-        PrefsService.to.prefs
-            .setInt(SharedPreferencesConstant.length, newLength);
-        MainPresenter.to.length.value = newLength;
-        double newCandleTolerance = _currentCandleTolerance;
-        PrefsService.to.prefs.setDouble(
-            SharedPreferencesConstant.candleTolerance, newCandleTolerance);
-        MainPresenter.to.candleTolerance.value = newCandleTolerance;
-        double newPriceTolerance = _currentPriceTolerance;
-        PrefsService.to.prefs.setDouble(
-            SharedPreferencesConstant.priceTolerance, newPriceTolerance);
-        MainPresenter.to.priceTolerance.value = newPriceTolerance;
-        double newMaTolerance = _currentMaTolerance;
-        PrefsService.to.prefs
-            .setDouble(SharedPreferencesConstant.maTolerance, newMaTolerance);
-        MainPresenter.to.maTolerance.value = newMaTolerance;
-        double newFirstMaTolerance = _currentFirstMaTolerance;
-        PrefsService.to.prefs.setDouble(
-            SharedPreferencesConstant.firstMaTolerance, newFirstMaTolerance);
-        MainPresenter.to.firstMaTolerance.value = newFirstMaTolerance;
-        int newSubLength = _currentSubLength;
-        PrefsService.to.prefs
-            .setInt(SharedPreferencesConstant.subLength, newSubLength);
-        MainPresenter.to.subLength.value = newSubLength;
-        double newEma1520Vwma20Tolerance = _currentEma1520Vwma20Tolerance;
-        PrefsService.to.prefs.setDouble(
-            SharedPreferencesConstant.ema1520Vwma20Tolerance,
-            newEma1520Vwma20Tolerance);
-        MainPresenter.to.ema1520Vwma20Tolerance.value =
-            newEma1520Vwma20Tolerance;
-        double newEma40Tolerance = _currentEma40Tolerance;
-        PrefsService.to.prefs.setDouble(
-            SharedPreferencesConstant.ema40Tolerance, newEma40Tolerance);
-        MainPresenter.to.ema40Tolerance.value = newEma40Tolerance;
-        double newEma60Tolerance = _currentEma60Tolerance;
-        PrefsService.to.prefs.setDouble(
-            SharedPreferencesConstant.ema60Tolerance, newEma60Tolerance);
-        MainPresenter.to.ema60Tolerance.value = newEma60Tolerance;
-        double newEma120Tolerance = _currentEma120Tolerance;
-        PrefsService.to.prefs.setDouble(
-            SharedPreferencesConstant.ema120Tolerance, newEma120Tolerance);
-        MainPresenter.to.ema120Tolerance.value = newEma120Tolerance;
-        double newFirstEma1520Vwma20Tolerance =
-            _currentEma1520Vwma20FirstTolerance;
-        PrefsService.to.prefs.setDouble(
-            SharedPreferencesConstant.firstEma1520Vwma20Tolerance,
-            newFirstEma1520Vwma20Tolerance);
-        MainPresenter.to.firstEma1520Vwma20Tolerance.value =
-            newFirstEma1520Vwma20Tolerance;
-        double newFirstEma40Tolerance = _currentEma40FirstTolerance;
-        PrefsService.to.prefs.setDouble(
-            SharedPreferencesConstant.firstEma40Tolerance,
-            newFirstEma40Tolerance);
-        MainPresenter.to.firstEma40Tolerance.value = newFirstEma40Tolerance;
-        double newFirstEma60Tolerance = _currentEma60FirstTolerance;
-        PrefsService.to.prefs.setDouble(
-            SharedPreferencesConstant.firstEma60Tolerance,
-            newFirstEma60Tolerance);
-        MainPresenter.to.firstEma60Tolerance.value = newFirstEma60Tolerance;
-        double newFirstEma120Tolerance = _currentEma120FirstTolerance;
-        PrefsService.to.prefs.setDouble(
-            SharedPreferencesConstant.firstEma120Tolerance,
-            newFirstEma120Tolerance);
-        MainPresenter.to.firstEma120Tolerance.value = newFirstEma120Tolerance;
+        updateTol();
         MainPresenter.to.searchCountNotifier.value++;
         MainPresenter.to.back();
       } else {
@@ -189,78 +126,15 @@ class _SearchViewState extends State<SearchView> {
             .where((SymbolAndName symbolAndName) =>
                 symbolAndName.name.toUpperCase().contains(symbol));
         if (textMatchesName.length == 1) {
-          String newSymbol = textMatchesName.first.symbol;
-          PrefsService.to.prefs.setString(
-              SharedPreferencesConstant.financialInstrumentSymbol, newSymbol);
-          MainPresenter.to.financialInstrumentSymbol.value = newSymbol;
           String newName = textMatchesName.first.name;
           PrefsService.to.prefs.setString(
               SharedPreferencesConstant.financialInstrumentName, newName);
           MainPresenter.to.financialInstrumentName.value = newName;
-          int newLength = _currentLength;
-          PrefsService.to.prefs
-              .setInt(SharedPreferencesConstant.length, newLength);
-          MainPresenter.to.length.value = newLength;
-          double newCandleTolerance = _currentCandleTolerance;
-          PrefsService.to.prefs.setDouble(
-              SharedPreferencesConstant.candleTolerance, newCandleTolerance);
-          MainPresenter.to.candleTolerance.value = newCandleTolerance;
-          double newPriceTolerance = _currentPriceTolerance;
-          PrefsService.to.prefs.setDouble(
-              SharedPreferencesConstant.priceTolerance, newPriceTolerance);
-          MainPresenter.to.priceTolerance.value = newPriceTolerance;
-          double newMaTolerance = _currentMaTolerance;
-          PrefsService.to.prefs
-              .setDouble(SharedPreferencesConstant.maTolerance, newMaTolerance);
-          MainPresenter.to.maTolerance.value = newMaTolerance;
-          double newFirstMaTolerance = _currentFirstMaTolerance;
-          PrefsService.to.prefs.setDouble(
-              SharedPreferencesConstant.firstMaTolerance, newFirstMaTolerance);
-          MainPresenter.to.firstMaTolerance.value = newFirstMaTolerance;
-          int newSubLength = _currentSubLength;
-          PrefsService.to.prefs
-              .setInt(SharedPreferencesConstant.subLength, newSubLength);
-          MainPresenter.to.subLength.value = newSubLength;
-          double newEma1520Vwma20Tolerance = _currentEma1520Vwma20Tolerance;
-          PrefsService.to.prefs.setDouble(
-              SharedPreferencesConstant.ema1520Vwma20Tolerance,
-              newEma1520Vwma20Tolerance);
-          MainPresenter.to.ema1520Vwma20Tolerance.value =
-              newEma1520Vwma20Tolerance;
-          double newEma40Tolerance = _currentEma40Tolerance;
-          PrefsService.to.prefs.setDouble(
-              SharedPreferencesConstant.ema40Tolerance, newEma40Tolerance);
-          MainPresenter.to.ema40Tolerance.value = newEma40Tolerance;
-          double newEma60Tolerance = _currentEma60Tolerance;
-          PrefsService.to.prefs.setDouble(
-              SharedPreferencesConstant.ema60Tolerance, newEma60Tolerance);
-          MainPresenter.to.ema60Tolerance.value = newEma60Tolerance;
-          double newEma120Tolerance = _currentEma120Tolerance;
-          PrefsService.to.prefs.setDouble(
-              SharedPreferencesConstant.ema120Tolerance, newEma120Tolerance);
-          MainPresenter.to.ema120Tolerance.value = newEma120Tolerance;
-          double newFirstEma1520Vwma20Tolerance =
-              _currentEma1520Vwma20FirstTolerance;
-          PrefsService.to.prefs.setDouble(
-              SharedPreferencesConstant.firstEma1520Vwma20Tolerance,
-              newFirstEma1520Vwma20Tolerance);
-          MainPresenter.to.firstEma1520Vwma20Tolerance.value =
-              newFirstEma1520Vwma20Tolerance;
-          double newFirstEma40Tolerance = _currentEma40FirstTolerance;
-          PrefsService.to.prefs.setDouble(
-              SharedPreferencesConstant.firstEma40Tolerance,
-              newFirstEma40Tolerance);
-          MainPresenter.to.firstEma40Tolerance.value = newFirstEma40Tolerance;
-          double newFirstEma60Tolerance = _currentEma60FirstTolerance;
-          PrefsService.to.prefs.setDouble(
-              SharedPreferencesConstant.firstEma60Tolerance,
-              newFirstEma60Tolerance);
-          double newFirstEma120Tolerance = _currentEma120FirstTolerance;
-          PrefsService.to.prefs.setDouble(
-              SharedPreferencesConstant.firstEma120Tolerance,
-              newFirstEma120Tolerance);
-          MainPresenter.to.firstEma120Tolerance.value = newFirstEma120Tolerance;
-          MainPresenter.to.firstEma60Tolerance.value = newFirstEma60Tolerance;
+          String newSymbol = textMatchesName.first.symbol;
+          PrefsService.to.prefs.setString(
+              SharedPreferencesConstant.financialInstrumentSymbol, newSymbol);
+          MainPresenter.to.financialInstrumentSymbol.value = newSymbol;
+          updateTol();
           MainPresenter.to.searchCountNotifier.value++;
           MainPresenter.to.back();
         } else if (textMatchesName.length > 1) {
@@ -287,6 +161,68 @@ class _SearchViewState extends State<SearchView> {
           icon: const Icon(Icons.error),
           'no_input'.tr);
     }
+  }
+
+  void updateTol() {
+    int newLength = _currentLength;
+    PrefsService.to.prefs.setInt(SharedPreferencesConstant.length, newLength);
+    MainPresenter.to.length.value = newLength;
+    double newCandleTolerance = _currentCandleTolerance;
+    PrefsService.to.prefs.setDouble(
+        SharedPreferencesConstant.candleTolerance, newCandleTolerance);
+    MainPresenter.to.candleTolerance.value = newCandleTolerance;
+    double newPriceTolerance = _currentPriceTolerance;
+    PrefsService.to.prefs
+        .setDouble(SharedPreferencesConstant.priceTolerance, newPriceTolerance);
+    MainPresenter.to.priceTolerance.value = newPriceTolerance;
+    double newMaTolerance = _currentMaTolerance;
+    PrefsService.to.prefs
+        .setDouble(SharedPreferencesConstant.maTolerance, newMaTolerance);
+    MainPresenter.to.maTolerance.value = newMaTolerance;
+    double newFirstMaTolerance = _currentFirstMaTolerance;
+    PrefsService.to.prefs.setDouble(
+        SharedPreferencesConstant.firstMaTolerance, newFirstMaTolerance);
+    MainPresenter.to.firstMaTolerance.value = newFirstMaTolerance;
+    int newSubLength = _currentSubLength;
+    PrefsService.to.prefs
+        .setInt(SharedPreferencesConstant.subLength, newSubLength);
+    MainPresenter.to.subLength.value = newSubLength;
+    double newEma1520Vwma20Tolerance = _currentEma1520Vwma20Tolerance;
+    PrefsService.to.prefs.setDouble(
+        SharedPreferencesConstant.ema1520Vwma20Tolerance,
+        newEma1520Vwma20Tolerance);
+    MainPresenter.to.ema1520Vwma20Tolerance.value = newEma1520Vwma20Tolerance;
+    double newEma40Tolerance = _currentEma40Tolerance;
+    PrefsService.to.prefs
+        .setDouble(SharedPreferencesConstant.ema40Tolerance, newEma40Tolerance);
+    MainPresenter.to.ema40Tolerance.value = newEma40Tolerance;
+    double newEma60Tolerance = _currentEma60Tolerance;
+    PrefsService.to.prefs
+        .setDouble(SharedPreferencesConstant.ema60Tolerance, newEma60Tolerance);
+    MainPresenter.to.ema60Tolerance.value = newEma60Tolerance;
+    double newEma120Tolerance = _currentEma120Tolerance;
+    PrefsService.to.prefs.setDouble(
+        SharedPreferencesConstant.ema120Tolerance, newEma120Tolerance);
+    MainPresenter.to.ema120Tolerance.value = newEma120Tolerance;
+    double newFirstEma1520Vwma20Tolerance = _currentEma1520Vwma20FirstTolerance;
+    PrefsService.to.prefs.setDouble(
+        SharedPreferencesConstant.firstEma1520Vwma20Tolerance,
+        newFirstEma1520Vwma20Tolerance);
+    MainPresenter.to.firstEma1520Vwma20Tolerance.value =
+        newFirstEma1520Vwma20Tolerance;
+    double newFirstEma40Tolerance = _currentEma40FirstTolerance;
+    PrefsService.to.prefs.setDouble(
+        SharedPreferencesConstant.firstEma40Tolerance, newFirstEma40Tolerance);
+    MainPresenter.to.firstEma40Tolerance.value = newFirstEma40Tolerance;
+    double newFirstEma60Tolerance = _currentEma60FirstTolerance;
+    PrefsService.to.prefs.setDouble(
+        SharedPreferencesConstant.firstEma60Tolerance, newFirstEma60Tolerance);
+    MainPresenter.to.firstEma60Tolerance.value = newFirstEma60Tolerance;
+    double newFirstEma120Tolerance = _currentEma120FirstTolerance;
+    PrefsService.to.prefs.setDouble(
+        SharedPreferencesConstant.firstEma120Tolerance,
+        newFirstEma120Tolerance);
+    MainPresenter.to.firstEma120Tolerance.value = newFirstEma120Tolerance;
   }
 
   @override

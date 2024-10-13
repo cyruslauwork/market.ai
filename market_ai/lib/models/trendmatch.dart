@@ -95,9 +95,9 @@ class TrendMatch {
 
     // Clear all match rows
     if (!isTracking) {
-      MainPresenter.to.matchRows.value = [];
+      MainPresenter.to.matchRows.clear();
       for (var symbol in MainPresenter.to.universalMatchRows.keys) {
-        MainPresenter.to.universalMatchRows[symbol] = [];
+        MainPresenter.to.universalMatchRows[symbol]!.clear();
       }
     }
     // MainPresenter.to.matchPercentDifferencesListList.value = [];
@@ -105,9 +105,9 @@ class TrendMatch {
     // MainPresenter.to.matchActualPricesListList.value = [];
     // Clear all tracking match rows
     if (isTracking) {
-      MainPresenter.to.trackingMatchRows.value = [];
+      MainPresenter.to.trackingMatchRows.clear();
       for (var symbol in MainPresenter.to.universalTrackingMatchRows.keys) {
-        MainPresenter.to.universalTrackingMatchRows[symbol] = [];
+        MainPresenter.to.universalTrackingMatchRows[symbol]!.clear();
       }
     }
 
@@ -845,6 +845,7 @@ class TrendMatch {
         if (!matched) {
           return false;
         }
+        extraIndex++;
       }
 
       for (int i = 0; i < comList.length; i++) {
@@ -879,6 +880,7 @@ class TrendMatch {
           if (!matched) {
             return false;
           }
+          extraIndex++;
         }
       }
     }
