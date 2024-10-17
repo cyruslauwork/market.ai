@@ -536,7 +536,6 @@ class TrendMatch {
         for (int l = 0; l < selCandleListList.first.length; l++) {
           double comVal = comCandleListList[i][l];
           double selVal = selCandleListList[i][l];
-          double difference = comVal - selVal;
           double percentDiff;
 
           // Handle zero in selPriceList to avoid division by zero
@@ -550,6 +549,7 @@ class TrendMatch {
               percentDiff = 0.0; // Both are zero, no difference
             }
           } else {
+          double difference = comVal - selVal;
             percentDiff = difference / selVal;
           }
 
@@ -564,7 +564,6 @@ class TrendMatch {
       for (int i = 0; i < selPriceList.length; i++) {
         double comVal = comPriceList[i];
         double selVal = selPriceList[i];
-        double difference = comVal - selVal;
         double percentDiff;
 
         // Handle zero in selPriceList to avoid division by zero
@@ -578,6 +577,7 @@ class TrendMatch {
             percentDiff = 0.0; // Both are zero, no difference
           }
         } else {
+        double difference = comVal - selVal;
           percentDiff = difference / selVal;
         }
 
@@ -609,7 +609,6 @@ class TrendMatch {
         for (int l = 0; l < selCandleListList.first.length; l++) {
           double comVal = comCandleListList[i][l];
           double selVal = selCandleListList[i][l];
-          double difference = comVal - selVal;
           double percentDiff;
 
           // Handle zero in selPriceList to avoid division by zero
@@ -623,6 +622,7 @@ class TrendMatch {
               percentDiff = 0.0; // Both are zero, no difference
             }
           } else {
+          double difference = comVal - selVal;
             percentDiff = difference / selVal;
           }
 
@@ -635,7 +635,6 @@ class TrendMatch {
       for (int i = 0; i < selPriceList.length; i++) {
         double comVal = comPriceList[i];
         double selVal = selPriceList[i];
-        double difference = comVal - selVal;
         double percentDiff;
 
         // Handle zero in selPriceList to avoid division by zero
@@ -649,6 +648,7 @@ class TrendMatch {
             percentDiff = 0.0; // Both are zero, no difference
           }
         } else {
+        double difference = comVal - selVal;
           percentDiff = difference / selVal;
         }
 
@@ -687,7 +687,6 @@ class TrendMatch {
       for (int i = 0; i < maLength; i++) {
         double comVal = comFirstList[i];
         double selVal = selFirstList[i];
-        double difference = comVal - selVal;
         double percentDiff;
 
         // Handle zero in selList to avoid division by zero
@@ -698,6 +697,7 @@ class TrendMatch {
             percentDiff = 0.0; // Both are zero, no difference
           }
         } else {
+        double difference = comVal - selVal;
           percentDiff = difference / selVal;
         }
 
@@ -754,7 +754,6 @@ class TrendMatch {
         for (int l = 0; l < maLength; l++) {
           double comVal = comList[i][l];
           double selVal = selList[i][l];
-          double difference = comVal - selVal;
           double percentDiff;
 
           // Handle zero in selList to avoid division by zero
@@ -765,6 +764,7 @@ class TrendMatch {
               percentDiff = 0.0; // Both are zero, no difference
             }
           } else {
+          double difference = comVal - selVal;
             percentDiff = difference / selVal;
           }
 
@@ -817,7 +817,6 @@ class TrendMatch {
       for (int i = 0; i < maLength; i++) {
         double comVal = comFirstList[i];
         double selVal = selFirstList[i];
-        double difference = comVal - selVal;
         double percentDiff;
 
         // Handle zero in selList to avoid division by zero
@@ -828,6 +827,7 @@ class TrendMatch {
             percentDiff = 0.0; // Both are zero, no difference
           }
         } else {
+        double difference = comVal - selVal;
           percentDiff = difference / selVal;
         }
 
@@ -852,7 +852,6 @@ class TrendMatch {
         for (int l = 0; l < maLength; l++) {
           double comVal = comList[i][l];
           double selVal = selList[i][l];
-          double difference = comVal - selVal;
           double percentDiff;
 
           // Handle zero in selList to avoid division by zero
@@ -863,6 +862,7 @@ class TrendMatch {
               percentDiff = 0.0; // Both are zero, no difference
             }
           } else {
+          double difference = comVal - selVal;
             percentDiff = difference / selVal;
           }
 

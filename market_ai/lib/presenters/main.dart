@@ -9695,7 +9695,6 @@ class MainPresenter extends GetxController {
               negativeTolerance = -dividedFirstEma1520Vwma20Tolerance;
             }
 
-            double difference = comVal - selVal;
             double percentDiff;
 
             // Handle zero in selList to avoid division by zero
@@ -9712,6 +9711,7 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
+            double difference = comVal - selVal;
               percentDiff = difference / selVal;
             }
 
@@ -9777,7 +9777,6 @@ class MainPresenter extends GetxController {
               negativeTolerance = -dividedEma1520Vwma20Tolerance;
             }
 
-            double difference = comVal - selVal;
             double percentDiff;
 
             // Handle zero in selList to avoid division by zero
@@ -9794,6 +9793,7 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
+            double difference = comVal - selVal;
               percentDiff = difference / selVal;
             }
 
@@ -9866,7 +9866,6 @@ class MainPresenter extends GetxController {
               negativeTolerance = -dividedFirstEma40Tolerance;
             }
 
-            double difference = comVal - selVal;
             double percentDiff;
 
             // Handle zero in selList to avoid division by zero
@@ -9883,6 +9882,7 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
+            double difference = comVal - selVal;
               percentDiff = difference / selVal;
             }
 
@@ -9946,7 +9946,6 @@ class MainPresenter extends GetxController {
               negativeTolerance = -dividedEma40Tolerance;
             }
 
-            double difference = comVal - selVal;
             double percentDiff;
 
             // Handle zero in selList to avoid division by zero
@@ -9963,6 +9962,7 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
+            double difference = comVal - selVal;
               percentDiff = difference / selVal;
             }
 
@@ -10035,7 +10035,6 @@ class MainPresenter extends GetxController {
               negativeTolerance = -dividedFirstEma60Tolerance;
             }
 
-            double difference = comVal - selVal;
             double percentDiff;
 
             // Handle zero in selList to avoid division by zero
@@ -10052,6 +10051,7 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
+            double difference = comVal - selVal;
               percentDiff = difference / selVal;
             }
 
@@ -10115,7 +10115,6 @@ class MainPresenter extends GetxController {
               negativeTolerance = -dividedEma60Tolerance;
             }
 
-            double difference = comVal - selVal;
             double percentDiff;
 
             // Handle zero in selList to avoid division by zero
@@ -10132,6 +10131,7 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
+            double difference = comVal - selVal;
               percentDiff = difference / selVal;
             }
 
@@ -10204,7 +10204,6 @@ class MainPresenter extends GetxController {
               negativeTolerance = -dividedFirstEma120Tolerance;
             }
 
-            double difference = comVal - selVal;
             double percentDiff;
 
             // Handle zero in selList to avoid division by zero
@@ -10221,6 +10220,7 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
+            double difference = comVal - selVal;
               percentDiff = difference / selVal;
             }
 
@@ -10284,7 +10284,6 @@ class MainPresenter extends GetxController {
               negativeTolerance = -dividedEma120Tolerance;
             }
 
-            double difference = comVal - selVal;
             double percentDiff;
 
             // Handle zero in selList to avoid division by zero
@@ -10301,6 +10300,7 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
+            double difference = comVal - selVal;
               percentDiff = difference / selVal;
             }
 
@@ -10363,7 +10363,6 @@ class MainPresenter extends GetxController {
             required double comVal,
             required double selVal,
           }) {
-            double difference = comVal - selVal;
             double percentDiff;
 
             // Handle zero in selList to avoid division by zero
@@ -10374,6 +10373,7 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
+            double difference = comVal - selVal;
               percentDiff = difference / selVal;
             }
 
@@ -10386,7 +10386,6 @@ class MainPresenter extends GetxController {
             required double comVal,
             required double selVal,
           }) {
-            double difference = comVal - selVal;
             double percentDiff;
 
             // Handle zero in selList to avoid division by zero
@@ -10397,6 +10396,7 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
+            double difference = comVal - selVal;
               percentDiff = difference / selVal;
             }
 
@@ -10416,7 +10416,6 @@ class MainPresenter extends GetxController {
             required double comVal,
             required double selVal,
           }) {
-            double difference = comVal - selVal;
             double percentDiff;
 
             // Handle zero in selList to avoid division by zero
@@ -10427,6 +10426,7 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
+            double difference = comVal - selVal;
               percentDiff = difference / selVal;
             }
 
@@ -10439,7 +10439,6 @@ class MainPresenter extends GetxController {
             required double comVal,
             required double selVal,
           }) {
-            double difference = comVal - selVal;
             double percentDiff;
 
             // Handle zero in selList to avoid division by zero
@@ -10450,6 +10449,7 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
+            double difference = comVal - selVal;
               percentDiff = difference / selVal;
             }
 
@@ -10469,7 +10469,6 @@ class MainPresenter extends GetxController {
             required double comVal,
             required double selVal,
           }) {
-            double difference = comVal - selVal;
             double percentDiff;
 
             // Handle zero in selList to avoid division by zero
@@ -10480,6 +10479,7 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
+            double difference = comVal - selVal;
               percentDiff = difference / selVal;
             }
 
@@ -10492,7 +10492,6 @@ class MainPresenter extends GetxController {
             required double comVal,
             required double selVal,
           }) {
-            double difference = comVal - selVal;
             double percentDiff;
 
             // Handle zero in selList to avoid division by zero
@@ -10503,6 +10502,7 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
+            double difference = comVal - selVal;
               percentDiff = difference / selVal;
             }
 
@@ -10522,7 +10522,6 @@ class MainPresenter extends GetxController {
             required double comVal,
             required double selVal,
           }) {
-            double difference = comVal - selVal;
             double percentDiff;
 
             // Handle zero in selList to avoid division by zero
@@ -10533,6 +10532,7 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
+            double difference = comVal - selVal;
               percentDiff = difference / selVal;
             }
 
@@ -10545,7 +10545,6 @@ class MainPresenter extends GetxController {
             required double comVal,
             required double selVal,
           }) {
-            double difference = comVal - selVal;
             double percentDiff;
 
             // Handle zero in selList to avoid division by zero
@@ -10556,6 +10555,7 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
+            double difference = comVal - selVal;
               percentDiff = difference / selVal;
             }
 
