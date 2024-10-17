@@ -671,6 +671,8 @@ class MainPresenter extends GetxController {
       (PrefsService.to.prefs.getInt(SharedPreferencesConstant.subLength) ?? 12)
           .obs;
   RxInt maxMa = 240.obs;
+  int maxPriceTol = 300;
+  late double dividedMaxPriceTol = maxPriceTol / 100;
   /* Lock-in Trend */
   RxBool isLockTrend =
       (PrefsService.to.prefs.getBool(SharedPreferencesConstant.lockTrend) ??
@@ -9680,6 +9682,16 @@ class MainPresenter extends GetxController {
             required double? positiveTolChange,
             required double? negativeTolChange,
           }) {
+            if ((selVal >= 0 && comVal < 0) || (selVal < 0 && comVal >= 0)) {
+              return (
+                false,
+                null,
+                null,
+                null,
+                null,
+              ); // if selVal is non-negative while comVal is negative vice versa
+            }
+
             double positiveTolerance;
             if (positiveTolChange != null) {
               positiveTolerance =
@@ -9711,11 +9723,12 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            if (comVal ==selVal){
-  percentDiff=0.0;
-} else {
-          double difference = comVal - selVal;
-            percentDiff = difference / selVal;}
+              if (comVal == selVal) {
+                percentDiff = 0.0;
+              } else {
+                double difference = comVal - selVal;
+                percentDiff = difference / selVal;
+              }
             }
 
             if (percentDiff >= 0) {
@@ -9796,11 +9809,12 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            if (comVal ==selVal){
-  percentDiff=0.0;
-} else {
-          double difference = comVal - selVal;
-            percentDiff = difference / selVal;}
+              if (comVal == selVal) {
+                percentDiff = 0.0;
+              } else {
+                double difference = comVal - selVal;
+                percentDiff = difference / selVal;
+              }
             }
 
             if (percentDiff >= 0) {
@@ -9857,6 +9871,16 @@ class MainPresenter extends GetxController {
             required double? positiveTolChange,
             required double? negativeTolChange,
           }) {
+            if ((selVal >= 0 && comVal < 0) || (selVal < 0 && comVal >= 0)) {
+              return (
+                false,
+                null,
+                null,
+                null,
+                null,
+              ); // if selVal is non-negative while comVal is negative vice versa
+            }
+
             double positiveTolerance;
             if (positiveTolChange != null) {
               positiveTolerance =
@@ -9888,11 +9912,12 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            if (comVal ==selVal){
-  percentDiff=0.0;
-} else {
-          double difference = comVal - selVal;
-            percentDiff = difference / selVal;}
+              if (comVal == selVal) {
+                percentDiff = 0.0;
+              } else {
+                double difference = comVal - selVal;
+                percentDiff = difference / selVal;
+              }
             }
 
             if (percentDiff >= 0) {
@@ -9971,11 +9996,12 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            if (comVal ==selVal){
-  percentDiff=0.0;
-} else {
-          double difference = comVal - selVal;
-            percentDiff = difference / selVal;}
+              if (comVal == selVal) {
+                percentDiff = 0.0;
+              } else {
+                double difference = comVal - selVal;
+                percentDiff = difference / selVal;
+              }
             }
 
             if (percentDiff >= 0) {
@@ -10032,6 +10058,16 @@ class MainPresenter extends GetxController {
             required double? positiveTolChange,
             required double? negativeTolChange,
           }) {
+            if ((selVal >= 0 && comVal < 0) || (selVal < 0 && comVal >= 0)) {
+              return (
+                false,
+                null,
+                null,
+                null,
+                null,
+              ); // if selVal is non-negative while comVal is negative vice versa
+            }
+
             double positiveTolerance;
             if (positiveTolChange != null) {
               positiveTolerance =
@@ -10063,11 +10099,12 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            if (comVal ==selVal){
-  percentDiff=0.0;
-} else {
-          double difference = comVal - selVal;
-            percentDiff = difference / selVal;}
+              if (comVal == selVal) {
+                percentDiff = 0.0;
+              } else {
+                double difference = comVal - selVal;
+                percentDiff = difference / selVal;
+              }
             }
 
             if (percentDiff >= 0) {
@@ -10146,11 +10183,12 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            if (comVal ==selVal){
-  percentDiff=0.0;
-} else {
-          double difference = comVal - selVal;
-            percentDiff = difference / selVal;}
+              if (comVal == selVal) {
+                percentDiff = 0.0;
+              } else {
+                double difference = comVal - selVal;
+                percentDiff = difference / selVal;
+              }
             }
 
             if (percentDiff >= 0) {
@@ -10207,6 +10245,16 @@ class MainPresenter extends GetxController {
             required double? positiveTolChange,
             required double? negativeTolChange,
           }) {
+            if ((selVal >= 0 && comVal < 0) || (selVal < 0 && comVal >= 0)) {
+              return (
+                false,
+                null,
+                null,
+                null,
+                null,
+              ); // if selVal is non-negative while comVal is negative vice versa
+            }
+
             double positiveTolerance;
             if (positiveTolChange != null) {
               positiveTolerance =
@@ -10238,11 +10286,12 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            if (comVal ==selVal){
-  percentDiff=0.0;
-} else {
-          double difference = comVal - selVal;
-            percentDiff = difference / selVal;}
+              if (comVal == selVal) {
+                percentDiff = 0.0;
+              } else {
+                double difference = comVal - selVal;
+                percentDiff = difference / selVal;
+              }
             }
 
             if (percentDiff >= 0) {
@@ -10321,11 +10370,12 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            if (comVal ==selVal){
-  percentDiff=0.0;
-} else {
-          double difference = comVal - selVal;
-            percentDiff = difference / selVal;}
+              if (comVal == selVal) {
+                percentDiff = 0.0;
+              } else {
+                double difference = comVal - selVal;
+                percentDiff = difference / selVal;
+              }
             }
 
             if (percentDiff >= 0) {
@@ -10387,6 +10437,10 @@ class MainPresenter extends GetxController {
             required double comVal,
             required double selVal,
           }) {
+            if ((selVal >= 0 && comVal < 0) || (selVal < 0 && comVal >= 0)) {
+              return false; // if selVal is non-negative while comVal is negative vice versa
+            }
+
             double percentDiff;
 
             // Handle zero in selList to avoid division by zero
@@ -10397,11 +10451,12 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            if (comVal ==selVal){
-  percentDiff=0.0;
-} else {
-          double difference = comVal - selVal;
-            percentDiff = difference / selVal;}
+              if (comVal == selVal) {
+                percentDiff = 0.0;
+              } else {
+                double difference = comVal - selVal;
+                percentDiff = difference / selVal;
+              }
             }
 
             if (percentDiff.abs() > dividedFirstEma1520Vwma20Tolerance) {
@@ -10423,11 +10478,12 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            if (comVal ==selVal){
-  percentDiff=0.0;
-} else {
-          double difference = comVal - selVal;
-            percentDiff = difference / selVal;}
+              if (comVal == selVal) {
+                percentDiff = 0.0;
+              } else {
+                double difference = comVal - selVal;
+                percentDiff = difference / selVal;
+              }
             }
 
             if (percentDiff.abs() > dividedEma1520Vwma20Tolerance) {
@@ -10446,6 +10502,10 @@ class MainPresenter extends GetxController {
             required double comVal,
             required double selVal,
           }) {
+            if ((selVal >= 0 && comVal < 0) || (selVal < 0 && comVal >= 0)) {
+              return false; // if selVal is non-negative while comVal is negative vice versa
+            }
+
             double percentDiff;
 
             // Handle zero in selList to avoid division by zero
@@ -10456,11 +10516,12 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            if (comVal ==selVal){
-  percentDiff=0.0;
-} else {
-          double difference = comVal - selVal;
-            percentDiff = difference / selVal;}
+              if (comVal == selVal) {
+                percentDiff = 0.0;
+              } else {
+                double difference = comVal - selVal;
+                percentDiff = difference / selVal;
+              }
             }
 
             if (percentDiff.abs() > dividedFirstEma40Tolerance) {
@@ -10482,11 +10543,12 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            if (comVal ==selVal){
-  percentDiff=0.0;
-} else {
-          double difference = comVal - selVal;
-            percentDiff = difference / selVal;}
+              if (comVal == selVal) {
+                percentDiff = 0.0;
+              } else {
+                double difference = comVal - selVal;
+                percentDiff = difference / selVal;
+              }
             }
 
             if (percentDiff.abs() > dividedEma40Tolerance) {
@@ -10505,6 +10567,10 @@ class MainPresenter extends GetxController {
             required double comVal,
             required double selVal,
           }) {
+            if ((selVal >= 0 && comVal < 0) || (selVal < 0 && comVal >= 0)) {
+              return false; // if selVal is non-negative while comVal is negative vice versa
+            }
+
             double percentDiff;
 
             // Handle zero in selList to avoid division by zero
@@ -10515,11 +10581,12 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            if (comVal ==selVal){
-  percentDiff=0.0;
-} else {
-          double difference = comVal - selVal;
-            percentDiff = difference / selVal;}
+              if (comVal == selVal) {
+                percentDiff = 0.0;
+              } else {
+                double difference = comVal - selVal;
+                percentDiff = difference / selVal;
+              }
             }
 
             if (percentDiff.abs() > dividedFirstEma60Tolerance) {
@@ -10541,11 +10608,12 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            if (comVal ==selVal){
-  percentDiff=0.0;
-} else {
-          double difference = comVal - selVal;
-            percentDiff = difference / selVal;}
+              if (comVal == selVal) {
+                percentDiff = 0.0;
+              } else {
+                double difference = comVal - selVal;
+                percentDiff = difference / selVal;
+              }
             }
 
             if (percentDiff.abs() > dividedEma60Tolerance) {
@@ -10564,6 +10632,10 @@ class MainPresenter extends GetxController {
             required double comVal,
             required double selVal,
           }) {
+            if ((selVal >= 0 && comVal < 0) || (selVal < 0 && comVal >= 0)) {
+              return false; // if selVal is non-negative while comVal is negative vice versa
+            }
+
             double percentDiff;
 
             // Handle zero in selList to avoid division by zero
@@ -10574,11 +10646,12 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            if (comVal ==selVal){
-  percentDiff=0.0;
-} else {
-          double difference = comVal - selVal;
-            percentDiff = difference / selVal;}
+              if (comVal == selVal) {
+                percentDiff = 0.0;
+              } else {
+                double difference = comVal - selVal;
+                percentDiff = difference / selVal;
+              }
             }
 
             if (percentDiff.abs() > dividedFirstEma120Tolerance) {
@@ -10600,11 +10673,12 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            if (comVal ==selVal){
-  percentDiff=0.0;
-} else {
-          double difference = comVal - selVal;
-            percentDiff = difference / selVal;}
+              if (comVal == selVal) {
+                percentDiff = 0.0;
+              } else {
+                double difference = comVal - selVal;
+                percentDiff = difference / selVal;
+              }
             }
 
             if (percentDiff.abs() > dividedEma120Tolerance) {

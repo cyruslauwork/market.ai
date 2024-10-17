@@ -549,15 +549,24 @@ class TrendMatch {
               percentDiff = 0.0; // Both are zero, no difference
             }
           } else {
-            if (comVal ==selVal){
-  percentDiff=0.0;
-} else {
-          double difference = comVal - selVal;
-            percentDiff = difference / selVal;}
+            if (comVal == selVal) {
+              percentDiff = 0.0;
+            } else {
+              double difference = comVal - selVal;
+              percentDiff = difference / selVal;
+            }
           }
 
-          if (percentDiff.abs() > candleTolerance) {
+          double absPercentDiff = percentDiff.abs();
+          if (absPercentDiff > candleTolerance) {
             return (false, []); // Difference is larger than certain %
+          } else if (percentDiff < 0) {
+            // If the price is in the opposite direction
+            double oppoTol =
+                MainPresenter.to.dividedMaxPriceTol - priceTolerance;
+            if (absPercentDiff > oppoTol) {
+              return (false, []);
+            }
           }
         }
       }
@@ -568,13 +577,13 @@ class TrendMatch {
         double comVal = comPriceList[i];
         double selVal = selPriceList[i];
         double percentDiff;
-        
-      if ((selVal >= 0 && comVal < 0) || (selVal < 0 && comVal >= 0)) {
-    return (
-              false,
-              []
-            ); // if selVal is non-negative while comVal is negative vice versa
-  }
+
+        if ((selVal >= 0 && comVal < 0) || (selVal < 0 && comVal >= 0)) {
+          return (
+            false,
+            []
+          ); // if selVal is non-negative while comVal is negative vice versa
+        }
 
         // Handle zero in selPriceList to avoid division by zero
         if (selVal == 0.0) {
@@ -587,11 +596,12 @@ class TrendMatch {
             percentDiff = 0.0; // Both are zero, no difference
           }
         } else {
-            if (comVal ==selVal){
-  percentDiff=0.0;
-} else {
-          double difference = comVal - selVal;
-            percentDiff = difference / selVal;}
+          if (comVal == selVal) {
+            percentDiff = 0.0;
+          } else {
+            double difference = comVal - selVal;
+            percentDiff = difference / selVal;
+          }
         }
 
         if (percentDiff >= 0) {
@@ -635,15 +645,24 @@ class TrendMatch {
               percentDiff = 0.0; // Both are zero, no difference
             }
           } else {
-            if (comVal ==selVal){
-  percentDiff=0.0;
-} else {
-          double difference = comVal - selVal;
-            percentDiff = difference / selVal;}
+            if (comVal == selVal) {
+              percentDiff = 0.0;
+            } else {
+              double difference = comVal - selVal;
+              percentDiff = difference / selVal;
+            }
           }
 
+          double absPercentDiff = percentDiff.abs();
           if (percentDiff.abs() > candleTolerance) {
             return (false, []); // Difference is larger than certain %
+          } else if (percentDiff < 0) {
+            // If the price is in the opposite direction
+            double oppoTol =
+                MainPresenter.to.dividedMaxPriceTol - priceTolerance;
+            if (absPercentDiff > oppoTol) {
+              return (false, []);
+            }
           }
         }
       }
@@ -653,12 +672,12 @@ class TrendMatch {
         double selVal = selPriceList[i];
         double percentDiff;
 
-      if ((selVal >= 0 && comVal < 0) || (selVal < 0 && comVal >= 0)) {
-    return (
-              false,
-              []
-            ); // if selVal is non-negative while comVal is negative vice versa
-  }
+        if ((selVal >= 0 && comVal < 0) || (selVal < 0 && comVal >= 0)) {
+          return (
+            false,
+            []
+          ); // if selVal is non-negative while comVal is negative vice versa
+        }
 
         // Handle zero in selPriceList to avoid division by zero
         if (selVal == 0.0) {
@@ -671,11 +690,12 @@ class TrendMatch {
             percentDiff = 0.0; // Both are zero, no difference
           }
         } else {
-            if (comVal ==selVal){
-  percentDiff=0.0;
-} else {
-          double difference = comVal - selVal;
-            percentDiff = difference / selVal;}
+          if (comVal == selVal) {
+            percentDiff = 0.0;
+          } else {
+            double difference = comVal - selVal;
+            percentDiff = difference / selVal;
+          }
         }
 
         if (percentDiff.abs() > priceTolerance) {
@@ -715,6 +735,10 @@ class TrendMatch {
         double selVal = selFirstList[i];
         double percentDiff;
 
+        if ((selVal >= 0 && comVal < 0) || (selVal < 0 && comVal >= 0)) {
+          return false; // if selVal is non-negative while comVal is negative vice versa
+        }
+
         // Handle zero in selList to avoid division by zero
         if (selVal == 0.0) {
           if (comVal != 0.0) {
@@ -723,11 +747,12 @@ class TrendMatch {
             percentDiff = 0.0; // Both are zero, no difference
           }
         } else {
-            if (comVal ==selVal){
-  percentDiff=0.0;
-} else {
-          double difference = comVal - selVal;
-            percentDiff = difference / selVal;}
+          if (comVal == selVal) {
+            percentDiff = 0.0;
+          } else {
+            double difference = comVal - selVal;
+            percentDiff = difference / selVal;
+          }
         }
 
         if (percentDiff >= 0) {
@@ -793,11 +818,12 @@ class TrendMatch {
               percentDiff = 0.0; // Both are zero, no difference
             }
           } else {
-            if (comVal ==selVal){
-  percentDiff=0.0;
-} else {
-          double difference = comVal - selVal;
-            percentDiff = difference / selVal;}
+            if (comVal == selVal) {
+              percentDiff = 0.0;
+            } else {
+              double difference = comVal - selVal;
+              percentDiff = difference / selVal;
+            }
           }
 
           if (percentDiff >= 0) {
@@ -851,6 +877,10 @@ class TrendMatch {
         double selVal = selFirstList[i];
         double percentDiff;
 
+        if ((selVal >= 0 && comVal < 0) || (selVal < 0 && comVal >= 0)) {
+          return false; // if selVal is non-negative while comVal is negative vice versa
+        }
+
         // Handle zero in selList to avoid division by zero
         if (selVal == 0.0) {
           if (comVal != 0.0) {
@@ -859,11 +889,12 @@ class TrendMatch {
             percentDiff = 0.0; // Both are zero, no difference
           }
         } else {
-            if (comVal ==selVal){
-  percentDiff=0.0;
-} else {
-          double difference = comVal - selVal;
-            percentDiff = difference / selVal;}
+          if (comVal == selVal) {
+            percentDiff = 0.0;
+          } else {
+            double difference = comVal - selVal;
+            percentDiff = difference / selVal;
+          }
         }
 
         if (percentDiff.abs() > firstMaTolerance) {
@@ -897,11 +928,12 @@ class TrendMatch {
               percentDiff = 0.0; // Both are zero, no difference
             }
           } else {
-            if (comVal ==selVal){
-  percentDiff=0.0;
-} else {
-          double difference = comVal - selVal;
-            percentDiff = difference / selVal;}
+            if (comVal == selVal) {
+              percentDiff = 0.0;
+            } else {
+              double difference = comVal - selVal;
+              percentDiff = difference / selVal;
+            }
           }
 
           if (percentDiff.abs() > maTolerance) {

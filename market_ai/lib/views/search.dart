@@ -333,9 +333,9 @@ class _SearchViewState extends State<SearchView> {
                         ),
                         child: Slider(
                           value: _currentPriceTolerance,
-                          max: 100,
+                          max: MainPresenter.to.maxPriceTol.toDouble(),
                           min: 5,
-                          divisions: 19,
+                          divisions: 59,
                           label: '${_currentPriceTolerance.round()}%',
                           onChanged: (double value) {
                             setState(() {
