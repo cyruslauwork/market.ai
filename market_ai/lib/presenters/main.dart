@@ -9711,8 +9711,11 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            double difference = comVal - selVal;
-              percentDiff = difference / selVal;
+            if (comVal ==selVal){
+  percentDiff=0.0;
+} else {
+          double difference = comVal - selVal;
+            percentDiff = difference / selVal;}
             }
 
             if (percentDiff >= 0) {
@@ -9793,8 +9796,11 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            double difference = comVal - selVal;
-              percentDiff = difference / selVal;
+            if (comVal ==selVal){
+  percentDiff=0.0;
+} else {
+          double difference = comVal - selVal;
+            percentDiff = difference / selVal;}
             }
 
             if (percentDiff >= 0) {
@@ -9882,8 +9888,11 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            double difference = comVal - selVal;
-              percentDiff = difference / selVal;
+            if (comVal ==selVal){
+  percentDiff=0.0;
+} else {
+          double difference = comVal - selVal;
+            percentDiff = difference / selVal;}
             }
 
             if (percentDiff >= 0) {
@@ -9962,8 +9971,11 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            double difference = comVal - selVal;
-              percentDiff = difference / selVal;
+            if (comVal ==selVal){
+  percentDiff=0.0;
+} else {
+          double difference = comVal - selVal;
+            percentDiff = difference / selVal;}
             }
 
             if (percentDiff >= 0) {
@@ -10051,8 +10063,11 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            double difference = comVal - selVal;
-              percentDiff = difference / selVal;
+            if (comVal ==selVal){
+  percentDiff=0.0;
+} else {
+          double difference = comVal - selVal;
+            percentDiff = difference / selVal;}
             }
 
             if (percentDiff >= 0) {
@@ -10131,8 +10146,11 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            double difference = comVal - selVal;
-              percentDiff = difference / selVal;
+            if (comVal ==selVal){
+  percentDiff=0.0;
+} else {
+          double difference = comVal - selVal;
+            percentDiff = difference / selVal;}
             }
 
             if (percentDiff >= 0) {
@@ -10220,8 +10238,11 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            double difference = comVal - selVal;
-              percentDiff = difference / selVal;
+            if (comVal ==selVal){
+  percentDiff=0.0;
+} else {
+          double difference = comVal - selVal;
+            percentDiff = difference / selVal;}
             }
 
             if (percentDiff >= 0) {
@@ -10300,8 +10321,11 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            double difference = comVal - selVal;
-              percentDiff = difference / selVal;
+            if (comVal ==selVal){
+  percentDiff=0.0;
+} else {
+          double difference = comVal - selVal;
+            percentDiff = difference / selVal;}
             }
 
             if (percentDiff >= 0) {
@@ -10373,8 +10397,11 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            double difference = comVal - selVal;
-              percentDiff = difference / selVal;
+            if (comVal ==selVal){
+  percentDiff=0.0;
+} else {
+          double difference = comVal - selVal;
+            percentDiff = difference / selVal;}
             }
 
             if (percentDiff.abs() > dividedFirstEma1520Vwma20Tolerance) {
@@ -10396,8 +10423,11 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            double difference = comVal - selVal;
-              percentDiff = difference / selVal;
+            if (comVal ==selVal){
+  percentDiff=0.0;
+} else {
+          double difference = comVal - selVal;
+            percentDiff = difference / selVal;}
             }
 
             if (percentDiff.abs() > dividedEma1520Vwma20Tolerance) {
@@ -10426,8 +10456,11 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            double difference = comVal - selVal;
-              percentDiff = difference / selVal;
+            if (comVal ==selVal){
+  percentDiff=0.0;
+} else {
+          double difference = comVal - selVal;
+            percentDiff = difference / selVal;}
             }
 
             if (percentDiff.abs() > dividedFirstEma40Tolerance) {
@@ -10449,8 +10482,11 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            double difference = comVal - selVal;
-              percentDiff = difference / selVal;
+            if (comVal ==selVal){
+  percentDiff=0.0;
+} else {
+          double difference = comVal - selVal;
+            percentDiff = difference / selVal;}
             }
 
             if (percentDiff.abs() > dividedEma40Tolerance) {
@@ -10479,8 +10515,11 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            double difference = comVal - selVal;
-              percentDiff = difference / selVal;
+            if (comVal ==selVal){
+  percentDiff=0.0;
+} else {
+          double difference = comVal - selVal;
+            percentDiff = difference / selVal;}
             }
 
             if (percentDiff.abs() > dividedFirstEma60Tolerance) {
@@ -10502,8 +10541,11 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            double difference = comVal - selVal;
-              percentDiff = difference / selVal;
+            if (comVal ==selVal){
+  percentDiff=0.0;
+} else {
+          double difference = comVal - selVal;
+            percentDiff = difference / selVal;}
             }
 
             if (percentDiff.abs() > dividedEma60Tolerance) {
@@ -10532,8 +10574,11 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            double difference = comVal - selVal;
-              percentDiff = difference / selVal;
+            if (comVal ==selVal){
+  percentDiff=0.0;
+} else {
+          double difference = comVal - selVal;
+            percentDiff = difference / selVal;}
             }
 
             if (percentDiff.abs() > dividedFirstEma120Tolerance) {
@@ -10555,8 +10600,11 @@ class MainPresenter extends GetxController {
                 percentDiff = 0.0; // Both are zero, no difference
               }
             } else {
-            double difference = comVal - selVal;
-              percentDiff = difference / selVal;
+            if (comVal ==selVal){
+  percentDiff=0.0;
+} else {
+          double difference = comVal - selVal;
+            percentDiff = difference / selVal;}
             }
 
             if (percentDiff.abs() > dividedEma120Tolerance) {

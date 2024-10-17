@@ -549,8 +549,11 @@ class TrendMatch {
               percentDiff = 0.0; // Both are zero, no difference
             }
           } else {
+            if (comVal ==selVal){
+  percentDiff=0.0;
+} else {
           double difference = comVal - selVal;
-            percentDiff = difference / selVal;
+            percentDiff = difference / selVal;}
           }
 
           if (percentDiff.abs() > candleTolerance) {
@@ -577,8 +580,11 @@ class TrendMatch {
             percentDiff = 0.0; // Both are zero, no difference
           }
         } else {
-        double difference = comVal - selVal;
-          percentDiff = difference / selVal;
+            if (comVal ==selVal){
+  percentDiff=0.0;
+} else {
+          double difference = comVal - selVal;
+            percentDiff = difference / selVal;}
         }
 
         if (percentDiff >= 0) {
@@ -622,8 +628,11 @@ class TrendMatch {
               percentDiff = 0.0; // Both are zero, no difference
             }
           } else {
+            if (comVal ==selVal){
+  percentDiff=0.0;
+} else {
           double difference = comVal - selVal;
-            percentDiff = difference / selVal;
+            percentDiff = difference / selVal;}
           }
 
           if (percentDiff.abs() > candleTolerance) {
@@ -648,8 +657,11 @@ class TrendMatch {
             percentDiff = 0.0; // Both are zero, no difference
           }
         } else {
-        double difference = comVal - selVal;
-          percentDiff = difference / selVal;
+            if (comVal ==selVal){
+  percentDiff=0.0;
+} else {
+          double difference = comVal - selVal;
+            percentDiff = difference / selVal;}
         }
 
         if (percentDiff.abs() > priceTolerance) {
@@ -697,8 +709,11 @@ class TrendMatch {
             percentDiff = 0.0; // Both are zero, no difference
           }
         } else {
-        double difference = comVal - selVal;
-          percentDiff = difference / selVal;
+            if (comVal ==selVal){
+  percentDiff=0.0;
+} else {
+          double difference = comVal - selVal;
+            percentDiff = difference / selVal;}
         }
 
         if (percentDiff >= 0) {
@@ -764,8 +779,11 @@ class TrendMatch {
               percentDiff = 0.0; // Both are zero, no difference
             }
           } else {
+            if (comVal ==selVal){
+  percentDiff=0.0;
+} else {
           double difference = comVal - selVal;
-            percentDiff = difference / selVal;
+            percentDiff = difference / selVal;}
           }
 
           if (percentDiff >= 0) {
@@ -827,8 +845,11 @@ class TrendMatch {
             percentDiff = 0.0; // Both are zero, no difference
           }
         } else {
-        double difference = comVal - selVal;
-          percentDiff = difference / selVal;
+            if (comVal ==selVal){
+  percentDiff=0.0;
+} else {
+          double difference = comVal - selVal;
+            percentDiff = difference / selVal;}
         }
 
         if (percentDiff.abs() > firstMaTolerance) {
@@ -862,8 +883,11 @@ class TrendMatch {
               percentDiff = 0.0; // Both are zero, no difference
             }
           } else {
+            if (comVal ==selVal){
+  percentDiff=0.0;
+} else {
           double difference = comVal - selVal;
-            percentDiff = difference / selVal;
+            percentDiff = difference / selVal;}
           }
 
           if (percentDiff.abs() > maTolerance) {
