@@ -568,6 +568,13 @@ class TrendMatch {
         double comVal = comPriceList[i];
         double selVal = selPriceList[i];
         double percentDiff;
+        
+      if ((selVal >= 0 && comVal < 0) || (selVal < 0 && comVal >= 0)) {
+    return (
+              false,
+              []
+            ); // if selVal is non-negative while comVal is negative vice versa
+  }
 
         // Handle zero in selPriceList to avoid division by zero
         if (selVal == 0.0) {
@@ -645,6 +652,13 @@ class TrendMatch {
         double comVal = comPriceList[i];
         double selVal = selPriceList[i];
         double percentDiff;
+
+      if ((selVal >= 0 && comVal < 0) || (selVal < 0 && comVal >= 0)) {
+    return (
+              false,
+              []
+            ); // if selVal is non-negative while comVal is negative vice versa
+  }
 
         // Handle zero in selPriceList to avoid division by zero
         if (selVal == 0.0) {
