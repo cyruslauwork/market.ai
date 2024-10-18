@@ -349,15 +349,7 @@ class _SearchViewState extends State<SearchView> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          '5%',
-                          style: const TextTheme().sp4,
-                        ),
-                        Text(
-                          '25%',
-                          style: const TextTheme().sp4,
-                        ),
-                        Text(
-                          '50%',
+                          '10%',
                           style: const TextTheme().sp4,
                         ),
                         Text(
@@ -365,7 +357,15 @@ class _SearchViewState extends State<SearchView> {
                           style: const TextTheme().sp4,
                         ),
                         Text(
-                          '100%',
+                          '150%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '225%',
+                          style: const TextTheme().sp4,
+                        ),
+                        Text(
+                          '300%',
                           style: const TextTheme().sp4,
                         ),
                       ],
