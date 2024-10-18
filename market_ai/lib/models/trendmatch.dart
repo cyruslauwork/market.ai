@@ -557,16 +557,8 @@ class TrendMatch {
             }
           }
 
-          double absPercentDiff = percentDiff.abs();
-          if (absPercentDiff > candleTolerance) {
+          if (percentDiff.abs() > candleTolerance) {
             return (false, []); // Difference is larger than certain %
-          } else if (percentDiff < 0) {
-            // If the price is in the opposite direction
-            double oppoTol =
-                MainPresenter.to.dividedMaxPriceTol - priceTolerance;
-            if (absPercentDiff > oppoTol) {
-              return (false, []);
-            }
           }
         }
       }
@@ -577,13 +569,6 @@ class TrendMatch {
         double comVal = comPriceList[i];
         double selVal = selPriceList[i];
         double percentDiff;
-
-        if ((selVal >= 0 && comVal < 0) || (selVal < 0 && comVal >= 0)) {
-          return (
-            false,
-            []
-          ); // if selVal is non-negative while comVal is negative vice versa
-        }
 
         // Handle zero in selPriceList to avoid division by zero
         if (selVal == 0.0) {
@@ -653,16 +638,8 @@ class TrendMatch {
             }
           }
 
-          double absPercentDiff = percentDiff.abs();
           if (percentDiff.abs() > candleTolerance) {
             return (false, []); // Difference is larger than certain %
-          } else if (percentDiff < 0) {
-            // If the price is in the opposite direction
-            double oppoTol =
-                MainPresenter.to.dividedMaxPriceTol - priceTolerance;
-            if (absPercentDiff > oppoTol) {
-              return (false, []);
-            }
           }
         }
       }
@@ -671,13 +648,6 @@ class TrendMatch {
         double comVal = comPriceList[i];
         double selVal = selPriceList[i];
         double percentDiff;
-
-        if ((selVal >= 0 && comVal < 0) || (selVal < 0 && comVal >= 0)) {
-          return (
-            false,
-            []
-          ); // if selVal is non-negative while comVal is negative vice versa
-        }
 
         // Handle zero in selPriceList to avoid division by zero
         if (selVal == 0.0) {
