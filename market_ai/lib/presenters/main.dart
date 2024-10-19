@@ -9533,6 +9533,8 @@ class MainPresenter extends GetxController {
       charts.add(Text('candle_chart'.tr, style: const TextTheme().sp5.w700));
       charts.add(SizedBox(height: 1.h));
       if (matchRows.isNotEmpty) {
+        int reducedSubLen = length.value - 1;
+        int reducedDataLen = listCandledata.length - 1;
         for (var index in matchRows) {
           if (chartCount >= 10) {
             // Stop adding more charts after reaching 10
@@ -9540,9 +9542,8 @@ class MainPresenter extends GetxController {
                 style: const TextTheme().sp5));
             break;
           }
-          int startIndex = (index - 60).clamp(0, listCandledata.length - 1);
-          int endIndex =
-              (index + length.value).clamp(0, listCandledata.length - 1);
+          int startIndex = (index - 60).clamp(0, reducedDataLen);
+          int endIndex = (index + reducedSubLen).clamp(0, reducedDataLen);
 
           List<CandleData> filteredCandles =
               listCandledata.sublist(startIndex, endIndex + 1);
@@ -9607,6 +9608,8 @@ class MainPresenter extends GetxController {
         // Check if the list of indices is not empty
         if (indices.isNotEmpty) {
           List<CandleData> candleDataList = universalListCandledata[key] ?? [];
+          int reducedSubLen = length.value - 1;
+          int reducedDataLen = candleDataList.length - 1;
           for (var index in indices) {
             if (chartCount >= 10) {
               // Stop adding more charts after reaching 10
@@ -9614,9 +9617,8 @@ class MainPresenter extends GetxController {
                   style: const TextTheme().sp5));
               break;
             }
-            int startIndex = (index - 60).clamp(0, candleDataList.length - 1);
-            int endIndex =
-                (index + length.value).clamp(0, candleDataList.length - 1);
+            int startIndex = (index - 60).clamp(0, reducedDataLen);
+            int endIndex = (index + reducedSubLen).clamp(0, reducedDataLen);
 
             List<CandleData> filteredCandles =
                 candleDataList.sublist(startIndex, endIndex + 1);
