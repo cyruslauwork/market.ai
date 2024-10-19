@@ -550,7 +550,7 @@ class TrendMatch {
             }
           } else {
             if (comVal == selVal) {
-              percentDiff = 0.0;
+              continue;
             } else {
               double difference = comVal - selVal;
               percentDiff = difference / selVal;
@@ -631,7 +631,7 @@ class TrendMatch {
             }
           } else {
             if (comVal == selVal) {
-              percentDiff = 0.0;
+              continue;
             } else {
               double difference = comVal - selVal;
               percentDiff = difference / selVal;
@@ -661,7 +661,7 @@ class TrendMatch {
           }
         } else {
           if (comVal == selVal) {
-            percentDiff = 0.0;
+            continue;
           } else {
             double difference = comVal - selVal;
             percentDiff = difference / selVal;
@@ -780,6 +780,10 @@ class TrendMatch {
           double selVal = selList[i][l];
           double percentDiff;
 
+          if ((selVal >= 0 && comVal < 0) || (selVal < 0 && comVal >= 0)) {
+            return false; // if selVal is non-negative while comVal is negative vice versa
+          }
+
           // Handle zero in selList to avoid division by zero
           if (selVal == 0.0) {
             if (comVal != 0.0) {
@@ -860,7 +864,7 @@ class TrendMatch {
           }
         } else {
           if (comVal == selVal) {
-            percentDiff = 0.0;
+            continue;
           } else {
             double difference = comVal - selVal;
             percentDiff = difference / selVal;
@@ -890,6 +894,10 @@ class TrendMatch {
           double selVal = selList[i][l];
           double percentDiff;
 
+          if ((selVal >= 0 && comVal < 0) || (selVal < 0 && comVal >= 0)) {
+            return false; // if selVal is non-negative while comVal is negative vice versa
+          }
+
           // Handle zero in selList to avoid division by zero
           if (selVal == 0.0) {
             if (comVal != 0.0) {
@@ -899,7 +907,7 @@ class TrendMatch {
             }
           } else {
             if (comVal == selVal) {
-              percentDiff = 0.0;
+              continue;
             } else {
               double difference = comVal - selVal;
               percentDiff = difference / selVal;

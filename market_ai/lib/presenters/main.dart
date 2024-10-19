@@ -9778,6 +9778,16 @@ class MainPresenter extends GetxController {
             required double? positiveTolChange,
             required double? negativeTolChange,
           }) {
+            if ((selVal >= 0 && comVal < 0) || (selVal < 0 && comVal >= 0)) {
+              return (
+                false,
+                null,
+                null,
+                null,
+                null,
+              ); // if selVal is non-negative while comVal is negative vice versa
+            }
+
             double positiveTolerance;
             if (positiveTolChange != null) {
               positiveTolerance =
@@ -9967,6 +9977,16 @@ class MainPresenter extends GetxController {
             required double? positiveTolChange,
             required double? negativeTolChange,
           }) {
+            if ((selVal >= 0 && comVal < 0) || (selVal < 0 && comVal >= 0)) {
+              return (
+                false,
+                null,
+                null,
+                null,
+                null,
+              ); // if selVal is non-negative while comVal is negative vice versa
+            }
+
             double positiveTolerance;
             if (positiveTolChange != null) {
               positiveTolerance = dividedEma40Tolerance * positiveTolChange;
@@ -10154,6 +10174,16 @@ class MainPresenter extends GetxController {
             required double? positiveTolChange,
             required double? negativeTolChange,
           }) {
+            if ((selVal >= 0 && comVal < 0) || (selVal < 0 && comVal >= 0)) {
+              return (
+                false,
+                null,
+                null,
+                null,
+                null,
+              ); // if selVal is non-negative while comVal is negative vice versa
+            }
+
             double positiveTolerance;
             if (positiveTolChange != null) {
               positiveTolerance = dividedEma60Tolerance * positiveTolChange;
@@ -10341,6 +10371,16 @@ class MainPresenter extends GetxController {
             required double? positiveTolChange,
             required double? negativeTolChange,
           }) {
+            if ((selVal >= 0 && comVal < 0) || (selVal < 0 && comVal >= 0)) {
+              return (
+                false,
+                null,
+                null,
+                null,
+                null,
+              ); // if selVal is non-negative while comVal is negative vice versa
+            }
+
             double positiveTolerance;
             if (positiveTolChange != null) {
               positiveTolerance = dividedEma120Tolerance * positiveTolChange;
@@ -10452,7 +10492,7 @@ class MainPresenter extends GetxController {
               }
             } else {
               if (comVal == selVal) {
-                percentDiff = 0.0;
+                return true;
               } else {
                 double difference = comVal - selVal;
                 percentDiff = difference / selVal;
@@ -10468,6 +10508,10 @@ class MainPresenter extends GetxController {
             required double comVal,
             required double selVal,
           }) {
+            if ((selVal >= 0 && comVal < 0) || (selVal < 0 && comVal >= 0)) {
+              return false; // if selVal is non-negative while comVal is negative vice versa
+            }
+
             double percentDiff;
 
             // Handle zero in selList to avoid division by zero
@@ -10479,7 +10523,7 @@ class MainPresenter extends GetxController {
               }
             } else {
               if (comVal == selVal) {
-                percentDiff = 0.0;
+                return true;
               } else {
                 double difference = comVal - selVal;
                 percentDiff = difference / selVal;
@@ -10517,7 +10561,7 @@ class MainPresenter extends GetxController {
               }
             } else {
               if (comVal == selVal) {
-                percentDiff = 0.0;
+                return true;
               } else {
                 double difference = comVal - selVal;
                 percentDiff = difference / selVal;
@@ -10533,6 +10577,10 @@ class MainPresenter extends GetxController {
             required double comVal,
             required double selVal,
           }) {
+            if ((selVal >= 0 && comVal < 0) || (selVal < 0 && comVal >= 0)) {
+              return false; // if selVal is non-negative while comVal is negative vice versa
+            }
+
             double percentDiff;
 
             // Handle zero in selList to avoid division by zero
@@ -10544,7 +10592,7 @@ class MainPresenter extends GetxController {
               }
             } else {
               if (comVal == selVal) {
-                percentDiff = 0.0;
+                return true;
               } else {
                 double difference = comVal - selVal;
                 percentDiff = difference / selVal;
@@ -10582,7 +10630,7 @@ class MainPresenter extends GetxController {
               }
             } else {
               if (comVal == selVal) {
-                percentDiff = 0.0;
+                return true;
               } else {
                 double difference = comVal - selVal;
                 percentDiff = difference / selVal;
@@ -10598,6 +10646,10 @@ class MainPresenter extends GetxController {
             required double comVal,
             required double selVal,
           }) {
+            if ((selVal >= 0 && comVal < 0) || (selVal < 0 && comVal >= 0)) {
+              return false; // if selVal is non-negative while comVal is negative vice versa
+            }
+
             double percentDiff;
 
             // Handle zero in selList to avoid division by zero
@@ -10609,7 +10661,7 @@ class MainPresenter extends GetxController {
               }
             } else {
               if (comVal == selVal) {
-                percentDiff = 0.0;
+                return true;
               } else {
                 double difference = comVal - selVal;
                 percentDiff = difference / selVal;
@@ -10647,7 +10699,7 @@ class MainPresenter extends GetxController {
               }
             } else {
               if (comVal == selVal) {
-                percentDiff = 0.0;
+                return true;
               } else {
                 double difference = comVal - selVal;
                 percentDiff = difference / selVal;
@@ -10663,6 +10715,10 @@ class MainPresenter extends GetxController {
             required double comVal,
             required double selVal,
           }) {
+            if ((selVal >= 0 && comVal < 0) || (selVal < 0 && comVal >= 0)) {
+              return false; // if selVal is non-negative while comVal is negative vice versa
+            }
+
             double percentDiff;
 
             // Handle zero in selList to avoid division by zero
@@ -10674,7 +10730,7 @@ class MainPresenter extends GetxController {
               }
             } else {
               if (comVal == selVal) {
-                percentDiff = 0.0;
+                return true;
               } else {
                 double difference = comVal - selVal;
                 percentDiff = difference / selVal;
