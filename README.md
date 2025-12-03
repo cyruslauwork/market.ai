@@ -24,6 +24,10 @@ Lau Ka Pui, Mak Wai Hang, Shum Wing Lam, Tong Yuen Yu
 - Dr. YUE Ho Yin, Willy (Second Examiner)
 - Department of Computer Science, The Hang Seng University of Hong Kong
 
-### GCP
+### Grade
 
-- Free Tier https://cloud.google.com/free/docs/free-cloud-features?#free-tier
+A-
+
+### Follow-up project
+
+Futures.AI https://github.com/cyruslauwork/futures.ai
