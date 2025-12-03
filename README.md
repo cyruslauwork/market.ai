@@ -6,11 +6,11 @@ Experimental screenshots during development:
 (The instruction setting is too strict) 
 (The probability density plot is under construction)
 
-![intro2](Screenshot 2024-10-28 at 11.07.54 PM.png)
-![intro3](Screenshot 2024-10-28 at 11.17.20 PM.png)
-![intro4](Screenshot 2024-10-28 at 11.52.06 PM.png)
-![intro5](Screenshot 2024-10-29 at 10.48.09 PM.png)
-![intro6](Screenshot 2024-10-29 at 11.10.26 PM.png)
+![intro2](Screenshot_2024-10-28_at_11.07.54PM.png)
+![intro3](Screenshot_2024-10-28_at_11.17.20PM.png)
+![intro4](Screenshot_2024-10-28_at_11.52.06PM.png)
+![intro5](Screenshot_2024-10-29_at_10.48.09PM.png)
+![intro6](Screenshot_2024-10-29_at_11.10.26PM.png)
 
 ### Source code is provided for reference only. After the presentation, many modifications were made for my own purposes, including but not limited to the better trade instruction, advanced search, and macOS version.
 
